@@ -100,15 +100,18 @@ function buildUrlOnlyScreenshotPayload(
   const baseUrl = String(input.__mcpBaseUrl || '').trim();
   if (!baseUrl) return null;
 
-  const imageBase64 = typeof payload.analysisBase64 === 'string'
-    ? payload.analysisBase64
-    : typeof payload.base64 === 'string'
-      ? payload.base64
+  // URL transport should preserve the original screenshot fidelity.
+  // Compression is still useful for base64 fallback, but when we can hand
+  // the model a short-lived image URL we should serve the original bytes.
+  const imageBase64 = typeof payload.base64 === 'string'
+    ? payload.base64
+    : typeof payload.analysisBase64 === 'string'
+      ? payload.analysisBase64
       : '';
-  const imageMimeType = typeof payload.analysisMimeType === 'string'
-    ? payload.analysisMimeType
-    : typeof payload.mimeType === 'string'
-      ? payload.mimeType
+  const imageMimeType = typeof payload.mimeType === 'string'
+    ? payload.mimeType
+    : typeof payload.analysisMimeType === 'string'
+      ? payload.analysisMimeType
       : '';
   if (!imageBase64 || !imageMimeType) return null;
 
@@ -126,10 +129,10 @@ function buildUrlOnlyScreenshotPayload(
     mimeType: imageMimeType,
     imageUrl: `${baseUrl}${stored.path}`,
     expiresAt: stored.expiresAt,
-    ...(typeof payload.analysisSizeBytes === 'number'
-      ? { sizeBytes: payload.analysisSizeBytes }
-      : typeof payload.sizeBytes === 'number'
-        ? { sizeBytes: payload.sizeBytes }
+    ...(typeof payload.sizeBytes === 'number'
+      ? { sizeBytes: payload.sizeBytes }
+      : typeof payload.analysisSizeBytes === 'number'
+        ? { sizeBytes: payload.analysisSizeBytes }
         : {}),
     ...(typeof payload.originalMimeType === 'string' ? { originalMimeType: payload.originalMimeType } : {}),
     ...(typeof payload.originalSizeBytes === 'number' ? { originalSizeBytes: payload.originalSizeBytes } : {}),
