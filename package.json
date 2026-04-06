@@ -4,6 +4,7 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
+    "build": "npm run build:rag",
     "build:rag": "tsx scripts/buildRagIndex.ts",
     "prestart": "npm run build:rag",
     "start": "tsx src/index.ts",
