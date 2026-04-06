@@ -263,6 +263,10 @@ function getRequestBaseUrl(req: http.IncomingMessage): string {
   return `${proto}://${host}`;
 }
 
+function getConfiguredPublicBaseUrl(): string {
+  return String(process.env.MCP_PUBLIC_URL || 'https://tekautomatemcpv2-production.up.railway.app').trim();
+}
+
 function getHealthPayload() {
   return {
     ok: startupState !== 'error',
@@ -440,8 +444,13 @@ export async function createServer(port = 8787): Promise<http.Server> {
       }
       const { name, arguments: args } = request.params;
       try {
-        const result = await runTool(name, (args as Record<string, unknown>) ?? {});
-        const text = typeof result === 'string' ? result : JSON.stringify(result, null, 2);
+        const toolArgs = {
+          ...((args as Record<string, unknown>) ?? {}),
+          __mcpBaseUrl: getConfiguredPublicBaseUrl(),
+        };
+        const result = await runTool(name, toolArgs);
+        const safeResult = sanitizeToolResultForExternalMcp(name, result);
+        const text = typeof safeResult === 'string' ? safeResult : JSON.stringify(safeResult, null, 2);
         return { content: [{ type: 'text' as const, text }] };
       } catch (err) {
         const msg = err instanceof Error ? err.message : String(err);
