@@ -211,14 +211,18 @@ async function queryLrn(input: Input): Promise<{ ok: boolean; response: string; 
 
 // ── Main discover function ──────────────────────────────────────────
 export async function discoverScpi(input: Input): Promise<ToolResult<Record<string, unknown>>> {
-  if (!input.executorUrl) {
-    return { ok: false, data: { error: 'NO_INSTRUMENT', message: 'No instrument connected.' }, sourceMeta: [], warnings: ['No executorUrl.'] };
-  }
-  if (!input.liveMode) {
-    return { ok: false, data: { error: 'NOT_LIVE', message: 'liveMode must be true.' }, sourceMeta: [], warnings: ['liveMode is not enabled.'] };
-  }
   if (!input.action || !['snapshot', 'diff', 'inspect'].includes(input.action)) {
     return { ok: false, data: { error: 'INVALID_ACTION', message: 'action must be "snapshot", "diff", or "inspect".' }, sourceMeta: [], warnings: ['Valid actions: snapshot, diff, inspect'] };
+  }
+
+  const hasForwardedLrn = Boolean(String(input._lrnResponse || '').trim());
+  const requiresLiveQuery = input.action !== 'inspect' && !hasForwardedLrn;
+
+  if (requiresLiveQuery && !input.executorUrl) {
+    return { ok: false, data: { error: 'NO_INSTRUMENT', message: 'No instrument connected.' }, sourceMeta: [], warnings: ['No executorUrl.'] };
+  }
+  if (requiresLiveQuery && !input.liveMode) {
+    return { ok: false, data: { error: 'NOT_LIVE', message: 'liveMode must be true.' }, sourceMeta: [], warnings: ['liveMode is not enabled.'] };
   }
 
   const key = input.visaResource || 'default';

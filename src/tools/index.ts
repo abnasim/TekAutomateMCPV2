@@ -963,7 +963,7 @@ export function getToolDefinitions() {
     },
     {
       name: 'capture_screenshot',
-      description: 'Capture a fresh scope screenshot from the selected live instrument. The image always updates the user interface. Pass analyze:true only when you need the image returned to the model for analysis, such as diagnosing errors or reading measurements. Default behavior is capture-only.',
+      description: 'Capture a fresh scope screenshot from the selected live instrument. The image always updates the user interface. Pass analyze:true only when the model must see the image. When analysis is requested, the default transport prefers OpenAI file_id handoff over base64 to reduce token usage.',
       parameters: {
         type: 'object',
         properties: {
@@ -975,7 +975,8 @@ export function getToolDefinitions() {
           scopeType: { type: 'string', enum: ['modern', 'legacy'] },
           modelFamily: { type: 'string' },
           deviceDriver: { type: 'string' },
-          analyze: { type: 'boolean', description: 'Set true to receive the image for AI analysis. Default false (capture only, updates UI).' },
+          analyze: { type: 'boolean', description: 'Set true to return the screenshot for AI vision analysis. Default false (capture only, updates UI).' },
+          analysisTransport: { type: 'string', enum: ['auto', 'file_id', 'base64'], description: 'Optional analysis transport hint when analyze:true. Default auto prefers file_id and falls back to base64.' },
         },
         required: [],
         additionalProperties: false,

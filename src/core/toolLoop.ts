@@ -7683,14 +7683,33 @@ async function runOpenAiToolLoop(
             liveScreenshots.push({ base64: imageData.base64, mimeType: imageData.mimeType, capturedAt: new Date().toISOString() });
             if (wantsAnalysis) {
               const analysisImageData = extractImageFromToolResult(result, 'analysis') || imageData;
+              const analysisTransport = String((toolArgs as Record<string, unknown>).analysisTransport || 'auto').toLowerCase() as ScreenshotAnalysisTransport;
+              const analysisFileId = analysisTransport === 'base64'
+                ? null
+                : await uploadVisionImageToOpenAiFileHosted(
+                    req.apiKey,
+                    analysisImageData.base64,
+                    analysisImageData.mimeType,
+                    new Date().toISOString(),
+                  );
               // AI wants to see the image — inject it
+              if (analysisTransport === 'file_id' && !analysisFileId) {
+                liveMessages.push({
+                  role: 'tool',
+                  tool_call_id: toolId,
+                  content: 'Error: capture_screenshot requested analysisTransport=file_id, but uploading the screenshot to OpenAI Files failed.',
+                });
+                continue;
+              }
               const textSummary = buildImageToolResultSummary(result);
-              liveMessages.push({ role: 'tool', tool_call_id: toolId, content: textSummary });
+              liveMessages.push({ role: 'tool', tool_call_id: toolId, content: `${textSummary} Vision transport: ${analysisFileId ? 'file_id' : 'base64'}.` });
               liveMessages.push({
                 role: 'user',
                 content: [
                   { type: 'text', text: 'Here is the screenshot you just captured. Describe what you see on the scope display.' },
-                  { type: 'image_url', image_url: { url: `data:${analysisImageData.mimeType};base64,${analysisImageData.base64}`, detail: 'auto' } },
+                  ...(analysisFileId
+                    ? [{ type: 'image_url', image_url: { file_id: analysisFileId, detail: 'auto' } }]
+                    : [{ type: 'image_url', image_url: { url: `data:${analysisImageData.mimeType};base64,${analysisImageData.base64}`, detail: 'auto' } }]),
                 ],
               });
             } else {
@@ -7892,6 +7911,54 @@ function extractImageFromToolResult(
 
   return null;
 }
+
+function guessImageExtensionFromMimeType(mimeType: string): string {
+  const lower = String(mimeType || '').toLowerCase();
+  if (lower.includes('jpeg') || lower.includes('jpg')) return 'jpg';
+  if (lower.includes('webp')) return 'webp';
+  if (lower.includes('gif')) return 'gif';
+  return 'png';
+}
+
+async function uploadVisionImageToOpenAiFileHosted(
+  apiKey: string,
+  base64: string,
+  mimeType: string,
+  capturedAt?: string,
+): Promise<string | null> {
+  if (!apiKey || !base64 || !String(mimeType || '').startsWith('image/')) return null;
+
+  try {
+    const fileName = `scope-${String(capturedAt || new Date().toISOString()).replace(/[:.]/g, '-')}.${guessImageExtensionFromMimeType(mimeType)}`;
+    const dataUri = `data:${mimeType};base64,${base64}`;
+    const res = await fetch('https://api.openai.com/v1/files', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: (() => {
+        const form = new FormData();
+        form.append('purpose', 'vision');
+        form.append('file', new File([Buffer.from(base64, 'base64')], fileName, { type: mimeType }));
+        return form;
+      })(),
+    });
+    if (!res.ok) {
+      console.log(`[MCP] Files upload failed (${res.status}) for screenshot vision handoff`);
+      return null;
+    }
+    const json = await res.json() as { id?: string };
+    const fileId = typeof json.id === 'string' ? json.id.trim() : '';
+    if (fileId) return fileId;
+    console.log(`[MCP] Files upload returned no file id; falling back to data URL (${dataUri.length} chars prepared)`);
+    return null;
+  } catch (err) {
+    console.log(`[MCP] Files upload error for screenshot vision handoff: ${err instanceof Error ? err.message : String(err)}`);
+    return null;
+  }
+}
+
+type ScreenshotAnalysisTransport = 'auto' | 'file_id' | 'base64';
 
 /**
  * Build a concise text summary for an image tool result, excluding the base64 blob.
