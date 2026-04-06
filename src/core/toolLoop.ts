@@ -23,6 +23,7 @@ import {
   buildSessionContext,
   cleanupStaleSessions,
 } from './liveSession';
+import { storeTempVisionImage } from './tempImageStore';
 
 /**
  * Build shortcut from clean plan
@@ -7684,14 +7685,22 @@ async function runOpenAiToolLoop(
             if (wantsAnalysis) {
               const analysisImageData = extractImageFromToolResult(result, 'analysis') || imageData;
               const analysisTransport = String((toolArgs as Record<string, unknown>).analysisTransport || 'auto').toLowerCase() as ScreenshotAnalysisTransport;
-              const analysisFileId = analysisTransport === 'base64'
-                ? null
-                : await uploadVisionImageToOpenAiFileHosted(
+              const analysisImageUrl = (analysisTransport === 'auto' || analysisTransport === 'url')
+                ? buildVisionImageUrlForHostedLoop(
+                    req,
+                    analysisImageData.base64,
+                    analysisImageData.mimeType,
+                    new Date().toISOString(),
+                  )
+                : null;
+              const analysisFileId = analysisTransport === 'file_id'
+                ? await uploadVisionImageToOpenAiFileHosted(
                     req.apiKey,
                     analysisImageData.base64,
                     analysisImageData.mimeType,
                     new Date().toISOString(),
-                  );
+                  )
+                : null;
               // AI wants to see the image — inject it
               if (analysisTransport === 'file_id' && !analysisFileId) {
                 liveMessages.push({
@@ -7701,13 +7710,24 @@ async function runOpenAiToolLoop(
                 });
                 continue;
               }
+              if (analysisTransport === 'url' && !analysisImageUrl) {
+                liveMessages.push({
+                  role: 'tool',
+                  tool_call_id: toolId,
+                  content: 'Error: capture_screenshot requested analysisTransport=url, but MCP could not create a temporary image URL.',
+                });
+                continue;
+              }
               const textSummary = buildImageToolResultSummary(result);
-              liveMessages.push({ role: 'tool', tool_call_id: toolId, content: `${textSummary} Vision transport: ${analysisFileId ? 'file_id' : 'base64'}.` });
+              const resolvedTransport = analysisImageUrl ? 'url' : analysisFileId ? 'file_id' : 'base64';
+              liveMessages.push({ role: 'tool', tool_call_id: toolId, content: `${textSummary} Vision transport: ${resolvedTransport}.` });
               liveMessages.push({
                 role: 'user',
                 content: [
                   { type: 'text', text: 'Here is the screenshot you just captured. Describe what you see on the scope display.' },
-                  ...(analysisFileId
+                  ...(analysisImageUrl
+                    ? [{ type: 'image_url', image_url: { url: analysisImageUrl, detail: 'auto' } }]
+                    : analysisFileId
                     ? [{ type: 'image_url', image_url: { file_id: analysisFileId, detail: 'auto' } }]
                     : [{ type: 'image_url', image_url: { url: `data:${analysisImageData.mimeType};base64,${analysisImageData.base64}`, detail: 'auto' } }]),
                 ],
@@ -7958,7 +7978,28 @@ async function uploadVisionImageToOpenAiFileHosted(
   }
 }
 
-type ScreenshotAnalysisTransport = 'auto' | 'file_id' | 'base64';
+type ScreenshotAnalysisTransport = 'auto' | 'url' | 'file_id' | 'base64';
+
+function buildVisionImageUrlForHostedLoop(
+  req: McpChatRequest,
+  base64: string,
+  mimeType: string,
+  capturedAt?: string,
+): string | null {
+  const baseUrl = String((req as unknown as Record<string, unknown>).__mcpBaseUrl || '').trim();
+  if (!baseUrl || !base64 || !mimeType) return null;
+  try {
+    const stored = storeTempVisionImage({
+      buffer: Buffer.from(base64, 'base64'),
+      mimeType,
+      createdAt: capturedAt,
+    });
+    return `${baseUrl}${stored.path}`;
+  } catch (err) {
+    console.log(`[MCP] Failed to create temp screenshot URL: ${err instanceof Error ? err.message : String(err)}`);
+    return null;
+  }
+}
 
 /**
  * Build a concise text summary for an image tool result, excluding the base64 blob.

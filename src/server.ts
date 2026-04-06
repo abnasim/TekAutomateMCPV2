@@ -14,6 +14,7 @@ import { bootRouter, createReloadProvidersHandler, createRouterHandler, getRoute
 import { getCommandIndex } from './core/commandIndex';
 import { getRagIndexes } from './core/ragIndex';
 import { getTemplateIndex } from './core/templateIndex';
+import { getTempVisionImage } from './core/tempImageStore';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -213,6 +214,14 @@ function sendJson(res: http.ServerResponse, status: number, payload: unknown) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   res.end(JSON.stringify(payload));
+}
+
+function getRequestBaseUrl(req: http.IncomingMessage): string {
+  const forwardedProto = String(req.headers['x-forwarded-proto'] || '').split(',')[0].trim();
+  const forwardedHost = String(req.headers['x-forwarded-host'] || '').split(',')[0].trim();
+  const host = forwardedHost || String(req.headers.host || '').trim() || 'localhost:3001';
+  const proto = forwardedProto || ((req.socket as any)?.encrypted ? 'https' : 'http');
+  return `${proto}://${host}`;
 }
 
 function getHealthPayload() {
@@ -616,6 +625,22 @@ function filterTools(q) {
       res.setHeader('Access-Control-Allow-Methods', 'GET,POST,DELETE,OPTIONS');
       res.setHeader('Access-Control-Expose-Headers', 'Mcp-Session-Id');
       res.end();
+      return;
+    }
+
+    if (req.method === 'GET' && req.url?.startsWith('/temp/vision/')) {
+      const id = decodeURIComponent(req.url.slice('/temp/vision/'.length));
+      const image = getTempVisionImage(id);
+      if (!image) {
+        res.statusCode = 404;
+        res.end('Not found');
+        return;
+      }
+      res.statusCode = 200;
+      res.setHeader('Content-Type', image.mimeType);
+      res.setHeader('Cache-Control', 'private, max-age=30');
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      res.end(image.buffer);
       return;
     }
 
@@ -1060,6 +1085,7 @@ function filterTools(q) {
       const requestId = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
       try {
         const body = (await readJsonBody(req)) as unknown as McpChatRequest;
+        (body as unknown as Record<string, unknown>).__mcpBaseUrl = getRequestBaseUrl(req);
         const normalizedUserMessage = typeof body?.userMessage === 'string' ? body.userMessage.trim() : '';
         const mode = body?.mode === 'mcp_only' ? 'mcp_only' : 'mcp_ai';
         if (mode === 'mcp_only') {

@@ -132,7 +132,7 @@ export function getToolDefinitions() {
     {
       name: 'instrument_live',
       description:
-        'Live instrument gateway for TekAutomate. Use `context` for connection info, `send` for SCPI commands, `screenshot` for capture, `snapshot`/`diff`/`inspect` for *LRN?-based state discovery, and `resources` for VISA discovery when needed. For screenshot analysis, the default transport prefers OpenAI file_id handoff over base64 to reduce token usage.',
+        'Live instrument gateway for TekAutomate. Use `context` for connection info, `send` for SCPI commands, `screenshot` for capture, `snapshot`/`diff`/`inspect` for *LRN?-based state discovery, and `resources` for VISA discovery when needed. For screenshot analysis, the default transport prefers a short-lived MCP-hosted image URL over base64 to reduce token usage.',
       parameters: {
         type: 'object',
         properties: {
@@ -156,8 +156,8 @@ export function getToolDefinitions() {
           },
           analysisTransport: {
             type: 'string',
-            enum: ['auto', 'file_id', 'base64'],
-            description: 'For action:"screenshot" — optional analysis transport hint. Default auto prefers file_id and falls back to base64.',
+            enum: ['auto', 'url', 'file_id', 'base64'],
+            description: 'For action:"screenshot" — optional analysis transport hint. Default auto prefers a short-lived MCP URL, then falls back to base64. file_id remains available for explicit OpenAI Files upload.',
           },
           timeoutMs: {
             type: 'number',
@@ -968,7 +968,7 @@ export function getToolDefinitions() {
     },
     {
       name: 'capture_screenshot',
-      description: 'Capture a fresh scope screenshot from the selected live instrument. The image always updates the user interface. Pass analyze:true only when the model must see the image. When analysis is requested, the default transport prefers OpenAI file_id handoff over base64 to reduce token usage.',
+      description: 'Capture a fresh scope screenshot from the selected live instrument. The image always updates the user interface. Pass analyze:true only when the model must see the image. When analysis is requested, the default transport prefers a short-lived MCP-hosted URL over base64 to reduce token usage.',
       parameters: {
         type: 'object',
         properties: {
@@ -981,7 +981,7 @@ export function getToolDefinitions() {
           modelFamily: { type: 'string' },
           deviceDriver: { type: 'string' },
           analyze: { type: 'boolean', description: 'Set true to return the screenshot for AI vision analysis. Default false (capture only, updates UI).' },
-          analysisTransport: { type: 'string', enum: ['auto', 'file_id', 'base64'], description: 'Optional analysis transport hint when analyze:true. Default auto prefers file_id and falls back to base64.' },
+          analysisTransport: { type: 'string', enum: ['auto', 'url', 'file_id', 'base64'], description: 'Optional analysis transport hint when analyze:true. Default auto prefers a short-lived MCP URL, then falls back to base64. file_id remains available for explicit OpenAI Files upload.' },
         },
         required: [],
         additionalProperties: false,

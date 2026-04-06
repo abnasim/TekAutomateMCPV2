@@ -12,7 +12,7 @@ interface Input extends Record<string, unknown> {
   modelFamily?: string;
   deviceDriver?: string;
   analyze?: boolean;
-  analysisTransport?: 'auto' | 'file_id' | 'base64';
+  analysisTransport?: 'auto' | 'url' | 'file_id' | 'base64';
 }
 
 async function compressAnalyzedScreenshotPayload(
