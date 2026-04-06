@@ -7711,11 +7711,11 @@ async function runOpenAiToolLoop(
                   )
                 : null;
               // AI wants to see the image — inject it
-              if (analysisTransport === 'file_id' && !analysisFileId) {
+              if ((analysisTransport === 'file_id' || analysisTransport === 'openai_image') && !analysisFileId) {
                 liveMessages.push({
                   role: 'tool',
                   tool_call_id: toolId,
-                  content: 'Error: capture_screenshot requested analysisTransport=file_id, but uploading the screenshot to OpenAI Files failed.',
+                  content: `Error: capture_screenshot requested analysisTransport=${analysisTransport}, but uploading the screenshot to OpenAI Files failed.`,
                 });
                 continue;
               }
@@ -7727,7 +7727,7 @@ async function runOpenAiToolLoop(
                 });
                 continue;
               }
-              if (analysisTransport === 'openai_image' && !analysisFileId && !analysisImageData) {
+              if (analysisTransport === 'openai_image' && !analysisImageData) {
                 liveMessages.push({
                   role: 'tool',
                   tool_call_id: toolId,
