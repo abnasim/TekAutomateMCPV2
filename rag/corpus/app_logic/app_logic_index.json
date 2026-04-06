@@ -1,0 +1,360 @@
+[
+  {
+    "id": "al_what_is_tekautomate",
+    "corpus": "app_logic",
+    "title": "What TekAutomate Is",
+    "body": "TekAutomate is an automation authoring environment for Tektronix and Keithley test & measurement instruments.\nUsers build workflows that control oscilloscopes, power supplies, SMUs, DMMs, AFGs, and TekExpress applications, then export runnable Python scripts.\nDelivery: Web app (http://dev.tek.com/TekAutomate); optional Electron desktop packaging.\nStack: React, TypeScript, Google Blockly, CodeMirror. Python is generated entirely client-side \u2014 no backend server.\nUsers: Test/validation engineers, R&D, researchers, educators, AEs.",
+    "tags": [
+      "architecture",
+      "overview",
+      "stack",
+      "react",
+      "typescript"
+    ],
+    "source": "MEMORY.md"
+  },
+  {
+    "id": "al_two_builders",
+    "corpus": "app_logic",
+    "title": "Two Authoring Modes: Steps Builder vs Blockly Builder",
+    "body": "Steps Builder: Linear step list, command library browser, single-device only. Exports legacy Python.\nBlockly Builder: Drag-and-drop blocks, loops, variables, full multi-device support. Exports clean Python.\nWorkflows convert bidirectionally: Steps \u2192 Blockly via stepToBlock.ts, Blockly \u2192 Steps via blockToStep.ts.\nRULE: For multi-device workflows, always use Blockly Builder. Steps UI cannot generate correct multi-device Python.",
+    "tags": [
+      "architecture",
+      "steps",
+      "blockly",
+      "multi-device",
+      "builder"
+    ],
+    "source": "MEMORY.md"
+  },
+  {
+    "id": "al_connection_types",
+    "corpus": "app_logic",
+    "title": "Connection Types and VISA Resource Strings",
+    "body": "TCP/IP (VXI-11): TCPIP::<host>::INSTR \u2014 no port needed, uses RPC portmapper.\nSocket: TCPIP::<host>::<port>::SOCKET \u2014 raw socket, default port 4000. NOT supported with tm_devices backend.\nUSB: USB::<vendor>::<product>::<serial>::INSTR \u2014 e.g. USB::0x0699::0x0522::INSTR\nGPIB: GPIB<board>::<address>::INSTR \u2014 address 1-30, e.g. GPIB0::1::INSTR\nSocket connection is NOT supported with tm_devices backend \u2014 use TCP/IP instead.",
+    "tags": [
+      "connection",
+      "visa",
+      "tcpip",
+      "socket",
+      "usb",
+      "gpib",
+      "resource-string"
+    ],
+    "source": "MEMORY.md"
+  },
+  {
+    "id": "al_step_types",
+    "corpus": "app_logic",
+    "title": "All Valid Step Types in Steps Builder",
+    "body": "connect: Opens device connections. Key params: instrumentIds[], printIdn.\nwrite: SCPI write (no return). Key param: command.\nquery: SCPI query (returns value). Key params: command, saveAs (REQUIRED).\nset_and_query: Write then verify readback. Key params: command, queryCommand, saveAs.\nsleep: Wait N seconds. Key param: duration.\npython: Custom inline Python code. Key param: code.\nsave_waveform: Waveform save. Key params: source, filename, format.\nsave_screenshot: Capture screenshot. Key params: filename, scopeType (modern|legacy).\nrecall: Recall waveform/setup. Key params: recallType, filePath, reference.\nsweep: Parameter sweep loop. Key params: variableName, start, stop, step, saveResults.\nerror_check: Validate response. Key params: command, expectedValue.\ncomment: Annotation only, no code generated. Key param: text.\ngroup: Container for nested steps. Key params: children[], instrumentAlias.\ndisconnect: Close all connections.",
+    "tags": [
+      "step-types",
+      "schema",
+      "write",
+      "query",
+      "sleep",
+      "sweep",
+      "group"
+    ],
+    "source": "MEMORY.md"
+  },
+  {
+    "id": "al_query_saveas_rule",
+    "corpus": "app_logic",
+    "title": "Query Steps MUST Have saveAs Parameter",
+    "body": "Every query step MUST have a saveAs (or outputVariable) parameter. This is REQUIRED.\nWithout saveAs, the query result is not stored and cannot be used in subsequent steps.\nCorrect: { type: 'query', params: { command: 'CH1:SCALE?', saveAs: 'scale_value' } }\nWrong:   { type: 'query', params: { command: 'CH1:SCALE?' } }  \u2190 Missing saveAs, will fail.",
+    "tags": [
+      "query",
+      "saveAs",
+      "outputVariable",
+      "required",
+      "validation"
+    ],
+    "source": "MEMORY.md"
+  },
+  {
+    "id": "al_device_binding",
+    "corpus": "app_logic",
+    "title": "Device Binding Rules and Resolution Order",
+    "body": "Steps bind to devices via boundDeviceId. Commands reference devices by instrumentAlias or instrumentId.\nResolution order (highest to lowest priority):\n1. Command-level instrumentAlias\n2. Group-level instrumentAlias  \n3. Default device (first enabled device in DeviceEntry list)\nIn generated Python: each device alias becomes a Python variable (scope, psu, dmm, smu).",
+    "tags": [
+      "device-binding",
+      "instrumentAlias",
+      "boundDeviceId",
+      "resolution"
+    ],
+    "source": "MEMORY.md"
+  },
+  {
+    "id": "al_backends_overview",
+    "corpus": "app_logic",
+    "title": "Supported Backends Overview",
+    "body": "PyVISA (pyvisa): Industry standard. TCP/IP, Socket, USB, GPIB. All devices. pip install pyvisa.\ntm_devices (tm_devices): Official Tektronix framework. TCP/IP, USB, GPIB. NO Socket support. pip install tm-devices.\nVXI-11 (vxi11): Lightweight, no VISA drivers. TCP/IP only. All devices. pip install vxi11.\nTekHSI (tekhsi): High-speed gRPC. TCP/IP port 5000 only. MSO5/6, DPO7K only. pip install tekhsi.\nHybrid: NOT a fifth backend. It is a mode where one workflow uses PyVISA (SCPI) + TekHSI (waveforms) simultaneously.\nSocket connection: ONLY supported by PyVISA. tm_devices, VXI-11, TekHSI do NOT support Socket.",
+    "tags": [
+      "backend",
+      "pyvisa",
+      "tm_devices",
+      "vxi11",
+      "tekhsi",
+      "hybrid",
+      "socket"
+    ],
+    "source": "MEMORY.md"
+  },
+  {
+    "id": "al_tm_devices_restrictions",
+    "corpus": "app_logic",
+    "title": "tm_devices Backend Restrictions \u2014 CRITICAL",
+    "body": "tm_devices backend FORBIDS these step types:\n  \u274c scpi_write / write \u2014 Use tm_devices API blocks instead (e.g. scope.commands.acquire.state.write('RUN'))\n  \u274c scpi_query / query \u2014 Use tm_devices API blocks instead\n  \u274c save_screenshot \u2014 Use scope.save_screenshot(name) method\n  \u274c save_waveform \u2014 Switch backend to PyVISA or use scope.curve_query()\nException: python_code blocks bypass validation \u2014 raw scope.write() is allowed inside python_code even with tm_devices.\nWhen violated, generator aborts with: BACKEND CAPABILITY VIOLATION DETECTED.",
+    "tags": [
+      "tm_devices",
+      "backend",
+      "restriction",
+      "violation",
+      "critical",
+      "scpi_write",
+      "scpi_query"
+    ],
+    "source": "MEMORY.md"
+  },
+  {
+    "id": "al_hybrid_mode",
+    "corpus": "app_logic",
+    "title": "Hybrid Mode \u2014 Not a Fifth Backend",
+    "body": "Hybrid is NOT a fifth backend. It is a mode where a single workflow uses more than one backend per device.\nTypically: SCPI commands via PyVISA + waveform capture via TekHSI.\nGenerated code uses two connection objects for the same device:\n  scpi = rm.open_resource('TCPIP::192.168.1.10::INSTR')  # PyVISA for SCPI\n  scope = TekHSIConnect('192.168.1.10:5000')              # TekHSI for waveforms\nSupported devices: MSO5/6, DPO7K only.",
+    "tags": [
+      "hybrid",
+      "backend",
+      "tekhsi",
+      "pyvisa",
+      "waveform"
+    ],
+    "source": "MEMORY.md"
+  },
+  {
+    "id": "al_backend_decision_tree",
+    "corpus": "app_logic",
+    "title": "Backend Selection Decision Tree",
+    "body": "FastFrame/FastAcq waveform capture ONLY \u2192 TekHSI\nMeasurements/search/histogram \u2192 PyVISA (NOT TekHSI)\nModern Python API on MSO6B \u2192 tm_devices\nTekExpress compliance testing \u2192 PyVISA SOCKET (port 5000)\nUnsure or maximum compatibility \u2192 PyVISA\nDPO70k or older scope \u2192 PyVISA\nLinux without VISA drivers \u2192 VXI-11 or PyVISA-py\nMulti-device management \u2192 tm_devices\nTekscopePC \u2192 tm_devices with HOST=127.0.0.1",
+    "tags": [
+      "backend",
+      "decision",
+      "selection",
+      "tekscopepc",
+      "tekhsi",
+      "pyvisa"
+    ],
+    "source": "MEMORY.md"
+  },
+  {
+    "id": "al_codegen_pipeline",
+    "corpus": "app_logic",
+    "title": "Python Code Generation Pipeline",
+    "body": "Steps UI or Blockly workspace \u2192 Converter/Generator \u2192 Analyze devices \u2192 determine backends \u2192 resolve imports\n\u2192 Generate: imports \u2192 connections \u2192 command body \u2192 cleanup \u2192 Downloadable .py file.\nKey files:\n  src/App.tsx \u2014 Steps UI Python generator\n  src/components/BlocklyBuilder/generators/pythonGenerators.ts \u2014 Blockly Python generator\n  src/components/BlocklyBuilder/converters/blockToStep.ts \u2014 Blockly\u2192Steps\n  src/components/BlocklyBuilder/converters/stepToBlock.ts \u2014 Steps\u2192Blockly",
+    "tags": [
+      "codegen",
+      "pipeline",
+      "python",
+      "generator",
+      "files"
+    ],
+    "source": "MEMORY.md"
+  },
+  {
+    "id": "al_opc_rules",
+    "corpus": "app_logic",
+    "title": "OPC Query Rules \u2014 Critical",
+    "body": "NEVER use query('*OPC?') after FILESYSTEM:READFILE + read_raw(). This causes UnicodeDecodeError.\nThe PNG binary data contaminates the read buffer. The subsequent *OPC? reads leftover binary bytes.\nFix: Use time.sleep(1.0) instead of *OPC? after all binary file transfer operations.\nFor tm_devices: use scope.commands.opc.query().strip() == '1' (string comparison, not int).\nFor PyVISA: result = device.query('*OPC?').strip() \u2014 always .strip() before comparison.",
+    "tags": [
+      "opc",
+      "critical",
+      "unicode",
+      "filesystem",
+      "readfile",
+      "screenshot",
+      "sleep"
+    ],
+    "source": "MEMORY.md"
+  },
+  {
+    "id": "al_filesystem_readfile_rule",
+    "corpus": "app_logic",
+    "title": "FILESystem:READFile \u2014 Raw Socket Required",
+    "body": "FILESystem:READFile is a command (not a query) that produces unframed binary output.\nIt omits IEEE 488.2 block headers and is terminated only by EOI.\nVISA-based APIs (PyVISA, tm_devices) CANNOT reliably consume this output.\nRaw TCP socket access with timeout-based EOF detection is REQUIRED.\nAfter sending FILESystem:READFile: do NOT query anything, do NOT send other SCPI commands.\nLet the socket stay in raw streaming mode until timeout. This is the One-Shot Binary Window Rule.",
+    "tags": [
+      "filesystem",
+      "readfile",
+      "raw-socket",
+      "binary",
+      "critical",
+      "visa",
+      "transport"
+    ],
+    "source": "MEMORY.md"
+  },
+  {
+    "id": "al_tekscopepc_rules",
+    "corpus": "app_logic",
+    "title": "TekscopePC-Specific Rules",
+    "body": "Connection: Use tm_devices backend with HOST=127.0.0.1.\nReset: Use scpi_write('*RST') NOT scope.reset() \u2014 scope.reset() causes AttributeError with PyVISA.\nMeasurements: Must query explicitly \u2014 no SAVE:MEASUREMENT:ALL command.\nFastFrame: Standard commands work normally.",
+    "tags": [
+      "tekscopepc",
+      "reset",
+      "tm_devices",
+      "local",
+      "127.0.0.1"
+    ],
+    "source": "MEMORY.md"
+  },
+  {
+    "id": "al_screenshot_rules",
+    "corpus": "app_logic",
+    "title": "Screenshot Capture Rules by Scope Family",
+    "body": "MSO 4/5/6 Series (modern):\n  Use SAVE:IMAGe \"C:/Temp/screenshot.png\" \u2014 format comes from file extension.\n  Do NOT use EXPort or HARDCopy commands on MSO 4/5/6.\n  After capture: time.sleep(1.0) then FILESystem:READFile via raw socket.\n\nMSO/DPO 70000 Series (legacy):\n  Use EXPort:FILEName + EXPort:FORMat PNG + EXPort START (case sensitive: START not STARt).\n  Do NOT use SAVE:IMAGe on 70000 series.\n  After capture: time.sleep(1.0) then FILESystem:READFile via raw socket.\n\nNEVER use *OPC? after file transfer. Use time.sleep(1.0) instead.",
+    "tags": [
+      "screenshot",
+      "save-image",
+      "export",
+      "hardcopy",
+      "mso456",
+      "mso70k",
+      "family"
+    ],
+    "source": "MEMORY.md"
+  },
+  {
+    "id": "al_blockly_controls_for_mutation",
+    "corpus": "app_logic",
+    "title": "Blockly controls_for MUST Include mutation/variable",
+    "body": "controls_for (for loop) blocks MUST include the mutation element with variable name.\nWithout mutation, Blockly variable scoping breaks and round-trip import/export is unstable.\nCORRECT XML:\n  <block type=\"controls_for\" id=\"loop1\">\n    <field name=\"VAR\">frame</field>\n    <mutation><variable>frame</variable></mutation>\n  </block>\nWRONG XML (missing mutation):\n  <block type=\"controls_for\" id=\"loop1\">\n    <field name=\"VAR\">frame</field>\n  </block>",
+    "tags": [
+      "blockly",
+      "controls_for",
+      "mutation",
+      "variable",
+      "xml",
+      "critical"
+    ],
+    "source": "MEMORY.md"
+  },
+  {
+    "id": "al_blockly_device_context",
+    "corpus": "app_logic",
+    "title": "Blockly DEVICE_CONTEXT Field Rules",
+    "body": "DEVICE_CONTEXT field on SCPI blocks determines which instrument gets the command.\nResolution priority:\n1. Explicit DEVICE_CONTEXT field on block (absolute priority \u2014 return immediately)\n2. Walk getPreviousBlock() chain to find nearest connect_to_instrument\n3. Walk parent blocks (for blocks inside loops/conditions)\n4. Fall back to currentDeviceContext module variable\n\nCommand prefix \u2192 DEVICE_CONTEXT mapping:\n  CH1:|ACQuire:|MEASU:|DATa: \u2192 (scope)\n  :SOURce:|:OUTPut:|:MEASure: \u2192 (smu)/(psu)\n  TEKEXP: \u2192 (tekexp)\n\nCommon GPT error: Scope commands (CH1:SCAle) given SMU device context.",
+    "tags": [
+      "blockly",
+      "device_context",
+      "scope",
+      "smu",
+      "context",
+      "gpt"
+    ],
+    "source": "MEMORY.md"
+  },
+  {
+    "id": "al_blockly_variable_names",
+    "corpus": "app_logic",
+    "title": "Blockly Variable Name Resolution \u2014 Critical Fix",
+    "body": "PROBLEM: block.getFieldValue('VAR') returns Blockly's internal UUID, not the human-readable name.\nThis causes Python output like: N%hHHhp:Bg=T0!BWtnrB = 0 instead of i = 0.\nFIX: Always use workspace API to resolve variable names:\n  const varModel = workspace.getVariableById(id);\n  const varName = varModel.getName();  // 'voltage', not 'abc-123-def'\nApplied at 3 locations in blockToStep.ts.",
+    "tags": [
+      "blockly",
+      "variable",
+      "uuid",
+      "name-resolution",
+      "bug",
+      "critical"
+    ],
+    "source": "MEMORY.md"
+  },
+  {
+    "id": "al_float_loop_rule",
+    "corpus": "app_logic",
+    "title": "Float Loop Must Use while, Not range()",
+    "body": "Python's range() does not accept float arguments.\nWhen loop start/stop/step are floats, generator MUST produce a while loop, not for i in range().\nCORRECT (float values):\n  v = 0.5\n  while v <= 2.5:\n      # loop body\n      v += 0.5\nWRONG (causes TypeError):\n  for v in range(0.5, 2.5, 0.5):  \u2190 Python range() rejects floats",
+    "tags": [
+      "codegen",
+      "sweep",
+      "float",
+      "range",
+      "while-loop",
+      "bug",
+      "critical"
+    ],
+    "source": "MEMORY.md"
+  },
+  {
+    "id": "al_ai_action_schema",
+    "corpus": "app_logic",
+    "title": "AiAction Schema \u2014 Do Not Break This Contract",
+    "body": "AiAction interface (must remain unchanged for apply-engine compatibility):\n  type: 'replace_command' | 'insert_step' | 'delete_step' | 'change_param' | 'change_backend' | 'change_device' | 'reorder'\n  targetStepId: string | null  \u2014 step ID this action targets (null for flow-level)\n  suggestedFix: string         \u2014 human-readable description of the fix\n  severity: 'critical' | 'warning' | 'info'\n  payload?: Record<string, unknown>  \u2014 optional: concrete new value (command text, param value, etc.)\nonApplyAiActions is the ONLY mutation path for AI-suggested fixes. It lives in App.tsx.",
+    "tags": [
+      "ai",
+      "action",
+      "schema",
+      "apply",
+      "mutation",
+      "contract"
+    ],
+    "source": "MEMORY.md"
+  },
+  {
+    "id": "al_ai_finding_schema",
+    "corpus": "app_logic",
+    "title": "AiFinding Schema",
+    "body": "AiFinding interface:\n  symptom: string  \u2014 human-readable symptom description\n  affectedStepId: string | null  \u2014 step ID (null for flow-level findings)\n  category: 'scpi_error' | 'timeout' | 'device_mismatch' | 'missing_step' | 'parameter_issue' | 'backend_conflict' | 'performance' | 'general'\n  confidence: number  \u2014 0-1 confidence that this finding is correct",
+    "tags": [
+      "ai",
+      "finding",
+      "schema",
+      "diagnostic"
+    ],
+    "source": "MEMORY.md"
+  },
+  {
+    "id": "al_tekexpress_rules",
+    "corpus": "app_logic",
+    "title": "TekExpress Integration Rules",
+    "body": "TekExpress commands are SCPI strings sent over PyVISA SOCKET backend. NEVER raw socket.sendall().\nConnection: TCPIP::localhost::5000::SOCKET with write_termination='\n' read_termination='\n' timeout=30000.\nSynchronization: Use TEKEXP:STATE? polling, NOT *OPC? (*OPC? not supported by TekExpress).\nExecution is async/state-machine \u2014 must poll TEKEXP:STATE? until COMPLETE.\nHandle popups: query TEKEXP:POPUP? and respond with TEKEXP:POPUP 'OK'.\nBackends: ONLY PyVISA SOCKET supported. tm_devices, TekHSI, VXI-11 all unsupported for TekExpress.",
+    "tags": [
+      "tekexpress",
+      "socket",
+      "pyvisa",
+      "state-machine",
+      "popup",
+      "compliance"
+    ],
+    "source": "MEMORY.md"
+  },
+  {
+    "id": "al_scpi_command_structure",
+    "corpus": "app_logic",
+    "title": "SCPI Command JSON Schema",
+    "body": "Each command in public/commands/*.json has these fields:\n  id, category, scpi, header, commandType (set|query|both)\n  shortDescription, description, mnemonics[]\n  instruments: { families: [], models: [] }\n  arguments: [{ name, type, validValues }]\n  syntax: { set, query }\n  codeExamples: [{ scpi: {code}, python: {code}, tm_devices: {code} }]\nQuery vs Write detection: ends with ? OR type='query' \u2192 query; no ? OR type='write' \u2192 write.\nParameter substitution: CH${channel}:SCALE ${scale} with values \u2192 CH2:SCALE 0.5",
+    "tags": [
+      "scpi",
+      "schema",
+      "json",
+      "command",
+      "syntax",
+      "arguments"
+    ],
+    "source": "MEMORY.md"
+  },
+  {
+    "id": "al_multi_device_rule",
+    "corpus": "app_logic",
+    "title": "Multi-Device Workflow Rules",
+    "body": "Steps UI is single-device only. For multi-device: always use Blockly Builder.\nEach device gets its own Python variable based on its alias: scope, psu, dmm, smu, awg, afg, sa.\nConnect first, disconnect last \u2014 every workflow must begin with connect and end with disconnect.\nIP Conflict Detection: generator aborts if multiple devices share same IP address.\nCleanup must close ALL connected devices, not just the first one.",
+    "tags": [
+      "multi-device",
+      "blockly",
+      "cleanup",
+      "connect",
+      "disconnect",
+      "ip-conflict"
+    ],
+    "source": "MEMORY.md"
+  }
+]

@@ -1,0 +1,182 @@
+[
+  {
+    "id": "workflow:spectrumview-peak-analysis",
+    "name": "SpectrumView Peak Analysis",
+    "description": "Enable SpectrumView on CH1, configure frequency settings, enable peak markers, and query peak amplitude/frequency with voltage conversion. Use this for RF signal analysis and spectral measurements.",
+    "triggers": [
+      "spectrumview peak analysis",
+      "spectrum view markers",
+      "rf spectrum analysis",
+      "peak frequency measurement",
+      "spectrum amplitude measurement",
+      "frequency spectrum analysis",
+      "spectrumview markers",
+      "peak analysis",
+      "spectrum view peak",
+      "rf spectrum measurement",
+      "specturmview analysis",
+      "spectrum analysis",
+      "spectrumview",
+      "spectral analysis",
+      "frequency analysis",
+      "specturmview"
+    ],
+    "tags": [
+      "scope",
+      "spectrumview",
+      "rf",
+      "frequency",
+      "marker",
+      "peak",
+      "analysis",
+      "spectral",
+      "pyvisa"
+    ],
+    "author": "SpectrumView analysis script",
+    "version": "Python 3.x / MSO4/5/6 Series",
+    "tested": false,
+    "category": "template",
+    "kind": "template",
+    "handlerRef": "flow_template",
+    "handlerConfig": {
+      "summary": "Configure SpectrumView and analyze peak signals with voltage conversion.",
+      "backend": "pyvisa",
+      "deviceType": "SCOPE"
+    },
+    "schema": {
+      "type": "object",
+      "properties": {
+        "centerFrequency": {
+          "type": "number",
+          "description": "Center frequency in Hz (default: 10MHz)",
+          "default": 10000000
+        },
+        "span": {
+          "type": "number", 
+          "description": "Frequency span in Hz (default: 5MHz)",
+          "default": 5000000
+        },
+        "threshold": {
+          "type": "number",
+          "description": "Peak threshold in dBm (default: -40dBm)",
+          "default": -40
+        },
+        "excursion": {
+          "type": "number",
+          "description": "Peak excursion in dB (default: 12dB)",
+          "default": 12
+        },
+        "impedance": {
+          "type": "number",
+          "description": "Reference impedance in ohms (default: 50)",
+          "default": 50
+        }
+      },
+      "required": []
+    },
+    "match": {
+      "keywords": [
+        "spectrumview peak analysis",
+        "spectrum view markers",
+        "rf spectrum measurement",
+        "specturmview analysis",
+        "spectrum analysis",
+        "spectral analysis",
+        "frequency analysis"
+      ],
+      "operations": [
+        "configure spectrumview",
+        "enable peak markers",
+        "measure spectral peaks",
+        "convert dBm to voltage"
+      ],
+      "backends": ["pyvisa"],
+      "deviceTypes": ["SCOPE"],
+      "modelFamilies": ["MSO4", "MSO5", "MSO6"],
+      "priority": 6,
+      "minScore": 0.3
+    },
+    "steps": [
+      { 
+        "id": "1", 
+        "type": "connect", 
+        "label": "Connect", 
+        "params": { "printIdn": true } 
+      },
+      { 
+        "id": "2", 
+        "type": "write", 
+        "label": "Enable SpectrumView on CH1", 
+        "params": { "command": "CH1:SV:STATE ON" } 
+      },
+      { 
+        "id": "3", 
+        "type": "query", 
+        "label": "Wait for SpectrumView enable", 
+        "params": { "command": "*OPC?", "saveAs": "sv_enable_opc" } 
+      },
+      { 
+        "id": "4", 
+        "type": "write", 
+        "label": "Set Center Frequency", 
+        "params": { "command": "CH1:SV:CENTERFrequency {{centerFrequency}}" } 
+      },
+      { 
+        "id": "5", 
+        "type": "write", 
+        "label": "Set Frequency Span", 
+        "params": { "command": "SV:SPAN {{span}}" } 
+      },
+      { 
+        "id": "6", 
+        "type": "query", 
+        "label": "Wait for frequency setup", 
+        "params": { "command": "*OPC?", "saveAs": "freq_setup_opc" } 
+      },
+      { 
+        "id": "7", 
+        "type": "write", 
+        "label": "Enable Peak Markers", 
+        "params": { "command": "SV:MARKER:PEAK:STATE 1" } 
+      },
+      { 
+        "id": "8", 
+        "type": "write", 
+        "label": "Set Peak Threshold", 
+        "params": { "command": "SV:MARKER:PEAK:THReshold {{threshold}}" } 
+      },
+      { 
+        "id": "9", 
+        "type": "write", 
+        "label": "Set Peak Excursion", 
+        "params": { "command": "SV:MARKER:PEAK:EXCURsion {{excursion}}" } 
+      },
+      { 
+        "id": "10", 
+        "type": "query", 
+        "label": "Query Peak Amplitude", 
+        "params": { "command": "SV:MARKER:PEAKS:AMPLITUDE?", "saveAs": "peak_amplitude" } 
+      },
+      { 
+        "id": "11", 
+        "type": "query", 
+        "label": "Query Peak Frequency", 
+        "params": { "command": "SV:MARKER:PEAKS:FREQUENCY?", "saveAs": "peak_frequency" } 
+      },
+      { 
+        "id": "12", 
+        "type": "python", 
+        "label": "Calculate Voltage from Power", 
+        "params": { 
+          "code": "import numpy as np\n\n# Parse marker values (remove quotes)\nmkr_amp = float(peak_amplitude.strip('\"'))\nmkr_freq = float(peak_frequency.strip('\"'))\n\nprint(f\"Peak amplitude: {mkr_amp:.2f} dBm\")\nprint(f\"Peak frequency: {mkr_freq:.2f} Hz\")\n\n# Convert dBm to peak-to-peak voltage\nimpedance = {{impedance}}\n\n# Convert power from dBm to watts\npower = 0.001 * 10.0**(mkr_amp / 10.0)\n\n# Calculate RMS voltage from watts\nv_rms = np.sqrt(power * impedance)\n\n# Convert RMS to peak-to-peak\nv_pk_pk = 2.0 * np.sqrt(2.0) * v_rms\n\nprint(f\"Peak-to-peak voltage: {v_pk_pk:.2f} V\")\nprint(f\"Using {impedance} Ohm reference impedance\")\n\n# Store results for later use\nresults = {\n    'amplitude_dbm': mkr_amp,\n    'frequency_hz': mkr_freq,\n    'voltage_pk_pk': v_pk_pk,\n    'impedance_ohms': impedance\n}" 
+        } 
+      },
+      { 
+        "id": "13", 
+        "type": "disconnect", 
+        "label": "Disconnect", 
+        "params": {} 
+      }
+    ]
+  }
+]

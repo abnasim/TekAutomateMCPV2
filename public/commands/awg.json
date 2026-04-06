@@ -1,0 +1,3161 @@
+{
+  "metadata": {
+    "name": "AWG Series",
+    "description": "Comprehensive SCPI commands for AWG70000, AWG5200 series, and all plugins",
+    "instruments": [
+      "AWG70001",
+      "AWG70002",
+      "AWG70001A",
+      "AWG70002A",
+      "AWG70001B",
+      "AWG70002B",
+      "AWG5200",
+      "AWG5202",
+      "AWG5204",
+      "AWG7000",
+      "AWG7001",
+      "AWG7002",
+      "AWG5000",
+      "AWG5001",
+      "AWG5002",
+      "AWG5004"
+    ],
+    "version": "2.2",
+    "manualReferences": [
+      {
+        "model": "AWG70000",
+        "document": "077-1452-00 REV B",
+        "title": "AWG70000 Series Programmer Manual"
+      },
+      {
+        "model": "AWG5200",
+        "document": "077-1337-00 REV A",
+        "title": "AWG5200 Series Programmer Manual"
+      },
+      {
+        "model": "Pulse Plugin",
+        "document": "077-1646-00",
+        "title": "Pulse Plug-in Application Programmer Manual"
+      },
+      {
+        "model": "LVDS Video Plugin",
+        "document": "077-1647-00",
+        "title": "LVDS Video Signals Plug-in Application Programmer Manual"
+      },
+      {
+        "model": "High Speed Serial",
+        "document": "077-1246-01",
+        "title": "High Speed Serial Application Plug-in Programmer Manual"
+      },
+      {
+        "model": "Radar Signals",
+        "document": "077-1356-00",
+        "title": "Radar Signals Plug-in Programmer Manual"
+      },
+      {
+        "model": "OFDM Modulation",
+        "document": "077-1349-00",
+        "title": "OFDM Signal Modulation Plug-in Programmer Manual"
+      },
+      {
+        "model": "RF Generic",
+        "document": "077-1248-02",
+        "title": "RF Generic Signals Plug-in Programmer Manual"
+      },
+      {
+        "model": "Optical Signals",
+        "document": "077-1250-00",
+        "title": "Optical Signals Plug-in Programmer Manual"
+      },
+      {
+        "model": "Multitone",
+        "document": "077-1239-01",
+        "title": "Multitone Plug-in Programmer Manual"
+      },
+      {
+        "model": "Generic Precompensation",
+        "document": "077-1251-01",
+        "title": "Generic Precompensation Plug-in Programmer Manual"
+      }
+    ]
+  },
+  "groups": {
+    "Output": {
+      "description": "Output channel control and configuration",
+      "color": "bg-green-100 text-green-700",
+      "commands": [
+        {
+          "name": "Enable Output",
+          "scpi": "OUTPut{ch}:STATe ON",
+          "description": "Enable output channel",
+          "params": [
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            }
+          ],
+          "example": "awg.write('OUTPut1:STATe ON')"
+        },
+        {
+          "name": "Disable Output",
+          "scpi": "OUTPut{ch}:STATe OFF",
+          "description": "Disable output channel",
+          "params": [
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            }
+          ],
+          "example": "awg.write('OUTPut1:STATe OFF')"
+        },
+        {
+          "name": "Query Output State",
+          "scpi": "OUTPut{ch}:STATe?",
+          "description": "Query output channel state",
+          "params": [
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            }
+          ],
+          "example": "state = awg.query('OUTPut1:STATe?')"
+        },
+        {
+          "name": "Enable All Outputs",
+          "scpi": "AWGControl:RUN:IMMediate",
+          "description": "Enable all outputs immediately",
+          "example": "awg.write('AWGControl:RUN:IMMediate')"
+        },
+        {
+          "name": "Stop All Outputs",
+          "scpi": "AWGControl:STOP:IMMediate",
+          "description": "Stop all outputs immediately",
+          "example": "awg.write('AWGControl:STOP:IMMediate')"
+        },
+        {
+          "name": "Set Output Path",
+          "scpi": "OUTPut{ch}:PATH {path}",
+          "description": "Set output signal path",
+          "params": [
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            },
+            {
+              "name": "path",
+              "type": "text",
+              "default": "DIRect",
+              "options": [
+                "DIRect",
+                "AC",
+                "DCAmplified"
+              ],
+              "required": true
+            }
+          ],
+          "example": "awg.write('OUTPut1:PATH DIRect')"
+        },
+        {
+          "name": "Set Amplitude",
+          "scpi": "SOURce{ch}:VOLTage:LEVel:IMMediate:AMPLitude {amplitude}",
+          "description": "Set output amplitude",
+          "params": [
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            },
+            {
+              "name": "amplitude",
+              "type": "number",
+              "default": 0.5,
+              "required": true,
+              "unit": "Vpp"
+            }
+          ],
+          "example": "awg.write('SOURce1:VOLTage:LEVel:IMMediate:AMPLitude 0.5')"
+        },
+        {
+          "name": "Query Amplitude",
+          "scpi": "SOURce{ch}:VOLTage:LEVel:IMMediate:AMPLitude?",
+          "description": "Query output amplitude",
+          "params": [
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            }
+          ],
+          "example": "amp = awg.query('SOURce1:VOLTage:LEVel:IMMediate:AMPLitude?')"
+        },
+        {
+          "name": "Set Offset",
+          "scpi": "SOURce{ch}:VOLTage:LEVel:IMMediate:OFFSet {offset}",
+          "description": "Set output DC offset",
+          "params": [
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            },
+            {
+              "name": "offset",
+              "type": "number",
+              "default": 0,
+              "required": true,
+              "unit": "V"
+            }
+          ],
+          "example": "awg.write('SOURce1:VOLTage:LEVel:IMMediate:OFFSet 0')"
+        },
+        {
+          "name": "Set High Level",
+          "scpi": "SOURce{ch}:VOLTage:LEVel:IMMediate:HIGH {level}",
+          "description": "Set output high voltage level",
+          "params": [
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            },
+            {
+              "name": "level",
+              "type": "number",
+              "default": 0.5,
+              "required": true,
+              "unit": "V"
+            }
+          ],
+          "example": "awg.write('SOURce1:VOLTage:LEVel:IMMediate:HIGH 0.5')"
+        },
+        {
+          "name": "Set Low Level",
+          "scpi": "SOURce{ch}:VOLTage:LEVel:IMMediate:LOW {level}",
+          "description": "Set output low voltage level",
+          "params": [
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            },
+            {
+              "name": "level",
+              "type": "number",
+              "default": 0,
+              "required": true,
+              "unit": "V"
+            }
+          ],
+          "example": "awg.write('SOURce1:VOLTage:LEVel:IMMediate:LOW 0')"
+        },
+        {
+          "name": "Set Filter Type",
+          "scpi": "OUTPut{ch}:FILTer {type}",
+          "description": "Set filter type for signal path (requires Option AC)",
+          "params": [
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            },
+            {
+              "name": "type",
+              "type": "text",
+              "default": "LPASs",
+              "options": [
+                "BPASs",
+                "LPASs",
+                "NONe"
+              ],
+              "required": true
+            }
+          ],
+          "example": "awg.write('OUTPut1:FILTer BPASs')"
+        },
+        {
+          "name": "Set Band Pass Filter Range",
+          "scpi": "OUTPut{ch}:FILTer:BPASs:RANGe {range}",
+          "description": "Set band pass filter frequency range",
+          "params": [
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            },
+            {
+              "name": "range",
+              "type": "text",
+              "default": "FREQuency1",
+              "required": true
+            }
+          ],
+          "example": "awg.write('OUTPut1:FILTer:BPASs:RANGe FREQuency1')"
+        },
+        {
+          "name": "Set All Outputs Off",
+          "scpi": "OUTPut:OFF {state}",
+          "description": "Enable/disable 'All Outputs Off' control",
+          "params": [
+            {
+              "name": "state",
+              "type": "text",
+              "default": "ON",
+              "options": [
+                "ON",
+                "OFF"
+              ],
+              "required": true
+            }
+          ],
+          "example": "awg.write('OUTPut:OFF ON')"
+        },
+        {
+          "name": "Set Attenuator A1",
+          "scpi": "OUTPut{ch}:ATTenuator:A1 {value}",
+          "description": "Set A1 attenuator value in dB (Band Pass Filter path)",
+          "params": [
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            },
+            {
+              "name": "value",
+              "type": "number",
+              "default": 0,
+              "required": true,
+              "unit": "dB"
+            }
+          ],
+          "example": "awg.write('OUTPut1:ATTenuator:A1 10')"
+        },
+        {
+          "name": "Set Attenuator A2",
+          "scpi": "OUTPut{ch}:ATTenuator:A2 {value}",
+          "description": "Set A2 attenuator value in dB (Band Pass Filter path)",
+          "params": [
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            },
+            {
+              "name": "value",
+              "type": "number",
+              "default": 0,
+              "required": true,
+              "unit": "dB"
+            }
+          ],
+          "example": "awg.write('OUTPut1:ATTenuator:A2 5')"
+        },
+        {
+          "name": "Set Attenuator A3",
+          "scpi": "OUTPut{ch}:ATTenuator:A3 {value}",
+          "description": "Set A3 attenuator value in dB (Band Pass Filter path)",
+          "params": [
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            },
+            {
+              "name": "value",
+              "type": "number",
+              "default": 0,
+              "required": true,
+              "unit": "dB"
+            }
+          ],
+          "example": "awg.write('OUTPut1:ATTenuator:A3 3')"
+        },
+        {
+          "name": "Set DAC Power Level",
+          "scpi": "OUTPut{ch}:ATTenuator:DAC {power}",
+          "description": "Set DAC output power level in dBm (AC output mode)",
+          "params": [
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            },
+            {
+              "name": "power",
+              "type": "number",
+              "default": 0,
+              "required": true,
+              "unit": "dBm"
+            }
+          ],
+          "example": "awg.write('OUTPut1:ATTenuator:DAC -10')"
+        },
+        {
+          "name": "Set Stopped Value Analog",
+          "scpi": "OUTPut{ch}:SVALue:ANALog:STATe {value}",
+          "description": "Set output condition when stopped",
+          "params": [
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            },
+            {
+              "name": "value",
+              "type": "text",
+              "default": "ZERO",
+              "options": [
+                "ZERO",
+                "HOLD",
+                "NAMe"
+              ],
+              "required": true
+            }
+          ],
+          "example": "awg.write('OUTPut1:SVALue:ANALog:STATe ZERO')"
+        },
+        {
+          "name": "Set Stopped Value Marker",
+          "scpi": "OUTPut{ch}:SVALue:MARKer{m} {value}",
+          "description": "Set marker output condition when stopped",
+          "params": [
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            },
+            {
+              "name": "m",
+              "type": "number",
+              "default": 1,
+              "required": true
+            },
+            {
+              "name": "value",
+              "type": "text",
+              "default": "LOW",
+              "options": [
+                "LOW",
+                "HIGH",
+                "HOLD"
+              ],
+              "required": true
+            }
+          ],
+          "example": "awg.write('OUTPut1:SVALue:MARKer1 LOW')"
+        },
+        {
+          "name": "Set Waiting Value Analog",
+          "scpi": "OUTPut{ch}:WVALue:ANALog:STATe {value}",
+          "description": "Set output condition when waiting for trigger",
+          "params": [
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            },
+            {
+              "name": "value",
+              "type": "text",
+              "default": "ZERO",
+              "options": [
+                "ZERO",
+                "HOLD",
+                "FIRSt"
+              ],
+              "required": true
+            }
+          ],
+          "example": "awg.write('OUTPut1:WVALue:ANALog:STATe FIRSt')"
+        },
+        {
+          "name": "Set Waiting Value Marker",
+          "scpi": "OUTPut{ch}:WVALue:MARKer{m} {value}",
+          "description": "Set marker output condition when waiting for trigger",
+          "params": [
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            },
+            {
+              "name": "m",
+              "type": "number",
+              "default": 1,
+              "required": true
+            },
+            {
+              "name": "value",
+              "type": "text",
+              "default": "LOW",
+              "options": [
+                "LOW",
+                "HIGH",
+                "HOLD"
+              ],
+              "required": true
+            }
+          ],
+          "example": "awg.write('OUTPut1:WVALue:MARKer1 LOW')"
+        }
+      ]
+    },
+    "Waveform": {
+      "description": "Waveform management and data transfer",
+      "color": "bg-blue-100 text-blue-700",
+      "commands": [
+        {
+          "name": "List Waveforms",
+          "scpi": "WLISt:LIST?",
+          "description": "List all waveforms in memory",
+          "example": "waveforms = awg.query('WLISt:LIST?')"
+        },
+        {
+          "name": "Query Waveform Count",
+          "scpi": "WLISt:SIZE?",
+          "description": "Query number of waveforms in memory",
+          "example": "count = awg.query('WLISt:SIZE?')"
+        },
+        {
+          "name": "Create New Waveform",
+          "scpi": "WLISt:WAVeform:NEW \"{name}\",{length},{type}",
+          "description": "Create a new waveform in memory",
+          "params": [
+            {
+              "name": "name",
+              "type": "text",
+              "default": "TestWfm",
+              "required": true
+            },
+            {
+              "name": "length",
+              "type": "number",
+              "default": 1000,
+              "required": true
+            },
+            {
+              "name": "type",
+              "type": "text",
+              "default": "REAL",
+              "options": [
+                "REAL",
+                "INTeger"
+              ],
+              "required": true
+            }
+          ],
+          "example": "awg.write('WLISt:WAVeform:NEW \"TestWfm\",1000,REAL')"
+        },
+        {
+          "name": "Delete Waveform",
+          "scpi": "WLISt:WAVeform:DELete \"{name}\"",
+          "description": "Delete a waveform from memory",
+          "params": [
+            {
+              "name": "name",
+              "type": "text",
+              "default": "TestWfm",
+              "required": true
+            }
+          ],
+          "example": "awg.write('WLISt:WAVeform:DELete \"TestWfm\"')"
+        },
+        {
+          "name": "Delete All Waveforms",
+          "scpi": "WLISt:WAVeform:DELete ALL",
+          "description": "Delete all waveforms from memory",
+          "example": "awg.write('WLISt:WAVeform:DELete ALL')"
+        },
+        {
+          "name": "Query Waveform Length",
+          "scpi": "WLISt:WAVeform:LENGth? \"{name}\"",
+          "description": "Query waveform length in samples",
+          "params": [
+            {
+              "name": "name",
+              "type": "text",
+              "default": "TestWfm",
+              "required": true
+            }
+          ],
+          "example": "length = awg.query('WLISt:WAVeform:LENGth? \"TestWfm\"')"
+        },
+        {
+          "name": "Set Waveform Data",
+          "scpi": "WLISt:WAVeform:DATA \"{name}\",{offset},{size},{data}",
+          "description": "Set waveform data",
+          "params": [
+            {
+              "name": "name",
+              "type": "text",
+              "default": "TestWfm",
+              "required": true
+            },
+            {
+              "name": "offset",
+              "type": "number",
+              "default": 0,
+              "required": true
+            },
+            {
+              "name": "size",
+              "type": "number",
+              "default": 1000,
+              "required": true
+            },
+            {
+              "name": "data",
+              "type": "text",
+              "default": "",
+              "required": true
+            }
+          ],
+          "example": "awg.write_binary('WLISt:WAVeform:DATA \"TestWfm\",0,1000,', data)"
+        },
+        {
+          "name": "Query Waveform Data",
+          "scpi": "WLISt:WAVeform:DATA? \"{name}\",{offset},{size}",
+          "description": "Query waveform data",
+          "params": [
+            {
+              "name": "name",
+              "type": "text",
+              "default": "TestWfm",
+              "required": true
+            },
+            {
+              "name": "offset",
+              "type": "number",
+              "default": 0,
+              "required": true
+            },
+            {
+              "name": "size",
+              "type": "number",
+              "default": 1000,
+              "required": true
+            }
+          ],
+          "example": "data = awg.query_binary('WLISt:WAVeform:DATA? \"TestWfm\",0,1000')"
+        },
+        {
+          "name": "Assign Waveform to Channel",
+          "scpi": "SOURce{ch}:WAVeform \"{name}\"",
+          "description": "Assign a waveform to output channel",
+          "params": [
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            },
+            {
+              "name": "name",
+              "type": "text",
+              "default": "TestWfm",
+              "required": true
+            }
+          ],
+          "example": "awg.write('SOURce1:WAVeform \"TestWfm\"')"
+        },
+        {
+          "name": "Query Assigned Waveform",
+          "scpi": "SOURce{ch}:WAVeform?",
+          "description": "Query waveform assigned to channel",
+          "params": [
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            }
+          ],
+          "example": "wfm = awg.query('SOURce1:WAVeform?')"
+        },
+        {
+          "name": "Normalize Waveform",
+          "scpi": "WLISt:WAVeform:NORMalize \"{name}\",{type}",
+          "description": "Normalize waveform data",
+          "params": [
+            {
+              "name": "name",
+              "type": "text",
+              "default": "TestWfm",
+              "required": true
+            },
+            {
+              "name": "type",
+              "type": "text",
+              "default": "FSCale",
+              "options": [
+                "FSCale",
+                "ZREFerence"
+              ],
+              "required": true
+            }
+          ],
+          "example": "awg.write('WLISt:WAVeform:NORMalize \"TestWfm\",FSCale')"
+        }
+      ]
+    },
+    "Clock": {
+      "description": "Sample rate and clock configuration",
+      "color": "bg-purple-100 text-purple-700",
+      "commands": [
+        {
+          "name": "Set External Clock Divider",
+          "scpi": "CLOCk:ECLock:DIVider {divider}",
+          "description": "Set external clock divider rate (power of 2)",
+          "params": [
+            {
+              "name": "divider",
+              "type": "number",
+              "default": 1,
+              "required": true
+            }
+          ],
+          "example": "awg.write('CLOCk:ECLock:DIVider 4')"
+        },
+        {
+          "name": "Query External Clock Divider",
+          "scpi": "CLOCk:ECLock:DIVider?",
+          "description": "Query external clock divider rate",
+          "example": "div = awg.query('CLOCk:ECLock:DIVider?')"
+        },
+        {
+          "name": "Set External Clock Frequency",
+          "scpi": "CLOCk:ECLock:FREQuency {freq}",
+          "description": "Set expected external clock frequency (6.25-12.5 GHz)",
+          "params": [
+            {
+              "name": "freq",
+              "type": "number",
+              "default": 10000000000,
+              "required": true,
+              "unit": "Hz"
+            }
+          ],
+          "example": "awg.write('CLOCk:ECLock:FREQuency 10E9')"
+        },
+        {
+          "name": "Adjust External Clock",
+          "scpi": "CLOCk:ECLock:FREQuency:ADJust",
+          "description": "Calibrate system clock circuitry for external clock",
+          "example": "awg.write('CLOCk:ECLock:FREQuency:ADJust')"
+        },
+        {
+          "name": "Detect External Clock Frequency",
+          "scpi": "CLOCk:ECLock:FREQuency:DETect",
+          "description": "Auto-detect and configure external clock frequency",
+          "example": "awg.write('CLOCk:ECLock:FREQuency:DETect')"
+        },
+        {
+          "name": "Set External Clock Multiplier",
+          "scpi": "CLOCk:ECLock:MULTiplier {mult}",
+          "description": "Set external clock multiplier (1, 2, or 4)",
+          "params": [
+            {
+              "name": "mult",
+              "type": "number",
+              "default": 1,
+              "options": [
+                "1",
+                "2",
+                "4"
+              ],
+              "required": true
+            }
+          ],
+          "example": "awg.write('CLOCk:ECLock:MULTiplier 2')"
+        },
+        {
+          "name": "Set External Reference Divider",
+          "scpi": "CLOCk:EREFerence:DIVider {divider}",
+          "description": "Set external reference divider rate",
+          "params": [
+            {
+              "name": "divider",
+              "type": "number",
+              "default": 1,
+              "required": true
+            }
+          ],
+          "example": "awg.write('CLOCk:EREFerence:DIVider 1')"
+        },
+        {
+          "name": "Set External Reference Frequency",
+          "scpi": "CLOCk:EREFerence:FREQuency {freq}",
+          "description": "Set expected external reference frequency (35-250 MHz)",
+          "params": [
+            {
+              "name": "freq",
+              "type": "number",
+              "default": 10000000,
+              "required": true,
+              "unit": "Hz"
+            }
+          ],
+          "example": "awg.write('CLOCk:EREFerence:FREQuency 10E6')"
+        },
+        {
+          "name": "Detect External Reference Frequency",
+          "scpi": "CLOCk:EREFerence:FREQuency:DETect",
+          "description": "Auto-detect external reference frequency",
+          "example": "awg.write('CLOCk:EREFerence:FREQuency:DETect')"
+        },
+        {
+          "name": "Set External Reference Multiplier",
+          "scpi": "CLOCk:EREFerence:MULTiplier {mult}",
+          "description": "Set external reference multiplier rate",
+          "params": [
+            {
+              "name": "mult",
+              "type": "number",
+              "default": 1,
+              "required": true
+            }
+          ],
+          "example": "awg.write('CLOCk:EREFerence:MULTiplier 50')"
+        },
+        {
+          "name": "Set Jitter Reduction",
+          "scpi": "CLOCk:JITTer {state}",
+          "description": "Enable/disable jitter reduction for clock",
+          "params": [
+            {
+              "name": "state",
+              "type": "text",
+              "default": "ON",
+              "options": [
+                "ON",
+                "OFF"
+              ],
+              "required": true
+            }
+          ],
+          "example": "awg.write('CLOCk:JITTer ON')"
+        },
+        {
+          "name": "Query Clock Output Frequency",
+          "scpi": "CLOCk:OUTPut:FREQuency?",
+          "description": "Query Clock Out connector frequency",
+          "example": "freq = awg.query('CLOCk:OUTPut:FREQuency?')"
+        },
+        {
+          "name": "Set Clock Output State",
+          "scpi": "CLOCk:OUTPut:STATe {state}",
+          "description": "Enable/disable clock output",
+          "params": [
+            {
+              "name": "state",
+              "type": "text",
+              "default": "ON",
+              "options": [
+                "ON",
+                "OFF"
+              ],
+              "required": true
+            }
+          ],
+          "example": "awg.write('CLOCk:OUTPut:STATe ON')"
+        },
+        {
+          "name": "Set Clock Phase Degrees",
+          "scpi": "CLOCk:PHASe:ADJust:DEGRees {degrees}",
+          "description": "Set clock phase adjustment in degrees (-10800 to 10800)",
+          "params": [
+            {
+              "name": "degrees",
+              "type": "number",
+              "default": 0,
+              "required": true
+            }
+          ],
+          "example": "awg.write('CLOCk:PHASe:ADJust:DEGRees 100')"
+        },
+        {
+          "name": "Set Clock Phase Time",
+          "scpi": "CLOCk:PHASe:ADJust:TIMe {time}",
+          "description": "Set clock phase adjustment in picoseconds",
+          "params": [
+            {
+              "name": "time",
+              "type": "number",
+              "default": 0,
+              "required": true,
+              "unit": "ps"
+            }
+          ],
+          "example": "awg.write('CLOCk:PHASe:ADJust:TIMe 100E-12')"
+        },
+        {
+          "name": "Set Sync Clock Out State",
+          "scpi": "CLOCk:SOUT:STATe {state}",
+          "description": "Enable/disable Sync Clock Out output",
+          "params": [
+            {
+              "name": "state",
+              "type": "text",
+              "default": "ON",
+              "options": [
+                "ON",
+                "OFF"
+              ],
+              "required": true
+            }
+          ],
+          "example": "awg.write('CLOCk:SOUT:STATe ON')"
+        }
+      ]
+    },
+    "Sequence": {
+      "description": "Sequence and playlist management",
+      "color": "bg-orange-100 text-orange-700",
+      "commands": [
+        {
+          "name": "Set Run Mode",
+          "scpi": "AWGControl:RMODe {mode}",
+          "description": "Set the run mode",
+          "params": [
+            {
+              "name": "mode",
+              "type": "text",
+              "default": "CONTinuous",
+              "options": [
+                "CONTinuous",
+                "TRIGgered",
+                "GATed",
+                "SEQuence"
+              ],
+              "required": true
+            }
+          ],
+          "example": "awg.write('AWGControl:RMODe SEQuence')"
+        },
+        {
+          "name": "Query Run Mode",
+          "scpi": "AWGControl:RMODe?",
+          "description": "Query current run mode",
+          "example": "mode = awg.query('AWGControl:RMODe?')"
+        },
+        {
+          "name": "List Sequences",
+          "scpi": "SLISt:LIST?",
+          "description": "List all sequences in memory",
+          "example": "sequences = awg.query('SLISt:LIST?')"
+        },
+        {
+          "name": "Query Sequence Count",
+          "scpi": "SLISt:SIZE?",
+          "description": "Query number of sequences",
+          "example": "count = awg.query('SLISt:SIZE?')"
+        },
+        {
+          "name": "Create Sequence",
+          "scpi": "SLISt:SEQuence:NEW \"{name}\",{steps},{tracks}",
+          "description": "Create a new sequence",
+          "params": [
+            {
+              "name": "name",
+              "type": "text",
+              "default": "TestSeq",
+              "required": true
+            },
+            {
+              "name": "steps",
+              "type": "number",
+              "default": 1,
+              "required": true
+            },
+            {
+              "name": "tracks",
+              "type": "number",
+              "default": 1,
+              "required": true
+            }
+          ],
+          "example": "awg.write('SLISt:SEQuence:NEW \"TestSeq\",10,1')"
+        },
+        {
+          "name": "Delete Sequence",
+          "scpi": "SLISt:SEQuence:DELete \"{name}\"",
+          "description": "Delete a sequence",
+          "params": [
+            {
+              "name": "name",
+              "type": "text",
+              "default": "TestSeq",
+              "required": true
+            }
+          ],
+          "example": "awg.write('SLISt:SEQuence:DELete \"TestSeq\"')"
+        },
+        {
+          "name": "Set Sequence Step Waveform",
+          "scpi": "SLISt:SEQuence:STEP{step}:TASSet{track}:WAVeform \"{seq}\",\"{wfm}\"",
+          "description": "Set waveform for a sequence step",
+          "params": [
+            {
+              "name": "step",
+              "type": "number",
+              "default": 1,
+              "required": true
+            },
+            {
+              "name": "track",
+              "type": "number",
+              "default": 1,
+              "required": true
+            },
+            {
+              "name": "seq",
+              "type": "text",
+              "default": "TestSeq",
+              "required": true
+            },
+            {
+              "name": "wfm",
+              "type": "text",
+              "default": "TestWfm",
+              "required": true
+            }
+          ],
+          "example": "awg.write('SLISt:SEQuence:STEP1:TASSet1:WAVeform \"TestSeq\",\"TestWfm\"')"
+        },
+        {
+          "name": "Set Sequence Step Loop Count",
+          "scpi": "SLISt:SEQuence:STEP{step}:RCOunt \"{seq}\",{count}",
+          "description": "Set repeat count for sequence step",
+          "params": [
+            {
+              "name": "step",
+              "type": "number",
+              "default": 1,
+              "required": true
+            },
+            {
+              "name": "seq",
+              "type": "text",
+              "default": "TestSeq",
+              "required": true
+            },
+            {
+              "name": "count",
+              "type": "number",
+              "default": 1,
+              "required": true
+            }
+          ],
+          "example": "awg.write('SLISt:SEQuence:STEP1:RCOunt \"TestSeq\",10')"
+        },
+        {
+          "name": "Set Sequence Step Goto",
+          "scpi": "SLISt:SEQuence:STEP{step}:GOTO \"{seq}\",{target}",
+          "description": "Set goto target for sequence step",
+          "params": [
+            {
+              "name": "step",
+              "type": "number",
+              "default": 1,
+              "required": true
+            },
+            {
+              "name": "seq",
+              "type": "text",
+              "default": "TestSeq",
+              "required": true
+            },
+            {
+              "name": "target",
+              "type": "text",
+              "default": "NEXT",
+              "options": [
+                "NEXT",
+                "FIRSt",
+                "LAST",
+                "END"
+              ],
+              "required": true
+            }
+          ],
+          "example": "awg.write('SLISt:SEQuence:STEP1:GOTO \"TestSeq\",NEXT')"
+        }
+      ]
+    },
+    "Marker": {
+      "description": "Marker output configuration",
+      "color": "bg-pink-100 text-pink-700",
+      "commands": [
+        {
+          "name": "Set Marker State",
+          "scpi": "SOURce{ch}:MARKer{m}:STATe {state}",
+          "description": "Enable/disable marker output",
+          "params": [
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            },
+            {
+              "name": "m",
+              "type": "number",
+              "default": 1,
+              "options": [
+                "1",
+                "2"
+              ],
+              "required": true
+            },
+            {
+              "name": "state",
+              "type": "text",
+              "default": "ON",
+              "options": [
+                "ON",
+                "OFF"
+              ],
+              "required": true
+            }
+          ],
+          "example": "awg.write('SOURce1:MARKer1:STATe ON')"
+        },
+        {
+          "name": "Set Marker Delay",
+          "scpi": "SOURce{ch}:MARKer{m}:DELay {delay}",
+          "description": "Set marker delay in seconds",
+          "params": [
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            },
+            {
+              "name": "m",
+              "type": "number",
+              "default": 1,
+              "required": true
+            },
+            {
+              "name": "delay",
+              "type": "number",
+              "default": 0,
+              "required": true,
+              "unit": "s"
+            }
+          ],
+          "example": "awg.write('SOURce1:MARKer1:DELay 1E-9')"
+        },
+        {
+          "name": "Set Marker High Level",
+          "scpi": "SOURce{ch}:MARKer{m}:VOLTage:LEVel:IMMediate:HIGH {level}",
+          "description": "Set marker high voltage level",
+          "params": [
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            },
+            {
+              "name": "m",
+              "type": "number",
+              "default": 1,
+              "required": true
+            },
+            {
+              "name": "level",
+              "type": "number",
+              "default": 1.0,
+              "required": true,
+              "unit": "V"
+            }
+          ],
+          "example": "awg.write('SOURce1:MARKer1:VOLTage:LEVel:IMMediate:HIGH 1.0')"
+        },
+        {
+          "name": "Set Marker Low Level",
+          "scpi": "SOURce{ch}:MARKer{m}:VOLTage:LEVel:IMMediate:LOW {level}",
+          "description": "Set marker low voltage level",
+          "params": [
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            },
+            {
+              "name": "m",
+              "type": "number",
+              "default": 1,
+              "required": true
+            },
+            {
+              "name": "level",
+              "type": "number",
+              "default": 0,
+              "required": true,
+              "unit": "V"
+            }
+          ],
+          "example": "awg.write('SOURce1:MARKer1:VOLTage:LEVel:IMMediate:LOW 0')"
+        }
+      ]
+    },
+    "Trigger": {
+      "description": "Trigger control and configuration",
+      "color": "bg-red-100 text-red-700",
+      "commands": [
+        {
+          "name": "Set Trigger Source",
+          "scpi": "TRIGger:SOURce {source}",
+          "description": "Set trigger source",
+          "params": [
+            {
+              "name": "source",
+              "type": "text",
+              "default": "INTernal",
+              "options": [
+                "INTernal",
+                "EXTernal",
+                "BUS"
+              ],
+              "required": true
+            }
+          ],
+          "example": "awg.write('TRIGger:SOURce EXTernal')"
+        },
+        {
+          "name": "Query Trigger Source",
+          "scpi": "TRIGger:SOURce?",
+          "description": "Query trigger source",
+          "example": "source = awg.query('TRIGger:SOURce?')"
+        },
+        {
+          "name": "Set Trigger Level",
+          "scpi": "TRIGger:LEVel {level}",
+          "description": "Set external trigger level",
+          "params": [
+            {
+              "name": "level",
+              "type": "number",
+              "default": 1.4,
+              "required": true,
+              "unit": "V"
+            }
+          ],
+          "example": "awg.write('TRIGger:LEVel 1.4')"
+        },
+        {
+          "name": "Set Trigger Slope",
+          "scpi": "TRIGger:SLOPe {slope}",
+          "description": "Set trigger slope",
+          "params": [
+            {
+              "name": "slope",
+              "type": "text",
+              "default": "POSitive",
+              "options": [
+                "POSitive",
+                "NEGative"
+              ],
+              "required": true
+            }
+          ],
+          "example": "awg.write('TRIGger:SLOPe POSitive')"
+        },
+        {
+          "name": "Set Trigger Impedance",
+          "scpi": "TRIGger:IMPedance {impedance}",
+          "description": "Set external trigger impedance",
+          "params": [
+            {
+              "name": "impedance",
+              "type": "text",
+              "default": "50",
+              "options": [
+                "50",
+                "1000"
+              ],
+              "required": true
+            }
+          ],
+          "example": "awg.write('TRIGger:IMPedance 50')"
+        },
+        {
+          "name": "Force Trigger",
+          "scpi": "*TRG",
+          "description": "Force an immediate trigger",
+          "example": "awg.write('*TRG')"
+        },
+        {
+          "name": "Set Wait for Trigger",
+          "scpi": "TRIGger:MODE {mode}",
+          "description": "Set trigger wait mode",
+          "params": [
+            {
+              "name": "mode",
+              "type": "text",
+              "default": "TRIGgered",
+              "options": [
+                "TRIGgered",
+                "SYNChronous",
+                "ASYNchronous"
+              ],
+              "required": true
+            }
+          ],
+          "example": "awg.write('TRIGger:MODE TRIGgered')"
+        }
+      ]
+    },
+    "System": {
+      "description": "System control and IEEE commands",
+      "color": "bg-gray-100 text-gray-700",
+      "commands": [
+        {
+          "name": "Identify",
+          "scpi": "*IDN?",
+          "description": "Query instrument identification",
+          "example": "idn = awg.query('*IDN?')"
+        },
+        {
+          "name": "Reset",
+          "scpi": "*RST",
+          "description": "Reset instrument to default settings",
+          "example": "awg.write('*RST')"
+        },
+        {
+          "name": "Clear Status",
+          "scpi": "*CLS",
+          "description": "Clear status registers",
+          "example": "awg.write('*CLS')"
+        },
+        {
+          "name": "Operation Complete Query",
+          "scpi": "*OPC?",
+          "description": "Query operation complete status",
+          "example": "opc = awg.query('*OPC?')"
+        },
+        {
+          "name": "Set Operation Complete",
+          "scpi": "*OPC",
+          "description": "Set OPC bit when operations complete",
+          "example": "awg.write('*OPC')"
+        },
+        {
+          "name": "Wait",
+          "scpi": "*WAI",
+          "description": "Wait for pending operations to complete",
+          "example": "awg.write('*WAI')"
+        },
+        {
+          "name": "Self Test",
+          "scpi": "*TST?",
+          "description": "Run self-test and query result",
+          "example": "result = awg.query('*TST?')"
+        },
+        {
+          "name": "Query Run State",
+          "scpi": "AWGControl:RSTate?",
+          "description": "Query AWG run state",
+          "example": "state = awg.query('AWGControl:RSTate?')"
+        },
+        {
+          "name": "Save Setup",
+          "scpi": "AWGControl:SSAVe \"{path}\"",
+          "description": "Save current setup to file",
+          "params": [
+            {
+              "name": "path",
+              "type": "text",
+              "default": "C:\\\\Setup\\\\mysetup.awgx",
+              "required": true
+            }
+          ],
+          "example": "awg.write('AWGControl:SSAVe \"C:\\\\Setup\\\\mysetup.awgx\"')"
+        },
+        {
+          "name": "Load Setup",
+          "scpi": "AWGControl:SREStore \"{path}\"",
+          "description": "Load setup from file",
+          "params": [
+            {
+              "name": "path",
+              "type": "text",
+              "default": "C:\\\\Setup\\\\mysetup.awgx",
+              "required": true
+            }
+          ],
+          "example": "awg.write('AWGControl:SREStore \"C:\\\\Setup\\\\mysetup.awgx\"')"
+        },
+        {
+          "name": "Query Error",
+          "scpi": "SYSTem:ERRor?",
+          "description": "Query and clear one error from queue",
+          "example": "error = awg.query('SYSTem:ERRor?')"
+        },
+        {
+          "name": "Query Error Count",
+          "scpi": "SYSTem:ERRor:COUNt?",
+          "description": "Query number of errors in queue",
+          "example": "count = awg.query('SYSTem:ERRor:COUNt?')"
+        }
+      ]
+    },
+    "Calibration": {
+      "description": "Calibration and diagnostics",
+      "color": "bg-yellow-100 text-yellow-700",
+      "commands": [
+        {
+          "name": "Abort Calibration",
+          "scpi": "CALibration:ABORt",
+          "description": "Stop calibration and restore previous constants",
+          "example": "awg.write('CALibration:ABORt')"
+        },
+        {
+          "name": "Run Full Calibration",
+          "scpi": "CALibration:ALL",
+          "description": "Perform full calibration of AWG",
+          "example": "awg.write('CALibration:ALL')"
+        },
+        {
+          "name": "Query Calibration Catalog",
+          "scpi": "CALibration:CATalog? {subsystem},{area}",
+          "description": "List calibration subsystems, areas, or procedures",
+          "params": [
+            {
+              "name": "subsystem",
+              "type": "text",
+              "default": "ALL",
+              "required": false
+            },
+            {
+              "name": "area",
+              "type": "text",
+              "default": "ALL",
+              "required": false
+            }
+          ],
+          "example": "cat = awg.query('CALibration:CATalog?')"
+        },
+        {
+          "name": "Query Calibration Log",
+          "scpi": "CALibration:LOG?",
+          "description": "Return concatenated calibration results log",
+          "example": "log = awg.query('CALibration:LOG?')"
+        },
+        {
+          "name": "Clear Calibration Log",
+          "scpi": "CALibration:LOG:CLEar",
+          "description": "Clear calibration results log",
+          "example": "awg.write('CALibration:LOG:CLEar')"
+        },
+        {
+          "name": "Restore Factory Calibration",
+          "scpi": "CALibration:RESTore",
+          "description": "Restore factory calibration constants",
+          "example": "awg.write('CALibration:RESTore')"
+        },
+        {
+          "name": "Start Calibration",
+          "scpi": "CALibration:STARt",
+          "description": "Start selected calibration procedures",
+          "example": "awg.write('CALibration:STARt')"
+        },
+        {
+          "name": "Query Factory Calibration State",
+          "scpi": "CALibration:STATe:FACTory?",
+          "description": "Query factory calibration state",
+          "example": "state = awg.query('CALibration:STATe:FACTory?')"
+        },
+        {
+          "name": "Query User Calibration State",
+          "scpi": "CALibration:STATe:USER?",
+          "description": "Query user calibration state",
+          "example": "state = awg.query('CALibration:STATe:USER?')"
+        }
+      ]
+    },
+    "Function_Generator": {
+      "description": "Basic function generator mode",
+      "color": "bg-teal-100 text-teal-700",
+      "commands": []
+    },
+    "Synchronization": {
+      "description": "Multi-instrument synchronization",
+      "color": "bg-indigo-100 text-indigo-700",
+      "commands": []
+    },
+    "S_Parameters": {
+      "description": "S-Parameter configuration",
+      "color": "bg-cyan-100 text-cyan-700",
+      "commands": []
+    },
+    "Pulse_Plugin": {
+      "description": "Pulse plug-in for waveform generation",
+      "color": "bg-emerald-100 text-emerald-700",
+      "commands": [
+        {
+          "name": "Compile Pulse Waveform",
+          "scpi": "PULSe:COMPile",
+          "description": "Compile and generate waveforms/sequences based on pulse setup",
+          "example": "awg.write('PULSe:COMPile')"
+        },
+        {
+          "name": "Cancel Pulse Compilation",
+          "scpi": "PULSe:COMPile:CANCel",
+          "description": "Cancel the current pulse compilation",
+          "example": "awg.write('PULSe:COMPile:CANCel')"
+        },
+        {
+          "name": "Set Pulse Compile and Assign",
+          "scpi": "PULSe:COMPile:CASSign {state}",
+          "description": "Set compilation type (compile only or compile and assign)",
+          "params": [
+            {
+              "name": "state",
+              "type": "text",
+              "default": "ON",
+              "options": [
+                "ON",
+                "OFF"
+              ],
+              "required": true
+            }
+          ],
+          "example": "awg.write('PULSe:COMPile:CASSign ON')"
+        },
+        {
+          "name": "Query Pulse Compile and Assign",
+          "scpi": "PULSe:COMPile:CASSign?",
+          "description": "Query compilation type setting",
+          "example": "state = awg.query('PULSe:COMPile:CASSign?')"
+        },
+        {
+          "name": "Set Pulse Oversampling",
+          "scpi": "PULSe:COMPile:OSAMpling {rate}",
+          "description": "Set oversampling rate for pulse compilation (1-1000)",
+          "params": [
+            {
+              "name": "rate",
+              "type": "number",
+              "default": 4,
+              "required": true
+            }
+          ],
+          "example": "awg.write('PULSe:COMPile:OSAMpling 6')"
+        },
+        {
+          "name": "Set Pulse Overwrite Mode",
+          "scpi": "PULSe:COMPile:OVERwrite {state}",
+          "description": "Enable/disable overwriting existing waveforms during compilation",
+          "params": [
+            {
+              "name": "state",
+              "type": "text",
+              "default": "ON",
+              "options": [
+                "ON",
+                "OFF"
+              ],
+              "required": true
+            }
+          ],
+          "example": "awg.write('PULSe:COMPile:OVERwrite ON')"
+        },
+        {
+          "name": "Set Pulse Play After Compile",
+          "scpi": "PULSe:COMPile:PLAY {state}",
+          "description": "Enable/disable play after assign",
+          "params": [
+            {
+              "name": "state",
+              "type": "text",
+              "default": "OFF",
+              "options": [
+                "ON",
+                "OFF"
+              ],
+              "required": true
+            }
+          ],
+          "example": "awg.write('PULSe:COMPile:PLAY ON')"
+        },
+        {
+          "name": "Set Pulse Create Sequence",
+          "scpi": "PULSe:COMPile:SEQuence {state}",
+          "description": "Enable/disable creating sequence after compilation",
+          "params": [
+            {
+              "name": "state",
+              "type": "text",
+              "default": "OFF",
+              "options": [
+                "ON",
+                "OFF"
+              ],
+              "required": true
+            }
+          ],
+          "example": "awg.write('PULSe:COMPile:SEQuence ON')"
+        },
+        {
+          "name": "Set Pulse Sample Rate",
+          "scpi": "PULSe:COMPile:SRATe {rate}",
+          "description": "Set sampling rate for pulse compilation",
+          "params": [
+            {
+              "name": "rate",
+              "type": "number",
+              "default": 1000000000,
+              "required": true,
+              "unit": "Sa/s"
+            }
+          ],
+          "example": "awg.write('PULSe:COMPile:SRATe 1E9')"
+        },
+        {
+          "name": "Set Pulse Sample Rate Auto",
+          "scpi": "PULSe:COMPile:SRATe:AUTO {state}",
+          "description": "Enable/disable automatic sample rate calculation",
+          "params": [
+            {
+              "name": "state",
+              "type": "text",
+              "default": "ON",
+              "options": [
+                "ON",
+                "OFF"
+              ],
+              "required": true
+            }
+          ],
+          "example": "awg.write('PULSe:COMPile:SRATe:AUTO ON')"
+        },
+        {
+          "name": "Add Pulse Frame",
+          "scpi": "PULSe:FRAMe:ADD",
+          "description": "Add new frame to current pulse train",
+          "example": "awg.write('PULSe:FRAMe:ADD')"
+        },
+        {
+          "name": "Query Pulse Frame Count",
+          "scpi": "PULSe:FRAMe:COUNt?",
+          "description": "Query number of pulse definitions in current pulse train",
+          "example": "count = awg.query('PULSe:FRAMe:COUNt?')"
+        },
+        {
+          "name": "Delete Pulse Frame",
+          "scpi": "PULSe:FRAMe:DELete {index}",
+          "description": "Delete pulse definition at specified index (1-100)",
+          "params": [
+            {
+              "name": "index",
+              "type": "number",
+              "default": 1,
+              "required": true
+            }
+          ],
+          "example": "awg.write('PULSe:FRAMe:DELete 3')"
+        },
+        {
+          "name": "Set Pulse Frame Dead Time",
+          "scpi": "PULSe:FRAMe:DTIMe {time}",
+          "description": "Set dead time for current frame (0-1 seconds)",
+          "params": [
+            {
+              "name": "time",
+              "type": "number",
+              "default": 0,
+              "required": true,
+              "unit": "s"
+            }
+          ],
+          "example": "awg.write('PULSe:FRAMe:DTIMe 12E-6')"
+        },
+        {
+          "name": "Set Pulse Frame Number of Pulses",
+          "scpi": "PULSe:FRAMe:NPULse {count}",
+          "description": "Set number of pulses in current frame (1-10000)",
+          "params": [
+            {
+              "name": "count",
+              "type": "number",
+              "default": 1,
+              "required": true
+            }
+          ],
+          "example": "awg.write('PULSe:FRAMe:NPULse 10')"
+        },
+        {
+          "name": "Select Pulse Frame",
+          "scpi": "PULSe:FRAMe:SELect {index}",
+          "description": "Select pulse definition index for editing (1-100)",
+          "params": [
+            {
+              "name": "index",
+              "type": "number",
+              "default": 1,
+              "required": true
+            }
+          ],
+          "example": "awg.write('PULSe:FRAMe:SELect 5')"
+        },
+        {
+          "name": "Set Pulse Fall Time Percentage",
+          "scpi": "PULSe:FRAMe:PSETup:FTIMe:PERCentage {type}",
+          "description": "Set fall time percentage type",
+          "params": [
+            {
+              "name": "type",
+              "type": "text",
+              "default": "TNINety",
+              "options": [
+                "TNINety",
+                "TEIGhty",
+                "ZHUNdred"
+              ],
+              "required": true
+            }
+          ],
+          "example": "awg.write('PULSe:FRAMe:PSETup:FTIMe:PERCentage TNINety')"
+        },
+        {
+          "name": "Set Pulse Fall Time Value",
+          "scpi": "PULSe:FRAMe:PSETup:FTIMe:VALue {time}",
+          "description": "Set fall time value for pulse",
+          "params": [
+            {
+              "name": "time",
+              "type": "number",
+              "default": 1e-09,
+              "required": true,
+              "unit": "s"
+            }
+          ],
+          "example": "awg.write('PULSe:FRAMe:PSETup:FTIMe:VALue 200E-9')"
+        },
+        {
+          "name": "Set Pulse Off Time",
+          "scpi": "PULSe:FRAMe:PSETup:OTIMe {time}",
+          "description": "Set off time value for frame (0-1 seconds)",
+          "params": [
+            {
+              "name": "time",
+              "type": "number",
+              "default": 0,
+              "required": true,
+              "unit": "s"
+            }
+          ],
+          "example": "awg.write('PULSe:FRAMe:PSETup:OTIMe 10E-6')"
+        },
+        {
+          "name": "Set Pulse Repeat Frequency",
+          "scpi": "PULSe:FRAMe:PSETup:PRF {freq}",
+          "description": "Set pulse repeat frequency for frame",
+          "params": [
+            {
+              "name": "freq",
+              "type": "number",
+              "default": 1000,
+              "required": true,
+              "unit": "Hz"
+            }
+          ],
+          "example": "awg.write('PULSe:FRAMe:PSETup:PRF 10E3')"
+        },
+        {
+          "name": "Set Pulse Repeat Interval",
+          "scpi": "PULSe:FRAMe:PSETup:PRI {interval}",
+          "description": "Set pulse repeat interval for frame",
+          "params": [
+            {
+              "name": "interval",
+              "type": "number",
+              "default": 0.001,
+              "required": true,
+              "unit": "s"
+            }
+          ],
+          "example": "awg.write('PULSe:FRAMe:PSETup:PRI 100E-6')"
+        },
+        {
+          "name": "Set Pulse Rise Time Percentage",
+          "scpi": "PULSe:FRAMe:PSETup:RTIMe:PERCentage {type}",
+          "description": "Set rise time percentage type",
+          "params": [
+            {
+              "name": "type",
+              "type": "text",
+              "default": "TNINety",
+              "options": [
+                "TNINety",
+                "TEIGhty",
+                "ZHUNdred"
+              ],
+              "required": true
+            }
+          ],
+          "example": "awg.write('PULSe:FRAMe:PSETup:RTIMe:PERCentage TNINety')"
+        },
+        {
+          "name": "Set Pulse Rise Time Value",
+          "scpi": "PULSe:FRAMe:PSETup:RTIMe:VALue {time}",
+          "description": "Set rise time value for pulse",
+          "params": [
+            {
+              "name": "time",
+              "type": "number",
+              "default": 1e-09,
+              "required": true,
+              "unit": "s"
+            }
+          ],
+          "example": "awg.write('PULSe:FRAMe:PSETup:RTIMe:VALue 200E-9')"
+        },
+        {
+          "name": "Set Pulse Shape",
+          "scpi": "PULSe:FRAMe:PSETup:SHAPe {shape}",
+          "description": "Set pulse shape (rectangular or trapezoidal)",
+          "params": [
+            {
+              "name": "shape",
+              "type": "text",
+              "default": "RECTangular",
+              "options": [
+                "RECTangular",
+                "TRAPezoidal"
+              ],
+              "required": true
+            }
+          ],
+          "example": "awg.write('PULSe:FRAMe:PSETup:SHAPe RECT')"
+        },
+        {
+          "name": "Set Pulse Width Percentage",
+          "scpi": "PULSe:FRAMe:PSETup:WIDTh:PERCentage {type}",
+          "description": "Set pulse width percentage type",
+          "params": [
+            {
+              "name": "type",
+              "type": "text",
+              "default": "FIFTy",
+              "options": [
+                "FIFTy",
+                "HUNDred"
+              ],
+              "required": true
+            }
+          ],
+          "example": "awg.write('PULSe:FRAMe:PSETup:WIDTh:PERCentage FIFTy')"
+        },
+        {
+          "name": "Set Pulse Width Value",
+          "scpi": "PULSe:FRAMe:PSETup:WIDTh:VALue {width}",
+          "description": "Set pulse width value (200ps-1s)",
+          "params": [
+            {
+              "name": "width",
+              "type": "number",
+              "default": 1e-06,
+              "required": true,
+              "unit": "s"
+            }
+          ],
+          "example": "awg.write('PULSe:FRAMe:PSETup:WIDTh:VALue 1E-6')"
+        },
+        {
+          "name": "Add Pulse Train",
+          "scpi": "PULSe:PTRain:ADD {name}",
+          "description": "Create and add pulse train to list (max 10 trains)",
+          "params": [
+            {
+              "name": "name",
+              "type": "text",
+              "default": "PulseTrain_1",
+              "required": false
+            }
+          ],
+          "example": "awg.write('PULSe:PTRain:ADD \"Sim_1\"')"
+        },
+        {
+          "name": "Set Pulse Train Amplitude",
+          "scpi": "PULSe:PTRain:AMPLitude {amplitude}",
+          "description": "Set peak-to-peak amplitude (25mV-1.5V)",
+          "params": [
+            {
+              "name": "amplitude",
+              "type": "number",
+              "default": 0.5,
+              "required": true,
+              "unit": "Vpp"
+            }
+          ],
+          "example": "awg.write('PULSe:PTRain:AMPLitude 300E-3')"
+        },
+        {
+          "name": "Set Pulse Train Channel",
+          "scpi": "PULSe:PTRain:CHANnel {channel}",
+          "description": "Set channel for pulse train waveform/sequence",
+          "params": [
+            {
+              "name": "channel",
+              "type": "number",
+              "default": 1,
+              "required": true
+            }
+          ],
+          "example": "awg.write('PULSe:PTRain:CHANnel 2')"
+        },
+        {
+          "name": "Query Pulse Train Count",
+          "scpi": "PULSe:PTRain:COUNt?",
+          "description": "Query number of pulse trains in list",
+          "example": "count = awg.query('PULSe:PTRain:COUNt?')"
+        },
+        {
+          "name": "Delete Pulse Train",
+          "scpi": "PULSe:PTRain:DELete {name}",
+          "description": "Delete specified pulse train from list",
+          "params": [
+            {
+              "name": "name",
+              "type": "text",
+              "default": "PulseTrain_1",
+              "required": true
+            }
+          ],
+          "example": "awg.write('PULSe:PTRain:DELete \"PulseTrain_1\"')"
+        },
+        {
+          "name": "Rename Pulse Train",
+          "scpi": "PULSe:PTRain:REName {name}",
+          "description": "Rename current selected pulse train",
+          "params": [
+            {
+              "name": "name",
+              "type": "text",
+              "default": "PulseTrain_1",
+              "required": true
+            }
+          ],
+          "example": "awg.write('PULSe:PTRain:REName \"PulseTrain_1\"')"
+        },
+        {
+          "name": "Select Pulse Train",
+          "scpi": "PULSe:PTRain:SELect {name}",
+          "description": "Select pulse train by name",
+          "params": [
+            {
+              "name": "name",
+              "type": "text",
+              "default": "PulseTrain_1",
+              "required": true
+            }
+          ],
+          "example": "awg.write('PULSe:PTRain:SELect \"PulseTrain_1\"')"
+        },
+        {
+          "name": "Reset Pulse Plugin",
+          "scpi": "PULSe:RESet",
+          "description": "Reset pulse plug-in to default values",
+          "example": "awg.write('PULSe:RESet')"
+        }
+      ]
+    },
+    "Video_Plugin": {
+      "description": "LVDS Video Signal plug-in for video waveform generation",
+      "color": "bg-violet-100 text-violet-700",
+      "commands": [
+        {
+          "name": "Compile Video Waveform",
+          "scpi": "LVS:COMPile",
+          "description": "Compile and generate LVDS video waveforms",
+          "example": "awg.write('LVS:COMPile')"
+        },
+        {
+          "name": "Cancel Video Compilation",
+          "scpi": "LVS:COMPile:CANCel",
+          "description": "Cancel current video compilation",
+          "example": "awg.write('LVS:COMPile:CANCel')"
+        },
+        {
+          "name": "Set Video Compile and Assign",
+          "scpi": "LVS:COMPile:CASSign {state}",
+          "description": "Set video compilation type",
+          "params": [
+            {
+              "name": "state",
+              "type": "text",
+              "default": "OFF",
+              "options": [
+                "ON",
+                "OFF"
+              ],
+              "required": true
+            }
+          ],
+          "example": "awg.write('LVS:COMPile:CASSign ON')"
+        },
+        {
+          "name": "Set Video Channel Assignment",
+          "scpi": "LVS:COMPile:CHANnel {signal},{channel}",
+          "description": "Set channel for video signal (Clock/DL0-4/IClock/IDL0-4)",
+          "params": [
+            {
+              "name": "signal",
+              "type": "text",
+              "default": "Clock",
+              "required": true
+            },
+            {
+              "name": "channel",
+              "type": "number",
+              "default": 1,
+              "required": true
+            }
+          ],
+          "example": "awg.write('LVS:COMPile:CHANnel \"Clock\",4')"
+        },
+        {
+          "name": "Set Video Lane Enable",
+          "scpi": "LVS:COMPile:ENABle {signal},{state}",
+          "description": "Enable/disable data lanes for compilation",
+          "params": [
+            {
+              "name": "signal",
+              "type": "text",
+              "default": "Clock",
+              "required": true
+            },
+            {
+              "name": "state",
+              "type": "text",
+              "default": "ON",
+              "options": [
+                "ON",
+                "OFF"
+              ],
+              "required": true
+            }
+          ],
+          "example": "awg.write('LVS:COMPile:ENABle \"Clock\",1')"
+        },
+        {
+          "name": "Set Video Waveform Name",
+          "scpi": "LVS:COMPile:NAME {name}",
+          "description": "Set name for compiled video waveform",
+          "params": [
+            {
+              "name": "name",
+              "type": "text",
+              "default": "LVDSVideoWfm",
+              "required": true
+            }
+          ],
+          "example": "awg.write('LVS:COMPile:NAME \"LVDSVideoWfm\"')"
+        },
+        {
+          "name": "Set Video Oversampling",
+          "scpi": "LVS:COMPile:OSAMpling {rate}",
+          "description": "Set oversampling rate for video (1-1000)",
+          "params": [
+            {
+              "name": "rate",
+              "type": "number",
+              "default": 4,
+              "required": true
+            }
+          ],
+          "example": "awg.write('LVS:COMPile:OSAMpling 6')"
+        },
+        {
+          "name": "Set Video Output Type",
+          "scpi": "LVS:COMPile:OUTPut {signal},{output}",
+          "description": "Set output type (Analog or Marker1-4)",
+          "params": [
+            {
+              "name": "signal",
+              "type": "text",
+              "default": "Clock",
+              "required": true
+            },
+            {
+              "name": "output",
+              "type": "text",
+              "default": "Analog",
+              "required": true
+            }
+          ],
+          "example": "awg.write('LVS:COMPile:OUTPut \"Clock\",\"Marker3\"')"
+        },
+        {
+          "name": "Set Video Overwrite Mode",
+          "scpi": "LVS:COMPile:OVERwrite {state}",
+          "description": "Enable/disable overwriting existing waveforms",
+          "params": [
+            {
+              "name": "state",
+              "type": "text",
+              "default": "ON",
+              "options": [
+                "ON",
+                "OFF"
+              ],
+              "required": true
+            }
+          ],
+          "example": "awg.write('LVS:COMPile:OVERwrite ON')"
+        },
+        {
+          "name": "Set Video Play After Compile",
+          "scpi": "LVS:COMPile:PLAY {state}",
+          "description": "Enable/disable play after assign",
+          "params": [
+            {
+              "name": "state",
+              "type": "text",
+              "default": "OFF",
+              "options": [
+                "ON",
+                "OFF"
+              ],
+              "required": true
+            }
+          ],
+          "example": "awg.write('LVS:COMPile:PLAY ON')"
+        },
+        {
+          "name": "Set Video Sample Rate",
+          "scpi": "LVS:COMPile:SRATe {rate}",
+          "description": "Set sampling rate for video compilation",
+          "params": [
+            {
+              "name": "rate",
+              "type": "number",
+              "default": 1000000000,
+              "required": true,
+              "unit": "Sa/s"
+            }
+          ],
+          "example": "awg.write('LVS:COMPile:SRATe 1E9')"
+        },
+        {
+          "name": "Set Video Sample Rate Auto",
+          "scpi": "LVS:COMPile:SRATe:AUTO {state}",
+          "description": "Enable/disable automatic sample rate calculation",
+          "params": [
+            {
+              "name": "state",
+              "type": "text",
+              "default": "ON",
+              "options": [
+                "ON",
+                "OFF"
+              ],
+              "required": true
+            }
+          ],
+          "example": "awg.write('LVS:COMPile:SRATe:AUTO ON')"
+        },
+        {
+          "name": "Set Video Export Enable",
+          "scpi": "LVS:EXPort:ENABle {state}",
+          "description": "Enable/disable export to file",
+          "params": [
+            {
+              "name": "state",
+              "type": "text",
+              "default": "OFF",
+              "options": [
+                "ON",
+                "OFF"
+              ],
+              "required": true
+            }
+          ],
+          "example": "awg.write('LVS:EXPort:ENABle ON')"
+        },
+        {
+          "name": "Set Video Export File",
+          "scpi": "LVS:EXPort:FILE {filename}",
+          "description": "Set export file path for image data",
+          "params": [
+            {
+              "name": "filename",
+              "type": "text",
+              "default": "C:\\\\Pattern.txt",
+              "required": true
+            }
+          ],
+          "example": "awg.write('LVS:EXPort:FILE \"C:\\\\Samples\\\\Pattern.txt\"')"
+        },
+        {
+          "name": "Set Video Color Bits",
+          "scpi": "LVS:ENCoding:CBITs {bits}",
+          "description": "Set encoding color bits (6, 8, or 10 bit)",
+          "params": [
+            {
+              "name": "bits",
+              "type": "text",
+              "default": "EIGHt",
+              "options": [
+                "SIX",
+                "EIGHt",
+                "TEN"
+              ],
+              "required": true
+            }
+          ],
+          "example": "awg.write('LVS:ENCoding:CBITs EIGHt')"
+        },
+        {
+          "name": "Set Video Compatibility Mode",
+          "scpi": "LVS:ENCoding:CMODe {state}",
+          "description": "Enable/disable compatibility mode",
+          "params": [
+            {
+              "name": "state",
+              "type": "text",
+              "default": "OFF",
+              "options": [
+                "ON",
+                "OFF"
+              ],
+              "required": true
+            }
+          ],
+          "example": "awg.write('LVS:ENCoding:CMODe ON')"
+        },
+        {
+          "name": "Set Video Encoding Type",
+          "scpi": "LVS:ENCoding:TYPE {type}",
+          "description": "Set encoding type (JEIDA or VESA)",
+          "params": [
+            {
+              "name": "type",
+              "type": "text",
+              "default": "JEIDa",
+              "options": [
+                "JEIDa",
+                "VESA"
+              ],
+              "required": true
+            }
+          ],
+          "example": "awg.write('LVS:ENCoding:TYPE JEIDa')"
+        },
+        {
+          "name": "Set Video Bitmap File",
+          "scpi": "LVS:FILE {filename}",
+          "description": "Set bitmap image file path",
+          "params": [
+            {
+              "name": "filename",
+              "type": "text",
+              "default": "C:\\\\image.bmp",
+              "required": true
+            }
+          ],
+          "example": "awg.write('LVS:FILE \"C:\\\\Samples\\\\Pattern.bmp\"')"
+        },
+        {
+          "name": "Set Video Frame Rate",
+          "scpi": "LVS:FRATe {rate}",
+          "description": "Set frame rate (1-144 Hz)",
+          "params": [
+            {
+              "name": "rate",
+              "type": "number",
+              "default": 30,
+              "required": true,
+              "unit": "Hz"
+            }
+          ],
+          "example": "awg.write('LVS:FRATe 30')"
+        },
+        {
+          "name": "Set Video Horizontal Resolution",
+          "scpi": "LVS:HRESolution {pixels}",
+          "description": "Set horizontal resolution (2-4096 pixels)",
+          "params": [
+            {
+              "name": "pixels",
+              "type": "number",
+              "default": 1024,
+              "required": true
+            }
+          ],
+          "example": "awg.write('LVS:HRESolution 1024')"
+        },
+        {
+          "name": "Query Video Horizontal Active",
+          "scpi": "LVS:HORizontal:ACTive?",
+          "description": "Query horizontal active value",
+          "example": "active = awg.query('LVS:HORizontal:ACTive?')"
+        },
+        {
+          "name": "Set Video Horizontal Active Low",
+          "scpi": "LVS:HORizontal:ALOW {state}",
+          "description": "Enable/disable horizontal active low",
+          "params": [
+            {
+              "name": "state",
+              "type": "text",
+              "default": "OFF",
+              "options": [
+                "ON",
+                "OFF"
+              ],
+              "required": true
+            }
+          ],
+          "example": "awg.write('LVS:HORizontal:ALOW ON')"
+        },
+        {
+          "name": "Set Video Horizontal Back Porch",
+          "scpi": "LVS:HORizontal:BLANking:BPORch {pixels}",
+          "description": "Set horizontal blanking back porch",
+          "params": [
+            {
+              "name": "pixels",
+              "type": "number",
+              "default": 100,
+              "required": true
+            }
+          ],
+          "example": "awg.write('LVS:HORizontal:BLANking:BPORch 1080')"
+        },
+        {
+          "name": "Set Video Horizontal Front Porch",
+          "scpi": "LVS:HORizontal:BLANking:FPORch {pixels}",
+          "description": "Set horizontal blanking front porch",
+          "params": [
+            {
+              "name": "pixels",
+              "type": "number",
+              "default": 100,
+              "required": true
+            }
+          ],
+          "example": "awg.write('LVS:HORizontal:BLANking:FPORch 1080')"
+        },
+        {
+          "name": "Query Video Horizontal Period",
+          "scpi": "LVS:HORizontal:PERiod?",
+          "description": "Query horizontal period value",
+          "example": "period = awg.query('LVS:HORizontal:PERiod?')"
+        },
+        {
+          "name": "Set Video Horizontal Sync",
+          "scpi": "LVS:HORizontal:SYNC {pixels}",
+          "description": "Set horizontal synchronization value",
+          "params": [
+            {
+              "name": "pixels",
+              "type": "number",
+              "default": 100,
+              "required": true
+            }
+          ],
+          "example": "awg.write('LVS:HORizontal:SYNC 1080')"
+        },
+        {
+          "name": "Query Video Pixel Clock",
+          "scpi": "LVS:PCLock?",
+          "description": "Query pixel clock value",
+          "example": "pclk = awg.query('LVS:PCLock?')"
+        },
+        {
+          "name": "Reset Video Plugin",
+          "scpi": "LVS:RESet",
+          "description": "Reset LVDS video plugin to defaults",
+          "example": "awg.write('LVS:RESet')"
+        },
+        {
+          "name": "Set Video Vertical Resolution",
+          "scpi": "LVS:VRESolution {lines}",
+          "description": "Set vertical resolution (2-2160 lines)",
+          "params": [
+            {
+              "name": "lines",
+              "type": "number",
+              "default": 768,
+              "required": true
+            }
+          ],
+          "example": "awg.write('LVS:VRESolution 1080')"
+        },
+        {
+          "name": "Query Video Vertical Active",
+          "scpi": "LVS:VERTical:ACTive?",
+          "description": "Query vertical active value",
+          "example": "active = awg.query('LVS:VERTical:ACTive?')"
+        },
+        {
+          "name": "Set Video Vertical Active Low",
+          "scpi": "LVS:VERTical:ALOW {state}",
+          "description": "Enable/disable vertical active low",
+          "params": [
+            {
+              "name": "state",
+              "type": "text",
+              "default": "OFF",
+              "options": [
+                "ON",
+                "OFF"
+              ],
+              "required": true
+            }
+          ],
+          "example": "awg.write('LVS:VERTical:ALOW ON')"
+        },
+        {
+          "name": "Set Video Vertical Back Porch",
+          "scpi": "LVS:VERTical:BLANking:BPORch {lines}",
+          "description": "Set vertical blanking back porch",
+          "params": [
+            {
+              "name": "lines",
+              "type": "number",
+              "default": 10,
+              "required": true
+            }
+          ],
+          "example": "awg.write('LVS:VERTical:BLANking:BPORch 20')"
+        },
+        {
+          "name": "Set Video Vertical Front Porch",
+          "scpi": "LVS:VERTical:BLANking:FPORch {lines}",
+          "description": "Set vertical blanking front porch",
+          "params": [
+            {
+              "name": "lines",
+              "type": "number",
+              "default": 10,
+              "required": true
+            }
+          ],
+          "example": "awg.write('LVS:VERTical:BLANking:FPORch 20')"
+        },
+        {
+          "name": "Query Video Vertical Period",
+          "scpi": "LVS:VERTical:PERiod?",
+          "description": "Query vertical period value",
+          "example": "period = awg.query('LVS:VERTical:PERiod?')"
+        },
+        {
+          "name": "Set Video Vertical Sync",
+          "scpi": "LVS:VERTical:SYNC {lines}",
+          "description": "Set vertical synchronization value",
+          "params": [
+            {
+              "name": "lines",
+              "type": "number",
+              "default": 10,
+              "required": true
+            }
+          ],
+          "example": "awg.write('LVS:VERTical:SYNC 10')"
+        },
+        {
+          "name": "Set Video High Voltage",
+          "scpi": "LVS:VOLTage:HIGH {voltage}",
+          "description": "Set high voltage level for LVDS",
+          "params": [
+            {
+              "name": "voltage",
+              "type": "number",
+              "default": -0.25,
+              "required": true,
+              "unit": "V"
+            }
+          ],
+          "example": "awg.write('LVS:VOLTage:HIGH -250E-3')"
+        },
+        {
+          "name": "Set Video Low Voltage",
+          "scpi": "LVS:VOLTage:LOW {voltage}",
+          "description": "Set low voltage level for LVDS",
+          "params": [
+            {
+              "name": "voltage",
+              "type": "number",
+              "default": -0.2,
+              "required": true,
+              "unit": "V"
+            }
+          ],
+          "example": "awg.write('LVS:VOLTage:LOW -200E-3')"
+        }
+      ]
+    },
+    "High_Speed_Serial": {
+      "description": "High-speed serial data signal generation and impairments",
+      "color": "bg-blue-100 text-blue-700",
+      "commands": [
+        {
+          "name": "Activate High Speed Serial Plugin",
+          "scpi": "WPLugin:ACTive \"HSSerial\"",
+          "description": "Activate the High Speed Serial plugin",
+          "example": "awg.write('WPLugin:ACTive \"HSSerial\"')"
+        },
+        {
+          "name": "Reset High Speed Serial Plugin",
+          "scpi": "HSSerial:RESet",
+          "description": "Reset plugin to default values",
+          "example": "awg.write('HSSerial:RESet')"
+        },
+        {
+          "name": "Set HSS Data Rate",
+          "scpi": "HSSerial:DRATe {rate}",
+          "description": "Set data rate for high-speed serial signal",
+          "params": [
+            {
+              "name": "rate",
+              "type": "number",
+              "default": 1000000000,
+              "required": true,
+              "unit": "bps"
+            }
+          ],
+          "example": "awg.write('HSSerial:DRATe 10E9')"
+        },
+        {
+          "name": "Set HSS Base Data Pattern",
+          "scpi": "HSSerial:BDATa {pattern}",
+          "description": "Set base data pattern type",
+          "params": [
+            {
+              "name": "pattern",
+              "type": "text",
+              "options": [
+                "CLOCk",
+                "AZERo",
+                "AONE",
+                "ISTate",
+                "PRBS",
+                "PATTern",
+                "FILE"
+              ],
+              "required": true
+            }
+          ],
+          "example": "awg.write('HSSerial:BDATa PRBS')"
+        },
+        {
+          "name": "Set HSS PRBS Type",
+          "scpi": "HSSerial:BDATa:PRBS {type}",
+          "description": "Set PRBS pattern type",
+          "params": [
+            {
+              "name": "type",
+              "type": "text",
+              "options": [
+                "PRBS7",
+                "PRBS9",
+                "PRBS15",
+                "PRBS23",
+                "PRBS31"
+              ],
+              "required": true
+            }
+          ],
+          "example": "awg.write('HSSerial:BDATa:PRBS PRBS23')"
+        },
+        {
+          "name": "Enable HSS Channel Emulation",
+          "scpi": "HSSerial:CHANnel:ENABle {state}",
+          "description": "Enable/disable channel emulation",
+          "params": [
+            {
+              "name": "state",
+              "type": "text",
+              "options": [
+                "ON",
+                "OFF"
+              ],
+              "required": true
+            }
+          ],
+          "example": "awg.write('HSSerial:CHANnel:ENABle ON')"
+        },
+        {
+          "name": "Set HSS Amplitude Maximum",
+          "scpi": "HSSerial:AMPLitude:MAXimum {amplitude}",
+          "description": "Set maximum signal amplitude",
+          "params": [
+            {
+              "name": "amplitude",
+              "type": "number",
+              "default": 0.5,
+              "required": true,
+              "unit": "V"
+            }
+          ],
+          "example": "awg.write('HSSerial:AMPLitude:MAXimum 200E-3')"
+        },
+        {
+          "name": "Compile HSS Waveform",
+          "scpi": "HSSerial:COMPile",
+          "description": "Compile high-speed serial waveform",
+          "example": "awg.write('HSSerial:COMPile')"
+        },
+        {
+          "name": "Set HSS Compile Sampling Rate",
+          "scpi": "HSSerial:COMPile:SRATe {rate}",
+          "description": "Set compilation sampling rate",
+          "params": [
+            {
+              "name": "rate",
+              "type": "number",
+              "default": 1000000000,
+              "required": true,
+              "unit": "Sa/s"
+            }
+          ],
+          "example": "awg.write('HSSerial:COMPile:SRATe 25E9')"
+        },
+        {
+          "name": "Enable HSS Pre-emphasis",
+          "scpi": "HSSerial:PREemphasis:ENABle {state}",
+          "description": "Enable/disable pre-emphasis",
+          "params": [
+            {
+              "name": "state",
+              "type": "text",
+              "options": [
+                "ON",
+                "OFF"
+              ],
+              "required": true
+            }
+          ],
+          "example": "awg.write('HSSerial:PREemphasis:ENABle ON')"
+        }
+      ]
+    },
+    "Radar_Signals": {
+      "description": "Radar signal generation with pulse modulation and impairments",
+      "color": "bg-red-100 text-red-700",
+      "commands": [
+        {
+          "name": "Activate Radar Signals Plugin",
+          "scpi": "WPLugin:ACTive \"RADar\"",
+          "description": "Activate the Radar Signals plugin",
+          "example": "awg.write('WPLugin:ACTive \"RADar\"')"
+        },
+        {
+          "name": "Reset Radar Plugin",
+          "scpi": "RADar:RESet",
+          "description": "Reset Radar plugin to default values",
+          "example": "awg.write('RADar:RESet')"
+        },
+        {
+          "name": "Add Radar Pulse Train",
+          "scpi": "RADar:PTRain:ADD {name}",
+          "description": "Create and add pulse train",
+          "params": [
+            {
+              "name": "name",
+              "type": "text",
+              "default": "PulseTrain_1",
+              "required": false
+            }
+          ],
+          "example": "awg.write('RADar:PTRain:ADD \"MyRadar\"')"
+        },
+        {
+          "name": "Set Radar Carrier Frequency",
+          "scpi": "RADar:PTRain:CARRier:FREQuency {freq}",
+          "description": "Set RF/IF carrier frequency",
+          "params": [
+            {
+              "name": "freq",
+              "type": "number",
+              "default": 10000000000,
+              "required": true,
+              "unit": "Hz"
+            }
+          ],
+          "example": "awg.write('RADar:PTRain:CARRier:FREQuency 10E9')"
+        },
+        {
+          "name": "Set Radar Pulse Width",
+          "scpi": "RADar:PULSe:PENVelope:WIDTh:VALue {width}",
+          "description": "Set pulse width value",
+          "params": [
+            {
+              "name": "width",
+              "type": "number",
+              "default": 1e-06,
+              "required": true,
+              "unit": "s"
+            }
+          ],
+          "example": "awg.write('RADar:PULSe:PENVelope:WIDTh:VALue 1E-6')"
+        },
+        {
+          "name": "Set Radar PRF",
+          "scpi": "RADar:PULSe:PENVelope:PRF {prf}",
+          "description": "Set pulse repetition frequency",
+          "params": [
+            {
+              "name": "prf",
+              "type": "number",
+              "default": 1000,
+              "required": true,
+              "unit": "Hz"
+            }
+          ],
+          "example": "awg.write('RADar:PULSe:PENVelope:PRF 10E3')"
+        },
+        {
+          "name": "Set Radar Modulation Type",
+          "scpi": "RADar:PULSe:MODulation {type}",
+          "description": "Set pulse modulation type",
+          "params": [
+            {
+              "name": "type",
+              "type": "text",
+              "options": [
+                "NONE",
+                "LFM",
+                "BARKer",
+                "FRANk"
+              ],
+              "required": true
+            }
+          ],
+          "example": "awg.write('RADar:PULSe:MODulation LFM')"
+        },
+        {
+          "name": "Set Radar Signal Format",
+          "scpi": "RADar:SFORmat {format}",
+          "description": "Set signal format (RF or IQ)",
+          "params": [
+            {
+              "name": "format",
+              "type": "text",
+              "options": [
+                "RF",
+                "IQ"
+              ],
+              "required": true
+            }
+          ],
+          "example": "awg.write('RADar:SFORmat RF')"
+        },
+        {
+          "name": "Compile Radar Waveform",
+          "scpi": "RADar:COMPile",
+          "description": "Compile radar waveform",
+          "example": "awg.write('RADar:COMPile')"
+        },
+        {
+          "name": "Enable Radar Frequency Hopping",
+          "scpi": "RADar:PULSe:HOPPing:TON {state}",
+          "description": "Enable/disable frequency hopping",
+          "params": [
+            {
+              "name": "state",
+              "type": "text",
+              "options": [
+                "ON",
+                "OFF"
+              ],
+              "required": true
+            }
+          ],
+          "example": "awg.write('RADar:PULSe:HOPPing:TON ON')"
+        }
+      ]
+    },
+    "OFDM_Modulation": {
+      "description": "OFDM signal modulation for wireless communications",
+      "color": "bg-indigo-100 text-indigo-700",
+      "commands": [
+        {
+          "name": "Activate OFDM Plugin",
+          "scpi": "WPLugin:ACTive \"OFDM\"",
+          "description": "Activate the OFDM Modulation plugin",
+          "example": "awg.write('WPLugin:ACTive \"OFDM\"')"
+        },
+        {
+          "name": "Reset OFDM Plugin",
+          "scpi": "OFDM:RESet",
+          "description": "Reset OFDM plugin to defaults",
+          "example": "awg.write('OFDM:RESet')"
+        },
+        {
+          "name": "Set OFDM Standard",
+          "scpi": "OFDM:STANdard {standard}",
+          "description": "Set OFDM communication standard",
+          "params": [
+            {
+              "name": "standard",
+              "type": "text",
+              "options": [
+                "802.11a",
+                "802.11g",
+                "802.11n",
+                "LTE"
+              ],
+              "required": true
+            }
+          ],
+          "example": "awg.write('OFDM:STANdard \"802.11n\"')"
+        },
+        {
+          "name": "Set OFDM Bandwidth",
+          "scpi": "OFDM:BANDwidth {bw}",
+          "description": "Set OFDM signal bandwidth",
+          "params": [
+            {
+              "name": "bw",
+              "type": "number",
+              "default": 20000000,
+              "required": true,
+              "unit": "Hz"
+            }
+          ],
+          "example": "awg.write('OFDM:BANDwidth 20E6')"
+        },
+        {
+          "name": "Set OFDM Carrier Frequency",
+          "scpi": "OFDM:CARRier:FREQuency {freq}",
+          "description": "Set carrier frequency",
+          "params": [
+            {
+              "name": "freq",
+              "type": "number",
+              "default": 2400000000,
+              "required": true,
+              "unit": "Hz"
+            }
+          ],
+          "example": "awg.write('OFDM:CARRier:FREQuency 2.4E9')"
+        },
+        {
+          "name": "Compile OFDM Waveform",
+          "scpi": "OFDM:COMPile",
+          "description": "Compile OFDM waveform",
+          "example": "awg.write('OFDM:COMPile')"
+        }
+      ]
+    },
+    "RF_Generic": {
+      "description": "Generic RF signal generation and modulation",
+      "color": "bg-yellow-100 text-yellow-700",
+      "commands": [
+        {
+          "name": "Activate RF Generic Plugin",
+          "scpi": "WPLugin:ACTive \"RFGeneric\"",
+          "description": "Activate the RF Generic Signals plugin",
+          "example": "awg.write('WPLugin:ACTive \"RFGeneric\"')"
+        },
+        {
+          "name": "Reset RF Generic Plugin",
+          "scpi": "RFG:RESet",
+          "description": "Reset RF Generic plugin to defaults",
+          "example": "awg.write('RFG:RESet')"
+        },
+        {
+          "name": "Set RFG Carrier Frequency",
+          "scpi": "RFG:CARRier:FREQuency {freq}",
+          "description": "Set RF carrier frequency",
+          "params": [
+            {
+              "name": "freq",
+              "type": "number",
+              "default": 1000000000,
+              "required": true,
+              "unit": "Hz"
+            }
+          ],
+          "example": "awg.write('RFG:CARRier:FREQuency 1E9')"
+        },
+        {
+          "name": "Set RFG Modulation Type",
+          "scpi": "RFG:MODulation:TYPE {type}",
+          "description": "Set modulation type",
+          "params": [
+            {
+              "name": "type",
+              "type": "text",
+              "options": [
+                "AM",
+                "FM",
+                "PM",
+                "QAM"
+              ],
+              "required": true
+            }
+          ],
+          "example": "awg.write('RFG:MODulation:TYPE QAM')"
+        },
+        {
+          "name": "Set RFG Signal Format",
+          "scpi": "RFG:SFORmat {format}",
+          "description": "Set signal format",
+          "params": [
+            {
+              "name": "format",
+              "type": "text",
+              "options": [
+                "RF",
+                "IQ"
+              ],
+              "required": true
+            }
+          ],
+          "example": "awg.write('RFG:SFORmat IQ')"
+        },
+        {
+          "name": "Compile RFG Waveform",
+          "scpi": "RFG:COMPile",
+          "description": "Compile RF generic waveform",
+          "example": "awg.write('RFG:COMPile')"
+        }
+      ]
+    },
+    "Optical_Signals": {
+      "description": "Optical signal generation for fiber optic testing",
+      "color": "bg-purple-100 text-purple-700",
+      "commands": [
+        {
+          "name": "Activate Optical Signals Plugin",
+          "scpi": "WPLugin:ACTive \"OPTical\"",
+          "description": "Activate the Optical Signals plugin",
+          "example": "awg.write('WPLugin:ACTive \"OPTical\"')"
+        },
+        {
+          "name": "Reset Optical Plugin",
+          "scpi": "OPTical:RESet",
+          "description": "Reset Optical Signals plugin to defaults",
+          "example": "awg.write('OPTical:RESet')"
+        },
+        {
+          "name": "Set Optical Data Rate",
+          "scpi": "OPTical:DRATe {rate}",
+          "description": "Set optical data rate",
+          "params": [
+            {
+              "name": "rate",
+              "type": "number",
+              "default": 10000000000,
+              "required": true,
+              "unit": "bps"
+            }
+          ],
+          "example": "awg.write('OPTical:DRATe 100E9')"
+        },
+        {
+          "name": "Set Optical Modulation Format",
+          "scpi": "OPTical:MODulation:FORMat {format}",
+          "description": "Set modulation format",
+          "params": [
+            {
+              "name": "format",
+              "type": "text",
+              "options": [
+                "NRZ",
+                "RZ",
+                "DPSK",
+                "QPSK"
+              ],
+              "required": true
+            }
+          ],
+          "example": "awg.write('OPTical:MODulation:FORMat QPSK')"
+        },
+        {
+          "name": "Set Optical Bit Pattern",
+          "scpi": "OPTical:BPATtern {pattern}",
+          "description": "Set bit pattern type",
+          "params": [
+            {
+              "name": "pattern",
+              "type": "text",
+              "options": [
+                "PRBS",
+                "CLOCK",
+                "USER"
+              ],
+              "required": true
+            }
+          ],
+          "example": "awg.write('OPTical:BPATtern PRBS')"
+        },
+        {
+          "name": "Compile Optical Waveform",
+          "scpi": "OPTical:COMPile",
+          "description": "Compile optical waveform",
+          "example": "awg.write('OPTical:COMPile')"
+        }
+      ]
+    },
+    "Multitone": {
+      "description": "Multi-tone signal generation for interference testing",
+      "color": "bg-pink-100 text-pink-700",
+      "commands": [
+        {
+          "name": "Activate Multitone Plugin",
+          "scpi": "WPLugin:ACTive \"MTONe\"",
+          "description": "Activate the Multitone plugin",
+          "example": "awg.write('WPLugin:ACTive \"MTONe\"')"
+        },
+        {
+          "name": "Reset Multitone Plugin",
+          "scpi": "MTONe:RESet",
+          "description": "Reset Multitone plugin to defaults",
+          "example": "awg.write('MTONe:RESet')"
+        },
+        {
+          "name": "Set Multitone Tone Count",
+          "scpi": "MTONe:TONes:COUNt {count}",
+          "description": "Set number of tones",
+          "params": [
+            {
+              "name": "count",
+              "type": "number",
+              "default": 2,
+              "required": true
+            }
+          ],
+          "example": "awg.write('MTONe:TONes:COUNt 5')"
+        },
+        {
+          "name": "Set Multitone Base Frequency",
+          "scpi": "MTONe:BFRequency {freq}",
+          "description": "Set base frequency for tones",
+          "params": [
+            {
+              "name": "freq",
+              "type": "number",
+              "default": 1000000,
+              "required": true,
+              "unit": "Hz"
+            }
+          ],
+          "example": "awg.write('MTONe:BFRequency 1E6')"
+        },
+        {
+          "name": "Set Multitone Spacing",
+          "scpi": "MTONe:SPACing {spacing}",
+          "description": "Set frequency spacing between tones",
+          "params": [
+            {
+              "name": "spacing",
+              "type": "number",
+              "default": 100000,
+              "required": true,
+              "unit": "Hz"
+            }
+          ],
+          "example": "awg.write('MTONe:SPACing 100E3')"
+        },
+        {
+          "name": "Compile Multitone Waveform",
+          "scpi": "MTONe:COMPile",
+          "description": "Compile multitone waveform",
+          "example": "awg.write('MTONe:COMPile')"
+        }
+      ]
+    },
+    "Generic_Precompensation": {
+      "description": "Generic pre-compensation and equalization",
+      "color": "bg-teal-100 text-teal-700",
+      "commands": [
+        {
+          "name": "Activate Generic Precompensation Plugin",
+          "scpi": "WPLugin:ACTive \"GPREcomp\"",
+          "description": "Activate the Generic Precompensation plugin",
+          "example": "awg.write('WPLugin:ACTive \"GPREcomp\"')"
+        },
+        {
+          "name": "Reset Generic Precompensation Plugin",
+          "scpi": "GPREcomp:RESet",
+          "description": "Reset plugin to defaults",
+          "example": "awg.write('GPREcomp:RESet')"
+        },
+        {
+          "name": "Enable Precompensation",
+          "scpi": "GPREcomp:ENABle {state}",
+          "description": "Enable/disable precompensation",
+          "params": [
+            {
+              "name": "state",
+              "type": "text",
+              "options": [
+                "ON",
+                "OFF"
+              ],
+              "required": true
+            }
+          ],
+          "example": "awg.write('GPREcomp:ENABle ON')"
+        },
+        {
+          "name": "Set Precompensation Filter File",
+          "scpi": "GPREcomp:FILTer:FILE {file}",
+          "description": "Set filter coefficient file",
+          "params": [
+            {
+              "name": "file",
+              "type": "text",
+              "default": "C:\\\\filter.txt",
+              "required": true
+            }
+          ],
+          "example": "awg.write('GPREcomp:FILTer:FILE \"C:\\\\filter.txt\"')"
+        },
+        {
+          "name": "Set Precompensation Tap Count",
+          "scpi": "GPREcomp:TAPs {count}",
+          "description": "Set number of filter taps",
+          "params": [
+            {
+              "name": "count",
+              "type": "number",
+              "default": 16,
+              "required": true
+            }
+          ],
+          "example": "awg.write('GPREcomp:TAPs 32')"
+        },
+        {
+          "name": "Compile Precompensated Waveform",
+          "scpi": "GPREcomp:COMPile",
+          "description": "Compile waveform with precompensation applied",
+          "example": "awg.write('GPREcomp:COMPile')"
+        }
+      ]
+    }
+  }
+}

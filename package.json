@@ -1,0 +1,33 @@
+{
+  "name": "tekautomate-mcp-server",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "build:rag": "tsx scripts/buildRagIndex.ts",
+    "prestart": "npm run build:rag",
+    "start": "tsx src/index.ts",
+    "predev": "npm run build:rag",
+    "start:stdio": "tsx src/stdio.ts",
+    "dev": "tsx src/index.ts",
+    "eval:router": "tsx tests/router_smoke.ts",
+    "eval:comprehensive": "tsx tests/comprehensive_smoke.ts",
+    "eval:levels": "tsx tests/level_benchmark.ts",
+    "eval:quality": "tsx tests/quality_comparison.ts",
+    "eval:final-compare": "tsx tests/final_case_compare.ts",
+    "verify:command-groups": "tsx tests/verify_command_groups.ts"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.80.0",
+    "@modelcontextprotocol/sdk": "^1.28.0",
+    "dotenv": "^17.3.1",
+    "jimp": "^1.6.0",
+    "sharp": "^0.34.5",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.20.5"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.1"
+  }
+}

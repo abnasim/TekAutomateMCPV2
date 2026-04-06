@@ -1,0 +1,260 @@
+[
+  {
+    "id": "workflow-spectrumview-peak-marker-query",
+    "name": "SpectrumView Peak Marker Query",
+    "description": "Enable SpectrumView on CH1, configure center frequency and span, enable the peak marker search, query marker amplitude and frequency, and compute an estimated sine-wave peak-to-peak voltage from the measured dBm value using a 50 ohm assumption.",
+    "triggers": [
+      "query spectrumview peak marker",
+      "enable spectrumview and read peak frequency",
+      "get marker amplitude and frequency from spectrumview",
+      "measure peak marker on scope spectrumview"
+    ],
+    "tags": [
+      "scope",
+      "spectrumview",
+      "marker",
+      "peak",
+      "frequency",
+      "amplitude",
+      "dbm",
+      "voltage",
+      "pyvisa",
+      "ch1"
+    ],
+    "author": "Tektronix example script",
+    "tested": false,
+    "category": "template",
+    "handlerRef": "flow_template",
+    "handlerConfig": {
+      "summary": "Enable SpectrumView, configure peak marker search, query marker results, and estimate peak-to-peak voltage.",
+      "backend": "pyvisa",
+      "deviceType": "SCOPE"
+    },
+    "schema": {
+      "type": "object",
+      "properties": {}
+    },
+    "match": {
+      "keywords": [
+        "spectrumview peak marker",
+        "marker amplitude frequency query",
+        "spectrumview marker measurement"
+      ],
+      "operations": [
+        "enable spectrum analyzer view",
+        "configure marker search",
+        "query marker values",
+        "convert dBm to voltage"
+      ],
+      "backends": [
+        "pyvisa"
+      ],
+      "deviceTypes": [
+        "SCOPE"
+      ],
+      "priority": 4,
+      "minScore": 0.75
+    },
+    "steps": [
+      {
+        "id": "1",
+        "type": "connect",
+        "label": "Connect to scope",
+        "params": {
+          "printIdn": true
+        }
+      },
+      {
+        "id": "2",
+        "type": "write",
+        "label": "Enable SpectrumView on CH1",
+        "params": {
+          "command": "CH1:SV:STATE ON"
+        }
+      },
+      {
+        "id": "3",
+        "type": "query",
+        "label": "Wait for SpectrumView enable",
+        "params": {
+          "command": "*OPC?",
+          "saveAs": "opc_sv_enable"
+        }
+      },
+      {
+        "id": "4",
+        "type": "write",
+        "label": "Set center frequency",
+        "params": {
+          "command": "CH1:SV:CENTERFrequency 10.0E+06"
+        }
+      },
+      {
+        "id": "5",
+        "type": "write",
+        "label": "Set span",
+        "params": {
+          "command": "SV:SPAN 5.0E+6"
+        }
+      },
+      {
+        "id": "6",
+        "type": "query",
+        "label": "Wait for frequency settings",
+        "params": {
+          "command": "*OPC?",
+          "saveAs": "opc_freq_setup"
+        }
+      },
+      {
+        "id": "7",
+        "type": "write",
+        "label": "Enable peak marker state",
+        "params": {
+          "command": "SV:MARKER:PEAK:STATE 1"
+        }
+      },
+      {
+        "id": "8",
+        "type": "write",
+        "label": "Set peak threshold",
+        "params": {
+          "command": "SV:MARKER:PEAK:THReshold -40"
+        }
+      },
+      {
+        "id": "9",
+        "type": "write",
+        "label": "Set peak excursion",
+        "params": {
+          "command": "SV:MARKER:PEAK:EXCURsion 12"
+        }
+      },
+      {
+        "id": "10",
+        "type": "query",
+        "label": "Query peak amplitude",
+        "params": {
+          "command": "SV:MARKER:PEAKS:AMPLITUDE?",
+          "saveAs": "marker_amplitude_raw"
+        }
+      },
+      {
+        "id": "11",
+        "type": "query",
+        "label": "Query peak frequency",
+        "params": {
+          "command": "SV:MARKER:PEAKS:FREQUENCY?",
+          "saveAs": "marker_frequency_raw"
+        }
+      },
+      {
+        "id": "12",
+        "type": "python",
+        "label": "Normalize values and estimate peak-to-peak voltage",
+        "params": {
+          "code": "from math import sqrt\nmkr_amp = float(str(marker_amplitude_raw).strip().strip('\"'))\nmkr_freq = float(str(marker_frequency_raw).strip().strip('\"'))\nimpedance = 50.0\npower = 0.001 * 10.0**(mkr_amp / 10.0)\nv_rms = sqrt(power * impedance)\nv_pk_pk = 2.0 * sqrt(2.0) * v_rms\nprint(f'Peak amplitude: {mkr_amp:.2f} dBm')\nprint(f'Peak frequency: {mkr_freq:.2f} Hz')\nprint(f'Estimated sine-wave Vpp at {impedance:.2f} ohm: {v_pk_pk:.2f} V')"
+        }
+      },
+      {
+        "id": "13",
+        "type": "disconnect",
+        "label": "Disconnect",
+        "params": {}
+      }
+    ]
+  },
+  {
+    "id": "scope-spectrumview-marker-guidance-legacy-disabled",
+    "name": "SpectrumView Peak Marker Guidance",
+    "description": "Guidance for enabling SpectrumView on CH1, configuring peak marker search, reading peak amplitude and frequency, and interpreting the result as an estimated sine-wave voltage based on a 50 ohm reference impedance.",
+    "triggers": [
+      "how to use spectrumview peak markers",
+      "spectrumview marker amplitude and frequency guidance",
+      "convert spectrumview dBm to voltage",
+      "configure peak search in spectrumview"
+    ],
+    "tags": [
+      "scope",
+      "spectrumview",
+      "marker",
+      "peak-search",
+      "dbm",
+      "frequency",
+      "amplitude",
+      "impedance",
+      "guidance",
+      "overlay"
+    ],
+    "author": "Tektronix example script",
+    "tested": false,
+    "category": "instrument",
+    "handlerRef": "static_result",
+    "handlerConfig": {
+      "text": "Use SpectrumView on CH1, set center frequency and span, enable peak marker search, then query the detected marker amplitude and frequency. Treat any dBm-to-voltage conversion as impedance-dependent and verify the channel termination before trusting the computed voltage.",
+      "data": {
+        "summary": "This provider captures a compact SpectrumView workflow: turn SpectrumView on for CH1, position the analysis window with center frequency and span, enable a peak marker search, and query the detected marker amplitude and frequency. The source also shows how to estimate sine-wave peak-to-peak voltage from dBm using a 50 ohm assumption.",
+        "commandsOfInterest": [
+          "CH1:SV:STATE ON",
+          "CH1:SV:CENTERFrequency 10.0E+06",
+          "SV:SPAN 5.0E+6",
+          "SV:MARKER:PEAK:STATE 1",
+          "SV:MARKER:PEAK:THReshold -40",
+          "SV:MARKER:PEAK:EXCURsion 12",
+          "SV:MARKER:PEAKS:AMPLITUDE?",
+          "SV:MARKER:PEAKS:FREQUENCY?"
+        ],
+        "sequenceHighlights": [
+          "Enable SpectrumView on CH1 and wait for operation complete before applying frequency settings.",
+          "Set center frequency and span before enabling the peak marker search.",
+          "Use threshold and excursion to constrain which spectral peak is selected.",
+          "Query both amplitude and frequency after the marker search is configured."
+        ],
+        "keyPoints": [
+          "The queried marker values may be returned as quoted strings and need normalization before numeric conversion.",
+          "The script interprets the amplitude as dBm and converts it to watts, RMS voltage, and then estimated peak-to-peak voltage for a sine wave.",
+          "The voltage conversion assumes a 50 ohm reference impedance."
+        ],
+        "pitfalls": [
+          "Peak threshold and excursion are signal-dependent and may need adjustment for a different spectrum or noise floor.",
+          "A dBm-to-voltage conversion is only valid if the termination and reference impedance match the assumption used in the math.",
+          "The computed peak-to-peak voltage is an estimate for a sine-wave interpretation, not a universal conversion for every signal shape."
+        ],
+        "recommendedApproach": [
+          "Verify the channel termination before using the converted voltage result.",
+          "Tune peak threshold and excursion based on the actual signal and noise environment.",
+          "Use the queried frequency and amplitude as the authoritative instrument outputs and treat derived voltage as post-processing."
+        ],
+        "verificationNeeded": [
+          "Confirm exact SpectrumView command support and marker behavior on the target scope family.",
+          "Confirm whether the instrument returns quoted numeric strings on the target firmware.",
+          "Confirm the active input impedance before relying on the voltage conversion."
+        ],
+        "references": [
+          "riddick_SV_markers_example.py"
+        ]
+      }
+    },
+    "match": {
+      "keywords": [
+        "spectrumview marker guidance",
+        "peak marker amplitude frequency",
+        "dBm to voltage from spectrumview"
+      ],
+      "operations": [
+        "configure spectrumview",
+        "set peak marker search",
+        "query peak results",
+        "interpret spectral power"
+      ],
+      "backends": [
+        "pyvisa"
+      ],
+      "deviceTypes": [
+        "SCOPE"
+      ],
+      "priority": 4,
+      "minScore": 0.7
+    }
+  }
+]

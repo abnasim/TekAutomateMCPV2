@@ -1,0 +1,22 @@
+{
+  "version": "1.0.0",
+  "generatedAt": "2026-04-04T18:34:56.582Z",
+  "corpora": {
+    "scpi": "scpi_index.json",
+    "tmdevices": "tmdevices_index.json",
+    "app_logic": "app_logic_index.json",
+    "scope_logic": "scope_logic_index.json",
+    "templates": "templates_index.json",
+    "errors": "errors_index.json",
+    "pyvisa_tekhsi": "pyvisa_tekhsi_index.json"
+  },
+  "counts": {
+    "scpi": 31229,
+    "tmdevices": 4408,
+    "app_logic": 152,
+    "scope_logic": 37,
+    "templates": 42,
+    "errors": 76,
+    "pyvisa_tekhsi": 38
+  }
+}

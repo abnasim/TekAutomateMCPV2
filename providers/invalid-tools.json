@@ -1,0 +1,14 @@
+[
+  {
+    "id": "bad_tool_id",
+    "name": "Broken Provider Entry",
+    "description": "Too short",
+    "triggers": ["broken provider"],
+    "tags": ["invalid"],
+    "category": "composite",
+    "handlerRef": "static_result",
+    "handlerConfig": {
+      "text": "This tool should be rejected."
+    }
+  }
+]

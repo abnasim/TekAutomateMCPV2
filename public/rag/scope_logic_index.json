@@ -1,0 +1,372 @@
+[
+  {
+    "id": "anti_clipping_md_1_p1",
+    "corpus": "scope_logic",
+    "title": "Anti-Clipping Procedure",
+    "body": "Use this procedure when clipping is detected, a measurement or cursor query returns `9.91E+37`, or the waveform is clearly over-ranging.",
+    "tags": [
+      "anti_clipping_md"
+    ],
+    "source": "rag/corpus/scope_logic/anti-clipping.md"
+  },
+  {
+    "id": "anti_clipping_md_2_p1",
+    "corpus": "scope_logic",
+    "title": "Trigger Signals",
+    "body": "- Channel clipping query reports `1`\n- Result values come back as `9.91E+37`\n- DVM or measurement results mention clipping\n- Trace is flattened against the top or bottom of the display",
+    "tags": [
+      "anti_clipping_md"
+    ],
+    "source": "rag/corpus/scope_logic/anti-clipping.md"
+  },
+  {
+    "id": "anti_clipping_md_4_p1",
+    "corpus": "scope_logic",
+    "title": "Notes",
+    "body": "- `9.91E+37` should be treated as an invalid-result sentinel, not a usable numeric value.\n- For automated recovery, prefer fixing vertical scale and position before changing trigger settings.\n- If clipping remains after reasonable scaling changes, suspect the probe attenuation or hardware range.",
+    "tags": [
+      "anti_clipping_md"
+    ],
+    "source": "rag/corpus/scope_logic/anti-clipping.md"
+  },
+  {
+    "id": "auto_setup_scope_md_1_p1",
+    "corpus": "scope_logic",
+    "title": "Auto Setup Scope Procedure",
+    "body": "Use this procedure when the user asks for a quick known-good display setup or when the current view is too mis-scaled to diagnose manually.",
+    "tags": [
+      "auto_setup_scope_md"
+    ],
+    "source": "rag/corpus/scope_logic/auto-setup-scope.md"
+  },
+  {
+    "id": "auto_setup_scope_md_2_p1",
+    "corpus": "scope_logic",
+    "title": "Procedure",
+    "body": "1. Enable only the channels that are relevant to the signal under test.\n2. Set reasonable probe attenuation and termination first.\n3. Run Autoset or front-panel autoset once.\n4. Re-check horizontal scale, trigger source, trigger slope, and trigger level after autoset completes.\n5. If autoset picked the wrong trigger source, correct trigger source manually and leave the acquired scale settings in place.\n6. If the display is still unstable, adjust vertical scale and trigger level manually instead of looping autoset repeatedly.",
+    "tags": [
+      "auto_setup_scope_md"
+    ],
+    "source": "rag/corpus/scope_logic/auto-setup-scope.md"
+  },
+  {
+    "id": "auto_setup_scope_md_3_p1",
+    "corpus": "scope_logic",
+    "title": "Notes",
+    "body": "- Autoset is a starting point, not a final configuration.\n- Repeated autoset can undo careful setup work later in a workflow.\n- In generated flows, place autoset early, before fine trigger and measurement configuration.",
+    "tags": [
+      "auto_setup_scope_md"
+    ],
+    "source": "rag/corpus/scope_logic/auto-setup-scope.md"
+  },
+  {
+    "id": "autoset_first_md_1_p1",
+    "corpus": "scope_logic",
+    "title": "Autoset First Procedure",
+    "body": "Use this procedure when the user has an unknown signal, the display is badly scaled, or the fastest safe move is to get the scope close before fine tuning.",
+    "tags": [
+      "autoset_first_md"
+    ],
+    "source": "rag/corpus/scope_logic/autoset-first.md"
+  },
+  {
+    "id": "autoset_first_md_2_p1",
+    "corpus": "scope_logic",
+    "title": "Trigger Signals",
+    "body": "- User says \"just set it up\"\n- Unknown signal on a channel\n- Display is unstable or clearly mis-scaled\n- User asks for quick bring-up or basic optimization",
+    "tags": [
+      "autoset_first_md"
+    ],
+    "source": "rag/corpus/scope_logic/autoset-first.md"
+  },
+  {
+    "id": "autoset_first_md_3_p1",
+    "corpus": "scope_logic",
+    "title": "Procedure",
+    "body": "1. Confirm the active probe attenuation and termination are reasonable for the channel.\n2. Enable only the channels that matter for the immediate setup.\n3. Run `AUTOSet EXECute` once.\n4. Re-check trigger source, trigger slope, and trigger level after autoset completes.\n5. If autoset chose the wrong source, keep the scaling it found and correct only the trigger and measurement setup manually.",
+    "tags": [
+      "autoset_first_md"
+    ],
+    "source": "rag/corpus/scope_logic/autoset-first.md"
+  },
+  {
+    "id": "autoset_first_md_4_p1",
+    "corpus": "scope_logic",
+    "title": "Notes",
+    "body": "- Autoset is a starting point, not a final scope configuration.\n- Do not loop autoset repeatedly after manual adjustments have started.\n- Prefer autoset early in a flow, before decode, measurements, or screenshots.",
+    "tags": [
+      "autoset_first_md"
+    ],
+    "source": "rag/corpus/scope_logic/autoset-first.md"
+  },
+  {
+    "id": "decode_bringup_md_1_p1",
+    "corpus": "scope_logic",
+    "title": "Decode Bring-Up Procedure",
+    "body": "This is the primary playbook for decode setup, bus decode bring-up, or when protocol decode is requested before the waveform is stable.\n\nUse this procedure when the user wants protocol decode and the AI needs a safe order of operations before configuring bus-specific details.",
+    "tags": [
+      "decode_bringup_md"
+    ],
+    "source": "rag/corpus/scope_logic/decode-bringup.md"
+  },
+  {
+    "id": "decode_bringup_md_2_p1",
+    "corpus": "scope_logic",
+    "title": "Trigger Signals",
+    "body": "- User asks to set up I2C, SPI, UART, CAN, or similar decode\n- User asks for decode setup or bus setup\n- Bus table is empty or decode does not lock\n- Clock and data sources are known but results are unreadable",
+    "tags": [
+      "decode_bringup_md"
+    ],
+    "source": "rag/corpus/scope_logic/decode-bringup.md"
+  },
+  {
+    "id": "decode_bringup_md_3_p1",
+    "corpus": "scope_logic",
+    "title": "Procedure",
+    "body": "1. Get the analog waveforms stable first: correct scaling, visible edges, and stable triggering.\n2. Confirm the intended bus sources channel by channel before enabling decode.\n3. Configure the bus sources and polarity/threshold settings required for that protocol.\n4. Turn on decode only after the underlying waveforms are readable.\n5. If decode looks wrong, check thresholds, polarity, and source mapping before assuming the bus type is wrong.",
+    "tags": [
+      "decode_bringup_md"
+    ],
+    "source": "rag/corpus/scope_logic/decode-bringup.md"
+  },
+  {
+    "id": "invalid_measurement_results_md_1_p1",
+    "corpus": "scope_logic",
+    "title": "Invalid Measurement Results Procedure",
+    "body": "Use this procedure when the scope returns invalid numeric sentinels such as `9.91E+37`, clipping flags, or obviously impossible values.",
+    "tags": [
+      "invalid_measurement_results_md"
+    ],
+    "source": "rag/corpus/scope_logic/invalid-measurement-results.md"
+  },
+  {
+    "id": "invalid_measurement_results_md_2_p1",
+    "corpus": "scope_logic",
+    "title": "Trigger Signals",
+    "body": "- `9.91E+37`\n- Measurement result is huge or impossible\n- Clipping reported by channel or measurement queries\n- Measurement exists but does not produce a usable value",
+    "tags": [
+      "invalid_measurement_results_md"
+    ],
+    "source": "rag/corpus/scope_logic/invalid-measurement-results.md"
+  },
+  {
+    "id": "invalid_measurement_results_md_4_p1",
+    "corpus": "scope_logic",
+    "title": "Notes",
+    "body": "- `9.91E+37` is usually a sentinel, not a real numeric measurement.\n- Invalid results often mean setup is wrong, not that the measurement command itself is wrong.\n- Prefer fixing signal visibility before deleting and recreating measurements.",
+    "tags": [
+      "invalid_measurement_results_md"
+    ],
+    "source": "rag/corpus/scope_logic/invalid-measurement-results.md"
+  },
+  {
+    "id": "opc_wai_busy_synchronization_md_1_p1",
+    "corpus": "scope_logic",
+    "title": "Synchronization with *OPC, *OPC?, *WAI, and BUSY?",
+    "body": "Use this procedure when the scope needs time to finish an operation before the next command is safe, especially for single-sequence acquisition, autoset, save/recall, waveform recall, trigger level set, calibration, or measurement result queries that depend on acquisition completion.",
+    "tags": [
+      "opc_wai_busy_synchronization_md"
+    ],
+    "source": "rag/corpus/scope_logic/opc-wai-busy-synchronization.md"
+  },
+  {
+    "id": "opc_wai_busy_synchronization_md_2_p1",
+    "corpus": "scope_logic",
+    "title": "Trigger Signals",
+    "body": "- `*OPC`\n- `*OPC?`\n- `*WAI`\n- `BUSY?`\n- `single sequence acquisition`\n- `acquire complete`\n- `wait until operation complete`\n- `timeout while waiting`\n- `no trigger`\n- `operation pending`\n- `measurement query returned too early`\n- `synchronization`\n- `ACQUIRE:STOPAFTER SEQUENCE`\n- `MEASUREMENT after acquisition`",
+    "tags": [
+      "opc_wai_busy_synchronization_md"
+    ],
+    "source": "rag/corpus/scope_logic/opc-wai-busy-synchronization.md"
+  },
+  {
+    "id": "opc_wai_busy_synchronization_md_3_p1",
+    "corpus": "scope_logic",
+    "title": "Procedure",
+    "body": "1. Identify whether the operation is one of the long-running or completion-generating operations.\n2. Prefer `*OPC?` when you want the simplest blocking synchronization and can afford to wait on the output queue.\n3. Prefer `*WAI` when you want the instrument to defer later command execution until pending OPC-generating work is complete, but you do not need a query response.\n4. Prefer `BUSY?` only when polling is acceptable and you intentionally want an explicit busy loop.\n5. Prefer bare `*OPC` with status handling when you are using serial poll or SRQ-based synchronization.\n6. Set the controller timeout long enough for the slowest expected operation before using `*OPC?` or a busy loop.\n7. If the operation may never complete, such as single-sequence acquisition with no trigger, do not wait forever. Handle timeout by checking `*ESR?` and the event queue (`EVMsg?`, `ALLEv?`, or equivalent status/event tools for the scope).\n8. After synchronization confirms completion, issue the measurement or follow-up command.",
+    "tags": [
+      "opc_wai_busy_synchronization_md"
+    ],
+    "source": "rag/corpus/scope_logic/opc-wai-busy-synchronization.md"
+  },
+  {
+    "id": "opc_wai_busy_synchronization_md_5_p1",
+    "corpus": "scope_logic",
+    "title": "Simplest Blocking Wait",
+    "body": "Use `*OPC?` when you want a single blocking wait and then continue:\n\n```text\nACQUIRE:STATE OFF\nDISPLAY:WAVEVIEW1:CH1:STATE 1\nHORIZONTAL:RECORDLENGTH 1000\nACQUIRE:MODE SAMPLE\nACQUIRE:STOPAFTER SEQUENCE\nMEASUREMENT:MEAS1:TYPE AMPLITUDE\nMEASUREMENT:MEAS1:SOURCE CH1\nACQUIRE:STATE ON\n*OPC?\nMEASUREMENT:MEAS1:RESUlts:CURRentacq:MEAN?\n```",
+    "tags": [
+      "opc_wai_busy_synchronization_md"
+    ],
+    "source": "rag/corpus/scope_logic/opc-wai-busy-synchronization.md"
+  },
+  {
+    "id": "opc_wai_busy_synchronization_md_6_p1",
+    "corpus": "scope_logic",
+    "title": "Instrument-Gated Sequence",
+    "body": "Use `*WAI` when later commands should not execute until pending work is complete:\n\n```text\nACQUIRE:STATE ON\n*WAI\nMEASUREMENT:MEAS1:RESUlts:CURRentacq:MEAN?\n```",
+    "tags": [
+      "opc_wai_busy_synchronization_md"
+    ],
+    "source": "rag/corpus/scope_logic/opc-wai-busy-synchronization.md"
+  },
+  {
+    "id": "opc_wai_busy_synchronization_md_7_p1",
+    "corpus": "scope_logic",
+    "title": "Polling Loop",
+    "body": "Use `BUSY?` only when explicit polling is acceptable:\n\n```text\nACQUIRE:STATE ON\nWhile BUSY? keep looping\nMEASUREMENT:IMMED:VALUE?\n```",
+    "tags": [
+      "opc_wai_busy_synchronization_md"
+    ],
+    "source": "rag/corpus/scope_logic/opc-wai-busy-synchronization.md"
+  },
+  {
+    "id": "opc_wai_busy_synchronization_md_8_p1",
+    "corpus": "scope_logic",
+    "title": "Status/SRQ Synchronization",
+    "body": "Use `*OPC` with status registers when polling or service request workflow is desired:\n\n```text\nDESE 1\n*ESE 1\n*SRE 32\nACQUIRE:STATE ON\n*OPC\n```",
+    "tags": [
+      "opc_wai_busy_synchronization_md"
+    ],
+    "source": "rag/corpus/scope_logic/opc-wai-busy-synchronization.md"
+  },
+  {
+    "id": "opc_wai_busy_synchronization_md_9_p1",
+    "corpus": "scope_logic",
+    "title": "Notes",
+    "body": "- `*OPC` sets bit 0 of the Standard Event Status Register when all pending OPC-generating operations are complete. Read it through `*ESR?` or status handling.\n- `*OPC?` returns `1` only after all pending OPC-generating operations complete, or a device clear is received.\n- `*WAI` blocks instrument-side processing of later commands until pending OPC-generating operations complete.\n- `BUSY?` returns `1` while operations are still pending and `0` when complete.\n- Not every command supports OPC. Important examples that can generate OPC include `ACQuire:STATE ON` in single-sequence mode, `AUTOSet EXECute`, `*RST`, `SAVe:IMAGe`, `SAVe:SETUp`, `SAVe:WAVEform`, `RECAll:SETUp`, `RECAll:WAVEform`, internal calibration commands, probe auto-zero/degauss, `TRIGger:A SETLevel`, and some measurement result operations in single sequence or waveform recall contexts.\n- Single-sequence acquisition may never complete if no trigger event occurs. Timeout handling is mandatory.\n- If the AI is unsure which synchronization primitive to choose, default to `*OPC?` for simple blocking waits and use a generous timeout.",
+    "tags": [
+      "opc_wai_busy_synchronization_md"
+    ],
+    "source": "rag/corpus/scope_logic/opc-wai-busy-synchronization.md"
+  },
+  {
+    "id": "probe_compensation_md_1_p1",
+    "corpus": "scope_logic",
+    "title": "Probe Compensation Check",
+    "body": "Use this when probe compensation, probe integrity, or passive-probe setup is suspected.",
+    "tags": [
+      "probe_compensation_md"
+    ],
+    "source": "rag/corpus/scope_logic/probe-compensation.md"
+  },
+  {
+    "id": "probe_compensation_md_2_p1",
+    "corpus": "scope_logic",
+    "title": "Procedure",
+    "body": "1. Confirm the selected probe attenuation matches the physical probe switch.\n2. Run the probe compensation procedure for the target channel if the scope and probe support it.\n3. Inspect the compensation waveform and adjust the probe if the square wave is under- or over-compensated.\n4. Re-check vertical scale and offset after compensation.\n5. Repeat any critical edge or amplitude measurements after compensation completes.",
+    "tags": [
+      "probe_compensation_md"
+    ],
+    "source": "rag/corpus/scope_logic/probe-compensation.md"
+  },
+  {
+    "id": "probe_compensation_md_3_p1",
+    "corpus": "scope_logic",
+    "title": "Notes",
+    "body": "- Compensation issues can look like ringing, overshoot, or bandwidth problems.\n- Fix compensation before spending time tuning trigger or measurement settings.",
+    "tags": [
+      "probe_compensation_md"
+    ],
+    "source": "rag/corpus/scope_logic/probe-compensation.md"
+  },
+  {
+    "id": "procedure_template_md_1_p1",
+    "corpus": "scope_logic",
+    "title": "Procedure Template",
+    "body": "Use this file as the starting point for new `scope_logic` entries.",
+    "tags": [
+      "procedure_template_md"
+    ],
+    "source": "rag/corpus/scope_logic/procedure-template.md"
+  },
+  {
+    "id": "procedure_template_md_3_p1",
+    "corpus": "scope_logic",
+    "title": "Procedure",
+    "body": "1. First safe step to try.\n2. Second diagnostic or configuration step.\n3. Third corrective step.\n4. Verification step.\n5. Escalation or fallback step if needed.",
+    "tags": [
+      "procedure_template_md"
+    ],
+    "source": "rag/corpus/scope_logic/procedure-template.md"
+  },
+  {
+    "id": "procedure_template_md_4_p1",
+    "corpus": "scope_logic",
+    "title": "Notes",
+    "body": "- Constraints or caveats.\n- Things the AI should avoid doing automatically.\n- Helpful reminders about when to stop and ask for user input.",
+    "tags": [
+      "procedure_template_md"
+    ],
+    "source": "rag/corpus/scope_logic/procedure-template.md"
+  },
+  {
+    "id": "signal_integrity_md_1_p1",
+    "corpus": "scope_logic",
+    "title": "Signal Integrity Triage",
+    "body": "Use this when the user mentions ringing, overshoot, undershoot, unstable edges, or poor signal quality.",
+    "tags": [
+      "signal_integrity_md"
+    ],
+    "source": "rag/corpus/scope_logic/signal-integrity.md"
+  },
+  {
+    "id": "signal_integrity_md_2_p1",
+    "corpus": "scope_logic",
+    "title": "Procedure",
+    "body": "1. Verify the channel is not clipping before interpreting overshoot or ringing.\n2. Confirm probe attenuation, grounding, and compensation are correct.\n3. Reduce loop area in the probe ground connection if a passive probe is used.\n4. Check whether bandwidth limiting should be enabled for the measurement goal.\n5. Use a shorter time scale to inspect the edge directly.\n6. Add overshoot, rise time, fall time, or pk-to-pk measurements only after the displayed edge is trustworthy.",
+    "tags": [
+      "signal_integrity_md"
+    ],
+    "source": "rag/corpus/scope_logic/signal-integrity.md"
+  },
+  {
+    "id": "signal_integrity_md_3_p1",
+    "corpus": "scope_logic",
+    "title": "Notes",
+    "body": "- Apparent overshoot on a clipped waveform is not trustworthy.\n- Bad probe setup often looks like a signal problem.\n- For quantitative edge analysis, stabilize the display first and measure second.",
+    "tags": [
+      "signal_integrity_md"
+    ],
+    "source": "rag/corpus/scope_logic/signal-integrity.md"
+  },
+  {
+    "id": "trigger_stabilization_md_1_p1",
+    "corpus": "scope_logic",
+    "title": "Trigger Stabilization Procedure",
+    "body": "This is the primary playbook for a rolling waveform, unstable trigger, or jittery display caused by poor trigger setup.\n\nUse this procedure when the waveform is rolling, acquisitions are unstable, or measurements vary because the trigger is not well defined.",
+    "tags": [
+      "trigger_stabilization_md"
+    ],
+    "source": "rag/corpus/scope_logic/trigger-stabilization.md"
+  },
+  {
+    "id": "trigger_stabilization_md_2_p1",
+    "corpus": "scope_logic",
+    "title": "Trigger Signals",
+    "body": "- User says the waveform is not stable\n- User says the waveform is rolling\n- Display rolls or jitters horizontally\n- Measurements jump around between acquisitions\n- Trigger source or level looks wrong after autoset",
+    "tags": [
+      "trigger_stabilization_md"
+    ],
+    "source": "rag/corpus/scope_logic/trigger-stabilization.md"
+  },
+  {
+    "id": "trigger_stabilization_md_3_p1",
+    "corpus": "scope_logic",
+    "title": "Procedure",
+    "body": "1. Set the trigger source to the channel carrying the signal of interest.\n2. Use edge trigger first unless the user clearly needs a more advanced trigger type.\n3. Choose the expected slope and place the trigger level near the signal midpoint.\n4. Set trigger mode to `AUTO` only for bring-up; switch to `NORMal` when the signal is understood.\n5. If the display is still unstable, widen time scale briefly, confirm the signal amplitude, then fine tune level and slope again.",
+    "tags": [
+      "trigger_stabilization_md"
+    ],
+    "source": "rag/corpus/scope_logic/trigger-stabilization.md"
+  },
+  {
+    "id": "trigger_stabilization_md_4_p1",
+    "corpus": "scope_logic",
+    "title": "Notes",
+    "body": "- Edge trigger is the safest baseline trigger for unknown or simple signals.\n- Do not jump to bus or logic trigger until basic edge trigger behavior is confirmed.\n- Trigger stabilization should happen before measurement or decode troubleshooting.",
+    "tags": [
+      "trigger_stabilization_md"
+    ],
+    "source": "rag/corpus/scope_logic/trigger-stabilization.md"
+  }
+]

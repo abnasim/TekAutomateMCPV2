@@ -1,0 +1,186 @@
+{
+  "metadata": {
+    "name": "PI Only Commands",
+    "description": "Scope functions that are Remote PI only — no way to set these via the GUI.",
+    "instruments": ["MSO44", "MSO46", "MSO54", "MSO56", "MSO58", "MSO64", "MSO66", "MSO68", "DPO7000", "DPO70000"],
+    "version": "1.0",
+    "totalCommands": 7,
+    "totalGroups": 1
+  },
+  "groups": {
+    "PI Only": {
+      "description": "Remote PI-only commands — scope functions with no GUI equivalent. These must be controlled via SCPI commands.",
+      "color": "bg-amber-100 text-amber-700",
+      "commands": [
+        {
+          "name": "Fast HW Average Limit",
+          "scpi": "ACQuire:FASTAVerage:LIMit",
+          "header": "ACQuire:FASTAVerage:LIMit",
+          "commandType": "both",
+          "shortDescription": "Limits the number of averages performed in HW before the result is sent up to the host CPU.",
+          "description": "Fast HW Averaging is a feature on 5 and 6 Series MSOs that allows you to very quickly obtain highly averaged waveform data in a fraction of the time it takes using the traditional average acquisition mode. Instead of averaging at speeds of 10s to 100s of waveforms per second, this feature allows for averaging at rates of 1000s of waveforms per second. This setting must be a divisor of the STOPafter count.",
+          "syntax": ["ACQuire:FASTAVerage:LIMit <NR1>", "ACQuire:FASTAVerage:LIMit?"],
+          "arguments": [
+            {
+              "name": "NR1",
+              "type": "numeric",
+              "description": "Number of averages performed in HW before result is sent to host CPU. Must be a divisor of the STOPafter count.",
+              "required": true
+            }
+          ],
+          "examples": [
+            {"scpi": "ACQUIRE:FASTAVERAGE:LIMIT 250", "description": "Sets the HW average batch size to 250 waveforms."}
+          ],
+          "relatedCommands": ["ACQuire:FASTAVerage:STATE", "ACQuire:FASTAVerage:STOPafter"],
+          "notes": ["PI Only — no GUI equivalent. Fast HW Averaging enables averaging at 1000s of wfms/sec vs 10s-100s in traditional mode."],
+          "group": "PI Only"
+        },
+        {
+          "name": "Fast HW Average State",
+          "scpi": "ACQuire:FASTAVerage:STATE",
+          "header": "ACQuire:FASTAVerage:STATE",
+          "commandType": "both",
+          "shortDescription": "Enables or disables Fast HW Averaging.",
+          "description": "Fast HW Averaging is a feature on 5 and 6 Series MSOs that allows you to very quickly obtain highly averaged waveform data in a fraction of the time it takes using the traditional average acquisition mode. Instead of averaging at speeds of 10s to 100s of waveforms per second, this feature allows for averaging at rates of 1000s of waveforms per second.",
+          "syntax": ["ACQuire:FASTAVerage:STATE {0|1|OFF|ON}", "ACQuire:FASTAVerage:STATE?"],
+          "arguments": [
+            {
+              "name": "state",
+              "type": "boolean",
+              "options": ["ON", "OFF", "0", "1"],
+              "description": "Enables or disables Fast HW Averaging.",
+              "required": true
+            }
+          ],
+          "examples": [
+            {"scpi": "ACQUIRE:FASTAVERAGE:STATE ON", "description": "Enables Fast HW Averaging."},
+            {"scpi": "ACQUIRE:FASTAVERAGE:STATE?", "description": "Queries whether Fast HW Averaging is enabled."}
+          ],
+          "relatedCommands": ["ACQuire:FASTAVerage:LIMit", "ACQuire:FASTAVerage:STOPafter"],
+          "notes": ["PI Only — no GUI equivalent."],
+          "group": "PI Only"
+        },
+        {
+          "name": "Fast HW Average Stop After",
+          "scpi": "ACQuire:FASTAVerage:STOPafter",
+          "header": "ACQuire:FASTAVerage:STOPafter",
+          "commandType": "both",
+          "shortDescription": "Sets the total number of averages to accumulate. Acquisitions stop when this number is hit.",
+          "description": "Sets the total number of averages to accumulate when using Fast HW Averaging. Acquisitions will stop when this number is reached.",
+          "syntax": ["ACQuire:FASTAVerage:STOPafter <NR1>", "ACQuire:FASTAVerage:STOPafter?"],
+          "arguments": [
+            {
+              "name": "NR1",
+              "type": "numeric",
+              "description": "Total number of averages to accumulate before stopping.",
+              "required": true
+            }
+          ],
+          "examples": [
+            {"scpi": "ACQUIRE:FASTAVERAGE:STOPAFTER 10000", "description": "Sets the scope to stop after accumulating 10,000 averages."}
+          ],
+          "relatedCommands": ["ACQuire:FASTAVerage:STATE", "ACQuire:FASTAVerage:LIMit"],
+          "notes": ["PI Only — no GUI equivalent. The LIMit value must be a divisor of this STOPafter count."],
+          "group": "PI Only"
+        },
+        {
+          "name": "User Holdoff Enable",
+          "scpi": "TRIGger:A:HOLDoff:BY",
+          "header": "TRIGger:A:HOLDoff:BY",
+          "commandType": "set",
+          "shortDescription": "Enables User Holdoff — scope holds off from triggering until a PI command releases it.",
+          "description": "The User Holdoff function allows you to configure the scope to hold off from triggering and acquiring the next acquisition until it receives a PI command to release the holdoff. Once released, the scope will trigger and acquire, then return to holdoff where it will wait for another release command. This allows you to keep the scope in the continuous free-running state where the scope maintains the fastest acquisition rate but keep your script in sync with scope operations. Before this function, the only way to stay in sync was to perform Single Sequences, which has significant overhead from state switching between Idle and Running. User Holdoff avoids this state switching and remains in the running state. After User Holdoff is selected via PI command, the User Holdoff option will be available for selection in the UI as a Holdoff option in the Trigger Mode & Holdoff settings panel.",
+          "syntax": ["TRIGger:A:HOLDoff:BY USER"],
+          "arguments": [
+            {
+              "name": "mode",
+              "type": "enumeration",
+              "options": ["USER"],
+              "description": "Set to USER to enable User Holdoff.",
+              "required": true
+            }
+          ],
+          "examples": [
+            {"scpi": "TRIGGER:A:HOLDOFF:BY USER", "description": "Enables User Holdoff mode."}
+          ],
+          "relatedCommands": ["TRIGger:A:HOLDoff:USER"],
+          "notes": ["PI Only — no GUI equivalent until first enabled via PI. Avoids Single Sequence overhead for synchronized acquisitions."],
+          "group": "PI Only"
+        },
+        {
+          "name": "User Holdoff Release",
+          "scpi": "TRIGger:A:HOLDoff:USER",
+          "header": "TRIGger:A:HOLDoff:USER",
+          "commandType": "set",
+          "shortDescription": "Releases the User Holdoff, allowing the scope to trigger and acquire the next waveform.",
+          "description": "Releases the User Holdoff allowing the scope to trigger and acquire the next waveform. After acquisition, the scope returns to holdoff and waits for another release command. This enables fast synchronized acquisitions without the overhead of Single Sequence state switching.",
+          "syntax": ["TRIGger:A:HOLDoff:USER {EXECute}"],
+          "arguments": [
+            {
+              "name": "action",
+              "type": "enumeration",
+              "options": ["EXECute"],
+              "description": "Execute to release the holdoff.",
+              "required": true
+            }
+          ],
+          "examples": [
+            {"scpi": "TRIGGER:A:HOLDOFF:USER EXECUTE", "description": "Releases the User Holdoff, triggering the next acquisition."}
+          ],
+          "relatedCommands": ["TRIGger:A:HOLDoff:BY"],
+          "notes": ["PI Only — use with TRIGger:A:HOLDoff:BY USER for synchronized acquisition loops."],
+          "group": "PI Only"
+        },
+        {
+          "name": "VXI-11 Buffer Size",
+          "scpi": "VXI:BUFSize",
+          "header": "VXI:BUFSize",
+          "commandType": "both",
+          "shortDescription": "Sets the size of the VXI-11 output buffer for data reads.",
+          "description": "Sets the size of the VXI-11 output buffer. As data is put into the output queue, it goes through a VXI-11 buffer to be read by clients via VXI-11 protocol. If the data to be read is larger than this buffer, it will require multiple reads by the connected client. Most vendor VISA software handles this automatically, but proprietary VXI-11 clients may expect all data in a single read. Increase this buffer if your code expects to receive all data in one read. Default is 128*1024 (131072 bytes).",
+          "syntax": ["VXI:BUFSize <NR1>", "VXI:BUFSize?"],
+          "arguments": [
+            {
+              "name": "NR1",
+              "type": "numeric",
+              "description": "Size of the VXI-11 output buffer in bytes. Default is 131072 (128*1024).",
+              "default": "131072",
+              "required": true
+            }
+          ],
+          "examples": [
+            {"scpi": "VXI:BUFSIZE 1048576", "description": "Sets the VXI-11 buffer to 1 MB for large single-read transfers."},
+            {"scpi": "VXI:BUFSIZE?", "description": "Queries the current VXI-11 buffer size."}
+          ],
+          "notes": ["PI Only — no GUI equivalent. Default is 128*1024 (131072). Increase if proprietary VXI-11 clients expect all data in a single read."],
+          "group": "PI Only"
+        },
+        {
+          "name": "Waveform Display On/Off",
+          "scpi": "DISplay:WAVEform",
+          "header": "DISplay:WAVEform",
+          "commandType": "both",
+          "shortDescription": "Turns waveform display On/Off. Turning off enables faster acquisition rates.",
+          "description": "Turning off the waveform display will allow the scope to achieve faster acquisition rates than can be achieved with it turned on. This is because rendering of the waveforms on screen is a synchronous operation that is performed sequentially as part of the acquisition cycle. Turning the waveform display off is useful when you want to perform a lot of averaging or make measurements with high statistical populations in less time. There is no option in the UI to turn the waveform display On/Off — this must be done by PI command. If you find the scope in a state with the waveform display turned off, the only way to re-enable the display from the UI is to perform a default setup.",
+          "syntax": ["DISplay:WAVEform {<NR1>|OFF|ON}", "DISplay:WAVEform?"],
+          "arguments": [
+            {
+              "name": "state",
+              "type": "boolean",
+              "options": ["ON", "OFF", "0", "1"],
+              "description": "Turns waveform display on or off.",
+              "required": true
+            }
+          ],
+          "examples": [
+            {"scpi": "DISPLAY:WAVEFORM OFF", "description": "Turns off waveform display for faster acquisition rates."},
+            {"scpi": "DISPLAY:WAVEFORM ON", "description": "Turns waveform display back on."},
+            {"scpi": "DISPLAY:WAVEFORM?", "description": "Queries whether waveform display is on or off."}
+          ],
+          "notes": ["PI Only — no GUI equivalent. Only way to re-enable from UI is default setup (*RST). Useful for fast averaging and high-population measurements."],
+          "group": "PI Only"
+        }
+      ]
+    }
+  }
+}

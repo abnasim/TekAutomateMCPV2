@@ -1,0 +1,73 @@
+[
+  {
+    "id": "workflow-factory-reset",
+    "name": "Reset Scope to Factory Defaults",
+    "description": "Reset oscilloscope to factory defaults with OPC synchronization and clear status registers.",
+    "triggers": ["reset", "factory reset", "factory defaults", "rst", "default setup", "reset scope"],
+    "tags": ["reset", "factory", "defaults", "rst", "cls", "opc", "initialization", "setup"],
+    "author": "Abdul / Lab Team",
+    "version": "1.0",
+    "tested": true,
+    "match": {
+      "keywords": [
+        "reset scope to factory defaults",
+        "factory reset scope",
+        "reset scope"
+      ],
+      "operations": [
+        "factory reset",
+        "clear status"
+      ],
+      "backends": ["pyvisa"],
+      "deviceTypes": ["SCOPE"],
+      "priority": 5,
+      "minScore": 0.75
+    },
+    "category": "template",
+    "handlerRef": "flow_template",
+    "handlerConfig": {
+      "summary": "Reset scope to factory defaults.",
+      "backend": "pyvisa",
+      "deviceType": "SCOPE"
+    },
+    "schema": {
+      "type": "object",
+      "properties": {}
+    },
+    "steps": [
+      { "id": "1", "type": "connect", "label": "Connect", "params": { "printIdn": true } },
+      { "id": "2", "type": "write", "label": "Reset to factory defaults", "params": { "command": "*RST" } },
+      { "id": "3", "type": "query", "label": "Wait for reset complete", "params": { "command": "*OPC?", "saveAs": "opc_reset" } },
+      { "id": "4", "type": "write", "label": "Clear status registers", "params": { "command": "*CLS" } },
+      { "id": "5", "type": "disconnect", "label": "Disconnect", "params": {} }
+    ]
+  },
+  {
+    "id": "workflow-horizontal-config",
+    "name": "Configure Horizontal Scale and Record Length",
+    "description": "Set horizontal time scale and record length for acquisition window configuration.",
+    "triggers": ["horizontal scale", "record length", "time scale", "timebase", "horizontal config"],
+    "tags": ["horizontal", "scale", "record", "length", "timebase", "acquisition", "window"],
+    "category": "template",
+    "handlerRef": "flow_template",
+    "handlerConfig": {
+      "summary": "Configure horizontal scale and record length.",
+      "backend": "pyvisa",
+      "deviceType": "SCOPE"
+    },
+    "schema": {
+      "type": "object",
+      "properties": {
+        "scale": { "type": "string", "description": "Time per division (for example 500E-12 for 500 ps/div)." },
+        "recordLength": { "type": "string", "description": "Record length in samples (for example 10000000)." }
+      }
+    },
+    "steps": [
+      { "id": "1", "type": "connect", "label": "Connect", "params": { "printIdn": true } },
+      { "id": "2", "type": "write", "label": "Set horizontal mode", "params": { "command": "HORizontal:MODe MANual" } },
+      { "id": "3", "type": "write", "label": "Set horizontal scale", "params": { "command": "HORizontal:MODE:SCAle 500E-12" } },
+      { "id": "4", "type": "write", "label": "Set record length", "params": { "command": "HORizontal:MODE:RECOrdlength 10000000" } },
+      { "id": "5", "type": "disconnect", "label": "Disconnect", "params": {} }
+    ]
+  }
+]

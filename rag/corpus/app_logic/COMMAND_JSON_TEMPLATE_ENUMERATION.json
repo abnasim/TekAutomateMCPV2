@@ -1,0 +1,145 @@
+{
+  "_comment": "Example with Enumeration Argument",
+  "_description": "Template showing how to define commands with enumeration (fixed text) arguments",
+  
+  "id": "acq_mode",
+  "category": "acquisition",
+  "scpi": "ACQuire:MODe",
+  "header": "ACQuire:MODe",
+  "mnemonics": ["ACQuire", "MODe"],
+  "commandType": "both",
+  "shortDescription": "Set or query acquisition mode",
+  "description": "Sets or queries the acquisition mode. Available modes include Sample (normal), Average, Envelope, High Resolution, and Peak Detect.",
+  
+  "instruments": {
+    "families": ["MSO4", "MSO5", "MSO6", "MSO7"],
+    "models": ["MSO4XB", "MSO5XB", "MSO6XB", "MSO58LP", "LPD64"],
+    "exclusions": []
+  },
+  
+  "arguments": [
+    {
+      "name": "mode",
+      "type": "enumeration",
+      "required": true,
+      "position": 0,
+      "description": "Acquisition mode",
+      "validValues": {
+        "type": "enumeration",
+        "values": [
+          "SAMple",
+          "PEAKdetect",
+          "HIRes",
+          "AVErage",
+          "ENVelope"
+        ],
+        "caseSensitive": false,
+        "default": "SAMple",
+        "notes": "Case insensitive, can use abbreviated forms"
+      },
+      "defaultValue": "SAMple"
+    }
+  ],
+  
+  "queryResponse": {
+    "type": "enumeration",
+    "format": "Enumeration string",
+    "description": "Returns current acquisition mode",
+    "example": "SAMple"
+  },
+  
+  "syntax": {
+    "set": "ACQuire:MODe <enumeration>",
+    "query": "ACQuire:MODe?",
+    "argumentType": "enumeration",
+    "description": "Enumeration: SAMple, PEAKdetect, HIRes, AVErage, or ENVelope"
+  },
+  
+  "codeExamples": [
+    {
+      "description": "Set acquisition mode to Average",
+      "codeExamples": {
+        "scpi": {
+          "code": "ACQuire:MODe AVErage",
+          "library": "SCPI",
+          "description": "Raw SCPI command"
+        },
+        "python": {
+          "code": "scope.write('ACQuire:MODe AVErage')",
+          "library": "PyVISA",
+          "description": "PyVISA example"
+        },
+        "tm_devices": {
+          "code": "scope.commands.acquire.mode.write('AVErage')",
+          "library": "tm_devices",
+          "description": "TM Devices library"
+        }
+      },
+      "result": null,
+      "resultDescription": "Acquisition mode set to Average"
+    },
+    {
+      "description": "Query current acquisition mode",
+      "codeExamples": {
+        "scpi": {
+          "code": "ACQuire:MODe?",
+          "library": "SCPI",
+          "description": "Raw SCPI query"
+        },
+        "python": {
+          "code": "mode = scope.query('ACQuire:MODe?')",
+          "library": "PyVISA",
+          "description": "PyVISA query"
+        },
+        "tm_devices": {
+          "code": "mode = scope.commands.acquire.mode.query()",
+          "library": "tm_devices",
+          "description": "TM Devices query"
+        }
+      },
+      "result": "SAMple",
+      "resultDescription": "Returns current mode, e.g., 'SAMple'"
+    }
+  ],
+  
+  "relatedCommands": [
+    "ACQuire:NUMAVg",
+    "ACQuire:STATE",
+    "ACQuire:STOPAfter"
+  ],
+  
+  "manualReference": {
+    "section": "Acquisition Commands",
+    "page": 164,
+    "subsection": "ACQuire:MODe"
+  },
+  
+  "notes": [
+    "Default mode is SAMple",
+    "AVErage mode requires ACQuire:NUMAVg to be set",
+    "ENVelope mode shows min/max over multiple acquisitions"
+  ],
+  
+  "backwardCompatibility": {
+    "legacyCommands": [],
+    "notes": "No backward compatibility issues"
+  },
+  
+  "dynamicActivation": {
+    "implicitlyActivates": false,
+    "createsObject": null,
+    "defaultType": null,
+    "notes": "Does not create new objects"
+  },
+  
+  "concatenation": {
+    "canConcatenate": true,
+    "requiresColon": true,
+    "example": "ACQuire:MODe AVErage;:ACQuire:NUMAVg 8"
+  },
+  
+  "commandGroup": "Acquisition",
+  "subGroup": "Mode"
+}
+
+

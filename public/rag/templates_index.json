@@ -1,0 +1,2122 @@
+[
+  {
+    "id": "advanced_json_1",
+    "corpus": "templates",
+    "title": "advanced",
+    "body": "{\"category\":\"Advanced\",\"templates\":[{\"name\":\"Automated Measurements Suite (Legacy 5k/7k/70k)\",\"description\":\"Setup and read multiple measurements with statistics - for MSO/DPO 5k, 7k, 70k series\",\"backend\":\"pyvisa\",\"deviceType\":\"SCOPE\",\"commandSet\":\"MSO_DPO_5k_7k_70K\",\"steps\":[{\"id\":\"1\",\"type\":\"connect\",\"label\":\"Connect\",\"params\":{}},{\"id\":\"2\",\"type\":\"write\",\"label\":\"Enable Statistics\",\"params\":{\"command\":\"MEASUrement:STATIstics:MODe ALL\"}},{\"id\":\"g1\",\"type\":\"group\",\"label\":\"Configure Measurements\",\"params\":{},\"collapsed\":false,\"children\":[{\"id\":\"3\",\"type\":\"write\",\"label\":\"Meas1: Frequency\",\"params\":{\"command\":\"MEASUrement:MEAS1:TYPe FREQuency\"}},{\"id\":\"4\",\"type\":\"write\",\"label\":\"Meas1 Source\",\"params\":{\"command\":\"MEASUrement:MEAS1:SOUrce1 CH1\"}},{\"id\":\"5\",\"type\":\"write\",\"label\":\"Meas2: Amplitude\",\"params\":{\"command\":\"MEASUrement:MEAS2:TYPe AMPlitude\"}},{\"id\":\"6\",\"type\":\"write\",\"label\":\"Meas2 Source\",\"params\":{\"command\":\"MEASUrement:MEAS2:SOUrce1 CH1\"}},{\"id\":\"7\",\"type\":\"write\",\"label\":\"Meas3: Rise Time\",\"params\":{\"command\":\"MEASUrement:MEAS3:TYPe RISe\"}},{\"id\":\"8\",\"type\":\"write\",\"label\":\"Meas3 Source\",\"params\":{\"command\":\"MEASUrement:MEAS3:SOUrce1 CH1\"}},{\"id\":\"9\",\"type\":\"write\",\"label\":\"Meas4: Duty Cycle\",\"params\":{\"command\":\"MEASUrement:MEAS4:TYPe PDUty\"}},{\"id\":\"10\",\"type\":\"write\",\"label\":\"Meas4 Source\",\"params\":{\"command\":\"MEASUrement:MEAS4:SOUrce1 CH1\"}}]},{\"id\":\"11\",\"type\":\"write\",\"label\":\"Single Acquisition\",\"params\":{\"command\":\"ACQuire:STOPAfter SEQUENCE\"}},{\"id\":\"12\",\"type\":\"write\",\"label\":\"Start\",\"params\":{\"command\":\"ACQuire:STATE ON\"}},{\"id\":\"13\",\"type\":\"sleep\",\"label\":\"Wait for Complete\",\"params\":{\"duration\":1}},{\"id\":\"g2\",\"type\":\"group\",\"label\":\"Read All Results\",\"params\":{},\"collapsed\":false,\"children\":[{\"id\":\"14\",\"type\":\"query\",\"label\":\"Read Frequency\",\"params\":{\"command\":\"MEASUrement:MEAS1:VALue?\",\"saveAs\":\"frequency\"}},{\"id\":\"15\",\"type\":\"query\",\"label\":\"Read Amplitude\",\"params\":{\"command\":\"MEASUrement:MEAS2:VALue?\",\"saveAs\":\"amplitude\"}},{\"id\":\"16\",\"type\":\"query\",\"label\":\"Read Rise Time\",\"params\":{\"command\":\"MEASUrement:MEAS3:VALue?\",\"saveAs\":\"risetime\"}},{\"id\":\"17\",\"type\":\"query\",\"label\":\"Read Duty Cycle\",\"params\":{\"command\":\"MEASUrement:MEAS4:VALue?\",\"saveAs\":\"duty\"}}]},{\"id\":\"18\",\"type\":\"disconnect\",\"label\":\"Disconnect\",\"params\":{}}]},{\"name\":\"FFT Spectrum Analysis\",\"description\":\"Capture FFT spectrum with custom window\",\"backend\":\"pyvis",
+    "source": "public/templates/advanced.json"
+  },
+  {
+    "id": "basic_json_1",
+    "corpus": "templates",
+    "title": "basic",
+    "body": "{\"category\":\"Basic\",\"templates\":[{\"name\":\"Quick Steps UI Demo\",\"description\":\"Complete reference showing every step type - connect, write, query, recall, save, sleep, python, and more\",\"backend\":\"pyvisa\",\"deviceType\":\"SCOPE\",\"steps\":[{\"id\":\"1\",\"type\":\"connect\",\"label\":\"Connect to Scope\",\"params\":{\"instrumentIds\":[],\"printIdn\":true}},{\"id\":\"g1\",\"type\":\"group\",\"label\":\"SCPI Commands\",\"params\":{},\"collapsed\":false,\"children\":[{\"id\":\"2\",\"type\":\"write\",\"label\":\"Write Command\",\"params\":{\"command\":\"CH1:SCALE 1.0\"}},{\"id\":\"3\",\"type\":\"query\",\"label\":\"Query with Variable\",\"params\":{\"command\":\"*IDN?\",\"saveAs\":\"idn\"}},{\"id\":\"4\",\"type\":\"set_and_query\",\"label\":\"Set and Verify\",\"params\":{\"command\":\"CH1:SCALE\",\"cmdParams\":[],\"paramValues\":{}}}]},{\"id\":\"g2\",\"type\":\"group\",\"label\":\"Recall Types\",\"params\":{},\"collapsed\":false,\"children\":[{\"id\":\"5\",\"type\":\"recall\",\"label\":\"Factory Reset\",\"params\":{\"recallType\":\"FACTORY\",\"filePath\":\"\",\"reference\":\"REF1\"}},{\"id\":\"6\",\"type\":\"recall\",\"label\":\"Recall Session (.tss)\",\"params\":{\"recallType\":\"SESSION\",\"filePath\":\"C:/TekScope/test.tss\",\"reference\":\"REF1\"}},{\"id\":\"7\",\"type\":\"recall\",\"label\":\"Recall Settings (.set)\",\"params\":{\"recallType\":\"SETUP\",\"filePath\":\"C:/TekScope/config.set\",\"reference\":\"REF1\"}},{\"id\":\"8\",\"type\":\"recall\",\"label\":\"Recall Waveform (.wfm)\",\"params\":{\"recallType\":\"WAVEFORM\",\"filePath\":\"C:/TekScope/golden.wfm\",\"reference\":\"REF1\"}}]},{\"id\":\"g3\",\"type\":\"group\",\"label\":\"Save Operations\",\"params\":{},\"collapsed\":false,\"children\":[{\"id\":\"9\",\"type\":\"save_screenshot\",\"label\":\"Screenshot (Modern MSO5/6)\",\"params\":{\"filename\":\"screen_modern.png\",\"scopeType\":\"modern\",\"method\":\"pc_transfer\"}},{\"id\":\"10\",\"type\":\"save_screenshot\",\"label\":\"Screenshot (Legacy 5k/7k/70k)\",\"params\":{\"filename\":\"screen_legacy.png\",\"scopeType\":\"legacy\",\"method\":\"pc_transfer\"}},{\"id\":\"11\",\"type\":\"save_waveform\",\"label\":\"Save Waveform Data\",\"params\":{\"source\":\"CH1\",\"filename\":\"waveform.bin\",\"format\":\"bin\"}}]},{\"id\":\"g4\",\"type\":\"group\",\"label\":\"Utility Steps\",\"params\":{},\"collapsed\":false,\"children\":[{\"id\":\"12\",\"type\":\"sleep\",\"label\":\"Wait 500ms\",\"params\":{\"duration\":0.5}},{\"id\":\"13\",\"type\":\"error_check\",\"label\":\"Check Errors\",\"params\":{\"command\":\"ALLEV?\"}},{\"id\":\"14\",\"type\":\"comment\",\"label\":\"Comment (not executed)\",\"params\":{\"text\":\"This is documentation only\"}},{\"id\":\"15\",\"type\":\"python\",\"label\":\"Custom Python\",\"params\":{\"code\":\"print(f'IDN: {idn}')\\nresul",
+    "source": "public/templates/basic.json"
+  },
+  {
+    "id": "screenshot_json_1",
+    "corpus": "templates",
+    "title": "screenshot",
+    "body": "{\"category\":\"tm_devices Examples\",\"templates\":[{\"name\":\"Screenshot Capture\",\"description\":\"Save screenshots using tm_devices high-level API\",\"backend\":\"tm_devices\",\"deviceType\":\"SCOPE\",\"deviceDriver\":\"DPO70K\",\"steps\":[{\"id\":\"1\",\"type\":\"write\",\"label\":\"Add MATH Channel\",\"params\":{\"command\":\"scope.add_new_math(\\\"MATH1\\\", \\\"CH1\\\")\"}},{\"id\":\"2\",\"type\":\"write\",\"label\":\"Turn On CH2\",\"params\":{\"command\":\"scope.turn_channel_on(\\\"CH2\\\")\"}},{\"id\":\"3\",\"type\":\"write\",\"label\":\"Set Horizontal Scale\",\"params\":{\"command\":\"scope.set_and_check(\\\":HORIZONTAL:SCALE\\\", 100e-9)\"}},{\"id\":\"4\",\"type\":\"write\",\"label\":\"Save Screenshot (timestamped)\",\"params\":{\"command\":\"scope.save_screenshot()\"}},{\"id\":\"5\",\"type\":\"write\",\"label\":\"Save Screenshot (named)\",\"params\":{\"command\":\"scope.save_screenshot(\\\"example.png\\\")\"}},{\"id\":\"6\",\"type\":\"write\",\"label\":\"Save Screenshot (advanced)\",\"params\":{\"command\":\"scope.save_screenshot(\\\"example.jpg\\\", colors=\\\"INVERTED\\\", local_folder=\\\"./images\\\", device_folder=\\\"./device_folder\\\", keep_device_file=True)\"}}]}]}",
+    "source": "public/templates/screenshot.json"
+  },
+  {
+    "id": "tekexpress_json_1",
+    "corpus": "templates",
+    "title": "tekexpress",
+    "body": "{\"category\":\"tekexpress\",\"templates\":[{\"name\":\"PCIe Gen3 Compliance\",\"description\":\"PCIe Gen3 Tx compliance test workflow\",\"backend\":\"pyvisa\",\"source\":\"tekexpress\",\"steps\":[{\"type\":\"write\",\"label\":\"Set Link Speed\",\"params\":{\"command\":\"TEKEXP:VALUE GENERAL,\\\"Lane Count\\\",\\\"4\\\"\"}},{\"type\":\"write\",\"label\":\"Run Compliance Tests\",\"params\":{\"command\":\"TEKEXP:STATE RUN\"}},{\"type\":\"query\",\"label\":\"Check Status\",\"params\":{\"command\":\"TEKEXP:STATE?\",\"saveAs\":\"status\"}}]}]}",
+    "source": "public/templates/tekexpress.json"
+  },
+  {
+    "id": "tekhsi_json_1",
+    "corpus": "templates",
+    "title": "tekhsi",
+    "body": "{\"category\":\"TekHSI\",\"templates\":[{\"name\":\"PyVISA + TekHSI Hybrid\",\"description\":\"Command & control using PyVISA and waveform data via TekHSI\",\"backend\":\"hybrid\",\"source\":\"TekHSI/examples/hybrid_pyvisa.py\",\"steps\":[{\"id\":\"1\",\"type\":\"query\",\"label\":\"Identify Instrument\",\"params\":{\"command\":\"*IDN?\",\"saveAs\":\"idn\"}},{\"id\":\"2\",\"type\":\"write\",\"label\":\"Hide Waveform\",\"params\":{\"command\":\"DISPlay:WAVEform OFF\"}},{\"id\":\"3\",\"type\":\"write\",\"label\":\"Manual Timebase\",\"params\":{\"command\":\"HOR:MODE MAN\"}},{\"id\":\"4\",\"type\":\"write\",\"label\":\"Record Length\",\"params\":{\"command\":\"HOR:MODE:RECO 2500\"}},{\"id\":\"5\",\"type\":\"python\",\"label\":\"Stream Loop\",\"params\":{\"code\":\"for i in range(10):\\n    with scope.access_data():\\n        waveform = scope.get_data('ch1')\\n        print(f\\\"{waveform.source_name}_{i}:{waveform.record_length}\\\")\"}},{\"id\":\"6\",\"type\":\"write\",\"label\":\"Show Waveform\",\"params\":{\"command\":\"DISPlay:WAVEform ON\"}},{\"id\":\"7\",\"type\":\"disconnect\",\"label\":\"Disconnect\",\"params\":{}}]},{\"name\":\"tm_devices + TekHSI Hybrid\",\"description\":\"Command & control using tm_devices and waveform data via TekHSI\",\"backend\":\"hybrid\",\"source\":\"TekHSI/examples/hybrid_tm_devices.py\",\"deviceType\":\"SCOPE\",\"steps\":[{\"id\":\"1\",\"type\":\"query\",\"label\":\"Identify Instrument\",\"params\":{\"command\":\"scope.commands.idn.query()\",\"saveAs\":\"idn\"}},{\"id\":\"2\",\"type\":\"write\",\"label\":\"Hide Waveform\",\"params\":{\"command\":\"scope.commands.display.waveform.write('OFF')\"}},{\"id\":\"3\",\"type\":\"write\",\"label\":\"Manual Timebase\",\"params\":{\"command\":\"scope.commands.horizontal.mode.write('MAN')\"}},{\"id\":\"4\",\"type\":\"write\",\"label\":\"Record Length\",\"params\":{\"command\":\"scope.commands.horizontal.mode.recordlength.write('2500')\"}},{\"id\":\"5\",\"type\":\"python\",\"label\":\"Stream Loop\",\"params\":{\"code\":\"for i in range(10):\\n    with scope.access_data():\\n        waveform = scope.get_data('ch1')\\n        print(f\\\"{waveform.source_name}_{i}:{waveform.record_length}\\\")\"}},{\"id\":\"6\",\"type\":\"write\",\"label\":\"Show Waveform\",\"params\":{\"command\":\"scope.commands.display.waveform.write('ON')\"}},{\"id\":\"7\",\"type\":\"disconnect\",\"label\":\"Disconnect\",\"params\":{}}]},{\"name\":\"TekHSI Standalone with Plotting\",\"description\":\"Pure TekHSI waveform capture and plotting with matplotlib\",\"backend\":\"tekhsi\",\"source\":\"TekHSI/examples/plotting.py\",\"steps\":[{\"id\":\"1\",\"type\":\"connect\",\"label\":\"Connect via TekHSI gRPC\",\"params\":{}},{\"id\":\"2\",\"type\":\"python\",\"label\":\"Impo",
+    "source": "public/templates/tekhsi.json"
+  },
+  {
+    "id": "tm_devices_json_1",
+    "corpus": "templates",
+    "title": "tm_devices",
+    "body": "{\"category\":\"tm_devices\",\"templates\":[{\"name\":\"DPOJET Analysis Suite\",\"description\":\"Full DPOJET measurement workflow with plots\",\"backend\":\"tm_devices\",\"source\":\"tm_devices/examples/scopes/dpojet.py\",\"steps\":[{\"id\":\"1\",\"type\":\"connect\",\"label\":\"Connect Scope\",\"params\":{}},{\"id\":\"2\",\"type\":\"write\",\"label\":\"Activate DPOJET\",\"params\":{\"command\":\"DPOJET:ACTIVATE\"}},{\"id\":\"3\",\"type\":\"query\",\"label\":\"DPOJET Version\",\"params\":{\"command\":\"DPOJET:VERSION?\",\"saveAs\":\"version\"}},{\"id\":\"4\",\"type\":\"write\",\"label\":\"Clear All Measurements\",\"params\":{\"command\":\"DPOJET:CLEARALLMEAS\"}},{\"id\":\"g1\",\"type\":\"group\",\"label\":\"Add Measurements\",\"params\":{},\"collapsed\":false,\"children\":[{\"id\":\"5\",\"type\":\"write\",\"label\":\"Add Period\",\"params\":{\"command\":\"DPOJET:ADDMEAS Period\"}},{\"id\":\"6\",\"type\":\"write\",\"label\":\"Add Duty Cycle\",\"params\":{\"command\":\"DPOJET:ADDMEAS Pduty\"}},{\"id\":\"7\",\"type\":\"write\",\"label\":\"Add Rise Time\",\"params\":{\"command\":\"DPOJET:ADDMEAS RiseTime\"}},{\"id\":\"8\",\"type\":\"write\",\"label\":\"Add AC RMS\",\"params\":{\"command\":\"DPOJET:ADDMEAS acrms\"}}]},{\"id\":\"g2\",\"type\":\"group\",\"label\":\"Add Plots\",\"params\":{},\"collapsed\":false,\"children\":[{\"id\":\"9\",\"type\":\"write\",\"label\":\"Spectrum Plot\",\"params\":{\"command\":\"DPOJET:ADDPLOT spectrum,MEAS1\"}},{\"id\":\"10\",\"type\":\"write\",\"label\":\"Data Array Plot\",\"params\":{\"command\":\"DPOJET:ADDPLOT dataarray,MEAS2\"}},{\"id\":\"11\",\"type\":\"write\",\"label\":\"Time Trend Plot\",\"params\":{\"command\":\"DPOJET:ADDPLOT TimeTrend,MEAS3\"}},{\"id\":\"12\",\"type\":\"write\",\"label\":\"Histogram Plot\",\"params\":{\"command\":\"DPOJET:ADDPLOT histogram,MEAS4\"}}]},{\"id\":\"13\",\"type\":\"write\",\"label\":\"Start Single Measurement\",\"params\":{\"command\":\"DPOJET:STATE SINGLE\"}},{\"id\":\"g3\",\"type\":\"group\",\"label\":\"Read Results\",\"params\":{},\"collapsed\":false,\"children\":[{\"id\":\"14\",\"type\":\"query\",\"label\":\"MEAS1 Max\",\"params\":{\"command\":\"DPOJET:MEAS1:RESUlts:CURRentacq:MAX?\",\"saveAs\":\"meas1_max\"}},{\"id\":\"15\",\"type\":\"query\",\"label\":\"MEAS1 Population\",\"params\":{\"command\":\"DPOJET:MEAS1:RESUlts:CURRentacq:POPUlation?\",\"saveAs\":\"meas1_pop\"}}]},{\"id\":\"16\",\"type\":\"write\",\"label\":\"Save All Plots\",\"params\":{\"command\":\"DPOJET:SAVEALLPLOTS\"}},{\"id\":\"17\",\"type\":\"write\",\"label\":\"Enable Waveforms in Report\",\"params\":{\"command\":\"DPOJET:REPORT:SAVEWaveforms 1\"}},{\"id\":\"18\",\"type\":\"write\",\"label\":\"Execute Report\",\"params\":{\"command\":\"DPOJET:REPORT EXECUTE\"}},{\"id\":\"19\",\"type\":\"disconnect\",\"label\":\"Disconnect\",\"params\":{",
+    "source": "public/templates/tm_devices.json"
+  },
+  {
+    "id": "tpl_json_structure",
+    "type": "template_rule",
+    "tags": [
+      "schema",
+      "structure",
+      "json",
+      "required_fields",
+      "template_rule"
+    ],
+    "title": "Template JSON Structure — Complete Schema",
+    "body": "Every TekAutomate template is a JSON object inside a category wrapper. Top-level: { \"category\": \"Name\", \"templates\": [ ... ] }. Each template object MUST have: name (string), description (string), steps (array). Recommended: backend ('pyvisa'|'tm_devices'|'tekhsi'|'hybrid'), deviceType ('SCOPE'|'AWG'|'SMU'|etc.), deviceDriver (e.g. 'MSO6B'). Steps array contains step objects with id, type, label, params. Multi-device steps add boundDeviceId. Group steps add children array and optional collapsed boolean.",
+    "template": {
+      "category": "Category Name",
+      "templates": [
+        {
+          "name": "Template Name",
+          "description": "Brief description",
+          "backend": "pyvisa",
+          "deviceType": "SCOPE",
+          "deviceDriver": "MSO6B",
+          "steps": [
+            {
+              "id": "1",
+              "type": "connect",
+              "label": "Connect",
+              "params": {
+                "instrumentIds": [],
+                "printIdn": true
+              }
+            },
+            {
+              "id": "2",
+              "type": "write",
+              "label": "Send Command",
+              "params": {
+                "command": "CH1:SCALE 1.0"
+              }
+            },
+            {
+              "id": "3",
+              "type": "disconnect",
+              "label": "Disconnect",
+              "params": {
+                "instrumentIds": []
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "corpus": "templates",
+    "source": "rag/corpus/templates/templates_index.json"
+  },
+  {
+    "id": "tpl_required_pattern",
+    "type": "template_rule",
+    "tags": [
+      "required",
+      "pattern",
+      "connect",
+      "disconnect",
+      "validation",
+      "template_rule"
+    ],
+    "title": "Required Pattern — Connect First, Disconnect Last",
+    "body": "CRITICAL RULE: Every template MUST start with a 'connect' step and end with a 'disconnect' step. The connect step establishes instrument connections; use empty instrumentIds [] to connect all enabled devices. The disconnect step closes all connections. No template should omit these. For single-device templates, connect params can be empty {}. For multi-device, use instrumentIds: [] (empty = all) or specific aliases. Steps between connect and disconnect form the workflow. This is the most important structural rule for template validity.",
+    "corpus": "templates",
+    "source": "rag/corpus/templates/templates_index.json"
+  },
+  {
+    "id": "tpl_step_type_reference",
+    "type": "template_rule",
+    "tags": [
+      "step_types",
+      "reference",
+      "schema",
+      "template_rule"
+    ],
+    "title": "Step Type Reference — All Valid Step Types",
+    "body": "Valid step types: connect (params: instrumentIds, printIdn — always first), disconnect (params: instrumentIds — always last), write (params: command — send SCPI, no response), query (params: command, saveAs — REQUIRED to store result), set_and_query (params: command, cmdParams, paramValues — set then verify), sleep (params: duration in seconds, decimals OK e.g. 0.5), recall (params: recallType FACTORY|SETUP|SESSION|WAVEFORM, filePath, reference), save_screenshot (params: filename, scopeType modern|legacy, method), save_waveform (params: source, filename, format bin|wfm|csv, width, encoding, start, stop), error_check (params: command usually ALLEV?), comment (params: text — not executed), python (params: code — custom Python), group (children array, collapsed boolean — container), tm_device_command (params: code, model, description — tm_devices backend only), sweep (params: variableName, start, stop, step, saveResults, resultVariable — iterate values).",
+    "template": {
+      "step_type_reference": {
+        "connect": {
+          "params": [
+            "instrumentIds",
+            "printIdn"
+          ],
+          "notes": "Always first step"
+        },
+        "disconnect": {
+          "params": [
+            "instrumentIds"
+          ],
+          "notes": "Always last step"
+        },
+        "write": {
+          "params": [
+            "command"
+          ],
+          "notes": "Send SCPI command, no response"
+        },
+        "query": {
+          "params": [
+            "command",
+            "saveAs"
+          ],
+          "notes": "saveAs is REQUIRED"
+        },
+        "set_and_query": {
+          "params": [
+            "command",
+            "cmdParams",
+            "paramValues"
+          ]
+        },
+        "sleep": {
+          "params": [
+            "duration"
+          ],
+          "notes": "Seconds, decimals OK"
+        },
+        "recall": {
+          "params": [
+            "recallType",
+            "filePath",
+            "reference"
+          ],
+          "notes": "FACTORY|SETUP|SESSION|WAVEFORM"
+        },
+        "save_screenshot": {
+          "params": [
+            "filename",
+            "scopeType",
+            "method"
+          ]
+        },
+        "save_waveform": {
+          "params": [
+            "source",
+            "filename",
+            "format",
+            "width",
+            "encoding",
+            "start",
+            "stop"
+          ]
+        },
+        "error_check": {
+          "params": [
+            "command"
+          ],
+          "notes": "Usually ALLEV?"
+        },
+        "comment": {
+          "params": [
+            "text"
+          ],
+          "notes": "Not executed"
+        },
+        "python": {
+          "params": [
+            "code"
+          ],
+          "notes": "Custom Python code"
+        },
+        "group": {
+          "extra": [
+            "children",
+            "collapsed"
+          ],
+          "notes": "Container for steps"
+        },
+        "tm_device_command": {
+          "params": [
+            "code",
+            "model",
+            "description"
+          ]
+        },
+        "sweep": {
+          "params": [
+            "variableName",
+            "start",
+            "stop",
+            "step",
+            "saveResults",
+            "resultVariable"
+          ]
+        }
+      }
+    },
+    "corpus": "templates",
+    "source": "rag/corpus/templates/templates_index.json"
+  },
+  {
+    "id": "tpl_golden_all_step_types_flat",
+    "type": "template_example",
+    "tags": [
+      "golden",
+      "reference",
+      "all_step_types",
+      "pyvisa",
+      "single_device",
+      "template_example"
+    ],
+    "title": "Golden Example: Complete Step Types (Flat List)",
+    "body": "Golden reference showing every valid step type in a flat sequential list. Demonstrates connect, write, query (with saveAs), set_and_query, sleep, all recall types (FACTORY, SESSION, SETUP, WAVEFORM), save_screenshot (modern and legacy), save_waveform, error_check, comment, python, tm_device_command, and disconnect. This is the canonical reference for step parameters.",
+    "template": {
+      "name": "Complete Step Types Reference",
+      "backend": "pyvisa",
+      "deviceType": "SCOPE",
+      "steps": [
+        {
+          "id": "1",
+          "type": "connect",
+          "label": "Connect to Scope",
+          "params": {
+            "instrumentIds": [],
+            "printIdn": true
+          }
+        },
+        {
+          "id": "2",
+          "type": "write",
+          "label": "Send SCPI Command",
+          "params": {
+            "command": "CH1:SCALE 1.0"
+          }
+        },
+        {
+          "id": "3",
+          "type": "query",
+          "label": "Query with Variable",
+          "params": {
+            "command": "*IDN?",
+            "saveAs": "idn"
+          }
+        },
+        {
+          "id": "4",
+          "type": "set_and_query",
+          "label": "Set and Verify",
+          "params": {
+            "command": "CH1:SCALE",
+            "cmdParams": [],
+            "paramValues": {}
+          }
+        },
+        {
+          "id": "5",
+          "type": "sleep",
+          "label": "Wait 500ms",
+          "params": {
+            "duration": 0.5
+          }
+        },
+        {
+          "id": "6",
+          "type": "recall",
+          "label": "Recall Factory Settings",
+          "params": {
+            "recallType": "FACTORY",
+            "filePath": "",
+            "reference": "REF1"
+          }
+        },
+        {
+          "id": "7",
+          "type": "recall",
+          "label": "Recall Session File",
+          "params": {
+            "recallType": "SESSION",
+            "filePath": "C:/Users/test/setup.tss",
+            "reference": "REF1"
+          }
+        },
+        {
+          "id": "8",
+          "type": "recall",
+          "label": "Recall Settings File",
+          "params": {
+            "recallType": "SETUP",
+            "filePath": "C:/Users/test/config.set",
+            "reference": "REF1"
+          }
+        },
+        {
+          "id": "9",
+          "type": "recall",
+          "label": "Recall Waveform to REF1",
+          "params": {
+            "recallType": "WAVEFORM",
+            "filePath": "C:/Users/test/golden.wfm",
+            "reference": "REF1"
+          }
+        },
+        {
+          "id": "10",
+          "type": "save_screenshot",
+          "label": "Capture Screen (Modern)",
+          "params": {
+            "filename": "screenshot.png",
+            "scopeType": "modern",
+            "method": "pc_transfer"
+          }
+        },
+        {
+          "id": "11",
+          "type": "save_screenshot",
+          "label": "Capture Screen (Legacy)",
+          "params": {
+            "filename": "screenshot.png",
+            "scopeType": "legacy",
+            "method": "pc_transfer"
+          }
+        },
+        {
+          "id": "12",
+          "type": "save_waveform",
+          "label": "Save Waveform Data",
+          "params": {
+            "source": "CH1",
+            "filename": "waveform.bin",
+            "format": "bin",
+            "width": 1,
+            "encoding": "RIBinary",
+            "start": 1,
+            "stop": null
+          }
+        },
+        {
+          "id": "13",
+          "type": "error_check",
+          "label": "Check for Errors",
+          "params": {
+            "command": "ALLEV?"
+          }
+        },
+        {
+          "id": "14",
+          "type": "comment",
+          "label": "Comment",
+          "params": {
+            "text": "This is a comment - not executed"
+          }
+        },
+        {
+          "id": "15",
+          "type": "python",
+          "label": "Custom Python Code",
+          "params": {
+            "code": "print(f'IDN: {idn}')\nresult = float(idn.split(',')[2])"
+          }
+        },
+        {
+          "id": "16",
+          "type": "tm_device_command",
+          "label": "tm_devices Command",
+          "params": {
+            "code": "scope.commands.ch[1].scale.write(1.0)",
+            "model": "MSO56",
+            "description": "Set CH1 scale using tm_devices"
+          }
+        },
+        {
+          "id": "17",
+          "type": "disconnect",
+          "label": "Disconnect",
+          "params": {
+            "instrumentIds": []
+          }
+        }
+      ]
+    },
+    "corpus": "templates",
+    "source": "rag/corpus/templates/templates_index.json"
+  },
+  {
+    "id": "tpl_golden_all_types_grouped",
+    "type": "template_example",
+    "tags": [
+      "golden",
+      "reference",
+      "groups",
+      "collapsed",
+      "organized",
+      "template_example"
+    ],
+    "title": "Golden Example: All Step Types with Groups",
+    "body": "Golden reference showing every step type organized into logical groups. Groups: SCPI Commands (write, query, set_and_query), Recall Types (FACTORY, SESSION, SETUP, WAVEFORM), Save Operations (screenshot modern/legacy, save_waveform), Utility Steps (sleep, error_check, comment, python). Each group has collapsed: false and children array. This demonstrates best practices for organizing complex templates.",
+    "template": {
+      "name": "Golden Reference - All Step Types",
+      "backend": "pyvisa",
+      "deviceType": "SCOPE",
+      "steps": [
+        {
+          "id": "1",
+          "type": "connect",
+          "label": "Connect to Scope",
+          "params": {
+            "instrumentIds": [],
+            "printIdn": true
+          }
+        },
+        {
+          "id": "g1",
+          "type": "group",
+          "label": "SCPI Commands",
+          "params": {},
+          "collapsed": false,
+          "children": [
+            {
+              "id": "2",
+              "type": "write",
+              "label": "Write Command",
+              "params": {
+                "command": "CH1:SCALE 1.0"
+              }
+            },
+            {
+              "id": "3",
+              "type": "query",
+              "label": "Query with Variable",
+              "params": {
+                "command": "*IDN?",
+                "saveAs": "idn"
+              }
+            },
+            {
+              "id": "4",
+              "type": "set_and_query",
+              "label": "Set and Verify CH1 Scale",
+              "params": {
+                "command": "CH1:SCALE 1.0",
+                "cmdParams": [
+                  {
+                    "name": "Scale",
+                    "type": "number",
+                    "default": "1.0"
+                  }
+                ],
+                "paramValues": {
+                  "Scale": "1.0"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "g2",
+          "type": "group",
+          "label": "Recall Types",
+          "params": {},
+          "collapsed": false,
+          "children": [
+            {
+              "id": "5",
+              "type": "recall",
+              "label": "Factory Reset",
+              "params": {
+                "recallType": "FACTORY",
+                "filePath": "",
+                "reference": "REF1"
+              }
+            },
+            {
+              "id": "6",
+              "type": "recall",
+              "label": "Recall Session (.tss)",
+              "params": {
+                "recallType": "SESSION",
+                "filePath": "C:/TekScope/test.tss",
+                "reference": "REF1"
+              }
+            },
+            {
+              "id": "7",
+              "type": "recall",
+              "label": "Recall Settings (.set)",
+              "params": {
+                "recallType": "SETUP",
+                "filePath": "C:/TekScope/config.set",
+                "reference": "REF1"
+              }
+            },
+            {
+              "id": "8",
+              "type": "recall",
+              "label": "Recall Waveform (.wfm)",
+              "params": {
+                "recallType": "WAVEFORM",
+                "filePath": "C:/TekScope/golden.wfm",
+                "reference": "REF1"
+              }
+            }
+          ]
+        },
+        {
+          "id": "g3",
+          "type": "group",
+          "label": "Save Operations",
+          "params": {},
+          "collapsed": false,
+          "children": [
+            {
+              "id": "9",
+              "type": "save_screenshot",
+              "label": "Screenshot (Modern MSO5/6)",
+              "params": {
+                "filename": "screen_modern.png",
+                "scopeType": "modern",
+                "method": "pc_transfer"
+              }
+            },
+            {
+              "id": "10",
+              "type": "save_screenshot",
+              "label": "Screenshot (Legacy 5k/7k/70k)",
+              "params": {
+                "filename": "screen_legacy.png",
+                "scopeType": "legacy",
+                "method": "pc_transfer"
+              }
+            },
+            {
+              "id": "11",
+              "type": "save_waveform",
+              "label": "Save Waveform Data",
+              "params": {
+                "source": "CH1",
+                "filename": "waveform.bin",
+                "format": "bin",
+                "width": 1,
+                "encoding": "RIBinary",
+                "start": 1,
+                "stop": null
+              }
+            }
+          ]
+        },
+        {
+          "id": "g4",
+          "type": "group",
+          "label": "Utility Steps",
+          "params": {},
+          "collapsed": false,
+          "children": [
+            {
+              "id": "12",
+              "type": "sleep",
+              "label": "Wait 500ms",
+              "params": {
+                "duration": 0.5
+              }
+            },
+            {
+              "id": "13",
+              "type": "error_check",
+              "label": "Check Errors",
+              "params": {
+                "command": "ALLEV?"
+              }
+            },
+            {
+              "id": "14",
+              "type": "comment",
+              "label": "Comment (not executed)",
+              "params": {
+                "text": "This is documentation only"
+              }
+            },
+            {
+              "id": "15",
+              "type": "python",
+              "label": "Custom Python",
+              "params": {
+                "code": "print(f'IDN: {idn}')\nresult = idn.split(',')[0]"
+              }
+            }
+          ]
+        },
+        {
+          "id": "16",
+          "type": "disconnect",
+          "label": "Disconnect",
+          "params": {
+            "instrumentIds": []
+          }
+        }
+      ]
+    },
+    "corpus": "templates",
+    "source": "rag/corpus/templates/templates_index.json"
+  },
+  {
+    "id": "tpl_golden_single_device",
+    "type": "template_example",
+    "tags": [
+      "golden",
+      "single_device",
+      "best_practice",
+      "pyvisa",
+      "scope",
+      "template_example"
+    ],
+    "title": "Golden Example: Perfect Single Device Template",
+    "body": "Best-practice single-device template showing the recommended workflow: connect with printIdn, reset (*RST), wait for reset, channel configuration group, stop/start acquisition, wait for trigger, stop acquisition, *OPC? wait, save waveform, error check, disconnect. This is the canonical example for single-device scope automation. Note: all commands go to the first enabled device by default (no boundDeviceId needed).",
+    "template": {
+      "name": "Perfect Single Device Template",
+      "backend": "pyvisa",
+      "deviceType": "SCOPE",
+      "steps": [
+        {
+          "id": "1",
+          "type": "connect",
+          "label": "Connect",
+          "params": {
+            "instrumentIds": [],
+            "printIdn": true
+          }
+        },
+        {
+          "id": "2",
+          "type": "write",
+          "label": "Reset Instrument",
+          "params": {
+            "command": "*RST"
+          }
+        },
+        {
+          "id": "3",
+          "type": "sleep",
+          "label": "Wait for Reset",
+          "params": {
+            "duration": 1
+          }
+        },
+        {
+          "id": "g1",
+          "type": "group",
+          "label": "Channel Configuration",
+          "params": {},
+          "collapsed": false,
+          "children": [
+            {
+              "id": "4",
+              "type": "write",
+              "label": "Configure CH1",
+              "params": {
+                "command": "CH1:SCAle 1.0"
+              }
+            },
+            {
+              "id": "5",
+              "type": "write",
+              "label": "Enable CH1",
+              "params": {
+                "command": "DISplay:WAVEView1:CH1:STATE ON"
+              }
+            }
+          ]
+        },
+        {
+          "id": "6",
+          "type": "write",
+          "label": "Stop Acquisition",
+          "params": {
+            "command": "ACQuire:STATE OFF"
+          }
+        },
+        {
+          "id": "7",
+          "type": "write",
+          "label": "Start Acquisition",
+          "params": {
+            "command": "ACQuire:STATE ON"
+          }
+        },
+        {
+          "id": "8",
+          "type": "sleep",
+          "label": "Wait for Trigger",
+          "params": {
+            "duration": 0.5
+          }
+        },
+        {
+          "id": "9",
+          "type": "write",
+          "label": "Stop Acquisition",
+          "params": {
+            "command": "ACQuire:STATE OFF"
+          }
+        },
+        {
+          "id": "10",
+          "type": "query",
+          "label": "Wait Complete",
+          "params": {
+            "command": "*OPC?",
+            "saveAs": "opc"
+          }
+        },
+        {
+          "id": "11",
+          "type": "save_waveform",
+          "label": "Save Waveform",
+          "params": {
+            "source": "CH1",
+            "filename": "waveform.bin",
+            "format": "bin",
+            "width": 1,
+            "encoding": "RIBinary"
+          }
+        },
+        {
+          "id": "12",
+          "type": "error_check",
+          "label": "Check for Errors",
+          "params": {
+            "command": "ALLEV?"
+          }
+        },
+        {
+          "id": "13",
+          "type": "disconnect",
+          "label": "Disconnect",
+          "params": {
+            "instrumentIds": []
+          }
+        }
+      ]
+    },
+    "corpus": "templates",
+    "source": "rag/corpus/templates/templates_index.json"
+  },
+  {
+    "id": "tpl_screenshot_modern",
+    "type": "template_example",
+    "tags": [
+      "screenshot",
+      "modern",
+      "mso5",
+      "mso6",
+      "save_image",
+      "python_block",
+      "template_example"
+    ],
+    "title": "Screenshot Template: Modern MSO5/6 (Correct 3-Step)",
+    "body": "The CORRECT screenshot template for MSO5/6/MSO5B/MSO6B series scopes. Uses only 3 steps: connect, python block, disconnect. The python block contains the complete screenshot workflow: create local directory, create remote temp directory (C:/Temp), SAVE:IMAGE:COMPOSITION NORMAL, SAVE:IMAGE with remote path, time.sleep(1.0) to wait (NOT *OPC? which causes UnicodeDecodeError), set timeout to 30000, FILESYSTEM:READFILE, read_raw(), restore timeout, write bytes locally, FILESYSTEM:DELETE cleanup. CRITICAL: Do NOT use query('*OPC?') after FILESYSTEM:READFILE — use time.sleep(1.0) instead. Modern scopes do NOT support HARDCOPY commands.",
+    "template": {
+      "name": "Screen Capture PNG (Modern MSO5/6)",
+      "description": "Screenshot via SAVE:IMAGE for MSO5, MSO6, MSO5B, MSO6B series scopes",
+      "backend": "pyvisa",
+      "deviceType": "SCOPE",
+      "steps": [
+        {
+          "id": "1",
+          "type": "connect",
+          "label": "Connect to Scope",
+          "params": {
+            "instrumentIds": [],
+            "printIdn": true
+          }
+        },
+        {
+          "id": "2",
+          "type": "python",
+          "label": "Capture Screenshot (Modern MSO5/6)",
+          "params": {
+            "code": "import os\nimport pathlib\nos.makedirs('./screenshots', exist_ok=True)\ntry:\n    scpi.write('FILESYSTEM:MKDIR \"C:/Temp\"')\nexcept:\n    pass\nscpi.write('SAVE:IMAGE:COMPOSITION NORMAL')\nscpi.write('SAVE:IMAGE \"C:/Temp/screenshot.png\"')\nimport time\ntime.sleep(1.0)  # Wait for save - do NOT use *OPC? here\nold_timeout = scpi.timeout\nscpi.timeout = 30000\nscpi.write('FILESYSTEM:READFILE \"C:/Temp/screenshot.png\"')\ndata = scpi.read_raw()\nscpi.timeout = old_timeout\npathlib.Path('./screenshots/screenshot.png').write_bytes(data)\nscpi.write('FILESYSTEM:DELETE \"C:/Temp/screenshot.png\"')\nprint('Saved screenshot to ./screenshots/screenshot.png')"
+          }
+        },
+        {
+          "id": "3",
+          "type": "disconnect",
+          "label": "Disconnect",
+          "params": {}
+        }
+      ]
+    },
+    "corpus": "templates",
+    "source": "rag/corpus/templates/templates_index.json"
+  },
+  {
+    "id": "tpl_screenshot_legacy",
+    "type": "template_example",
+    "tags": [
+      "screenshot",
+      "legacy",
+      "hardcopy",
+      "dpo5k",
+      "dpo7k",
+      "dpo70k",
+      "python_block",
+      "template_example"
+    ],
+    "title": "Screenshot Template: Legacy 5k/7k/70k (HARDCOPY Method)",
+    "body": "The CORRECT screenshot template for MSO/DPO 5k/7k/70k series scopes. Uses 3 steps: connect, python block, disconnect. The python block: create local dir, create remote dirs (C:/TekScope/Temp), HARDCOPY:PORT FILE, HARDCOPY:FORMAT PNG (was previously broken — literal '${format}'), HARDCOPY:FILENAME with remote path, HARDCOPY START, time.sleep(1.0) to wait (NOT *OPC?), set timeout to 30000, FILESYSTEM:READFILE, read_raw(), restore timeout, save locally, FILESYSTEM:DELETE cleanup. CRITICAL: Legacy scopes do NOT support SAVE:IMAGE — must use HARDCOPY. The HARDCOPY:FORMAT bug (literal ${format}) was fixed in pythonGenerators.ts line 1264.",
+    "template": {
+      "name": "Screen Capture PNG (Legacy 5k/7k/70k)",
+      "description": "Screenshot via HARDCOPY for MSO/DPO 5k, 7k, 70k series scopes",
+      "backend": "pyvisa",
+      "deviceType": "SCOPE",
+      "steps": [
+        {
+          "id": "1",
+          "type": "connect",
+          "label": "Connect to Scope",
+          "params": {
+            "instrumentIds": [],
+            "printIdn": true
+          }
+        },
+        {
+          "id": "2",
+          "type": "python",
+          "label": "Capture Screenshot (Legacy 5k/7k/70k)",
+          "params": {
+            "code": "import os\nimport pathlib\nimport time\nos.makedirs('./screenshots', exist_ok=True)\ntry:\n    scpi.write('FILESYSTEM:MKDIR \"C:/TekScope\"')\nexcept:\n    pass\ntry:\n    scpi.write('FILESYSTEM:MKDIR \"C:/TekScope/Temp\"')\nexcept:\n    pass\nscpi.write('HARDCOPY:PORT FILE')\nscpi.write('HARDCOPY:FORMAT PNG')\nscpi.write('HARDCOPY:FILENAME \"C:/TekScope/Temp/screenshot.png\"')\nscpi.write('HARDCOPY START')\ntime.sleep(1.0)  # Wait for hardcopy - do NOT use *OPC?\nold_timeout = scpi.timeout\nscpi.timeout = 30000\nscpi.write('FILESYSTEM:READFILE \"C:/TekScope/Temp/screenshot.png\"')\ndata = scpi.read_raw()\nscpi.timeout = old_timeout\npathlib.Path('./screenshots/screenshot.png').write_bytes(data)\nscpi.write('FILESYSTEM:DELETE \"C:/TekScope/Temp/screenshot.png\"')\nprint('Saved screenshot to ./screenshots/screenshot.png')"
+          }
+        },
+        {
+          "id": "3",
+          "type": "disconnect",
+          "label": "Disconnect",
+          "params": {}
+        }
+      ]
+    },
+    "corpus": "templates",
+    "source": "rag/corpus/templates/templates_index.json"
+  },
+  {
+    "id": "tpl_screenshot_70k",
+    "type": "template_example",
+    "tags": [
+      "screenshot",
+      "mso70k",
+      "dpo70k",
+      "export",
+      "python_block",
+      "template_example"
+    ],
+    "title": "Screenshot Template: MSO/DPO 70000 Series (EXPort Method)",
+    "body": "Screenshot for MSO/DPO 70000 series (MSO73304DX, MSO70404C, DPO70404C etc). Uses EXPort commands, NOT SAVE:IMAGE or HARDCOPY. Flow: EXPort:FILEName set path, EXPort:FORMat PNG, EXPort:VIEW FULLSCREEN, EXPort:PALEtte COLOR, EXPort START (case-sensitive!), *OPC? wait, FILESYSTEM:READFILE transfer, FILESYSTEM:DELETE cleanup. Default working directory is C:/TekScope. Tested on MSO73304DX FW 10.14.1.",
+    "template": {
+      "name": "Screen Capture PNG (MSO/DPO 70000 Series)",
+      "description": "Screenshot via EXPort for MSO/DPO 70000 series scopes",
+      "backend": "pyvisa",
+      "deviceType": "SCOPE",
+      "steps": [
+        {
+          "id": "1",
+          "type": "connect",
+          "label": "Connect to Scope",
+          "params": {
+            "printIdn": true
+          }
+        },
+        {
+          "id": "2",
+          "type": "python",
+          "label": "Capture Screenshot (70000 Series)",
+          "params": {
+            "code": "import os\nimport pathlib\nimport time\nos.makedirs('./screenshots', exist_ok=True)\nremote_path = 'C:/TekScope/screenshot.png'\nscpi.write(f'EXPort:FILEName \"{remote_path}\"')\nscpi.write('EXPort:FORMat PNG')\nscpi.write('EXPort:VIEW FULLSCREEN')\nscpi.write('EXPort:PALEtte COLOR')\nscpi.write('EXPort START')\nscpi.query('*OPC?')\ntime.sleep(1.0)\nold_timeout = scpi.timeout\nscpi.timeout = 30000\nscpi.write(f'FILESYSTEM:READFILE \"{remote_path}\"')\ndata = scpi.read_raw()\nscpi.timeout = old_timeout\npathlib.Path('./screenshots/screenshot.png').write_bytes(data)\nscpi.write(f'FILESYSTEM:DELETE \"{remote_path}\"')\nprint('Saved screenshot to ./screenshots/screenshot.png')"
+          }
+        },
+        {
+          "id": "3",
+          "type": "disconnect",
+          "label": "Disconnect",
+          "params": {}
+        }
+      ]
+    },
+    "corpus": "templates",
+    "source": "rag/corpus/templates/templates_index.json"
+  },
+  {
+    "id": "tpl_scope_screenshot_commands",
+    "type": "template_rule",
+    "tags": [
+      "screenshot",
+      "scope_family",
+      "commands",
+      "mso456",
+      "mso70k",
+      "template_rule"
+    ],
+    "title": "Scope Family Screenshot Command Summary",
+    "body": "MSO 4/5/6 Series (MSO44/54/58/64/68B): Trigger=SAVE:IMAGe \"path.png\", format from extension, view=SAVE:IMAGe:VIEWTYpe FULLScreen, colors=SAVE:IMAGe:COMPosition NORMal, default path=C:/Temp. NOT SUPPORTED: SAVE:IMAGe:FILEFormat, SAVE:IMAGe:INKSaver, SAVE:IMAGe:LAYout, EXPort, HARDCopy. MSO/DPO 70000 Series (MSO73304DX etc): Trigger=EXPort START (case-sensitive!), EXPort:FILEName for path, EXPort:FORMat PNG, EXPort:VIEW FULLSCREEN, EXPort:PALEtte COLOR, default path=C:/TekScope. NOT SUPPORTED: SAVE:IMAGe, HARDCopy:DATA?. Both: FILESystem:READFile for transfer (raw binary, no IEEE header), FILESystem:DELEte for cleanup.",
+    "corpus": "templates",
+    "source": "rag/corpus/templates/templates_index.json"
+  },
+  {
+    "id": "tpl_recall_factory",
+    "type": "template_example",
+    "tags": [
+      "recall",
+      "factory",
+      "reset",
+      "template_example"
+    ],
+    "title": "Recall Template: Factory Reset",
+    "body": "Factory reset restores scope to default settings. No filePath needed. recallType: 'FACTORY'. This is equivalent to sending *RST but through the recall mechanism.",
+    "template": {
+      "id": "r1",
+      "type": "recall",
+      "label": "Factory Reset",
+      "params": {
+        "recallType": "FACTORY",
+        "filePath": "",
+        "reference": "REF1"
+      }
+    },
+    "corpus": "templates",
+    "source": "rag/corpus/templates/templates_index.json"
+  },
+  {
+    "id": "tpl_recall_setup",
+    "type": "template_example",
+    "tags": [
+      "recall",
+      "setup",
+      "set_file",
+      "template_example"
+    ],
+    "title": "Recall Template: Settings (.set file)",
+    "body": "Recall a settings-only file (.set). Restores instrument configuration (channel scales, trigger, horizontal, etc.) but NOT waveform data. recallType: 'SETUP'. filePath must point to a .set file on the scope filesystem (e.g. C:/TekScope/config.set).",
+    "template": {
+      "id": "r2",
+      "type": "recall",
+      "label": "Recall Settings (.set)",
+      "params": {
+        "recallType": "SETUP",
+        "filePath": "C:/TekScope/config.set",
+        "reference": "REF1"
+      }
+    },
+    "corpus": "templates",
+    "source": "rag/corpus/templates/templates_index.json"
+  },
+  {
+    "id": "tpl_recall_session",
+    "type": "template_example",
+    "tags": [
+      "recall",
+      "session",
+      "tss_file",
+      "template_example"
+    ],
+    "title": "Recall Template: Session (.tss file)",
+    "body": "Recall a full session file (.tss). Restores EVERYTHING: settings, waveforms, measurements, math, search, reference waveforms. This is the most complete recall type. recallType: 'SESSION'. filePath must point to a .tss file. Add sleep(2.0) after recall to allow full load.",
+    "template": {
+      "id": "r3",
+      "type": "recall",
+      "label": "Recall Session (.tss)",
+      "params": {
+        "recallType": "SESSION",
+        "filePath": "C:/TekScope/Sessions/DDR_Test.tss",
+        "reference": "REF1"
+      }
+    },
+    "corpus": "templates",
+    "source": "rag/corpus/templates/templates_index.json"
+  },
+  {
+    "id": "tpl_recall_waveform",
+    "type": "template_example",
+    "tags": [
+      "recall",
+      "waveform",
+      "wfm_file",
+      "reference",
+      "template_example"
+    ],
+    "title": "Recall Template: Waveform (.wfm to REF)",
+    "body": "Recall a waveform data file (.wfm) into a reference channel (REF1-REF4). recallType: 'WAVEFORM'. filePath points to .wfm file. reference specifies which REF channel (REF1, REF2, etc.). After recall, reference waveform is available for comparison.",
+    "template": {
+      "id": "r4",
+      "type": "recall",
+      "label": "Recall Waveform (.wfm)",
+      "params": {
+        "recallType": "WAVEFORM",
+        "filePath": "C:/TekScope/golden.wfm",
+        "reference": "REF1"
+      }
+    },
+    "corpus": "templates",
+    "source": "rag/corpus/templates/templates_index.json"
+  },
+  {
+    "id": "tpl_save_waveform",
+    "type": "template_example",
+    "tags": [
+      "save",
+      "waveform",
+      "binary",
+      "csv",
+      "template_example"
+    ],
+    "title": "Save Template: Waveform Data",
+    "body": "Save waveform data from a channel. source: CH1-CH4. filename: output file. format: 'bin' (fastest, binary), 'wfm' (Tek format), 'csv' (human readable). width: 1 or 2 bytes. encoding: 'RIBinary' (signed) or 'RPBinary' (unsigned). start/stop: data point range (null = all). For binary: configure DATa:SOUrce, DATa:ENCdg, DATa:WIDth, then CURVe? to fetch.",
+    "template": {
+      "id": "sw1",
+      "type": "save_waveform",
+      "label": "Save CH1 Waveform",
+      "params": {
+        "source": "CH1",
+        "filename": "waveform.bin",
+        "format": "bin",
+        "width": 1,
+        "encoding": "RIBinary",
+        "start": 1,
+        "stop": null
+      }
+    },
+    "corpus": "templates",
+    "source": "rag/corpus/templates/templates_index.json"
+  },
+  {
+    "id": "tpl_save_screenshot_step",
+    "type": "template_example",
+    "tags": [
+      "save",
+      "screenshot",
+      "step_type",
+      "template_example"
+    ],
+    "title": "Save Template: Screenshot (Step Type)",
+    "body": "The save_screenshot step type captures a screen image. scopeType: 'modern' (MSO5/6, uses SAVE:IMAGE) or 'legacy' (5k/7k/70k, uses HARDCOPY). method: 'pc_transfer' (save on scope then transfer). For reliable operation, use a python block instead of save_screenshot step — the python block gives full control over timeouts and error handling.",
+    "template": {
+      "id": "ss1",
+      "type": "save_screenshot",
+      "label": "Capture Screenshot",
+      "params": {
+        "filename": "screenshot.png",
+        "scopeType": "modern",
+        "method": "pc_transfer"
+      }
+    },
+    "corpus": "templates",
+    "source": "rag/corpus/templates/templates_index.json"
+  },
+  {
+    "id": "tpl_multi_device_pattern",
+    "type": "template_example",
+    "tags": [
+      "multi_device",
+      "bounddeviceid",
+      "scope",
+      "psu",
+      "smu",
+      "template_example"
+    ],
+    "title": "Multi-Device Template Pattern with boundDeviceId",
+    "body": "Multi-device templates control multiple instruments. Key rules: 1) Connect all devices first (instrumentIds: []), 2) Use boundDeviceId on every step to specify target device, 3) Device aliases (e.g. 'scope-uuid', 'psu-uuid') match user-configured device entries, 4) Without boundDeviceId, commands go to first enabled device, 5) Disconnect all at end. Groups can also have boundDeviceId which applies to all children. Device selection priority: step boundDeviceId > parent group boundDeviceId > default (first device).",
+    "template": {
+      "name": "Multi-Device: Scope + Power Supply",
+      "backend": "pyvisa",
+      "steps": [
+        {
+          "id": "1",
+          "type": "connect",
+          "label": "Connect Scope",
+          "params": {
+            "instrumentIds": [
+              "scope-uuid"
+            ]
+          },
+          "boundDeviceId": "scope-uuid"
+        },
+        {
+          "id": "2",
+          "type": "connect",
+          "label": "Connect PSU",
+          "params": {
+            "instrumentIds": [
+              "psu-uuid"
+            ]
+          },
+          "boundDeviceId": "psu-uuid"
+        },
+        {
+          "id": "g1",
+          "type": "group",
+          "label": "Configure PSU",
+          "params": {},
+          "children": [
+            {
+              "id": "3",
+              "type": "write",
+              "label": "Set Voltage 5V",
+              "params": {
+                "command": "VOLT 5.0"
+              },
+              "boundDeviceId": "psu-uuid"
+            },
+            {
+              "id": "4",
+              "type": "write",
+              "label": "Set Current Limit",
+              "params": {
+                "command": "CURR 0.5"
+              },
+              "boundDeviceId": "psu-uuid"
+            },
+            {
+              "id": "5",
+              "type": "write",
+              "label": "Enable Output",
+              "params": {
+                "command": "OUTP ON"
+              },
+              "boundDeviceId": "psu-uuid"
+            }
+          ]
+        },
+        {
+          "id": "6",
+          "type": "sleep",
+          "label": "Wait for Settle",
+          "params": {
+            "duration": 1
+          }
+        },
+        {
+          "id": "g2",
+          "type": "group",
+          "label": "Measure on Scope",
+          "params": {},
+          "children": [
+            {
+              "id": "7",
+              "type": "write",
+              "label": "Single Acquisition",
+              "params": {
+                "command": "ACQuire:STOPAfter SEQUENCE;:ACQuire:STATE ON"
+              },
+              "boundDeviceId": "scope-uuid"
+            },
+            {
+              "id": "8",
+              "type": "sleep",
+              "label": "Wait",
+              "params": {
+                "duration": 0.5
+              }
+            },
+            {
+              "id": "9",
+              "type": "query",
+              "label": "Read Voltage",
+              "params": {
+                "command": "MEASUrement:MEAS1:RESUlts:CURRentacq:MEAN?",
+                "saveAs": "measured_v"
+              },
+              "boundDeviceId": "scope-uuid"
+            }
+          ]
+        },
+        {
+          "id": "10",
+          "type": "write",
+          "label": "Disable PSU Output",
+          "params": {
+            "command": "OUTP OFF"
+          },
+          "boundDeviceId": "psu-uuid"
+        },
+        {
+          "id": "11",
+          "type": "disconnect",
+          "label": "Disconnect All",
+          "params": {}
+        }
+      ]
+    },
+    "corpus": "templates",
+    "source": "rag/corpus/templates/templates_index.json"
+  },
+  {
+    "id": "tpl_tekexpress_pattern",
+    "type": "template_example",
+    "tags": [
+      "tekexpress",
+      "compliance",
+      "socket",
+      "state_machine",
+      "polling",
+      "template_example"
+    ],
+    "title": "TekExpress Template Pattern — SOCKET Connection, State Polling",
+    "body": "TekExpress templates use PyVISA SOCKET backend on port 5000. CRITICAL RULES: 1) Connection: TCPIP::host::5000::SOCKET with write_termination='\\n' and read_termination='\\n', 2) Commands use TEKEXP:* namespace, 3) NO *OPC? support — use TEKEXP:STATE? polling loop instead, 4) Must handle popups with TEKEXP:POPUP? check during WAIT/ERROR states, 5) Never generate raw socket.sendall() code — only .write()/.query(), 6) Termination handled by PyVISA config — don't add \\n in commands. State machine: RUN → RUNNING → WAIT/ERROR (handle popup) → COMPLETE.",
+    "template": {
+      "name": "TekExpress USB Compliance Test",
+      "description": "Run TekExpress compliance test with state polling",
+      "backend": "pyvisa",
+      "deviceType": "TEKEXPRESS",
+      "steps": [
+        {
+          "id": "1",
+          "type": "connect",
+          "label": "Connect to TekExpress",
+          "params": {
+            "instrumentIds": [
+              "tekexp"
+            ],
+            "connectionType": "socket",
+            "port": 5000
+          }
+        },
+        {
+          "id": "2",
+          "type": "write",
+          "label": "Set Acquire Mode",
+          "params": {
+            "command": "TEKEXP:ACQUIRE_MODE LIVE"
+          },
+          "boundDeviceId": "tekexp"
+        },
+        {
+          "id": "3",
+          "type": "write",
+          "label": "Select Device",
+          "params": {
+            "command": "TEKEXP:SELECT DEVICE,\"Device\""
+          },
+          "boundDeviceId": "tekexp"
+        },
+        {
+          "id": "4",
+          "type": "write",
+          "label": "Set DUT ID",
+          "params": {
+            "command": "TEKEXP:VALUE DUTID,DemoDUTID"
+          },
+          "boundDeviceId": "tekexp"
+        },
+        {
+          "id": "5",
+          "type": "write",
+          "label": "Select Test",
+          "params": {
+            "command": "TEKEXP:SELECT TEST,\"UI-Unit Interval\",1"
+          },
+          "boundDeviceId": "tekexp"
+        },
+        {
+          "id": "6",
+          "type": "write",
+          "label": "Run Test",
+          "params": {
+            "command": "TEKEXP:STATE RUN"
+          },
+          "boundDeviceId": "tekexp"
+        },
+        {
+          "id": "7",
+          "type": "python",
+          "label": "Wait for Completion",
+          "params": {
+            "code": "import time\nstart_time = time.time()\nwhile True:\n    state = tekexp.query('TEKEXP:STATE?').strip()\n    if state == 'COMPLETE':\n        print('Test completed successfully')\n        break\n    if state in ('WAIT', 'ERROR'):\n        popup = tekexp.query('TEKEXP:POPUP?')\n        print(f'Popup: {popup}')\n        tekexp.write('TEKEXP:POPUP \"OK\"')\n    if time.time() - start_time > 300:\n        raise TimeoutError('Test timed out after 5 minutes')\n    time.sleep(2)"
+          }
+        },
+        {
+          "id": "8",
+          "type": "write",
+          "label": "Export Report",
+          "params": {
+            "command": "TEKEXP:EXPORT REPORT"
+          },
+          "boundDeviceId": "tekexp"
+        },
+        {
+          "id": "9",
+          "type": "disconnect",
+          "label": "Disconnect",
+          "params": {
+            "instrumentIds": [
+              "tekexp"
+            ]
+          }
+        }
+      ]
+    },
+    "corpus": "templates",
+    "source": "rag/corpus/templates/templates_index.json"
+  },
+  {
+    "id": "tpl_groups_organization",
+    "type": "template_example",
+    "tags": [
+      "groups",
+      "organization",
+      "measurement",
+      "acquisition",
+      "template_example"
+    ],
+    "title": "Template with Groups: Setup → Configure → Acquire → Measure → Save",
+    "body": "Demonstrates group-based organization for complex workflows. Five groups: Setup Phase (*RST, *CLS, wait), Channel Configuration (enable, scale, position), Acquisition (stop after sequence, start, wait for trigger, *OPC?), Measurements (add pk2pk, set source, read value), Save Results (screenshot, waveform). Groups help users understand workflow phases and can be collapsed for readability.",
+    "template": {
+      "name": "Organized Measurement Template",
+      "backend": "pyvisa",
+      "steps": [
+        {
+          "id": "1",
+          "type": "connect",
+          "label": "Connect",
+          "params": {}
+        },
+        {
+          "id": "g1",
+          "type": "group",
+          "label": "Setup Phase",
+          "params": {},
+          "collapsed": false,
+          "children": [
+            {
+              "id": "2",
+              "type": "write",
+              "label": "Reset Scope",
+              "params": {
+                "command": "*RST"
+              }
+            },
+            {
+              "id": "3",
+              "type": "write",
+              "label": "Clear Status",
+              "params": {
+                "command": "*CLS"
+              }
+            },
+            {
+              "id": "4",
+              "type": "sleep",
+              "label": "Wait for Reset",
+              "params": {
+                "duration": 1
+              }
+            }
+          ]
+        },
+        {
+          "id": "g2",
+          "type": "group",
+          "label": "Channel Configuration",
+          "params": {},
+          "collapsed": false,
+          "children": [
+            {
+              "id": "5",
+              "type": "write",
+              "label": "Enable CH1",
+              "params": {
+                "command": "DISplay:WAVEView1:CH1:STATE ON"
+              }
+            },
+            {
+              "id": "6",
+              "type": "write",
+              "label": "Set CH1 Scale",
+              "params": {
+                "command": "CH1:SCALE 0.5"
+              }
+            },
+            {
+              "id": "7",
+              "type": "write",
+              "label": "Set CH1 Position",
+              "params": {
+                "command": "CH1:POSITION 2.0"
+              }
+            }
+          ]
+        },
+        {
+          "id": "g3",
+          "type": "group",
+          "label": "Acquisition",
+          "params": {},
+          "collapsed": false,
+          "children": [
+            {
+              "id": "8",
+              "type": "write",
+              "label": "Single Sequence",
+              "params": {
+                "command": "ACQuire:STOPAfter SEQUENCE"
+              }
+            },
+            {
+              "id": "9",
+              "type": "write",
+              "label": "Start Acquisition",
+              "params": {
+                "command": "ACQuire:STATE ON"
+              }
+            },
+            {
+              "id": "10",
+              "type": "sleep",
+              "label": "Wait for Trigger",
+              "params": {
+                "duration": 2
+              }
+            },
+            {
+              "id": "11",
+              "type": "query",
+              "label": "Wait Complete",
+              "params": {
+                "command": "*OPC?",
+                "saveAs": "_opc"
+              }
+            }
+          ]
+        },
+        {
+          "id": "g4",
+          "type": "group",
+          "label": "Measurements",
+          "params": {},
+          "collapsed": false,
+          "children": [
+            {
+              "id": "12",
+              "type": "write",
+              "label": "Add Pk2Pk Measurement",
+              "params": {
+                "command": "MEASUrement:ADDMEAS PK2PK"
+              }
+            },
+            {
+              "id": "13",
+              "type": "write",
+              "label": "Set Measurement Source",
+              "params": {
+                "command": "MEASUrement:MEAS1:SOUrce CH1"
+              }
+            },
+            {
+              "id": "14",
+              "type": "query",
+              "label": "Read Pk2Pk Value",
+              "params": {
+                "command": "MEASUrement:MEAS1:RESUlts:CURRentacq:MEAN?",
+                "saveAs": "pk2pk"
+              }
+            }
+          ]
+        },
+        {
+          "id": "g5",
+          "type": "group",
+          "label": "Save Results",
+          "params": {},
+          "collapsed": false,
+          "children": [
+            {
+              "id": "15",
+              "type": "save_screenshot",
+              "label": "Capture Screen",
+              "params": {
+                "filename": "result.png",
+                "scopeType": "modern"
+              }
+            },
+            {
+              "id": "16",
+              "type": "save_waveform",
+              "label": "Save CH1 Data",
+              "params": {
+                "source": "CH1",
+                "filename": "ch1_data.bin",
+                "format": "bin"
+              }
+            }
+          ]
+        },
+        {
+          "id": "17",
+          "type": "disconnect",
+          "label": "Disconnect",
+          "params": {}
+        }
+      ]
+    },
+    "corpus": "templates",
+    "source": "rag/corpus/templates/templates_index.json"
+  },
+  {
+    "id": "tpl_measurement_sweep",
+    "type": "template_example",
+    "tags": [
+      "sweep",
+      "measurement",
+      "frequency",
+      "scale",
+      "iteration",
+      "template_example"
+    ],
+    "title": "Measurement Sweep: Iterate Scales and Capture",
+    "body": "Demonstrates iterating through different scale settings (1V, 500mV, 100mV per division), capturing frequency measurements at each scale, and taking screenshots. Uses groups to organize each scale point. Adds frequency measurement first, then loops through scales. Each group: set scale, settle (sleep 0.5), read measurement, screenshot. Final python block prints all results. Note: this uses manual group repetition, not the sweep step type.",
+    "template": {
+      "name": "Measurement Sweep - Scale vs Frequency",
+      "backend": "pyvisa",
+      "steps": [
+        {
+          "id": "1",
+          "type": "connect",
+          "label": "Connect",
+          "params": {
+            "printIdn": true
+          }
+        },
+        {
+          "id": "2",
+          "type": "write",
+          "label": "Delete All Measurements",
+          "params": {
+            "command": "MEASUrement:DELETEALL"
+          }
+        },
+        {
+          "id": "3",
+          "type": "write",
+          "label": "Add Frequency Measurement",
+          "params": {
+            "command": "MEASUrement:ADDMEAS FREQUENCY"
+          }
+        },
+        {
+          "id": "g1",
+          "type": "group",
+          "label": "Scale 1: 1V/div",
+          "params": {},
+          "children": [
+            {
+              "id": "4",
+              "type": "write",
+              "label": "Set Scale 1V",
+              "params": {
+                "command": "CH1:SCALE 1.0"
+              }
+            },
+            {
+              "id": "5",
+              "type": "sleep",
+              "label": "Settle",
+              "params": {
+                "duration": 0.5
+              }
+            },
+            {
+              "id": "6",
+              "type": "query",
+              "label": "Read Frequency",
+              "params": {
+                "command": "MEASUrement:MEAS1:RESUlts:CURRentacq:MEAN?",
+                "saveAs": "freq_1v"
+              }
+            },
+            {
+              "id": "7",
+              "type": "save_screenshot",
+              "label": "Screenshot 1V",
+              "params": {
+                "filename": "scale_1v.png",
+                "scopeType": "modern"
+              }
+            }
+          ]
+        },
+        {
+          "id": "g2",
+          "type": "group",
+          "label": "Scale 2: 500mV/div",
+          "params": {},
+          "children": [
+            {
+              "id": "8",
+              "type": "write",
+              "label": "Set Scale 500mV",
+              "params": {
+                "command": "CH1:SCALE 0.5"
+              }
+            },
+            {
+              "id": "9",
+              "type": "sleep",
+              "label": "Settle",
+              "params": {
+                "duration": 0.5
+              }
+            },
+            {
+              "id": "10",
+              "type": "query",
+              "label": "Read Frequency",
+              "params": {
+                "command": "MEASUrement:MEAS1:RESUlts:CURRentacq:MEAN?",
+                "saveAs": "freq_500mv"
+              }
+            },
+            {
+              "id": "11",
+              "type": "save_screenshot",
+              "label": "Screenshot 500mV",
+              "params": {
+                "filename": "scale_500mv.png",
+                "scopeType": "modern"
+              }
+            }
+          ]
+        },
+        {
+          "id": "16",
+          "type": "python",
+          "label": "Print Results",
+          "params": {
+            "code": "print(f'Frequency at 1V/div: {freq_1v}')\nprint(f'Frequency at 500mV/div: {freq_500mv}')"
+          }
+        },
+        {
+          "id": "17",
+          "type": "disconnect",
+          "label": "Disconnect",
+          "params": {}
+        }
+      ]
+    },
+    "corpus": "templates",
+    "source": "rag/corpus/templates/templates_index.json"
+  },
+  {
+    "id": "tpl_session_recall_validate",
+    "type": "template_example",
+    "tags": [
+      "recall",
+      "session",
+      "validation",
+      "verify",
+      "assert",
+      "template_example"
+    ],
+    "title": "Session Recall and Validation Template",
+    "body": "Load a session file (.tss) and validate that settings were applied correctly. Pattern: connect, recall SESSION, sleep(2.0) for load, query group to check CH1:SCALE?, HORizontal:SCALE?, TRIGger:A:LEVel:CH1?, then python block with assert statements to validate. Useful for test setup verification.",
+    "template": {
+      "name": "Session Recall and Validation",
+      "backend": "pyvisa",
+      "steps": [
+        {
+          "id": "1",
+          "type": "connect",
+          "label": "Connect",
+          "params": {}
+        },
+        {
+          "id": "2",
+          "type": "recall",
+          "label": "Load Test Session",
+          "params": {
+            "recallType": "SESSION",
+            "filePath": "C:/TekScope/Sessions/DDR_Test.tss",
+            "reference": "REF1"
+          }
+        },
+        {
+          "id": "3",
+          "type": "sleep",
+          "label": "Wait for Load",
+          "params": {
+            "duration": 2
+          }
+        },
+        {
+          "id": "g1",
+          "type": "group",
+          "label": "Verify Settings",
+          "params": {},
+          "children": [
+            {
+              "id": "4",
+              "type": "query",
+              "label": "Check CH1 Scale",
+              "params": {
+                "command": "CH1:SCALE?",
+                "saveAs": "ch1_scale"
+              }
+            },
+            {
+              "id": "5",
+              "type": "query",
+              "label": "Check Timebase",
+              "params": {
+                "command": "HORizontal:SCALE?",
+                "saveAs": "timebase"
+              }
+            },
+            {
+              "id": "6",
+              "type": "query",
+              "label": "Check Trigger Level",
+              "params": {
+                "command": "TRIGger:A:LEVel:CH1?",
+                "saveAs": "trig_level"
+              }
+            }
+          ]
+        },
+        {
+          "id": "7",
+          "type": "python",
+          "label": "Validate Settings",
+          "params": {
+            "code": "print(f'CH1 Scale: {ch1_scale}')\nprint(f'Timebase: {timebase}')\nprint(f'Trigger Level: {trig_level}')\nassert float(ch1_scale) == 0.1, 'CH1 scale mismatch!'"
+          }
+        },
+        {
+          "id": "8",
+          "type": "disconnect",
+          "label": "Disconnect",
+          "params": {}
+        }
+      ]
+    },
+    "corpus": "templates",
+    "source": "rag/corpus/templates/templates_index.json"
+  },
+  {
+    "id": "tpl_tm_devices",
+    "type": "template_example",
+    "tags": [
+      "tm_devices",
+      "high_level_api",
+      "mso6b",
+      "template_example"
+    ],
+    "title": "tm_devices High-Level API Template",
+    "body": "Template using the tm_devices backend with high-level Python API calls instead of raw SCPI. Commands use scope.commands.* or scope.turn_channel_on() etc. Backend MUST be set to 'tm_devices'. deviceDriver specifies exact model (e.g. MSO6B). Commands are Python method calls, not SCPI strings.",
+    "template": {
+      "name": "tm_devices High-Level API Template",
+      "backend": "tm_devices",
+      "deviceType": "SCOPE",
+      "deviceDriver": "MSO6B",
+      "steps": [
+        {
+          "id": "1",
+          "type": "connect",
+          "label": "Connect",
+          "params": {}
+        },
+        {
+          "id": "2",
+          "type": "write",
+          "label": "Turn On CH1",
+          "params": {
+            "command": "scope.turn_channel_on(\"CH1\")"
+          }
+        },
+        {
+          "id": "3",
+          "type": "write",
+          "label": "Set Horizontal Scale",
+          "params": {
+            "command": "scope.set_and_check(\":HORIZONTAL:SCALE\", 100e-9)"
+          }
+        },
+        {
+          "id": "4",
+          "type": "write",
+          "label": "Save Screenshot",
+          "params": {
+            "command": "scope.save_screenshot(\"example.png\")"
+          }
+        },
+        {
+          "id": "5",
+          "type": "disconnect",
+          "label": "Disconnect",
+          "params": {}
+        }
+      ]
+    },
+    "corpus": "templates",
+    "source": "rag/corpus/templates/templates_index.json"
+  },
+  {
+    "id": "tpl_sweep_pattern",
+    "type": "template_example",
+    "tags": [
+      "sweep",
+      "voltage",
+      "smu",
+      "multi_device",
+      "loop",
+      "template_example"
+    ],
+    "title": "Sweep Step Type: Voltage Sweep with SMU",
+    "body": "The sweep step type iterates over a range of values. params: variableName (e.g. 'voltage'), start, stop, step, saveResults (boolean), resultVariable. Children steps use ${variableName} in commands for substitution. Useful for characterization sweeps. Note: sweep is different from group — it automatically iterates and can collect results.",
+    "template": {
+      "name": "Voltage Sweep with SMU",
+      "backend": "pyvisa",
+      "steps": [
+        {
+          "id": "1",
+          "type": "connect",
+          "label": "Connect All",
+          "params": {
+            "instrumentIds": [],
+            "printIdn": true
+          }
+        },
+        {
+          "id": "sweep1",
+          "type": "sweep",
+          "label": "Voltage Sweep",
+          "params": {
+            "variableName": "voltage",
+            "start": 0,
+            "stop": 5,
+            "step": 0.1,
+            "saveResults": true,
+            "resultVariable": "results"
+          },
+          "children": [
+            {
+              "id": "2",
+              "type": "write",
+              "label": "Set Voltage",
+              "params": {
+                "command": "SOURce:VOLTage ${voltage}"
+              },
+              "boundDeviceId": "smu"
+            },
+            {
+              "id": "3",
+              "type": "sleep",
+              "label": "Stabilize",
+              "params": {
+                "duration": 0.2
+              }
+            },
+            {
+              "id": "4",
+              "type": "query",
+              "label": "Read Current",
+              "params": {
+                "command": "MEASure:CURRent:DC?",
+                "saveAs": "current"
+              },
+              "boundDeviceId": "smu"
+            }
+          ]
+        },
+        {
+          "id": "5",
+          "type": "disconnect",
+          "label": "Disconnect All",
+          "params": {
+            "instrumentIds": []
+          }
+        }
+      ]
+    },
+    "corpus": "templates",
+    "source": "rag/corpus/templates/templates_index.json"
+  },
+  {
+    "id": "tpl_validation_rules",
+    "type": "template_rule",
+    "tags": [
+      "validation",
+      "rules",
+      "errors",
+      "checklist",
+      "template_rule"
+    ],
+    "title": "Template Validation Rules — What Makes a Template Valid",
+    "body": "VALID template requirements: 1) Has name and description, 2) Has non-empty steps array, 3) First step is type='connect', 4) Last step is type='disconnect', 5) Specifies backend (recommended), 6) Query steps have saveAs, 7) Multi-device steps have boundDeviceId, 8) Commands use full SCPI syntax (not abbreviations), 9) Labels are descriptive. INVALID patterns (common mistakes): Missing connect/disconnect, multi-device without boundDeviceId, tm_devices commands without backend:'tm_devices', query without saveAs, using *OPC? after FILESYSTEM:READFILE, using HARDCOPY on modern scopes or SAVE:IMAGE on legacy scopes, connect all but disconnect specific (inconsistent), sweep type used where group is needed.",
+    "corpus": "templates",
+    "source": "rag/corpus/templates/templates_index.json"
+  },
+  {
+    "id": "tpl_file_type_reference",
+    "type": "template_rule",
+    "tags": [
+      "file_types",
+      "set",
+      "tss",
+      "wfm",
+      "recall",
+      "save",
+      "template_rule"
+    ],
+    "title": "File Type Reference — .SET, .TSS, .WFM Extensions",
+    "body": ".SET = Settings only file. Contains: channel scales, trigger configuration, horizontal settings, display settings. Does NOT contain: waveform data, measurements, reference waveforms. Use recallType: 'SETUP' to load. .TSS = Full session file. Contains: ALL settings + waveform data + measurements + math channels + search + reference waveforms. Most complete recall type. Use recallType: 'SESSION'. Takes longer to load (add sleep 2.0). .WFM = Waveform data file. Contains: raw waveform sample data for one channel. Used with recallType: 'WAVEFORM' and reference: 'REF1'-'REF4' to load into reference channels. For saving: save_waveform step produces .bin, .wfm, or .csv depending on format param.",
+    "corpus": "templates",
+    "source": "rag/corpus/templates/templates_index.json"
+  },
+  {
+    "id": "tpl_backend_specification",
+    "type": "template_rule",
+    "tags": [
+      "backend",
+      "pyvisa",
+      "tm_devices",
+      "tekhsi",
+      "hybrid",
+      "template_rule"
+    ],
+    "title": "Backend Specification in Templates",
+    "body": "Always specify backend when template uses backend-specific features. PyVISA ('pyvisa'): Standard SCPI commands like 'CH1:SCALE 1.0'. tm_devices ('tm_devices'): High-level API like 'scope.commands.ch[1].scale.write(1.0)'. TekHSI ('tekhsi'): gRPC API like 'scope.ch[1].scale = 1.0'. Hybrid ('hybrid'): Mix SCPI (via PyVISA) for config and TekHSI for fast waveforms. IMPORTANT: tm_devices commands in a pyvisa template will fail. Backend determines how commands are interpreted and what code is generated.",
+    "corpus": "templates",
+    "source": "rag/corpus/templates/templates_index.json"
+  },
+  {
+    "id": "tpl_common_patterns",
+    "type": "template_pattern",
+    "tags": [
+      "patterns",
+      "setup_execute_save",
+      "best_practice",
+      "template_pattern"
+    ],
+    "title": "Common Template Patterns",
+    "body": "Pattern 1 — Setup → Execute → Save: connect, *RST, sleep(1.0), configure channels, start acquisition, wait, stop, save data, disconnect. Pattern 2 — Group Organization: connect, group(Setup), group(Configure), group(Measure), group(Save), disconnect. Pattern 3 — Query and Process: connect, query to get value (saveAs), python block to process/validate, disconnect. Pattern 4 — Recall and Verify: connect, recall session/setup, sleep for load, query settings, python assert, disconnect. Pattern 5 — Multi-Step Screenshot: connect, python block with complete screenshot code, disconnect. Pattern 6 — Sweep: connect, setup instruments, sweep step with children, cleanup, disconnect.",
+    "corpus": "templates",
+    "source": "rag/corpus/templates/templates_index.json"
+  },
+  {
+    "id": "tpl_xml_basic_scope",
+    "type": "xml_example",
+    "tags": [
+      "xml",
+      "blockly",
+      "basic",
+      "scope_setup",
+      "waveform",
+      "xml_example"
+    ],
+    "title": "XML Example: Basic Scope Setup and Waveform Capture",
+    "body": "Blockly XML for basic oscilloscope setup and waveform capture. Blocks: connect_scope, set_device_context, enable_channel (CH1), configure_channel (SCALE 1.0, OFFSET 0.0, COUPLING DC, TERMINATION ONEMEG), scpi_write (horizontal scale), acquisition_reset, single_acquisition, wait_for_opc, save_waveform (CSV), disconnect. Validated and fixed — configure_channel now includes TERMINATION field. Generates clean Python code.",
+    "xml": "<block type=\"connect_scope\"><next><block type=\"set_device_context\"><next><block type=\"enable_channel\"><field name=\"CHANNEL\">CH1</field><field name=\"STATE\">ON</field><next><block type=\"configure_channel\"><field name=\"CHANNEL\">CH1</field><field name=\"SCALE\">1.0</field><field name=\"OFFSET\">0.0</field><field name=\"COUPLING\">DC</field><field name=\"TERMINATION\">ONEMEG</field><next><block type=\"scpi_write\"><field name=\"COMMAND\">HORizontal:SCAle 1e-6</field><next><block type=\"acquisition_reset\"><next><block type=\"single_acquisition\"><next><block type=\"wait_for_opc\"><next><block type=\"save_waveform\"><next><block type=\"disconnect\"/></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block>",
+    "corpus": "templates",
+    "source": "rag/corpus/templates/templates_index.json"
+  },
+  {
+    "id": "tpl_xml_voltage_sweep",
+    "type": "xml_example",
+    "tags": [
+      "xml",
+      "blockly",
+      "voltage_sweep",
+      "smu",
+      "multi_device",
+      "tm_devices",
+      "xml_example"
+    ],
+    "title": "XML Example: Voltage Sweep with SMU (Multi-Device Blockly)",
+    "body": "Blockly XML for multi-device voltage sweep. Uses tm_devices backend. Blocks: connect_scope x2 (scope + SMU), set_device_context (switch between devices), python_code (SMU output on, set voltage), controls_for loop (v = 1 to 5), acquisition_reset, single_acquisition, wait_for_opc, measurement_immediate (PK2PK), disconnect x2. Demonstrates device context switching and for loops in Blockly. Validated, no changes needed.",
+    "xml": "<!-- Voltage sweep with SMU - uses tm_devices backend, connect_scope x2, controls_for loop v=1..5, measurement_immediate PK2PK -->",
+    "corpus": "templates",
+    "source": "rag/corpus/templates/templates_index.json"
+  },
+  {
+    "id": "tpl_xml_tekexpress",
+    "type": "xml_example",
+    "tags": [
+      "xml",
+      "blockly",
+      "tekexpress",
+      "compliance",
+      "usb",
+      "displayport",
+      "xml_example"
+    ],
+    "title": "XML Example: TekExpress Compliance Test Blockly Workflow",
+    "body": "Blockly XML for TekExpress compliance testing (validated for USB, PCIe, DisplayPort). Blocks: connect_tekexpress, tekexp_write (multiple SCPI), tekexp_query, tekexp_select_device, tekexp_select_test, tekexp_set_value (DUTID), tekexp_run, tekexp_wait_state (COMPLETE with popup handling), tekexp_export_report, python_code, wait_seconds (uses <field> not <value> — was a bug fixed in TekExpress_USB.xml), disconnect. Key fix: wait_seconds uses FieldNumber (<field name=\"SECONDS\">2</field>), NOT <value> with shadow blocks.",
+    "xml": "<!-- TekExpress workflow: connect_tekexpress → tekexp_set_acquire_mode LIVE → tekexp_select_device → tekexp_set_value DUTID → tekexp_select_test → tekexp_run → tekexp_wait_state COMPLETE → tekexp_export_report → disconnect -->",
+    "corpus": "templates",
+    "source": "rag/corpus/templates/templates_index.json"
+  },
+  {
+    "id": "tpl_xml_validation",
+    "type": "template_rule",
+    "tags": [
+      "xml",
+      "blockly",
+      "validation",
+      "common_errors",
+      "template_rule"
+    ],
+    "title": "XML/Blockly Validation Rules and Common Errors",
+    "body": "XML validation rules: 1) All block types must be registered (connect_scope, scpi_write, tekexp_write, etc.), 2) Field names must match block definitions exactly, 3) wait_seconds uses <field name=\"SECONDS\">value</field> NOT <value> with shadow blocks (FieldNumber not value input), 4) configure_channel must include TERMINATION field, 5) All <next> tags must be properly closed, 6) Variable declarations must match usage, 7) Mutation tags present where needed. Common fix: TekExpress_USB.xml had 6 wait_seconds blocks using wrong format (value→field). Common fix: basic_setup_waveform.xml missing TERMINATION field.",
+    "corpus": "templates",
+    "source": "rag/corpus/templates/templates_index.json"
+  },
+  {
+    "id": "tpl_device_binding",
+    "type": "template_rule",
+    "tags": [
+      "device_binding",
+      "bounddeviceid",
+      "multi_device",
+      "alias",
+      "template_rule"
+    ],
+    "title": "Device Binding Rules — boundDeviceId Usage",
+    "body": "Device binding determines which instrument receives each command. Rules: 1) boundDeviceId uses device ALIAS (not UUID), set by user in device configuration, 2) If boundDeviceId not specified, command goes to default (first enabled) device, 3) For single-device templates, binding is unnecessary, 4) Device selection priority: step boundDeviceId > parent group boundDeviceId > default device, 5) Connect and disconnect can use instrumentIds array for specific devices or empty [] for all, 6) Each device can have different backend (scope=tm_devices, smu=pyvisa), 7) Commands within groups inherit group's device unless overridden.",
+    "corpus": "templates",
+    "source": "rag/corpus/templates/templates_index.json"
+  },
+  {
+    "id": "tpl_creation_checklist",
+    "type": "template_rule",
+    "tags": [
+      "checklist",
+      "creation",
+      "quality",
+      "template_rule"
+    ],
+    "title": "Template Creation Checklist",
+    "body": "Before creating: Determine single vs multi-device, choose backend, identify device type(s), plan connection strategy. Structure checks: Has name and description, has non-empty steps array, starts with connect, ends with disconnect, specifies backend. Connection checks: Connect is first, disconnect is last, handles single/multi-device correctly, printIdn for verification. Multi-device checks: Uses boundDeviceId for device-specific commands, device aliases documented, all devices connected at start and disconnected at end. Command quality: Full SCPI syntax (not abbreviations), library commands when possible, query steps have saveAs, labels are descriptive. Code generation: Generates valid Python, no syntax errors, device references correct, backend-specific commands correct.",
+    "corpus": "templates",
+    "source": "rag/corpus/templates/templates_index.json"
+  },
+  {
+    "id": "tpl_common_pitfalls",
+    "type": "template_rule",
+    "tags": [
+      "pitfalls",
+      "errors",
+      "debugging",
+      "common_mistakes",
+      "template_rule"
+    ],
+    "title": "Common Template Pitfalls to Avoid",
+    "body": "Pitfall 1: Missing connect/disconnect — every template needs both. Pitfall 2: Multi-device without boundDeviceId — commands go to wrong device. Pitfall 3: Missing backend specification — tm_devices commands in pyvisa template fail. Pitfall 4: Inconsistent device handling — connect all but disconnect only one. Pitfall 5: Using *OPC? after FILESYSTEM:READFILE — causes UnicodeDecodeError from PNG binary data in buffer. Use time.sleep(1.0) instead. Pitfall 6: Using HARDCOPY on modern scopes (MSO5/6) — not supported, use SAVE:IMAGE. Pitfall 7: Using SAVE:IMAGE on legacy scopes (5k/7k/70k) — not supported, use HARDCOPY. Pitfall 8: HARDCOPY:FORMAT ${format} literal — was a generator bug, now fixed. Pitfall 9: Query without saveAs — result is lost.",
+    "corpus": "templates",
+    "source": "rag/corpus/templates/templates_index.json"
+  },
+  {
+    "id": "tpl_save_patterns",
+    "type": "template_pattern",
+    "tags": [
+      "save",
+      "setup",
+      "session",
+      "waveform",
+      "image",
+      "template_pattern"
+    ],
+    "title": "Save Operations — Setup, Session, Waveform, Image",
+    "body": "Save SETUP: SAVE:SETUP \"filepath.set\" — saves instrument settings only. Save SESSION: SAVe:SESsion \"filepath.tss\" — saves full session with waveforms. Save WAVEFORM: Use save_waveform step type with source (CH1), filename, format (bin/wfm/csv). Internally configures DATa:SOUrce, DATa:ENCdg, DATa:WIDth, then CURVe? for data. Save IMAGE: Use save_screenshot step type OR python block. Modern: SAVE:IMAGE \"path.png\". Legacy: HARDCOPY:PORT FILE + HARDCOPY:FORMAT PNG + HARDCOPY:FILENAME + HARDCOPY START. Both transfer via FILESYSTEM:READFILE.",
+    "corpus": "templates",
+    "source": "rag/corpus/templates/templates_index.json"
+  },
+  {
+    "id": "tpl_scope_type_detection",
+    "type": "template_rule",
+    "tags": [
+      "scope_type",
+      "detection",
+      "modern",
+      "legacy",
+      "mso70k",
+      "template_rule"
+    ],
+    "title": "Scope Type Detection for Template Selection",
+    "body": "Detect scope series from *IDN? response to choose correct commands. MSO 4/5/6 series (model starts with MSO4, MSO5, MSO6, or contains TEKSCOPESW): Use SAVE:IMAGe, default path C:/Temp. MSO/DPO 70000 series (model starts with MSO7 or DPO7): Use EXPort commands, default path C:/TekScope. Legacy 5k/7k (DPO5000, DPO7000, MSO5000): Use HARDCOPY commands, default path C:/TekScope/Temp. Python detection: parse parts[1] from IDN string, check prefix (MSO7/DPO7 → mso70k, MSO4/5/6 → mso456).",
+    "corpus": "templates",
+    "source": "rag/corpus/templates/templates_index.json"
+  }
+]

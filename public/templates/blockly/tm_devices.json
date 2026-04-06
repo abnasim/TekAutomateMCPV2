@@ -1,0 +1,15 @@
+{
+  "category": "tm_devices",
+  "builderType": "blockly",
+  "templates": [
+    {
+      "name": "tm_devices Scope Setup",
+      "description": "Connect using tm_devices backend, configure channel, capture waveform",
+      "backend": "tm_devices",
+      "deviceType": "SCOPE",
+      "deviceDriver": "MSO6B",
+      "builderType": "blockly",
+      "xml": "<xml xmlns=\"https://developers.google.com/blockly/xml\">\n  <variables></variables>\n  <block type=\"connect_scope\" id=\"c1\" x=\"20\" y=\"20\">\n    <mutation show_advanced=\"true\" current_backend=\"tm_devices\" current_dev_type=\"SCOPE\" host=\"192.168.1.100\"></mutation>\n    <field name=\"DEVICE_NAME\">scope</field>\n    <field name=\"BACKEND\">tm_devices</field>\n    <field name=\"HOST\">192.168.1.100</field>\n    <field name=\"DEV_TYPE\">SCOPE</field>\n    <field name=\"DRIVER_NAME\">MSO6B</field>\n    <next>\n      <block type=\"set_device_context\" id=\"ctx1\">\n        <mutation device=\"scope\"></mutation>\n        <field name=\"DEVICE\">scope</field>\n        <next>\n          <block type=\"enable_channel\" id=\"ch1_en\">\n            <field name=\"CHANNEL\">CH1</field>\n            <field name=\"STATE\">ON</field>\n            <next>\n              <block type=\"configure_channel\" id=\"ch1_cfg\">\n                <field name=\"CHANNEL\">CH1</field>\n                <field name=\"SCALE\">1.0</field>\n                <field name=\"OFFSET\">0.0</field>\n                <field name=\"COUPLING\">DC</field>\n                <field name=\"TERMINATION\">FIFTY</field>\n                <next>\n                  <block type=\"single_acquisition\" id=\"acq_single\">\n                    <next>\n                      <block type=\"wait_for_opc\" id=\"opc1\">\n                        <field name=\"DEVICE_CONTEXT\">(scope)</field>\n                        <field name=\"TIMEOUT\">10</field>\n                        <next>\n                          <block type=\"save_waveform\" id=\"save_wf1\">\n                            <mutation></mutation>\n                            <field name=\"DEVICE_CONTEXT\">(scope)</field>\n                            <field name=\"SOURCE\">CH1</field>\n                            <field name=\"FILENAME\">waveform</field>\n                            <field name=\"FORMAT\">WFM</field>\n                            <next>\n                              <block type=\"disconnect\" id=\"d1\">\n                                <field name=\"DEVICE_CONTEXT\">(scope)</field>\n                              </block>\n                            </next>\n                          </block>\n                        </next>\n                      </block>\n                    </next>\n                  </block>\n                </next>\n              </block>\n            </next>\n          </block>\n        </next>\n      </block>\n    </next>\n  </block>\n</xml>"
+    }
+  ]
+}

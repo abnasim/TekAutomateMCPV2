@@ -1,0 +1,563 @@
+[
+  {
+    "id": "tm_001",
+    "type": "tm_concept",
+    "tags": [
+      "core",
+      "definition"
+    ],
+    "title": "What tm_devices Actually Is",
+    "body": "tm_devices is NOT a SCPI command list. It is a Python command framework that composes SCPI at runtime.\nKey Point: SCPI strings do not exist as static data. They are built when a method is executed.\nThink of tm_devices_full_tree.json as an AST (Abstract Syntax Tree) of the command language, not assembly code.\nCommands are exposed as Python objects, not strings. Example: scope.commands.acquire.state.write(\"ON\") internally sends 'ACQuire:STATE ON' over VISA."
+  },
+  {
+    "id": "tm_002",
+    "type": "tm_concept",
+    "tags": [
+      "core",
+      "object_graph"
+    ],
+    "title": "Command Object Graph Structure",
+    "body": "Commands in tm_devices are structured as a Python object hierarchy:\n- scope.commands \u2014 root command group\n- scope.commands.acquire \u2014 acquisition subsystem\n- scope.commands.acquire.state \u2014 state property\n- scope.commands.acquire.state.write(\"ON\") \u2014 sends SCPI\n- scope.commands.ch[1].scale.write(1.0) \u2014 indexed channel access\n\nIndexed nodes use bracket syntax: ch[1], math[2], source[1], meas[1].\nNavigation: group \u2192 subgroup \u2192 ... \u2192 leaf \u2192 method (write/query).",
+    "code": "scope.commands.acquire.state.write(\"ON\")  # sends ACQuire:STATE ON"
+  },
+  {
+    "id": "tm_003",
+    "type": "tm_concept",
+    "tags": [
+      "core",
+      "methods",
+      "write",
+      "query"
+    ],
+    "title": "Method Types: write, query, set_and_verify, verify",
+    "body": "tm_devices methods:\n- write(value) \u2014 Sends a SCPI SET command. e.g., scope.commands.ch[1].scale.write(1.0)\n- query() \u2014 Sends a SCPI QUERY command, returns string. e.g., result = scope.commands.ch[1].scale.query()\n- set_and_verify(value) \u2014 Writes then queries to confirm value was set correctly\n- verify(expected) \u2014 Queries and checks that result matches expected value\n- no_op \u2014 Placeholder, does nothing (exists in tree but not executable)"
+  },
+  {
+    "id": "tm_004",
+    "type": "tm_concept",
+    "tags": [
+      "core",
+      "indexed",
+      "channel"
+    ],
+    "title": "Indexed Nodes \u2014 ch[x], math[x], source[x]",
+    "body": "Many tm_devices command groups use indexed access:\n- scope.commands.ch[1] \u2014 Channel 1\n- scope.commands.ch[2] \u2014 Channel 2\n- scope.commands.math[1] \u2014 Math waveform 1\n- scope.commands.measurement.meas[1] \u2014 Measurement 1\n- afg.commands.source[1] \u2014 AFG source channel 1\n\nIn the command browser, indexed nodes prompt the user to enter an index value.\nIn generated code, the index appears in brackets: ch[1], not ch1.",
+    "code": "scope.commands.ch[1].scale.write(1.0)"
+  },
+  {
+    "id": "tm_005",
+    "type": "tm_concept",
+    "tags": [
+      "core",
+      "property_vs_method"
+    ],
+    "title": "Property vs Method Distinction",
+    "body": "In tm_devices:\n- Properties are intermediate nodes in the command tree (e.g., scope.commands.acquire)\n- Methods are executable endpoints (e.g., .write(), .query(), .set_and_verify())\n- A property can have both sub-properties AND methods\n- The full tree JSON marks nodes as GROUP (intermediate), LEAF (terminal), or METHOD (executable)\n- Only METHOD nodes generate actual SCPI communication"
+  },
+  {
+    "id": "tm_006",
+    "type": "tm_concept",
+    "tags": [
+      "core",
+      "tree_json"
+    ],
+    "title": "What the Full Tree JSON Represents",
+    "body": "tm_devices_full_tree.json is a structural map of the tm_devices command object graph.\nIt represents: every command group, every valid subcommand, every indexed factory,\nevery callable method, and model-specific availability.\nIt does NOT represent literal SCPI strings.\nNode types in the tree:\n- GROUP: has children, navigate deeper\n- LEAF: terminal node, has methods\n- METHOD: executable (write, query, set_and_verify, verify, no_op)"
+  },
+  {
+    "id": "tm_007",
+    "type": "tm_connection",
+    "tags": [
+      "connection",
+      "basic",
+      "ip"
+    ],
+    "title": "Basic Connection by IP Address",
+    "body": "Connect to a scope by IP address using DeviceManager:",
+    "code": "from tm_devices import DeviceManager\nfrom tm_devices.drivers import MSO6B\n\nwith DeviceManager(verbose=True) as dm:\n    dm.setup_cleanup_enabled = True\n    dm.teardown_cleanup_enabled = True\n    scope: MSO6B = dm.add_scope(\"192.168.0.1\")\n    # scope is now connected and ready",
+    "instruments": [
+      "MSO6B"
+    ]
+  },
+  {
+    "id": "tm_008",
+    "type": "tm_connection",
+    "tags": [
+      "connection",
+      "hostname"
+    ],
+    "title": "Connection by Hostname",
+    "body": "Connect using instrument hostname instead of IP.",
+    "code": "scope: MSO5 = dm.add_scope(\"MSO56-100083\")",
+    "instruments": [
+      "MSO5"
+    ]
+  },
+  {
+    "id": "tm_009",
+    "type": "tm_connection",
+    "tags": [
+      "connection",
+      "alias"
+    ],
+    "title": "Connection with Alias",
+    "body": "Add an alias for easier reference.",
+    "code": "smu: SMU2450 = dm.add_smu(\"192.168.0.1\", alias=\"my2450\")",
+    "instruments": [
+      "SMU2450"
+    ]
+  },
+  {
+    "id": "tm_010",
+    "type": "tm_connection",
+    "tags": [
+      "connection",
+      "multi_device"
+    ],
+    "title": "Multiple Device Types Simultaneously",
+    "body": "Connect scope, AFG, PSU, SMU, AWG in same DeviceManager context.",
+    "code": "from tm_devices import DeviceManager\nfrom tm_devices.drivers import MSO5, AFG3KC, PSU2200, SMU2470, AWG5K\n\nwith DeviceManager(verbose=True) as dm:\n    scope: MSO5 = dm.add_scope(\"MSO56-100083\")\n    afg: AFG3KC = dm.add_afg(\"192.168.0.1\")\n    psu: PSU2200 = dm.add_psu(\"MODEL-SERIAL\", connection_type=\"USB\")\n    smu: SMU2470 = dm.add_smu(\"192.168.0.2\")\n    awg: AWG5K = dm.add_awg(\"192.168.0.3\")"
+  },
+  {
+    "id": "tm_011",
+    "type": "tm_connection",
+    "tags": [
+      "connection",
+      "pyvisa_py",
+      "backend"
+    ],
+    "title": "Configuring PyVISA-py Backend",
+    "body": "Use pure Python VISA backend instead of NI-VISA.",
+    "code": "from tm_devices import DeviceManager\nfrom tm_devices.helpers import PYVISA_PY_BACKEND\n\nwith DeviceManager(verbose=True) as dm:\n    dm.visa_library = PYVISA_PY_BACKEND\n    scope: MSO6B = dm.add_scope(\"127.0.0.1\")"
+  },
+  {
+    "id": "tm_012",
+    "type": "tm_connection",
+    "tags": [
+      "connection",
+      "cleanup"
+    ],
+    "title": "Cleanup and Connection Lifecycle",
+    "body": "DeviceManager handles cleanup automatically in context manager:\n- setup_cleanup_enabled = True \u2192 resets device on connect (*RST equivalent)\n- teardown_cleanup_enabled = True \u2192 cleans up on disconnect\n- Context manager (with statement) ensures close() is called\n- Explicit: device_manager.close() if not using context manager\n- Each device also has scope.close() for individual cleanup"
+  },
+  {
+    "id": "tm_013",
+    "type": "tm_connection",
+    "tags": [
+      "connection",
+      "usb",
+      "gpib",
+      "serial"
+    ],
+    "title": "USB, GPIB, and Serial Connections",
+    "body": "Non-TCP/IP connection types.",
+    "code": "# USB\npsu: PSU2200 = dm.add_psu(\"MODEL-SERIAL\", connection_type=\"USB\")\n\n# GPIB\nscope = dm.add_scope(\"1\", connection_type=\"GPIB\")  # GPIB address 1\n\n# Serial\nfrom tm_devices.helpers import SerialConfig\nserial_config = SerialConfig(baud_rate=9600)\n# dm.add_scope(\"COM3\", connection_type=\"SERIAL\", serial_config=serial_config)"
+  },
+  {
+    "id": "tm_014",
+    "type": "tm_device_class",
+    "tags": [
+      "oscilloscope",
+      "mso6b",
+      "mso5b",
+      "mso4b"
+    ],
+    "title": "Modern Oscilloscopes: MSO4B/5B/6B Series",
+    "body": "MSO6B: 4/6/8 channel, 1-10 GHz, flagship. Full tm_devices support.\nMSO5B: 4/6/8 channel, 350 MHz-2 GHz. Full support.\nMSO4B: 4 channel, 200 MHz-1.5 GHz. Full support.\nPrevious gen: MSO4, MSO5 (non-B). Also MSO2 (entry-level, 70-200 MHz).\nAll support: PyVISA, tm_devices, TekHSI (waveform only), VXI-11.",
+    "instruments": [
+      "MSO6B",
+      "MSO5B",
+      "MSO4B",
+      "MSO5",
+      "MSO4",
+      "MSO2"
+    ]
+  },
+  {
+    "id": "tm_015",
+    "type": "tm_device_class",
+    "tags": [
+      "oscilloscope",
+      "dpo",
+      "legacy"
+    ],
+    "title": "Legacy Oscilloscopes: DPO/MSO 5K/7K/70K",
+    "body": "DPO7000/C: 4ch, 500MHz-3.5GHz. DPO5000/B: 4ch, 350MHz-2GHz.\nDPO70000 series (B/C/D/DX/SX): high-performance.\nDSA70000 series. MSO70000 series.\nLimited tm_devices support for older models. No TekHSI.\nBest with PyVISA backend.",
+    "instruments": [
+      "DPO7K",
+      "DPO5K",
+      "DPO70K",
+      "MSO70K"
+    ]
+  },
+  {
+    "id": "tm_016",
+    "type": "tm_device_class",
+    "tags": [
+      "afg",
+      "function_generator"
+    ],
+    "title": "AFG Series (Function Generators)",
+    "body": "AFG3000 (AFG3K): 1/2ch, 250MHz, 2GS/s\nAFG3000B (AFG3KB): Updated. AFG3000C (AFG3KC): Latest.\nAFG31000 (AFG31K): 1/2ch, 250MHz, 14-bit resolution.\nFull tm_devices support with source[1]/source[2] indexed access.",
+    "instruments": [
+      "AFG3K",
+      "AFG3KB",
+      "AFG3KC",
+      "AFG31K"
+    ]
+  },
+  {
+    "id": "tm_017",
+    "type": "tm_device_class",
+    "tags": [
+      "awg",
+      "waveform_generator"
+    ],
+    "title": "AWG Series (Arbitrary Waveform Generators)",
+    "body": "AWG5000: 2/4ch, 600MS/s-1.2GS/s. AWG5200: 2/4/8ch, 10GS/s.\nAWG7000: 1/2ch, 10-20GS/s. AWG70000: 1/2ch, 25-50GS/s ultra high speed.\ntm_devices classes: AWG5K, AWG5200, AWG7K, AWG70K.",
+    "instruments": [
+      "AWG5K",
+      "AWG5200",
+      "AWG7K",
+      "AWG70K"
+    ]
+  },
+  {
+    "id": "tm_018",
+    "type": "tm_device_class",
+    "tags": [
+      "smu",
+      "keithley",
+      "source_measure"
+    ],
+    "title": "Keithley SMU Series (Source Measure Units)",
+    "body": "PI-based (SCPI): SMU2400, SMU2450 (touchscreen), SMU2460 (7A high current), SMU2470 (1100V high voltage).\nTSP-based: SMU2600, SMU2600B (dual-channel).\nPI models use standard SCPI :SOURce:/:SENSe:/:OUTPut commands.\nTSP models use Lua-based Test Script Processor.",
+    "instruments": [
+      "SMU2400",
+      "SMU2450",
+      "SMU2460",
+      "SMU2470",
+      "SMU2600",
+      "SMU2600B"
+    ]
+  },
+  {
+    "id": "tm_019",
+    "type": "tm_device_class",
+    "tags": [
+      "psu",
+      "dmm",
+      "daq",
+      "keithley"
+    ],
+    "title": "Other Keithley Instruments",
+    "body": "PSU2200 series: Power supplies. Basic voltage/current control.\nDMM6500, DMM7510: Digital multimeters. Voltage, current, resistance.\nDAQ6510: Data acquisition. Multi-channel scanning.\nAll support PyVISA and tm_devices.",
+    "instruments": [
+      "PSU2200",
+      "DMM6500",
+      "DMM7510",
+      "DAQ6510"
+    ]
+  },
+  {
+    "id": "tm_020",
+    "type": "tm_command_pattern",
+    "tags": [
+      "scope",
+      "setup",
+      "horizontal",
+      "vertical",
+      "trigger"
+    ],
+    "title": "Basic Scope Setup Pattern",
+    "body": "Configure horizontal, vertical, and trigger settings.",
+    "code": "# Horizontal\nscope.commands.horizontal.scale.write(1e-6)  # 1 \u00b5s/div\nscope.commands.horizontal.recordlength.write(10000)\n\n# Vertical\nscope.commands.ch[1].scale.write(0.5)  # 500 mV/div\nscope.commands.ch[1].offset.write(0)\nscope.commands.ch[1].coupling.write(\"DC\")\n\n# Trigger\nscope.commands.trigger.a.edge.source.write(\"CH1\")\nscope.commands.trigger.a.edge.slope.write(\"RISE\")\nscope.commands.trigger.a.level.ch[1].write(0.5)"
+  },
+  {
+    "id": "tm_021",
+    "type": "tm_command_pattern",
+    "tags": [
+      "scope",
+      "acquisition",
+      "state",
+      "mode"
+    ],
+    "title": "Acquisition Control Pattern",
+    "body": "Start, stop, configure acquisition.",
+    "code": "scope.commands.acquire.state.write(\"OFF\")  # Stop\nscope.commands.acquire.mode.write(\"SAMple\")\nscope.commands.acquire.stopafter.write(\"SEQuence\")\nscope.commands.acquire.state.write(\"ON\")  # Start single\nscope.commands.opc.query()  # Wait for completion"
+  },
+  {
+    "id": "tm_022",
+    "type": "tm_command_pattern",
+    "tags": [
+      "scope",
+      "measurement",
+      "meas",
+      "value"
+    ],
+    "title": "Measurement Pattern",
+    "body": "Add and read automated measurements.",
+    "code": "# Add frequency measurement on CH1\nscope.commands.measurement.meas[1].type.write(\"FREQuency\")\nscope.commands.measurement.meas[1].source.write(\"CH1\")\n\n# Read measurement value\nfreq = scope.commands.measurement.meas[1].value.query()\nprint(f\"Frequency: {freq}\")"
+  },
+  {
+    "id": "tm_023",
+    "type": "tm_command_pattern",
+    "tags": [
+      "scope",
+      "fastframe",
+      "acquisition"
+    ],
+    "title": "FastFrame Pattern",
+    "body": "Enable and use FastFrame for multi-frame acquisition.",
+    "code": "# Enable FastFrame\nscope.commands.horizontal.fastframe.state.write(\"ON\")\nscope.commands.horizontal.fastframe.count.write(100)\n\n# Acquire\nscope.commands.acquire.stopafter.write(\"SEQuence\")\nscope.commands.acquire.state.write(\"ON\")\nscope.commands.opc.query()\n\n# Select and read specific frame\nscope.commands.horizontal.fastframe.selected.write(1)\ndata = scope.commands.curve.query()"
+  },
+  {
+    "id": "tm_024",
+    "type": "tm_command_pattern",
+    "tags": [
+      "scope",
+      "search",
+      "edge",
+      "marks"
+    ],
+    "title": "Search Pattern",
+    "body": "Configure and query search results.",
+    "code": "# Configure edge search\nscope.commands.search.search[1].trigger.a.edge.source.write(\"CH1\")\nscope.commands.search.search[1].trigger.a.edge.slope.write(\"RISE\")\n\n# Query total marks found\ntotal = scope.commands.search.search[1].total.query()\nprint(f\"Found {total} edges\")"
+  },
+  {
+    "id": "tm_025",
+    "type": "tm_command_pattern",
+    "tags": [
+      "scope",
+      "screenshot",
+      "save"
+    ],
+    "title": "Screenshot Capture (tm_devices)",
+    "body": "Use built-in save_screenshot method.",
+    "code": "# tm_devices has a built-in method\nscope.save_screenshot(\"screenshot.png\")\n# This handles the full save+transfer+cleanup internally"
+  },
+  {
+    "id": "tm_026",
+    "type": "tm_command_pattern",
+    "tags": [
+      "scope",
+      "session",
+      "recall"
+    ],
+    "title": "Session Recall (tm_devices)",
+    "body": "Recall instrument session.",
+    "code": "scope.recall_session(\"C:/path/to/session.tss\")"
+  },
+  {
+    "id": "tm_027",
+    "type": "tm_command_pattern",
+    "tags": [
+      "afg",
+      "signal",
+      "frequency",
+      "amplitude"
+    ],
+    "title": "AFG Signal Generation Pattern",
+    "body": "Configure and enable AFG output.",
+    "code": "afg.commands.source[1].frequency.fixed.write(1e6)  # 1 MHz\nafg.commands.source[1].voltage.amplitude.write(1.0)  # 1 Vpp\nafg.commands.source[1].function.shape.write(\"SINusoid\")\nafg.commands.output[1].state.write(\"ON\")",
+    "instruments": [
+      "AFG3K",
+      "AFG31K"
+    ]
+  },
+  {
+    "id": "tm_028",
+    "type": "tm_command_pattern",
+    "tags": [
+      "smu",
+      "voltage",
+      "source",
+      "measure"
+    ],
+    "title": "SMU Voltage Source Pattern",
+    "body": "Configure SMU as voltage source and measure current.",
+    "code": "# Configure as voltage source\nsmu.commands.source.function.write(\"VOLTage\")\nsmu.commands.source.voltage.level.write(5.0)\nsmu.commands.source.voltage.range.auto.write(\"ON\")\nsmu.commands.sense.current.protection.write(0.1)  # 100mA compliance\n\n# Enable output\nsmu.commands.output.write(\"ON\")\n\n# Measure current\ncurrent = smu.commands.measure.current.query()\nprint(f\"Current: {current} A\")\n\n# Disable output\nsmu.commands.output.write(\"OFF\")",
+    "instruments": [
+      "SMU2450",
+      "SMU2460"
+    ]
+  },
+  {
+    "id": "tm_029",
+    "type": "tm_command_pattern",
+    "tags": [
+      "smu",
+      "iv_sweep"
+    ],
+    "title": "SMU IV Sweep Pattern",
+    "body": "Sweep voltage and measure current for IV curve.",
+    "code": "import time\nsmu.commands.source.function.write(\"VOLTage\")\nsmu.commands.output.write(\"ON\")\n\nvoltages = [v * 0.1 for v in range(0, 51)]  # 0 to 5V\ncurrents = []\n\nfor v in voltages:\n    smu.commands.source.voltage.level.write(v)\n    time.sleep(0.05)  # settle\n    i = float(smu.commands.measure.current.query())\n    currents.append(i)\n\nsmu.commands.output.write(\"OFF\")",
+    "instruments": [
+      "SMU2450",
+      "SMU2460",
+      "SMU2470"
+    ]
+  },
+  {
+    "id": "tm_030",
+    "type": "tm_command_pattern",
+    "tags": [
+      "scope",
+      "waveform",
+      "curve",
+      "data"
+    ],
+    "title": "Waveform Data Transfer Pattern",
+    "body": "Transfer waveform data from scope.",
+    "code": "# Configure data transfer\nscope.commands.data.source.write(\"CH1\")\nscope.commands.data.encoding.write(\"RPBinary\")\nscope.commands.data.start.write(1)\nscope.commands.data.stop.write(10000)\n\n# Transfer\nwaveform = scope.commands.curve.query()"
+  },
+  {
+    "id": "tm_031",
+    "type": "tm_command_pattern",
+    "tags": [
+      "ieee488",
+      "common",
+      "idn",
+      "rst",
+      "opc",
+      "cls"
+    ],
+    "title": "IEEE 488.2 Common Commands",
+    "body": "Standard common commands available on all instruments.",
+    "code": "idn = scope.commands.idn.query()  # *IDN?\nscope.commands.rst.write()  # *RST\nscope.commands.cls.write()  # *CLS\nscope.commands.opc.query()  # *OPC? \u2014 wait for completion"
+  },
+  {
+    "id": "tm_032",
+    "type": "tm_command_pattern",
+    "tags": [
+      "error",
+      "handling",
+      "expect_esr"
+    ],
+    "title": "Error Handling Pattern",
+    "body": "Check for errors after operations.",
+    "code": "# Check Event Status Register\nesr = scope.commands.esr.query()\nif int(esr) != 0:\n    # Read error queue\n    error = scope.commands.allev.query()\n    print(f\"Error: {error}\")"
+  },
+  {
+    "id": "tm_033",
+    "type": "tm_integration",
+    "tags": [
+      "tekautomate",
+      "code_generation",
+      "imports"
+    ],
+    "title": "TekAutomate tm_devices Code Generation",
+    "body": "When TekAutomate generates Python for tm_devices backend:\n1. Imports: from tm_devices import DeviceManager; from tm_devices.drivers import MSO6B\n2. Context manager: with DeviceManager(verbose=True) as device_manager:\n3. Type hints: scope: MSO6B = device_manager.add_scope(\"ip\")\n4. Cleanup: automatic via context manager\n5. If DRIVER_NAME not specified in XML, no type hint generated",
+    "code": "from tm_devices import DeviceManager\nfrom tm_devices.drivers import MSO6B\n\nwith DeviceManager(verbose=True) as device_manager:\n    device_manager.setup_cleanup_enabled = True\n    device_manager.teardown_cleanup_enabled = True\n    scope: MSO6B = device_manager.add_scope(\"192.168.0.1\")\n    \n    # ... generated commands ...\n    \n    scope.close()\nprint(\"Done\")"
+  },
+  {
+    "id": "tm_034",
+    "type": "tm_integration",
+    "tags": [
+      "tekautomate",
+      "validation",
+      "backend"
+    ],
+    "title": "Backend Capability Validation",
+    "body": "When tm_devices backend is selected, TekAutomate enforces:\n- scpi_write blocks are FORBIDDEN (use tm_devices blocks or python_code)\n- scpi_query blocks are FORBIDDEN\n- Must use: fastframe_enable, search_configure_edge, measurement_immediate, python_code, etc.\nGenerator detects violations and shows clear error with HOW TO FIX guidance.\nConsole output: 'BACKEND CAPABILITY VIOLATION DETECTED' with list of forbidden blocks per device."
+  },
+  {
+    "id": "tm_035",
+    "type": "tm_integration",
+    "tags": [
+      "tekautomate",
+      "step",
+      "tm_device_command"
+    ],
+    "title": "tm_device_command Step Type",
+    "body": "The tm_device_command step in Steps UI:\n- params.code: generated Python call (e.g., 'scope.commands.acquire.state.write(\"ON\")')\n- params.model: instrument model for context (e.g., 'MSO6B')\n- params.description: human-readable description\nAdded to STEP_PALETTE with purple icon and color scheme.\nCode is inserted directly into generated Python."
+  },
+  {
+    "id": "tm_036",
+    "type": "tm_integration",
+    "tags": [
+      "tekautomate",
+      "browser",
+      "command_tree"
+    ],
+    "title": "tm_devices Command Browser",
+    "body": "Full-screen hierarchical command browser:\n- 70+ instrument models available\n- Model search to quickly find instrument\n- Tree navigation with visual node type indicators\n- Indexed nodes prompt for index value\n- Method nodes show arguments and generate code\n- Breadcrumb path shows current location\n- Back button for navigation\n- Three overlays: main browser, index input, method arguments\nAccess: Add tm_devices Command step \u2192 Browse Commands, or Commands tab \u2192 purple tm_devices Browser button"
+  },
+  {
+    "id": "tm_037",
+    "type": "tm_integration",
+    "tags": [
+      "tekautomate",
+      "blockly",
+      "blocks"
+    ],
+    "title": "Blockly Blocks for tm_devices",
+    "body": "Dedicated Blockly blocks for common tm_devices operations:\n- fastframe_enable: STATE (ON/OFF)\n- fastframe_set_count: COUNT (1-10000)\n- fastframe_select_frame: CHANNEL, FRAME\n- search_configure_edge: SEARCH_NUM, SOURCE, SLOPE\n- search_query_total: SEARCH_NUM, VARIABLE\n- measurement_immediate: TYPE, SOURCE, VARIABLE\n- tm_devices_save_screenshot\n- tm_devices_recall_session\nThese generate proper tm_devices Python code, not SCPI strings.\nPreferred over python_code blocks for these operations."
+  },
+  {
+    "id": "tm_038",
+    "type": "tm_concept",
+    "tags": [
+      "qstring",
+      "quoting",
+      "argument"
+    ],
+    "title": "The QString Problem and Fix",
+    "body": "QString is a SCPI data type for quoted string parameters.\nWhen tm_devices sends: scope.commands.application.activate.write(\"TekExpress PCI\")\nIt internally adds SCPI quotes: :APPLication:ACTivate \"TekExpress PCI\"\nBUG: User input was getting double-quoted. Fix: tm_devices handles quoting automatically.\nRule: Provide plain Python strings to tm_devices methods. Never add SCPI quotes manually."
+  },
+  {
+    "id": "tm_039",
+    "type": "tm_concept",
+    "tags": [
+      "shared_implementations",
+      "mixin",
+      "ieee488"
+    ],
+    "title": "Shared Implementations and Mixins",
+    "body": "tm_devices.driver_mixins.shared_implementations provides:\n- CommonPISystemErrorCheckMixin: PI-side error checking (expect_esr())\n- CommonTSPErrorCheckMixin: TSP-side error checking\n- IEEE4882Commands: Standard IEEE 488.2 commands (*IDN?, *RST, *OPC?, *CLS, etc.)\n- LegacyTSPIEEE4882Commands, TSPIEEE4882Commands\nTekAutomate doesn't instantiate these directly \u2014 consumed through official driver classes."
+  },
+  {
+    "id": "tm_040",
+    "type": "tm_concept",
+    "tags": [
+      "helpers",
+      "constants",
+      "visa"
+    ],
+    "title": "tm_devices Helpers Module",
+    "body": "tm_devices.helpers provides:\n- Constants: PYVISA_PY_BACKEND, SYSTEM_DEFAULT_VISA_BACKEND\n- Connection validation: check_network_connection, check_port_connection, check_visa_connection\n- VISA utilities: create_visa_connection, detect_visa_resource_expression, get_visa_backend\n- Value safety: validate_address, sanitize_enum, verify_values\nTekAutomate uses backend constants for DeviceManager.visa_library selection."
+  },
+  {
+    "id": "tm_041",
+    "type": "tm_concept",
+    "tags": [
+      "pi_vs_tsp",
+      "scpi",
+      "lua"
+    ],
+    "title": "PI (SCPI) vs TSP (Lua) Devices",
+    "body": "tm_devices supports two control interfaces:\n- PI (Programmable Interface): Standard SCPI commands. Used by MSO scopes, AFGs, AWGs, SMU2400 series.\n- TSP (Test Script Processor): Lua-based scripting. Used by SMU2600/2600B series, some Keithley instruments.\nPI devices use colon-separated command paths: :SOURce:VOLTage:LEVel 5.0\nTSP devices use Lua syntax: smu.source.levelv = 5.0\nTekAutomate primarily generates PI/SCPI code. TSP support is limited."
+  },
+  {
+    "id": "tm_042",
+    "type": "tm_concept",
+    "tags": [
+      "conversion",
+      "scpi_to_tm",
+      "tm_to_scpi"
+    ],
+    "title": "SCPI \u2194 tm_devices Conversion",
+    "body": "Bidirectional conversion between SCPI strings and tm_devices calls:\n\n| SCPI Command | tm_devices Path | Method | Value |\n|---|---|---|---|\n| CH1:SCALE 1.0 | ch[1].scale | write | 1.0 |\n| CH2:COUPLING DC | ch[2].coupling | write | DC |\n| *IDN? | commands.idn | query | \u2014 |\n| ACQuire:STATE ON | acquire.state | write | ON |\n| MATH1:DEFINE \"CH1+CH2\" | math[1].define | write | \"CH1+CH2\" |\n| HORIZONTAL:SCALE? | horizontal.scale | query | \u2014 |\n\nConversion utility: scpiToTmDevicesConverter.ts\nRight-click context menu on SCPI blocks: \"Convert to tm_devices Command\" "
+  },
+  {
+    "id": "tm_043",
+    "type": "tm_concept",
+    "tags": [
+      "decision",
+      "when_to_use",
+      "pyvisa_vs_tmdevices"
+    ],
+    "title": "When to Use tm_devices vs PyVISA",
+    "body": "Use tm_devices when:\n- Working with modern MSO4B/5B/6B scopes and want Python API\n- Need command validation and type checking\n- Want IDE autocomplete for commands\n- Building complex multi-step automation\n- Need set_and_verify for reliable configuration\n\nUse PyVISA when:\n- Working with legacy instruments (DPO5K/7K/70K)\n- Need maximum compatibility\n- Working with measurements, search, histogram\n- Simple send-command workflows\n- Cross-platform compatibility critical\n- Instrument not supported by tm_devices\n\nPyVISA is the default/recommended choice for most users."
+  }
+]

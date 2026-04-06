@@ -1,0 +1,105 @@
+{
+  "category": "Basic",
+  "templates": [
+    {
+      "name": "Quick Steps UI Demo",
+      "description": "Complete reference showing every step type - connect, write, query, recall, save, sleep, python, and more",
+      "backend": "pyvisa",
+      "deviceType": "SCOPE",
+      "steps": [
+        { "id": "1", "type": "connect", "label": "Connect to Scope", "params": { "instrumentIds": [], "printIdn": true } },
+        { "id": "g1", "type": "group", "label": "SCPI Commands", "params": {}, "collapsed": false, "children": [
+          { "id": "2", "type": "write", "label": "Write Command", "params": { "command": "CH1:SCALE 1.0" } },
+          { "id": "3", "type": "query", "label": "Query with Variable", "params": { "command": "*IDN?", "saveAs": "idn" } },
+          { "id": "4", "type": "set_and_query", "label": "Set and Verify", "params": { "command": "CH1:SCALE", "cmdParams": [], "paramValues": {} } }
+        ]},
+        { "id": "g2", "type": "group", "label": "Recall Types", "params": {}, "collapsed": false, "children": [
+          { "id": "5", "type": "recall", "label": "Factory Reset", "params": { "recallType": "FACTORY", "filePath": "", "reference": "REF1" } },
+          { "id": "6", "type": "recall", "label": "Recall Session (.tss)", "params": { "recallType": "SESSION", "filePath": "C:/TekScope/test.tss", "reference": "REF1" } },
+          { "id": "7", "type": "recall", "label": "Recall Settings (.set)", "params": { "recallType": "SETUP", "filePath": "C:/TekScope/config.set", "reference": "REF1" } },
+          { "id": "8", "type": "recall", "label": "Recall Waveform (.wfm)", "params": { "recallType": "WAVEFORM", "filePath": "C:/TekScope/golden.wfm", "reference": "REF1" } }
+        ]},
+        { "id": "g3", "type": "group", "label": "Save Operations", "params": {}, "collapsed": false, "children": [
+          { "id": "9", "type": "save_screenshot", "label": "Screenshot (Modern MSO5/6)", "params": { "filename": "screen_modern.png", "scopeType": "modern", "method": "pc_transfer" } },
+          { "id": "10", "type": "save_screenshot", "label": "Screenshot (Legacy 5k/7k/70k)", "params": { "filename": "screen_legacy.png", "scopeType": "legacy", "method": "pc_transfer" } },
+          { "id": "11", "type": "save_waveform", "label": "Save Waveform Data", "params": { "source": "CH1", "filename": "waveform.bin", "format": "bin" } }
+        ]},
+        { "id": "g4", "type": "group", "label": "Utility Steps", "params": {}, "collapsed": false, "children": [
+          { "id": "12", "type": "sleep", "label": "Wait 500ms", "params": { "duration": 0.5 } },
+          { "id": "13", "type": "error_check", "label": "Check Errors", "params": { "command": "ALLEV?" } },
+          { "id": "14", "type": "comment", "label": "Comment (not executed)", "params": { "text": "This is documentation only" } },
+          { "id": "15", "type": "python", "label": "Custom Python", "params": { "code": "print(f'IDN: {idn}')\nresult = idn.split(',')[0]" } }
+        ]},
+        { "id": "16", "type": "disconnect", "label": "Disconnect", "params": { "instrumentIds": [] } }
+      ]
+    },
+    {
+      "name": "Hello Scope",
+      "description": "Simple connect and identify",
+      "backend": "pyvisa",
+      "steps": [
+        { "id": "1", "type": "connect", "label": "Connect", "params": {} },
+        { "id": "2", "type": "query", "label": "Query IDN", "params": { "command": "*IDN?", "saveAs": "idn" } },
+        { "id": "3", "type": "query", "label": "Query Options", "params": { "command": "*OPT?", "saveAs": "options" } },
+        { "id": "4", "type": "disconnect", "label": "Disconnect", "params": {} }
+      ]
+    },
+    {
+      "name": "Single Waveform Capture",
+      "description": "Basic waveform acquisition from CH1",
+      "backend": "pyvisa",
+      "steps": [
+        { "id": "1", "type": "connect", "label": "Connect", "params": {} },
+        { "id": "2", "type": "write", "label": "Stop Acquisition", "params": { "command": "ACQuire:STATE OFF" } },
+        { "id": "3", "type": "write", "label": "Set Manual Mode", "params": { "command": "HORizontal:MODE MANUAL" } },
+        { "id": "4", "type": "write", "label": "Set Record Length", "params": { "command": "HORizontal:RECOrdlength 1000000" } },
+        { "id": "5", "type": "sleep", "label": "Wait", "params": { "duration": 0.2 } },
+        { "id": "6", "type": "write", "label": "Configure Data Transfer", "params": { "command": "DATA:SOURCE CH1;:DATA:ENCDG RIBINARY;:DATA:WIDTH 1" } },
+        { "id": "7", "type": "write", "label": "Start Acquisition", "params": { "command": "ACQuire:STATE ON" } },
+        { "id": "8", "type": "sleep", "label": "Wait for Trigger", "params": { "duration": 0.1 } },
+        { "id": "9", "type": "write", "label": "Stop Acquisition", "params": { "command": "ACQuire:STATE OFF" } },
+        { "id": "10", "type": "query", "label": "Wait Complete", "params": { "command": "*OPC?", "saveAs": "_" } },
+        { "id": "11", "type": "save_waveform", "label": "Save Waveform", "params": { "command": "CURVE?", "filename": "waveform.bin" } },
+        { "id": "12", "type": "disconnect", "label": "Disconnect", "params": {} }
+      ]
+    },
+    {
+      "name": "Screen Capture PNG (Legacy 5k/7k/70k)",
+      "description": "Screenshot via HARDCOPY for MSO/DPO 5k, 7k, 70k series scopes",
+      "backend": "pyvisa",
+      "deviceType": "SCOPE",
+      "steps": [
+        { "id": "1", "type": "connect", "label": "Connect to Scope", "params": {} },
+        { "id": "2", "type": "save_screenshot", "label": "Capture Screenshot (Legacy 5k/7k/70k)", "params": { "filename": "screenshot.png", "scopeType": "legacy", "method": "pc_transfer" } },
+        { "id": "3", "type": "disconnect", "label": "Disconnect", "params": {} }
+      ]
+    },
+    {
+      "name": "Screen Capture PNG (Modern MSO5/6)",
+      "description": "Screenshot via SAVE:IMAGE for MSO5, MSO6, MSO5B, MSO6B series scopes",
+      "backend": "pyvisa",
+      "deviceType": "SCOPE",
+      "steps": [
+        { "id": "1", "type": "connect", "label": "Connect to Scope", "params": {} },
+        { "id": "2", "type": "save_screenshot", "label": "Capture Screenshot (Modern MSO5/6)", "params": { "filename": "screenshot.png", "scopeType": "modern", "method": "pc_transfer" } },
+        { "id": "3", "type": "disconnect", "label": "Disconnect", "params": {} }
+      ]
+    },
+    {
+      "name": "Setup Save & Recall",
+      "description": "Save and restore instrument configuration",
+      "backend": "pyvisa",
+      "steps": [
+        { "id": "1", "type": "connect", "label": "Connect", "params": {} },
+        { "id": "2", "type": "write", "label": "Configure CH1", "params": { "command": "CH1:SCAle 1.0" } },
+        { "id": "3", "type": "write", "label": "Set Timebase", "params": { "command": "HORizontal:SCAle 1e-6" } },
+        { "id": "4", "type": "write", "label": "Save Setup", "params": { "command": "SAVe:SETUp 'mysetup.set'" } },
+        { "id": "5", "type": "sleep", "label": "Wait", "params": { "duration": 0.5 } },
+        { "id": "6", "type": "write", "label": "Reset to Default", "params": { "command": "*RST" } },
+        { "id": "7", "type": "sleep", "label": "Wait", "params": { "duration": 1.0 } },
+        { "id": "8", "type": "write", "label": "Recall Setup", "params": { "command": "RECAll:SETUp 'mysetup.set'" } },
+        { "id": "9", "type": "disconnect", "label": "Disconnect", "params": {} }
+      ]
+    }
+  ]
+}

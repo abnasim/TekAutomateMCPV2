@@ -1,0 +1,410 @@
+[
+  {
+    "id": "group_acquisition",
+    "corpus": "app_logic",
+    "title": "Acquisition Command Group",
+    "body": "Acquisition commands set up the modes and functions that control how the instrument acquires signals and processes them into waveforms.\n\nKey commands: ACQuire?, ACQuire:FASTAcq:PALEtte, ACQuire:FASTAcq:STATE, ACQuire:FASTAVerage:LIMit, ACQuire:FASTAVerage:STATE, ACQuire:FASTAVerage:STOPafter, ACQuire:MAXSamplerate?, ACQuire:MODe, ACQuire:NUMACq?, ACQuire:NUMAVg, ...",
+    "tags": [
+      "acquisition",
+      "group",
+      "commands"
+    ],
+    "source": "scripts/command_groups_mapping.py"
+  },
+  {
+    "id": "group_act_on_event",
+    "corpus": "app_logic",
+    "title": "Act On Event Command Group",
+    "body": "Use this group of commands to program the instrument to perform an action on trigger, search, measurement limit, and mask test events.\n\nKey commands: ACTONEVent:ENable, ACTONEVent:LIMit, ACTONEVent:LIMITCount, ACTONEVent:MASKFail:ACTION:SAVEIMAGe:STATE, ACTONEVent:MASKFail:ACTION:SAVEWAVEform:STATE, ACTONEVent:MASKFail:ACTION:SRQ:STATE, ACTONEVent:MASKFail:ACTION:STOPACQ:STATE, ACTONEVent:MASKHit:ACTION:SAVEIMAGe:STATE, ACTONEVent:MASKHit:ACTION:SAVEWAVEform:STATE, ACTONEVent:MASKHit:ACTION:SRQ:STATE, ...",
+    "tags": [
+      "act_on_event",
+      "group",
+      "commands"
+    ],
+    "source": "scripts/command_groups_mapping.py"
+  },
+  {
+    "id": "group_afg",
+    "corpus": "app_logic",
+    "title": "AFG Command Group",
+    "body": "Use the AFG commands for Arbitrary Function Generator functionality. Requires option AFG.\n\nKey commands: AFG:AMPLitude, AFG:ARBitrary:SOUrce, AFG:BURSt:CCOUnt, AFG:BURSt:TRIGger, AFG:FREQuency, AFG:FUNCtion, AFG:HIGHLevel, AFG:LOWLevel, AFG:NOISEAdd:PERCent, AFG:NOISEAdd:STATE, ...",
+    "tags": [
+      "afg",
+      "group",
+      "commands"
+    ],
+    "source": "scripts/command_groups_mapping.py"
+  },
+  {
+    "id": "group_alias",
+    "corpus": "app_logic",
+    "title": "Alias Command Group",
+    "body": "Alias commands allow you to define new commands as a sequence of standard commands. You might find this useful when repeatedly using the same commands to perform certain tasks like setting up measurements.\n\nKey commands: ALIas, ALIas:CATalog?, ALIas:DEFine, ALIas:DELEte, ALIas:DELEte:ALL, ALIas:DELEte:NAMe, ALIas:STATE",
+    "tags": [
+      "alias",
+      "group",
+      "commands"
+    ],
+    "source": "scripts/command_groups_mapping.py"
+  },
+  {
+    "id": "group_bus",
+    "corpus": "app_logic",
+    "title": "Bus Command Group",
+    "body": "Use the commands in the Bus Command Group to configure a bus. These commands let you specify the bus type, specify the signals to be used in the bus, and specify its display style.\n\nKey commands: BUS:ADDNew, BUS:B<x>:ARINC429A:SOUrce, BUS:B<x>:ARINC429A:THRESHold, BUS:B<x>:ARINC429A:POLARITY, BUS:B<x>:ARINC429A:DATAFORmat, BUS:B<x>:AUDio:BITDelay, BUS:B<x>:AUDio:BITOrder, BUS:B<x>:ARINC429A:BITRate, BUS:B<x>:ARINC429A:BITRate:CUSTom, BUS:B<x>:AUDio:CLOCk:POLarity, ...",
+    "tags": [
+      "bus",
+      "group",
+      "commands"
+    ],
+    "source": "scripts/command_groups_mapping.py"
+  },
+  {
+    "id": "group_calibration",
+    "corpus": "app_logic",
+    "title": "Calibration Command Group",
+    "body": "The Calibration commands provide information about the current state of instrument calibration and allow you to initiate signal path calibration (SPC).\n\nKey commands: *CAL?, CALibrate?, CALibrate:INTERNal, CALibrate:INTERNal:STARt, CALibrate:INTERNal:STATus?, CALibrate:PWRUpstatus?, TOUCHSCReen:CALibrate, TOUCHSCReen:STATe",
+    "tags": [
+      "calibration",
+      "group",
+      "commands"
+    ],
+    "source": "scripts/command_groups_mapping.py"
+  },
+  {
+    "id": "group_callout",
+    "corpus": "app_logic",
+    "title": "Callout Command Group",
+    "body": "The Callout commands creates custom callouts to document specific details of your test results.\n\nKey commands: CALLOUTS:ADDNew, CALLOUTS:CALLOUT<x>:BOOKMark:SOURCE, CALLOUTS:CALLOUT<x>:BOOKMark:XPOS, CALLOUTS:CALLOUT<x>:COLOR, CALLOUTS:CALLOUT<x>:DISPLAYPOSition:X, CALLOUTS:CALLOUT<x>:DISPLAYPOSition:Y, CALLOUTS:CALLOUT<x>:FONT:BOLD, CALLOUTS:CALLOUT<x>:FONT:ITALIC, CALLOUTS:CALLOUT<x>:FONT:SIZE, CALLOUTS:CALLOUT<x>:FONT:TYPE, ...",
+    "tags": [
+      "callout",
+      "group",
+      "commands"
+    ],
+    "source": "scripts/command_groups_mapping.py"
+  },
+  {
+    "id": "group_cursor",
+    "corpus": "app_logic",
+    "title": "Cursor Command Group",
+    "body": "Use the commands in the Cursor Command Group to control the cursor display and readout. You can use these commands to control the setups for each cursor, such as waveform source, and cursor position.\n\nKey commands: DISplay:MATHFFTView<x>:CURSor:ASOUrce?, DISplay:MATHFFTView<x>:CURSor:BSOUrce?, DISplay:MATHFFTView<x>:CURSor:DDT?, DISplay:MATHFFTView<x>:CURSor:FUNCtion, DISplay:MATHFFTView<x>:CURSor:HBArs:APOSition, DISplay:MATHFFTView<x>:CURSor:HBArs:AUNIts?, DISplay:MATHFFTView<x>:CURSor:HBArs:BPOSition, DISplay:MATHFFTView<x>:CURSor:HBArs:BUNIts?, DISplay:MATHFFTView<x>:CURSor:HBArs:DELTa?, DISplay:MATHFFTView<x>:CURSor:MODe, ...",
+    "tags": [
+      "cursor",
+      "group",
+      "commands"
+    ],
+    "source": "scripts/command_groups_mapping.py"
+  },
+  {
+    "id": "group_digital",
+    "corpus": "app_logic",
+    "title": "Digital Command Group",
+    "body": "Use the commands in the Digital Command Group to acquire up to 64 digital signals and analyze them. Digital channels are only available when a digital probe is attached to the super channel.\n\nKey commands: CH<x>_DALL:LABel:COLor, CH<x>_DALL:LABel:FONT:BOLD, CH<x>_DALL:LABel:FONT:ITALic, CH<x>_DALL:LABel:FONT:SIZE, CH<x>_DALL:LABel:FONT:TYPE, CH<x>_DALL:LABel:FONT:UNDERline, CH<x>_DALL:LABel:NAMe, CH<x>_D<x>:LABel:COLor, CH<x>_D<x>:LABel:FONT:BOLD, CH<x>_D<x>:LABel:FONT:ITALic, ...",
+    "tags": [
+      "digital",
+      "group",
+      "commands"
+    ],
+    "source": "scripts/command_groups_mapping.py"
+  },
+  {
+    "id": "group_digital_power_management",
+    "corpus": "app_logic",
+    "title": "Digital Power Management Command Group",
+    "body": "Use the commands in the DPM command group for Digital Power Management functionality. Requires option 5-DPM (5 Series MSO instruments) or 6-DPM (6 Series MSO instrument).\n\nKey commands: MEASUrement:AUTOset, MEASUrement:MEAS<x>:EDGEQUALifier, MEASUrement:MEAS<x>:INPUTLEVel, MEASUrement:MEAS<x>:MAXVoltage, MEASUrement:MEAS<x>:OUTPUT<x>VOLTage, MEASUrement:MEAS<x>:PFREquency, MEASUrement:MEAS<x>:PTHReshold, MEASUrement:MEAS<x>:REConstwfm, MEASUrement:MEAS<x>:REFVOLTAGE<x>Val, MEASUrement:MEAS<x>:RFREquency, ...",
+    "tags": [
+      "digital_power_management",
+      "group",
+      "commands"
+    ],
+    "source": "scripts/command_groups_mapping.py"
+  },
+  {
+    "id": "group_display",
+    "corpus": "app_logic",
+    "title": "Display Command Group",
+    "body": "Display commands control general instrument settings, such as the intensity of the graticule, stacked or overlay display mode, and the fastacq color palette. Display commands also control how and where waveforms are shown, their position on screen, and zoom settings applied to the view.\n\nKey commands: DISplay?, DISplay:{CH<x>|MATH<x>|REF<x>}:INVERTColor, DISplay:{CH<x>|MATH<x>|REF<x>}:NORMALColor, DISplay:COLors, DISplay:GLObal:B<x>:STATE, DISplay:GLObal:CH<x>:STATE, DISplay:GLObal:MATH<x>:STATE, DISplay:GLObal:PLOT<x>:STATE, DISplay:GLObal:REF<x>:STATE, DISplay:INTENSITy?, ...",
+    "tags": [
+      "display",
+      "group",
+      "commands"
+    ],
+    "source": "scripts/command_groups_mapping.py"
+  },
+  {
+    "id": "group_dvm",
+    "corpus": "app_logic",
+    "title": "DVM Command Group",
+    "body": "Use the commands in the DVM command group for Digital Voltmeter functionality. Requires DVM option (free with product registration).\n\nKey commands: DVM, DVM:AUTORange, DVM:MEASUrement:FREQuency?, DVM:MEASUrement:HIStory:AVErage?, DVM:MEASUrement:HIStory:MAXimum?, DVM:MEASUrement:HIStory:MINImum?, DVM:MEASUrement:INFMAXimum?, DVM:MEASUrement:INFMINimum?, DVM:MEASUrement:VALue?, DVM:MODe, ...",
+    "tags": [
+      "dvm",
+      "group",
+      "commands"
+    ],
+    "source": "scripts/command_groups_mapping.py"
+  },
+  {
+    "id": "group_ethernet",
+    "corpus": "app_logic",
+    "title": "Ethernet Command Group",
+    "body": "Use the commands in the Ethernet Command Group to set up the 10BASE-T, 100BASE-TX, 1000BASE-TX or 100BASE-T Ethernet remote interface.\n\nKey commands: ETHERnet:DHCPbootp, ETHERnet:DNS:IPADDress, ETHERnet:DOMAINname, ETHERnet:ENET:ADDress?, ETHERnet:GATEWay:IPADDress, ETHERnet:IPADDress, ETHERnet:LXI:LAN:RESET, ETHERnet:LXI:LAN:SERVICENAMe, ETHERnet:LXI:LAN:STATus?, ETHERnet:NAME, ...",
+    "tags": [
+      "ethernet",
+      "group",
+      "commands"
+    ],
+    "source": "scripts/command_groups_mapping.py"
+  },
+  {
+    "id": "group_file_system",
+    "corpus": "app_logic",
+    "title": "File System Command Group",
+    "body": "Use the commands in the File System Command Group to help you use the built-in hard disk drive. You can use the commands to list directory contents, create and delete directories, and create, copy, read, rename, or delete files.\n\nKey commands: FILESystem?, FILESystem:COPy, FILESystem:CWD, FILESystem:DELEte, FILESystem:DIR?, FILESystem:HOMEDir?, FILESystem:LDIR?, FILESystem:MKDir, FILESystem:MOUNT:DRIVE, FILESystem:MOUNT:TEKDrive, ...",
+    "tags": [
+      "file_system",
+      "group",
+      "commands"
+    ],
+    "source": "scripts/command_groups_mapping.py"
+  },
+  {
+    "id": "group_histogram",
+    "corpus": "app_logic",
+    "title": "Histogram Command Group",
+    "body": "Use the commands in the Histogram command group for Histogram functionality.\n\nKey commands: HISTogram:ADDNew, HISTogram:DELete, HISTogram:DELETEALL, HISTogram:HISTogram<x>:BOX, HISTogram:HISTogram<x>:BSTate, HISTogram:HISTogram<x>:DATa?, HISTogram:HISTogram<x>:DISPlay, HISTogram:HISTogram<x>:FUNCtion, HISTogram:HISTogram<x>:MEASurement:COUNt, HISTogram:HISTogram<x>:MEASurement:HITS, ...",
+    "tags": [
+      "histogram",
+      "group",
+      "commands"
+    ],
+    "source": "scripts/command_groups_mapping.py"
+  },
+  {
+    "id": "group_history",
+    "corpus": "app_logic",
+    "title": "History Command Group",
+    "body": "Use the commands in the History command group for History mode functionality.\n\nKey commands: TSTamptable:ADDNew, TSTamptable:DELETE, TSTamptable:LIST?",
+    "tags": [
+      "history",
+      "group",
+      "commands"
+    ],
+    "source": "scripts/command_groups_mapping.py"
+  },
+  {
+    "id": "group_horizontal",
+    "corpus": "app_logic",
+    "title": "Horizontal Command Group",
+    "body": "Horizontal commands control the time base of the instrument. You can set the time per division (or time per point) of the main time base. You can use the Horizontal commands to set the scale, horizontal position and reference, and units of the time base, get the screen resolution, time of first point and time of last point, or get all the horizontal settings, and enable or disable the display of the time base.\n\nKey commands: ACQuire:NUMFRAMESACQuired?, HORizontal?, HORizontal:ACQDURATION?, HORizontal:DELay:MODe, HORizontal:DELay:TIMe, HORizontal:DIVisions?, HORizontal:FASTframe?, HORizontal:FASTframe:COUNt, HORizontal:FASTframe:MAXFRames?, HORizontal:FASTframe:MULtipleframes:MODe, ...",
+    "tags": [
+      "horizontal",
+      "group",
+      "commands"
+    ],
+    "source": "scripts/command_groups_mapping.py"
+  },
+  {
+    "id": "group_inverter_motors_and_drive_analysis",
+    "corpus": "app_logic",
+    "title": "Inverter Motors and Drive Analysis Command Group",
+    "body": "Use the commands in the IMDA group for input analysis, output analysis, ripple analysis measurements.\n\nKey commands: CUSTOMTABle:ADDNew, CUSTOMTABle:DELete, CUSTOMTABle:LIST?, MEASUrement:ADDMEAS, MEASUrement:AUTOset, MEASUrement:HIGHLEVel:CONFIGuration, MEASUrement:HIGHLEVel:EDGEQUALifier, MEASUrement:HIGHLEVel:INLOWPass:FREQ, MEASUrement:HIGHLEVel:INLOWPass:SPEC, MEASUrement:HIGHLEVel:L2LTOL2N, ...",
+    "tags": [
+      "inverter_motors_and_drive_analysis",
+      "group",
+      "commands"
+    ],
+    "source": "scripts/command_groups_mapping.py"
+  },
+  {
+    "id": "group_mask",
+    "corpus": "app_logic",
+    "title": "Mask Command Group",
+    "body": "Mask commands compare incoming waveforms to standard or user-defined masks. A mask is a set of polygonal regions on the screen. Unlike limit testing, the inside of a mask is the region where waveform data would not normally fall. Standards with eye patterns usually have three masks, but some have four.\n\nKey commands: EYEMASK:MASK<x>:COUNt:HITS?, EYEMASK:MASK<x>:COUNt:SEG<y>:HITS?, EYEMASK:MASK<x>:CREATor?, EYEMASK:MASK<x>:ENAbled, EYEMASK:MASK<x>:MASKfile, EYEMASK:MASK<x>:MASKOffset:HORizontal:AUTOfit?, EYEMASK:MASK<x>:TESt:SAMple:THReshold, EYEMASK:MASK<x>:TESt:STATUS?, MASK:DELete, MASK:MASK<x>:COUNT?, ...",
+    "tags": [
+      "mask",
+      "group",
+      "commands"
+    ],
+    "source": "scripts/command_groups_mapping.py"
+  },
+  {
+    "id": "group_math",
+    "corpus": "app_logic",
+    "title": "Math Command Group",
+    "body": "Use the commands in the Math Command Group to create and define math waveforms. Use the available math functions to define your math waveform. The math waveform you create depends on sources listed in the math expression. If you change these sources, the math waveforms you previously defined will be affected.\n\nKey commands: DISplay:SELect:MATH, DISplay:WAVEView<x>:MATH:MATH<x>:STATE, DISplay:WAVEView<x>:MATH:MATH<x>:VERTical:POSition, DISplay:WAVEView<x>:MATH:MATH<x>:VERTical:SCAle, MATH:ADDNew, MATHArbflt<x>:FILepath, MATH:DELete, MATH:LIST?, MATH:MATH<x>:ARINC429A:SUPPortedfields, MATH:MATH<x>:AUDIO:SUPPortedfields, ...",
+    "tags": [
+      "math",
+      "group",
+      "commands"
+    ],
+    "source": "scripts/command_groups_mapping.py"
+  },
+  {
+    "id": "group_measurement",
+    "corpus": "app_logic",
+    "title": "Measurement Command Group",
+    "body": "Use the commands in the Measurement Command Group to control the automated measurement system. Measurement commands can set and query measurement parameters. You can assign parameters, such as waveform sources and reference levels, differently for each measurement.\n\nKey commands: CUSTOMTABle:ADDNew, CUSTOMTABle:DELete, CUSTOMTABle:LIST?, MEASTABle:ADDNew, MEASTABle:DELETE, MEASUrement?, MEASUrement:ADDMEAS, MEASUrement:ADDNew, MEASUrement:ANNOTate, MEASUrement:AUTOset, ...",
+    "tags": [
+      "measurement",
+      "group",
+      "commands"
+    ],
+    "source": "scripts/command_groups_mapping.py"
+  },
+  {
+    "id": "group_miscellaneous",
+    "corpus": "app_logic",
+    "title": "Miscellaneous Command Group",
+    "body": "Miscellaneous commands do not fit into other categories. Several commands and queries are common to all devices. The 488.2-1987 standard defines these commands. The common commands begin with an asterisk (*) character.\n\nKey commands: APPLication:ACTivate, AUTOSAVEPITIMEOUT, AUTOSAVEUITIMEOUT, AUTOSet, AUTOSet:ACQuisition:ENAble, AUTOSet:ENAble, AUTOSet:HORizontal:ENAble, AUTOSet:TRIGger:ENAble, AUTOSet:VERTical:ENAble, AUTOSet:VERTical:OPTIMize, ...",
+    "tags": [
+      "miscellaneous",
+      "group",
+      "commands"
+    ],
+    "source": "scripts/command_groups_mapping.py"
+  },
+  {
+    "id": "group_plot",
+    "corpus": "app_logic",
+    "title": "Plot Command Group",
+    "body": "Plot commands let you select the type and control the appearance of your plots.\n\nKey commands: PEAKSTABle:TABle<x>:FRESolution, PLOT:ADDNew, PLOT:DELete, PLOT:LIST?, PLOT:PLOT<x>:BATHtub:BER, PLOT:PLOT<x>:BATHtub:XAXISUnits, PLOT:PLOT<x>:BITType, PLOT:PLOT<x>:EXPORTRaw?, PLOT:PLOT<x>:EXTENDuis, PLOT:PLOT<x>:EYERender, ...",
+    "tags": [
+      "plot",
+      "group",
+      "commands"
+    ],
+    "source": "scripts/command_groups_mapping.py"
+  },
+  {
+    "id": "group_power",
+    "corpus": "app_logic",
+    "title": "Power Command Group",
+    "body": "Use the commands in the Power command group for power measurement functionality.\n\nKey commands: POWer:ADDNew, POWer:DELete, POWer:POWer<x>:AUTOSet, POWer:POWer<x>:CLRESPONSE:AMP<x>Val, POWer:POWer<x>:CLRESPONSE:ANALYSISMethod, POWer:POWer<x>:CLRESPONSE:AUTORbw, POWer:POWer<x>:CLRESPONSE:CONNECTSTATus?, POWer:POWer<x>:CLRESPONSE:CONSTAMPlitude, POWer:POWer<x>:CLRESPONSE:FREQ<x>Val, POWer:POWer<x>:CLRESPONSE:GENerator, ...",
+    "tags": [
+      "power",
+      "group",
+      "commands"
+    ],
+    "source": "scripts/command_groups_mapping.py"
+  },
+  {
+    "id": "group_save_and_recall",
+    "corpus": "app_logic",
+    "title": "Save and Recall Command Group",
+    "body": "Use the commands in the Save and Recall Command Group to store and retrieve internal waveforms and settings. When you save a setup, you save all the settings of the instrument. When you recall a setup, the instrument restores itself to the state that it was in when you originally saved that setting.\n\nKey commands: FACtory, RECAll:SESsion, RECAll:SETUp, RECAll:WAVEform, SAVe:EVENTtable:BUS, SAVe:EVENTtable:CUSTom, SAVe:EVENTtable:CUSTom:COMMents, SAVe:EVENTtable:CUSTom:DATAFormat, SAVe:EVENTtable:CUSTom:INCLUDEREFs, SAVe:EVENTtable:MEASUrement, ...",
+    "tags": [
+      "save_and_recall",
+      "group",
+      "commands"
+    ],
+    "source": "scripts/command_groups_mapping.py"
+  },
+  {
+    "id": "group_save_on",
+    "corpus": "app_logic",
+    "title": "Save on Command Group",
+    "body": "Use this group of commands to program the instrument to save images, measurements, waveforms, or the instrument setup, on triggers that you select. These commands still function, however the Act On Event commands are preferred. Please see the Act On Event section for continued development and enhancements.\n\nKey commands: SAVEON:FILE:DEST, SAVEON:FILE:NAME, SAVEON:IMAGe:FILEFormat, SAVEON:IMAGe, SAVEON:TRIGger, SAVEON:WAVEform, SAVEON:WAVEform:FILEFormat, SAVEON:WAVEform:SOURce",
+    "tags": [
+      "save_on",
+      "group",
+      "commands"
+    ],
+    "source": "scripts/command_groups_mapping.py"
+  },
+  {
+    "id": "group_search_and_mark",
+    "corpus": "app_logic",
+    "title": "Search and Mark Command Group",
+    "body": "Use search and mark commands to seek out and identify information in waveform records that warrant further investigation.\n\nKey commands: SEARCH:ADDNew, SEARCH:DELete, SEARCH:DELETEALL, SEARCH:LIST?, SEARCH:SEARCH<x>:COPy, SEARCH:SEARCH<x>:NAVigate, SEARCH:SEARCH<x>:TOTAL?, SEARCH:SEARCH<x>:TRIGger:A:BUS:ARINC429A:CONDition, SEARCH:SEARCH<x>:TRIGger:A:BUS:ARINC429A:ERRTYPe, SEARCH:SEARCH<x>:TRIGger:A:BUS:ARINC429A:LABel:QUALifier, ...",
+    "tags": [
+      "search_and_mark",
+      "group",
+      "commands"
+    ],
+    "source": "scripts/command_groups_mapping.py"
+  },
+  {
+    "id": "group_self_test",
+    "corpus": "app_logic",
+    "title": "Self Test Command Group",
+    "body": "The Self test commands control the selection and execution of diagnostic tests.\n\nKey commands: DIAg:LOOP:OPTion, DIAg:LOOP:OPTion:NTIMes, DIAg:LOOP:STOP, DIAg:MODe, DIAg:RESUlt?, DIAg:RESUlt:FLAg?, DIAg:RESUlt:LOG?, DIAg:SELect, DIAg:STATE, TOUCHSCReen:CALibrate",
+    "tags": [
+      "self_test",
+      "group",
+      "commands"
+    ],
+    "source": "scripts/command_groups_mapping.py"
+  },
+  {
+    "id": "group_spectrum_view",
+    "corpus": "app_logic",
+    "title": "Spectrum view Command Group",
+    "body": "The Spectrum view commands control the selection and execution of spectrum analysis.\n\nKey commands: CH<x>:SV:CENTERFrequency, CH<x>:SV:POSition, CH<x>:SV:SPANABovebw?, CH<x>:SV:SPANBELowdc?, CH<x>:SV:STARTFrequency?, CH<x>:SV:STATE, CH<x>:SV:STOPFrequency?, PEAKSTABle:ADDNew, PEAKSTABle:DELete, PEAKSTABle:LIST?, ...",
+    "tags": [
+      "spectrum_view",
+      "group",
+      "commands"
+    ],
+    "source": "scripts/command_groups_mapping.py"
+  },
+  {
+    "id": "group_status_and_error",
+    "corpus": "app_logic",
+    "title": "Status and Error Command Group",
+    "body": "Use the commands in the Status and Error command Group to determine the status of the instrument and control events. Several commands and queries used with the instrument are common to all devices. The IEEE Std 488.2-1987 defines these commands and queries. The common commands begin with an asterisk (*) character.\n\nKey commands: ALLEv?, BUSY?, *CLS, DESE, *ESE, *ESR?, EVENT?, EVMsg?, EVQty?, *OPC, ...",
+    "tags": [
+      "status_and_error",
+      "group",
+      "commands"
+    ],
+    "source": "scripts/command_groups_mapping.py"
+  },
+  {
+    "id": "group_trigger",
+    "corpus": "app_logic",
+    "title": "Trigger Command Group",
+    "body": "Use the commands in the Trigger Command Group to control all aspects of triggering for the instrument. There are two triggers: A and B. Where appropriate, the command set has parallel constructions for each trigger. You can set the A or B triggers to edge mode. Edge triggering lets you display a waveform at or near the point where the signal passes through a voltage level of your choosing. You can also set A or B triggers to pulse or logic modes. With pulse triggering, the instrument triggers whenever it detects a pulse of a certain width or height. Logic triggering lets you logically combine the signals on one or more channels. The instrument then triggers when it detects a certain combination of signal levels. The trigger types of Pulse Width, Timeout, Runt, Window, and Rise/Fall Time can be further qualified by a logic pattern. This is referred to as logic qualification.\n\nKey commands: TRIGger, TRIGger:{A|B}:BUS:B<x>:ARINC429A:CONDition, TRIGger:{A|B}:BUS:B<x>:ARINC429A:ERRTYPe, TRIGger:{A|B}:BUS:B<x>:ARINC429A:LABel:QUALifier, TRIGger:{A|B}:BUS:B<x>:ARINC429A:LABel:VALue, TRIGger:{A|B}:BUS:B<x>:ARINC429A:LABel:HIVALue, TRIGger:{A|B}:BUS:B<x>:ARINC429A:SDI:VALue, TRIGger:{A|B}:BUS:B<x>:ARINC429A:SSM:VALue, TRIGger:{A|B}:BUS:B<x>:ARINC429A:DATa:QUALifier, TRIGger:{A|B}:BUS:B<x>:ARINC429A:DATa:VALue, ...",
+    "tags": [
+      "trigger",
+      "group",
+      "commands"
+    ],
+    "source": "scripts/command_groups_mapping.py"
+  },
+  {
+    "id": "group_waveform_transfer",
+    "corpus": "app_logic",
+    "title": "Waveform Transfer Command Group",
+    "body": "Use the commands in the Waveform Transfer Command Group to transfer waveform data points from the instrument. Waveform data points are a collection of values that define a waveform. One data value usually represents one data point in the waveform record. When working with envelope waveforms, each data value is either the minimum or maximum of a min/max pair. Before you transfer waveform data, you must specify the data format, record length, and waveform source. Data formats: Acquired waveform data uses eight or more bits to represent each data point. The number of bits used depends on the acquisition mode specified when you acquired the data. Data acquired in SAMple or ENVelope mode uses eight bits per waveform data point. Data acquired in AVERage mode uses up to 14 bits per point. The instrument can transfer waveform data in either ASCII or binary format. You specify the format with the DATa:ENCdg command. The instrument uses signed, 4 byte integers and floating point values; it does not support unsigned floating point values. ASCII data: Data is represented by signed integer or floating point values. Use ASCII to obtain more readable and easier to format output than binary. However, ASCII can require more bytes to send the same values than it does with binary. This can reduce transmission speeds. Binary data: Data can be represented by signed integer or floating point values. The range of the values depends on the byte width specified. When the byte width is one, signed integer data ranges from -128 to 127, and positive integer values range from 0 to 255. When the byte width is two, the values range from -32768 to 32767. When a MATH (or REF that came from a MATH) is used, 32-bit floating point values are used that are four bytes in width. The defined binary formats specify the order in which the bytes are transferred. The following are the four binary formats: RIBinary specifies signed integer data-point representation with the most significant byte transferred first. SRIBinary is the same as RIBinary except that the byte order is swapped, meaning that the least significant byte is transferred first. This format is useful when transferring data to PCs. RFBinary specifies floating point data-point representation with the most significant byte transferred first. SRFBinary is the same as RFBinary except that the byte order is swapped, meaning that the least s",
+    "tags": [
+      "waveform_transfer",
+      "group",
+      "commands"
+    ],
+    "source": "scripts/command_groups_mapping.py"
+  },
+  {
+    "id": "group_wide_band_gap_analysis_wbg",
+    "corpus": "app_logic",
+    "title": "Wide Band Gap Analysis (WBG) Command Group",
+    "body": "Use the commands in the Wide Band Gap Analysis (WBG) command group for WBG-DPT (Wide Band Gap Device Power Test) measurements. Note: Some of the following commands may not be available on your instrument model. Also, some of the following commands are only available if your instrument has the associated option installed.\n\nKey commands: MEASUrement:AUTOset, MEASUrement:MEAS<x>:BVOLTage, MEASUrement:MEAS<x>:DMEThod, MEASUrement:MEAS<x>:DVDS, MEASUrement:MEAS<x>:EEQUal, MEASUrement:MEAS<x>:EINDuctance, MEASUrement:MEAS<x>:FORDer, MEASUrement:MEAS<x>:LTYPe, MEASUrement:MEAS<x>:LUNITs, MEASUrement:MEAS<x>:MAXTime, ...",
+    "tags": [
+      "wide_band_gap_analysis_wbg",
+      "group",
+      "commands"
+    ],
+    "source": "scripts/command_groups_mapping.py"
+  },
+  {
+    "id": "group_zoom",
+    "corpus": "app_logic",
+    "title": "Zoom Command Group",
+    "body": "Zoom commands let you expand and position the waveform display horizontally and vertically, without changing the time base or vertical settings. Note: Zoom commands are available once a view has been added.\n\nKey commands: DISplay:MATHFFTView<x>:ZOOM:XAXIS:FROM, DISplay:MATHFFTView<x>:ZOOM:XAXIS:TO, DISplay:MATHFFTView<x>:ZOOM:YAXIS:FROM, DISplay:MATHFFTView<x>:ZOOM:YAXIS:TO, DISplay:PLOTView<x>:ZOOM:XAXIS:FROM, DISplay:PLOTView<x>:ZOOM:XAXIS:TO, DISplay:PLOTView<x>:ZOOM:YAXIS:FROM, DISplay:PLOTView<x>:ZOOM:YAXIS:TO, DISplay:REFFFTView<x>:ZOOM:XAXIS:FROM, DISplay:REFFFTView<x>:ZOOM:XAXIS:TO, ...",
+    "tags": [
+      "zoom",
+      "group",
+      "commands"
+    ],
+    "source": "scripts/command_groups_mapping.py"
+  }
+]

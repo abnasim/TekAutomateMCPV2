@@ -1,0 +1,95 @@
+[
+  {
+    "id": "scope-fast-hw-averaging-guidance",
+    "name": "Fast HW Averaging Guidance",
+    "description": "Contextual guidance for using FastAcq hardware averaging together with MATH1 accumulation on 4/5/6 Series scopes. Use this when you want the command pattern, workflow intent, and caveats without forcing the entire example script into an executable flow.",
+    "triggers": [
+      "fast hardware averaging",
+      "fastacq averaging",
+      "average waveform using math trace",
+      "how do i use fast average on the scope"
+    ],
+    "tags": [
+      "scope",
+      "fastacq",
+      "fastaverage",
+      "math",
+      "math1",
+      "averaging",
+      "performance",
+      "guidance",
+      "overlay"
+    ],
+    "author": "Tektronix example script",
+    "version": "Python 3.10 / firmware 1.38+",
+    "tested": false,
+    "category": "instrument",
+    "handlerRef": "static_result",
+    "handlerConfig": {
+      "text": "Use FastAverage when you need high-speed batched averaging and accumulate the result in MATH1 for deeper total averaging. Verify scaling and clipping before enabling dithering or exporting the result.",
+      "data": {
+        "summary": "This workflow combines FastAcq hardware averaging with a MATH1 average trace so the scope can accumulate many more averages than the hardware batch format alone. It is useful when acquisition speed matters more than a simple standard averaging setup.",
+        "commandsOfInterest": [
+          "acquire:fastaverage:state ON",
+          "acquire:fastaverage:limit 256",
+          "acquire:fastaverage:stopafter 32000",
+          "math:math1:avg:mode ON",
+          "math:math1:avg:weight 32000",
+          "data:encdg FPBinary",
+          "data:source MATH1",
+          "curve?"
+        ],
+        "sequenceHighlights": [
+          "Stop acquisition and define MATH1 from the source channel before enabling averaging.",
+          "Configure MATH1 averaging and measurement tracking before enabling FastAverage.",
+          "Set export format to FPBinary and source to MATH1 before reading curve data."
+        ],
+        "keyPoints": [
+          "FastAverage handles batched hardware accumulation while MATH1 extends total averaging depth.",
+          "Real-time sample-rate ranges can produce faster averaging in practice."
+        ],
+        "pitfalls": [
+          "Autoset plus dithering can clip the signal.",
+          "Saved sessions may not recall the averaged MATH trace correctly."
+        ],
+        "performanceNotes": [
+          "Benefit past roughly 256 FastAverage samples can flatten if the signal is not noisy enough.",
+          "Embedded Linux scope builds were observed to average faster than some other environments."
+        ],
+        "recommendedApproach": [
+          "Set channel scaling first so dithering and averaging do not clip.",
+          "Use the example command pattern as guidance, then verify exact settings for the target model and waveform."
+        ],
+        "toolHints": [
+          "tek_router search",
+          "search_scpi",
+          "get_command_by_header"
+        ],
+        "verificationNeeded": [
+          "Confirm exact support for FastAverage and MATH averaging on the target scope model.",
+          "Confirm whether dithering is required and which command form the target firmware expects."
+        ],
+        "references": [
+          "fast_HW_averaging 1.py"
+        ]
+      }
+    },
+    "match": {
+      "keywords": [
+        "fast hardware averaging",
+        "fastacq averaging",
+        "math trace averaging"
+      ],
+      "operations": [
+        "configure averaging",
+        "accumulate math averages",
+        "export waveform"
+      ],
+      "backends": ["pyvisa"],
+      "deviceTypes": ["SCOPE"],
+      "modelFamilies": ["4/5/6 Series MSO"],
+      "priority": 4,
+      "minScore": 0.75
+    }
+  }
+]

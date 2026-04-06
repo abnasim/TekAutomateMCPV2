@@ -1,0 +1,543 @@
+{
+  "metadata": {
+    "name": "SMU Series",
+    "description": "Source Measure Unit SCPI commands for Keithley SMU instruments",
+    "instruments": ["Keithley 2400", "Keithley 2450", "Keithley 2460", "Keithley 2461", "Keithley 2470", "Keithley 2600B", "Keithley 2651A"],
+    "version": "1.0"
+  },
+  "groups": {
+    "Source": {
+      "description": "Source configuration commands",
+      "color": "bg-blue-100 text-blue-700",
+      "commands": [
+        {
+          "name": "Set Source Function",
+          "scpi": ":SOURce:FUNCtion {function}",
+          "description": "Set source function (voltage or current)",
+          "params": [
+            { "name": "function", "type": "text", "default": "VOLTage", "options": ["VOLTage", "CURRent"], "required": true }
+          ],
+          "example": "smu.write(':SOURce:FUNCtion VOLTage')"
+        },
+        {
+          "name": "Query Source Function",
+          "scpi": ":SOURce:FUNCtion?",
+          "description": "Query current source function",
+          "example": "func = smu.query(':SOURce:FUNCtion?')"
+        },
+        {
+          "name": "Set Source Voltage",
+          "scpi": ":SOURce:VOLTage:LEVel {voltage}",
+          "description": "Set source voltage level",
+          "params": [
+            { "name": "voltage", "type": "number", "default": 0, "required": true, "unit": "V" }
+          ],
+          "example": "smu.write(':SOURce:VOLTage:LEVel 5.0')"
+        },
+        {
+          "name": "Query Source Voltage",
+          "scpi": ":SOURce:VOLTage:LEVel?",
+          "description": "Query source voltage level",
+          "example": "voltage = smu.query(':SOURce:VOLTage:LEVel?')"
+        },
+        {
+          "name": "Set Source Current",
+          "scpi": ":SOURce:CURRent:LEVel {current}",
+          "description": "Set source current level",
+          "params": [
+            { "name": "current", "type": "number", "default": 0, "required": true, "unit": "A" }
+          ],
+          "example": "smu.write(':SOURce:CURRent:LEVel 0.001')"
+        },
+        {
+          "name": "Query Source Current",
+          "scpi": ":SOURce:CURRent:LEVel?",
+          "description": "Query source current level",
+          "example": "current = smu.query(':SOURce:CURRent:LEVel?')"
+        },
+        {
+          "name": "Set Voltage Range",
+          "scpi": ":SOURce:VOLTage:RANGe {range}",
+          "description": "Set source voltage range",
+          "params": [
+            { "name": "range", "type": "number", "default": 20, "required": true, "unit": "V" }
+          ],
+          "example": "smu.write(':SOURce:VOLTage:RANGe 20')"
+        },
+        {
+          "name": "Set Voltage Range Auto",
+          "scpi": ":SOURce:VOLTage:RANGe:AUTO {state}",
+          "description": "Enable/disable auto voltage range",
+          "params": [
+            { "name": "state", "type": "text", "default": "ON", "options": ["ON", "OFF"], "required": true }
+          ],
+          "example": "smu.write(':SOURce:VOLTage:RANGe:AUTO ON')"
+        },
+        {
+          "name": "Set Current Range",
+          "scpi": ":SOURce:CURRent:RANGe {range}",
+          "description": "Set source current range",
+          "params": [
+            { "name": "range", "type": "number", "default": 0.1, "required": true, "unit": "A" }
+          ],
+          "example": "smu.write(':SOURce:CURRent:RANGe 0.1')"
+        },
+        {
+          "name": "Set Current Range Auto",
+          "scpi": ":SOURce:CURRent:RANGe:AUTO {state}",
+          "description": "Enable/disable auto current range",
+          "params": [
+            { "name": "state", "type": "text", "default": "ON", "options": ["ON", "OFF"], "required": true }
+          ],
+          "example": "smu.write(':SOURce:CURRent:RANGe:AUTO ON')"
+        },
+        {
+          "name": "Set Voltage Limit",
+          "scpi": ":SENSe:CURRent:PROTection {limit}",
+          "description": "Set voltage source current protection limit",
+          "params": [
+            { "name": "limit", "type": "number", "default": 0.1, "required": true, "unit": "A" }
+          ],
+          "example": "smu.write(':SENSe:CURRent:PROTection 0.1')"
+        },
+        {
+          "name": "Set Current Limit",
+          "scpi": ":SENSe:VOLTage:PROTection {limit}",
+          "description": "Set current source voltage protection limit",
+          "params": [
+            { "name": "limit", "type": "number", "default": 20, "required": true, "unit": "V" }
+          ],
+          "example": "smu.write(':SENSe:VOLTage:PROTection 20')"
+        }
+      ]
+    },
+    "Measure": {
+      "description": "Measurement configuration commands",
+      "color": "bg-green-100 text-green-700",
+      "commands": [
+        {
+          "name": "Set Measure Function",
+          "scpi": ":SENSe:FUNCtion \"{function}\"",
+          "description": "Set measurement function",
+          "params": [
+            { "name": "function", "type": "text", "default": "VOLTage:DC", "options": ["VOLTage:DC", "CURRent:DC", "RESistance"], "required": true }
+          ],
+          "example": "smu.write(':SENSe:FUNCtion \"CURRent:DC\"')"
+        },
+        {
+          "name": "Query Measure Function",
+          "scpi": ":SENSe:FUNCtion?",
+          "description": "Query current measurement function",
+          "example": "func = smu.query(':SENSe:FUNCtion?')"
+        },
+        {
+          "name": "Set Voltage Measure Range",
+          "scpi": ":SENSe:VOLTage:DC:RANGe {range}",
+          "description": "Set voltage measurement range",
+          "params": [
+            { "name": "range", "type": "number", "default": 20, "required": true, "unit": "V" }
+          ],
+          "example": "smu.write(':SENSe:VOLTage:DC:RANGe 20')"
+        },
+        {
+          "name": "Set Voltage Measure Range Auto",
+          "scpi": ":SENSe:VOLTage:DC:RANGe:AUTO {state}",
+          "description": "Enable/disable auto voltage measure range",
+          "params": [
+            { "name": "state", "type": "text", "default": "ON", "options": ["ON", "OFF"], "required": true }
+          ],
+          "example": "smu.write(':SENSe:VOLTage:DC:RANGe:AUTO ON')"
+        },
+        {
+          "name": "Set Current Measure Range",
+          "scpi": ":SENSe:CURRent:DC:RANGe {range}",
+          "description": "Set current measurement range",
+          "params": [
+            { "name": "range", "type": "number", "default": 0.1, "required": true, "unit": "A" }
+          ],
+          "example": "smu.write(':SENSe:CURRent:DC:RANGe 0.001')"
+        },
+        {
+          "name": "Set Current Measure Range Auto",
+          "scpi": ":SENSe:CURRent:DC:RANGe:AUTO {state}",
+          "description": "Enable/disable auto current measure range",
+          "params": [
+            { "name": "state", "type": "text", "default": "ON", "options": ["ON", "OFF"], "required": true }
+          ],
+          "example": "smu.write(':SENSe:CURRent:DC:RANGe:AUTO ON')"
+        },
+        {
+          "name": "Set NPLC",
+          "scpi": ":SENSe:{function}:NPLCycles {nplc}",
+          "description": "Set integration time in power line cycles",
+          "params": [
+            { "name": "function", "type": "text", "default": "VOLTage:DC", "options": ["VOLTage:DC", "CURRent:DC", "RESistance"], "required": true },
+            { "name": "nplc", "type": "number", "default": 1, "min": 0.01, "max": 10, "required": true }
+          ],
+          "example": "smu.write(':SENSe:VOLTage:DC:NPLCycles 1')"
+        },
+        {
+          "name": "Read Measurement",
+          "scpi": ":READ?",
+          "description": "Trigger and read measurement",
+          "example": "reading = smu.query(':READ?')"
+        },
+        {
+          "name": "Measure Voltage",
+          "scpi": ":MEASure:VOLTage:DC?",
+          "description": "Measure and return DC voltage",
+          "example": "voltage = smu.query(':MEASure:VOLTage:DC?')"
+        },
+        {
+          "name": "Measure Current",
+          "scpi": ":MEASure:CURRent:DC?",
+          "description": "Measure and return DC current",
+          "example": "current = smu.query(':MEASure:CURRent:DC?')"
+        },
+        {
+          "name": "Measure Resistance",
+          "scpi": ":MEASure:RESistance?",
+          "description": "Measure and return resistance",
+          "example": "resistance = smu.query(':MEASure:RESistance?')"
+        },
+        {
+          "name": "Set 4-Wire Mode",
+          "scpi": ":SENSe:RESistance:RSENse {state}",
+          "description": "Enable/disable 4-wire (remote sense) mode",
+          "params": [
+            { "name": "state", "type": "text", "default": "ON", "options": ["ON", "OFF"], "required": true }
+          ],
+          "example": "smu.write(':SENSe:RESistance:RSENse ON')"
+        }
+      ]
+    },
+    "Output": {
+      "description": "Output control commands",
+      "color": "bg-orange-100 text-orange-700",
+      "commands": [
+        {
+          "name": "Enable Output",
+          "scpi": ":OUTPut:STATe ON",
+          "description": "Enable output",
+          "example": "smu.write(':OUTPut:STATe ON')"
+        },
+        {
+          "name": "Disable Output",
+          "scpi": ":OUTPut:STATe OFF",
+          "description": "Disable output",
+          "example": "smu.write(':OUTPut:STATe OFF')"
+        },
+        {
+          "name": "Set Output State",
+          "scpi": ":OUTPut:STATe {state}",
+          "description": "Set output state",
+          "params": [
+            { "name": "state", "type": "text", "default": "ON", "options": ["ON", "OFF"], "required": true }
+          ],
+          "example": "smu.write(':OUTPut:STATe ON')"
+        },
+        {
+          "name": "Query Output State",
+          "scpi": ":OUTPut:STATe?",
+          "description": "Query output state",
+          "example": "state = smu.query(':OUTPut:STATe?')"
+        },
+        {
+          "name": "Set Output Off Mode",
+          "scpi": ":OUTPut:SMODe {mode}",
+          "description": "Set output off mode",
+          "params": [
+            { "name": "mode", "type": "text", "default": "NORMal", "options": ["NORMal", "HIMPedance", "ZERO", "GUARd"], "required": true }
+          ],
+          "example": "smu.write(':OUTPut:SMODe HIMPedance')"
+        }
+      ]
+    },
+    "Sweep": {
+      "description": "Sweep configuration commands",
+      "color": "bg-purple-100 text-purple-700",
+      "commands": [
+        {
+          "name": "Set Sweep Voltage Start",
+          "scpi": ":SOURce:VOLTage:STARt {voltage}",
+          "description": "Set voltage sweep start value",
+          "params": [
+            { "name": "voltage", "type": "number", "default": 0, "required": true, "unit": "V" }
+          ],
+          "example": "smu.write(':SOURce:VOLTage:STARt 0')"
+        },
+        {
+          "name": "Set Sweep Voltage Stop",
+          "scpi": ":SOURce:VOLTage:STOP {voltage}",
+          "description": "Set voltage sweep stop value",
+          "params": [
+            { "name": "voltage", "type": "number", "default": 5, "required": true, "unit": "V" }
+          ],
+          "example": "smu.write(':SOURce:VOLTage:STOP 5')"
+        },
+        {
+          "name": "Set Sweep Points",
+          "scpi": ":SOURce:SWEep:POINts {points}",
+          "description": "Set number of sweep points",
+          "params": [
+            { "name": "points", "type": "number", "default": 100, "required": true }
+          ],
+          "example": "smu.write(':SOURce:SWEep:POINts 100')"
+        },
+        {
+          "name": "Set Sweep Spacing",
+          "scpi": ":SOURce:SWEep:SPACing {spacing}",
+          "description": "Set sweep spacing (linear or logarithmic)",
+          "params": [
+            { "name": "spacing", "type": "text", "default": "LINear", "options": ["LINear", "LOGarithmic"], "required": true }
+          ],
+          "example": "smu.write(':SOURce:SWEep:SPACing LINear')"
+        },
+        {
+          "name": "Set Sweep Direction",
+          "scpi": ":SOURce:SWEep:DIRection {direction}",
+          "description": "Set sweep direction",
+          "params": [
+            { "name": "direction", "type": "text", "default": "UP", "options": ["UP", "DOWN"], "required": true }
+          ],
+          "example": "smu.write(':SOURce:SWEep:DIRection UP')"
+        },
+        {
+          "name": "Set Current Sweep Start",
+          "scpi": ":SOURce:CURRent:STARt {current}",
+          "description": "Set current sweep start value",
+          "params": [
+            { "name": "current", "type": "number", "default": 0, "required": true, "unit": "A" }
+          ],
+          "example": "smu.write(':SOURce:CURRent:STARt 0')"
+        },
+        {
+          "name": "Set Current Sweep Stop",
+          "scpi": ":SOURce:CURRent:STOP {current}",
+          "description": "Set current sweep stop value",
+          "params": [
+            { "name": "current", "type": "number", "default": 0.1, "required": true, "unit": "A" }
+          ],
+          "example": "smu.write(':SOURce:CURRent:STOP 0.1')"
+        },
+        {
+          "name": "Arm Sweep",
+          "scpi": ":INITiate",
+          "description": "Arm/initiate sweep or measurement",
+          "example": "smu.write(':INITiate')"
+        }
+      ]
+    },
+    "Trigger": {
+      "description": "Trigger configuration commands",
+      "color": "bg-red-100 text-red-700",
+      "commands": [
+        {
+          "name": "Set Trigger Source",
+          "scpi": ":TRIGger:SOURce {source}",
+          "description": "Set trigger source",
+          "params": [
+            { "name": "source", "type": "text", "default": "IMMediate", "options": ["IMMediate", "TIMer", "MANual", "BUS", "EXTernal"], "required": true }
+          ],
+          "example": "smu.write(':TRIGger:SOURce IMMediate')"
+        },
+        {
+          "name": "Set Trigger Count",
+          "scpi": ":TRIGger:COUNt {count}",
+          "description": "Set trigger count",
+          "params": [
+            { "name": "count", "type": "number", "default": 1, "required": true }
+          ],
+          "example": "smu.write(':TRIGger:COUNt 100')"
+        },
+        {
+          "name": "Set Trigger Delay",
+          "scpi": ":TRIGger:DELay {delay}",
+          "description": "Set trigger delay in seconds",
+          "params": [
+            { "name": "delay", "type": "number", "default": 0, "required": true, "unit": "s" }
+          ],
+          "example": "smu.write(':TRIGger:DELay 0.001')"
+        },
+        {
+          "name": "Set Trigger Timer",
+          "scpi": ":TRIGger:TIMer {interval}",
+          "description": "Set trigger timer interval",
+          "params": [
+            { "name": "interval", "type": "number", "default": 0.1, "required": true, "unit": "s" }
+          ],
+          "example": "smu.write(':TRIGger:TIMer 0.1')"
+        },
+        {
+          "name": "Initiate Measurement",
+          "scpi": ":INITiate:IMMediate",
+          "description": "Immediately initiate measurement",
+          "example": "smu.write(':INITiate:IMMediate')"
+        },
+        {
+          "name": "Abort",
+          "scpi": ":ABORt",
+          "description": "Abort measurement in progress",
+          "example": "smu.write(':ABORt')"
+        }
+      ]
+    },
+    "Data Buffer": {
+      "description": "Data buffer management commands",
+      "color": "bg-teal-100 text-teal-700",
+      "commands": [
+        {
+          "name": "Clear Buffer",
+          "scpi": ":TRACe:CLEar",
+          "description": "Clear the data buffer",
+          "example": "smu.write(':TRACe:CLEar')"
+        },
+        {
+          "name": "Set Buffer Size",
+          "scpi": ":TRACe:POINts {size}",
+          "description": "Set buffer size",
+          "params": [
+            { "name": "size", "type": "number", "default": 100, "required": true }
+          ],
+          "example": "smu.write(':TRACe:POINts 1000')"
+        },
+        {
+          "name": "Query Buffer Size",
+          "scpi": ":TRACe:POINts?",
+          "description": "Query current buffer size",
+          "example": "size = smu.query(':TRACe:POINts?')"
+        },
+        {
+          "name": "Query Buffer Count",
+          "scpi": ":TRACe:ACTual?",
+          "description": "Query number of readings in buffer",
+          "example": "count = smu.query(':TRACe:ACTual?')"
+        },
+        {
+          "name": "Fetch Buffer Data",
+          "scpi": ":TRACe:DATA?",
+          "description": "Fetch all data from buffer",
+          "example": "data = smu.query(':TRACe:DATA?')"
+        },
+        {
+          "name": "Fetch Buffer Range",
+          "scpi": ":TRACe:DATA? {start},{count}",
+          "description": "Fetch specified range from buffer",
+          "params": [
+            { "name": "start", "type": "number", "default": 1, "required": true },
+            { "name": "count", "type": "number", "default": 10, "required": true }
+          ],
+          "example": "data = smu.query(':TRACe:DATA? 1,10')"
+        },
+        {
+          "name": "Enable Buffer Feed",
+          "scpi": ":TRACe:FEED:CONTrol {mode}",
+          "description": "Set buffer feed mode",
+          "params": [
+            { "name": "mode", "type": "text", "default": "NEXT", "options": ["NEXT", "ALWays", "NEVer"], "required": true }
+          ],
+          "example": "smu.write(':TRACe:FEED:CONTrol NEXT')"
+        }
+      ]
+    },
+    "System": {
+      "description": "System and common commands",
+      "color": "bg-gray-100 text-gray-700",
+      "commands": [
+        {
+          "name": "Identify",
+          "scpi": "*IDN?",
+          "description": "Query instrument identification",
+          "example": "idn = smu.query('*IDN?')"
+        },
+        {
+          "name": "Reset",
+          "scpi": "*RST",
+          "description": "Reset instrument to default settings",
+          "example": "smu.write('*RST')"
+        },
+        {
+          "name": "Clear Status",
+          "scpi": "*CLS",
+          "description": "Clear status registers",
+          "example": "smu.write('*CLS')"
+        },
+        {
+          "name": "Operation Complete Query",
+          "scpi": "*OPC?",
+          "description": "Query operation complete status",
+          "example": "opc = smu.query('*OPC?')"
+        },
+        {
+          "name": "Set Operation Complete",
+          "scpi": "*OPC",
+          "description": "Set OPC bit when operations complete",
+          "example": "smu.write('*OPC')"
+        },
+        {
+          "name": "Wait",
+          "scpi": "*WAI",
+          "description": "Wait for pending operations to complete",
+          "example": "smu.write('*WAI')"
+        },
+        {
+          "name": "Self Test",
+          "scpi": "*TST?",
+          "description": "Run self-test and query result",
+          "example": "result = smu.query('*TST?')"
+        },
+        {
+          "name": "Save Setup",
+          "scpi": "*SAV {memory}",
+          "description": "Save setup to memory location",
+          "params": [
+            { "name": "memory", "type": "number", "default": 1, "required": true }
+          ],
+          "example": "smu.write('*SAV 1')"
+        },
+        {
+          "name": "Recall Setup",
+          "scpi": "*RCL {memory}",
+          "description": "Recall setup from memory location",
+          "params": [
+            { "name": "memory", "type": "number", "default": 1, "required": true }
+          ],
+          "example": "smu.write('*RCL 1')"
+        },
+        {
+          "name": "Query Error",
+          "scpi": ":SYSTem:ERRor?",
+          "description": "Query and clear one error from queue",
+          "example": "error = smu.query(':SYSTem:ERRor?')"
+        },
+        {
+          "name": "Set Display State",
+          "scpi": ":DISPlay:ENABle {state}",
+          "description": "Enable/disable front panel display",
+          "params": [
+            { "name": "state", "type": "text", "default": "ON", "options": ["ON", "OFF"], "required": true }
+          ],
+          "example": "smu.write(':DISPlay:ENABle ON')"
+        },
+        {
+          "name": "Set Beeper State",
+          "scpi": ":SYSTem:BEEPer:STATe {state}",
+          "description": "Enable/disable beeper",
+          "params": [
+            { "name": "state", "type": "text", "default": "ON", "options": ["ON", "OFF"], "required": true }
+          ],
+          "example": "smu.write(':SYSTem:BEEPer:STATe OFF')"
+        },
+        {
+          "name": "Beep",
+          "scpi": ":SYSTem:BEEPer:IMMediate",
+          "description": "Generate a beep",
+          "example": "smu.write(':SYSTem:BEEPer:IMMediate')"
+        }
+      ]
+    }
+  }
+}
+
+
+

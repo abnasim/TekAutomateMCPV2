@@ -1,0 +1,1545 @@
+[
+  {
+    "command": "CH1:SCAle",
+    "header": "CH<x>:SCAle",
+    "mnemonics": ["CH<x>", "SCAle"],
+    "commandType": "both",
+    "group": "Vertical",
+    "description": "This command sets or queries the vertical scale for the specified analog channel. The channel is specified by x.",
+    "shortDescription": "Set or query channel vertical scale (volts per division)",
+    "instruments": {
+      "families": ["MSO2", "MSO4", "MSO5", "MSO6", "MSO7"],
+      "models": [],
+      "exclusions": []
+    },
+    "arguments": [
+      {
+        "name": "channel", "type": "mnemonic", "required": true, "position": 0,
+        "description": "Analog channel selector.",
+        "mnemonicType": "channel",
+        "validValues": { "type": "mnemonic_range", "pattern": "CH<x>", "examples": ["CH1", "CH2", "CH3", "CH4"] }
+      },
+      {
+        "name": "scale", "type": "numeric", "required": true, "position": 1,
+        "description": "Vertical scale in volts per division.",
+        "validValues": { "type": "NR3", "examples": ["0.001", "0.01", "0.1", "0.5", "1.0", "10.0"] }
+      }
+    ],
+    "syntax": { "set": "CH<x>:SCAle <NR3>", "query": "CH<x>:SCAle?" },
+    "relatedCommands": ["CH<x>:OFFSet", "CH<x>:POSition", "CH<x>:BANdwidth", "CH<x>:COUPling"]
+  },
+  {
+    "command": "CH1:OFFSet",
+    "header": "CH<x>:OFFSet",
+    "mnemonics": ["CH<x>", "OFFSet"],
+    "commandType": "both",
+    "group": "Vertical",
+    "description": "This command sets or queries the vertical offset for the specified analog channel.",
+    "shortDescription": "Set or query channel vertical offset",
+    "instruments": {
+      "families": ["MSO2", "MSO4", "MSO5", "MSO6", "MSO7"],
+      "models": [],
+      "exclusions": []
+    },
+    "arguments": [
+      {
+        "name": "channel", "type": "mnemonic", "required": true, "position": 0,
+        "description": "Analog channel selector.",
+        "validValues": { "type": "mnemonic_range", "pattern": "CH<x>", "examples": ["CH1", "CH2", "CH3", "CH4"] }
+      },
+      {
+        "name": "offset", "type": "numeric", "required": true, "position": 1,
+        "description": "Vertical offset in volts.",
+        "validValues": { "type": "NR3", "examples": ["0", "0.5", "-1.0", "2.5"] }
+      }
+    ],
+    "syntax": { "set": "CH<x>:OFFSet <NR3>", "query": "CH<x>:OFFSet?" },
+    "relatedCommands": ["CH<x>:SCAle", "CH<x>:POSition"]
+  },
+  {
+    "command": "CH1:POSition",
+    "header": "CH<x>:POSition",
+    "mnemonics": ["CH<x>", "POSition"],
+    "commandType": "both",
+    "group": "Vertical",
+    "description": "This command sets or queries the vertical position for the specified analog channel. Position is in divisions from the center of the screen.",
+    "shortDescription": "Set or query channel vertical position (divisions from center)",
+    "instruments": {
+      "families": ["MSO2", "MSO4", "MSO5", "MSO6", "MSO7"],
+      "models": [],
+      "exclusions": []
+    },
+    "arguments": [
+      {
+        "name": "channel", "type": "mnemonic", "required": true, "position": 0,
+        "description": "Analog channel selector.",
+        "validValues": { "type": "mnemonic_range", "pattern": "CH<x>", "examples": ["CH1", "CH2", "CH3", "CH4"] }
+      },
+      {
+        "name": "position", "type": "numeric", "required": true, "position": 1,
+        "description": "Vertical position in divisions.",
+        "validValues": { "type": "NR3", "examples": ["-5.0", "0", "2.5", "5.0"] }
+      }
+    ],
+    "syntax": { "set": "CH<x>:POSition <NR3>", "query": "CH<x>:POSition?" },
+    "relatedCommands": ["CH<x>:SCAle", "CH<x>:OFFSet"]
+  },
+  {
+    "command": "CH1:BANdwidth",
+    "header": "CH<x>:BANdwidth",
+    "mnemonics": ["CH<x>", "BANdwidth"],
+    "commandType": "both",
+    "group": "Vertical",
+    "description": "This command sets or queries the selectable low-pass bandwidth limit filter for the specified channel. The actual bandwidth depends on the attached probe.",
+    "shortDescription": "Set or query channel bandwidth limit",
+    "instruments": {
+      "families": ["MSO2", "MSO4", "MSO5", "MSO6", "MSO7"],
+      "models": [],
+      "exclusions": []
+    },
+    "arguments": [
+      {
+        "name": "channel", "type": "mnemonic", "required": true, "position": 0,
+        "description": "Analog channel selector.",
+        "validValues": { "type": "mnemonic_range", "pattern": "CH<x>", "examples": ["CH1", "CH2", "CH3", "CH4"] }
+      },
+      {
+        "name": "bandwidth", "type": "numeric", "required": true, "position": 1,
+        "description": "Bandwidth limit in Hz. Use FULl for full bandwidth.",
+        "validValues": { "type": "NR3", "examples": ["20000000", "250000000", "500000000", "1000000000"] }
+      }
+    ],
+    "syntax": { "set": "CH<x>:BANdwidth <NR3>", "query": "CH<x>:BANdwidth?" },
+    "relatedCommands": ["CH<x>:BANdwidth:ACTUal", "CH<x>:BANdwidth:ENHanced:STATE"]
+  },
+  {
+    "command": "CH1:COUPling",
+    "header": "CH<x>:COUPling",
+    "mnemonics": ["CH<x>", "COUPling"],
+    "commandType": "both",
+    "group": "Vertical",
+    "description": "This command sets or queries the input attenuator coupling setting for the specified channel.",
+    "shortDescription": "Set or query channel coupling (AC/DC/DCREJect)",
+    "instruments": {
+      "families": ["MSO2", "MSO4", "MSO5", "MSO6", "MSO7"],
+      "models": [],
+      "exclusions": []
+    },
+    "arguments": [
+      {
+        "name": "channel", "type": "mnemonic", "required": true, "position": 0,
+        "description": "Analog channel selector.",
+        "validValues": { "type": "mnemonic_range", "pattern": "CH<x>", "examples": ["CH1", "CH2", "CH3", "CH4"] }
+      },
+      {
+        "name": "coupling", "type": "enum", "required": true, "position": 1,
+        "description": "Input coupling mode.",
+        "validValues": { "type": "enum", "values": ["AC", "DC", "DCREJect"] }
+      }
+    ],
+    "syntax": { "set": "CH<x>:COUPling {AC|DC|DCREJect}", "query": "CH<x>:COUPling?" },
+    "relatedCommands": ["CH<x>:TERmination", "CH<x>:OFFSet"]
+  },
+  {
+    "command": "CH1:INVert",
+    "header": "CH<x>:INVert",
+    "mnemonics": ["CH<x>", "INVert"],
+    "commandType": "both",
+    "group": "Vertical",
+    "description": "This command sets or queries the invert state for the specified channel.",
+    "shortDescription": "Set or query channel inversion (ON/OFF)",
+    "instruments": {
+      "families": ["MSO2", "MSO4", "MSO5", "MSO6", "MSO7"],
+      "models": [],
+      "exclusions": []
+    },
+    "arguments": [
+      {
+        "name": "channel", "type": "mnemonic", "required": true, "position": 0,
+        "description": "Analog channel selector.",
+        "validValues": { "type": "mnemonic_range", "pattern": "CH<x>", "examples": ["CH1", "CH2", "CH3", "CH4"] }
+      },
+      {
+        "name": "state", "type": "enum", "required": true, "position": 1,
+        "description": "Invert state.",
+        "validValues": { "type": "enum", "values": ["ON", "OFF", "0", "1"] }
+      }
+    ],
+    "syntax": { "set": "CH<x>:INVert {ON|OFF}", "query": "CH<x>:INVert?" },
+    "relatedCommands": ["CH<x>:SCAle", "CH<x>:OFFSet"]
+  },
+  {
+    "command": "CH1:LABel:NAMe",
+    "header": "CH<x>:LABel:NAMe",
+    "mnemonics": ["CH<x>", "LABel", "NAMe"],
+    "commandType": "both",
+    "group": "Vertical",
+    "description": "This command sets or queries the user label for the specified channel.",
+    "shortDescription": "Set or query channel label name",
+    "instruments": {
+      "families": ["MSO2", "MSO4", "MSO5", "MSO6", "MSO7"],
+      "models": [],
+      "exclusions": []
+    },
+    "arguments": [
+      {
+        "name": "channel", "type": "mnemonic", "required": true, "position": 0,
+        "description": "Analog channel selector.",
+        "validValues": { "type": "mnemonic_range", "pattern": "CH<x>", "examples": ["CH1", "CH2", "CH3", "CH4"] }
+      },
+      {
+        "name": "name", "type": "string", "required": true, "position": 1,
+        "description": "Channel label string.",
+        "validValues": { "type": "quoted_string", "examples": ["\"Vout\"", "\"Clock\"", "\"Data\""] }
+      }
+    ],
+    "syntax": { "set": "CH<x>:LABel:NAMe <Qstring>", "query": "CH<x>:LABel:NAMe?" },
+    "relatedCommands": ["CH<x>:LABel:COLor"]
+  },
+  {
+    "command": "CH1:DESKew",
+    "header": "CH<x>:DESKew",
+    "mnemonics": ["CH<x>", "DESKew"],
+    "commandType": "both",
+    "group": "Vertical",
+    "description": "This command sets or queries the deskew time for the specified channel.",
+    "shortDescription": "Set or query channel deskew time",
+    "instruments": {
+      "families": ["MSO2", "MSO4", "MSO5", "MSO6", "MSO7"],
+      "models": [],
+      "exclusions": []
+    },
+    "arguments": [
+      {
+        "name": "channel", "type": "mnemonic", "required": true, "position": 0,
+        "description": "Analog channel selector.",
+        "validValues": { "type": "mnemonic_range", "pattern": "CH<x>", "examples": ["CH1", "CH2", "CH3", "CH4"] }
+      },
+      {
+        "name": "deskew", "type": "numeric", "required": true, "position": 1,
+        "description": "Deskew time in seconds.",
+        "validValues": { "type": "NR3", "examples": ["0", "1e-9", "5e-9"] }
+      }
+    ],
+    "syntax": { "set": "CH<x>:DESKew <NR3>", "query": "CH<x>:DESKew?" },
+    "relatedCommands": ["CH<x>:SCAle"]
+  },
+  {
+    "command": "CH1:TERmination",
+    "header": "CH<x>:TERmination",
+    "mnemonics": ["CH<x>", "TERmination"],
+    "commandType": "both",
+    "group": "Vertical",
+    "description": "This command sets or queries the vertical termination for the specified analog channel. The channel is specified by x. The available arguments depend on the instrument model and the attached accessories.",
+    "shortDescription": "Set or query analog channel termination",
+    "instruments": {
+      "families": ["MSO4", "MSO5", "MSO6", "MSO7"],
+      "models": ["MSO44", "MSO46", "MSO54", "MSO56", "MSO58", "MSO64", "MSO66", "MSO68", "MSO70", "MSO74", "MSO76"],
+      "exclusions": []
+    },
+    "arguments": [
+      {
+        "name": "channel",
+        "type": "mnemonic",
+        "required": true,
+        "position": 0,
+        "description": "Analog channel selector.",
+        "mnemonicType": "channel",
+        "validValues": {
+          "type": "mnemonic_range",
+          "pattern": "CH<x>",
+          "examples": ["CH1", "CH2", "CH3", "CH4"],
+          "range": {
+            "channels": {
+              "min": 1,
+              "max": 4,
+              "description": "Analog channels 1 through 4"
+            }
+          }
+        }
+      },
+      {
+        "name": "termination_ohms",
+        "type": "numeric",
+        "required": true,
+        "position": 1,
+        "description": "Channel input resistance in ohms. Typical values are 50 or 1000000 depending on the model and accessories.",
+        "validValues": {
+          "type": "numeric_examples",
+          "examples": [50, 1000000]
+        },
+        "defaultValue": 1000000
+      }
+    ],
+    "queryResponse": {
+      "type": "numeric",
+      "format": "Returns the current channel termination in ohms.",
+      "example": "50.0E+0",
+      "description": "Typical returned values are 50.0E+0 or 1000000.0E+0."
+    },
+    "examples": [
+      {
+        "scpi": "CH4:TERMINATION 50.0E+0",
+        "description": "Set channel 4 termination to 50 ohms."
+      },
+      {
+        "scpi": "CH2:TERMINATION?",
+        "description": "Might return CH2:TERMINATION 50.0E+0, indicating that channel 2 is set to 50 ohms."
+      }
+    ],
+    "relatedCommands": ["CH<x>:COUPling", "CH<x>:SCAle", "CH<x>:VTERm:BIAS"],
+    "commandGroup": "Vertical",
+    "subGroup": "Channel Termination",
+    "backwardCompatibility": {
+      "legacyCommands": [],
+      "notes": "Added as a manual override because the upstream vendor extract embeds this command in a malformed example block."
+    },
+    "notes": [
+      "Available arguments depend on the instrument model and attached accessories.",
+      "50 ohms and 1000000 ohms are the common supported values on analog channels."
+    ],
+    "manualReference": {
+      "section": "Vertical",
+      "subsection": "CH<x>:TERmination"
+    },
+    "concatenation": {
+      "canConcatenate": true,
+      "requiresColon": false,
+      "example": "CH1:TERMINATION 50.0E+0;CH1:COUPLING DC"
+    },
+    "dynamicActivation": {
+      "implicitlyActivates": false,
+      "requiresActiveSource": false
+    },
+    "syntax": {
+      "set": "CH<x>:TERmination <NR3>",
+      "query": "CH<x>:TERmination?"
+    }
+  },
+  {
+    "command": "SEARCH:SEARCH1:TRIGger:A:BUS:AUTOETHERnet:MAC:LENgth:VALue",
+    "header": "SEARCH:SEARCH<x>:TRIGger:A:BUS:AUTOETHERnet:MAC:LENgth:VALue",
+    "mnemonics": ["SEARCH", "SEARCH<x>", "TRIGger", "A", "BUS", "AUTOETHERnet", "MAC", "LENgth", "VALue"],
+    "commandType": "both",
+    "description": "This command sets or queries the MAC length value to use when searching on an AutoEthernet bus signal.",
+    "shortDescription": "Set or query AutoEthernet MAC length search value",
+    "instruments": {
+      "families": ["MSO4", "MSO5", "MSO6", "MSO7"],
+      "models": ["MSO44", "MSO46", "MSO54", "MSO56", "MSO58", "MSO64", "MSO66", "MSO68", "MSO70", "MSO74", "MSO76"],
+      "exclusions": []
+    },
+    "arguments": [
+      {
+        "name": "search",
+        "type": "mnemonic",
+        "required": true,
+        "position": 0,
+        "description": "Search slot selector.",
+        "mnemonicType": "search",
+        "validValues": {
+          "type": "mnemonic_range",
+          "pattern": "SEARCH<x>",
+          "examples": ["SEARCH1", "SEARCH2"]
+        }
+      },
+      {
+        "name": "mac_length_value",
+        "type": "quoted_string",
+        "required": true,
+        "position": 1,
+        "description": "Binary MAC length value to use for the search.",
+        "validValues": {
+          "type": "binary_string"
+        }
+      }
+    ],
+    "relatedCommands": [
+      "SEARCH:SEARCH<x>:TRIGger:A:BUS:AUTOETHERnet:MAC:LENgth:HIVALue",
+      "SEARCH:SEARCH<x>:TRIGger:A:BUS:AUTOETHERnet:CONDition"
+    ],
+    "commandGroup": "Search and Mark",
+    "subGroup": "AutoEthernet Search",
+    "notes": [
+      "Added as a manual override because the vendor extract truncates the trailing VALue token.",
+      "Use with the matching AutoEthernet MAC length search condition."
+    ],
+    "manualReference": {
+      "section": "Search and Mark",
+      "page": 109,
+      "subsection": "SEARCH:SEARCH<x>:TRIGger:A:BUS:AUTOETHERnet:MAC:LENgth:VALue"
+    },
+    "syntax": {
+      "set": "SEARCH:SEARCH<x>:TRIGger:A:BUS:AUTOETHERnet:MAC:LENgth:VALue <QString>",
+      "query": "SEARCH:SEARCH<x>:TRIGger:A:BUS:AUTOETHERnet:MAC:LENgth:VALue?"
+    }
+  },
+  {
+    "command": "SEARCH:SEARCH1:TRIGger:A:BUS:ESPI:VIRTUALWIRe:INDeX:VALue",
+    "header": "SEARCH:SEARCH<x>:TRIGger:A:BUS:ESPI:VIRTUALWIRe:INDeX:VALue",
+    "mnemonics": ["SEARCH", "SEARCH<x>", "TRIGger", "A", "BUS", "ESPI", "VIRTUALWIRe", "INDeX", "VALue"],
+    "commandType": "both",
+    "description": "This command sets or queries the binary data string used for eSPI searching when the trigger condition is Virtual wire Index.",
+    "shortDescription": "Set or query eSPI virtual wire index search value",
+    "instruments": {
+      "families": ["MSO4", "MSO5", "MSO6", "MSO7"],
+      "models": ["MSO44", "MSO46", "MSO54", "MSO56", "MSO58", "MSO64", "MSO66", "MSO68", "MSO70", "MSO74", "MSO76"],
+      "exclusions": []
+    },
+    "arguments": [
+      {
+        "name": "search",
+        "type": "mnemonic",
+        "required": true,
+        "position": 0,
+        "description": "Search slot selector.",
+        "mnemonicType": "search",
+        "validValues": {
+          "type": "mnemonic_range",
+          "pattern": "SEARCH<x>",
+          "examples": ["SEARCH1", "SEARCH2"]
+        }
+      },
+      {
+        "name": "index_value",
+        "type": "quoted_string",
+        "required": true,
+        "position": 1,
+        "description": "Binary index value used for the virtual wire search.",
+        "validValues": {
+          "type": "binary_string"
+        }
+      }
+    ],
+    "relatedCommands": [
+      "SEARCH:SEARCH<x>:TRIGger:A:BUS:ESPI:VIRTUALWIRe:STATus:VALue",
+      "SEARCH:SEARCH<x>:TRIGger:A:BUS:ESPI:CONDition"
+    ],
+    "commandGroup": "Search and Mark",
+    "subGroup": "eSPI Search",
+    "notes": [
+      "Added as a manual override because the vendor extract truncates the trailing VALue token."
+    ],
+    "manualReference": {
+      "section": "Search and Mark",
+      "page": 113,
+      "subsection": "SEARCH:SEARCH<x>:TRIGger:A:BUS:ESPI:VIRTUALWIRe:INDeX:VALue"
+    },
+    "syntax": {
+      "set": "SEARCH:SEARCH<x>:TRIGger:A:BUS:ESPI:VIRTUALWIRe:INDeX:VALue <QString>",
+      "query": "SEARCH:SEARCH<x>:TRIGger:A:BUS:ESPI:VIRTUALWIRe:INDeX:VALue?"
+    }
+  },
+  {
+    "command": "SEARCH:SEARCH1:TRIGger:A:BUS:ESPI:VIRTUALWIRe:STATus:VALue",
+    "header": "SEARCH:SEARCH<x>:TRIGger:A:BUS:ESPI:VIRTUALWIRe:STATus:VALue",
+    "mnemonics": ["SEARCH", "SEARCH<x>", "TRIGger", "A", "BUS", "ESPI", "VIRTUALWIRe", "STATus", "VALue"],
+    "commandType": "both",
+    "description": "This command sets or queries the binary data string used for eSPI searching when the trigger condition is Virtual wire Status.",
+    "shortDescription": "Set or query eSPI virtual wire status search value",
+    "instruments": {
+      "families": ["MSO4", "MSO5", "MSO6", "MSO7"],
+      "models": ["MSO44", "MSO46", "MSO54", "MSO56", "MSO58", "MSO64", "MSO66", "MSO68", "MSO70", "MSO74", "MSO76"],
+      "exclusions": []
+    },
+    "arguments": [
+      {
+        "name": "search",
+        "type": "mnemonic",
+        "required": true,
+        "position": 0,
+        "description": "Search slot selector.",
+        "mnemonicType": "search",
+        "validValues": {
+          "type": "mnemonic_range",
+          "pattern": "SEARCH<x>",
+          "examples": ["SEARCH1", "SEARCH2"]
+        }
+      },
+      {
+        "name": "status_value",
+        "type": "quoted_string",
+        "required": true,
+        "position": 1,
+        "description": "Binary status value used for the virtual wire search.",
+        "validValues": {
+          "type": "binary_string"
+        }
+      }
+    ],
+    "relatedCommands": [
+      "SEARCH:SEARCH<x>:TRIGger:A:BUS:ESPI:VIRTUALWIRe:INDeX:VALue",
+      "SEARCH:SEARCH<x>:TRIGger:A:BUS:ESPI:CONDition"
+    ],
+    "commandGroup": "Search and Mark",
+    "subGroup": "eSPI Search",
+    "notes": [
+      "Added as a manual override because the vendor extract truncates the trailing VALue token."
+    ],
+    "manualReference": {
+      "section": "Search and Mark",
+      "page": 113,
+      "subsection": "SEARCH:SEARCH<x>:TRIGger:A:BUS:ESPI:VIRTUALWIRe:STATus:VALue"
+    },
+    "syntax": {
+      "set": "SEARCH:SEARCH<x>:TRIGger:A:BUS:ESPI:VIRTUALWIRe:STATus:VALue <QString>",
+      "query": "SEARCH:SEARCH<x>:TRIGger:A:BUS:ESPI:VIRTUALWIRe:STATus:VALue?"
+    }
+  },
+  {
+    "command": "SEARCH:SEARCH1:TRIGger:A:BUS:ETHERCAT:NETWORKVARiable:DATa:SIZe",
+    "header": "SEARCH:SEARCH<x>:TRIGger:A:BUS:ETHERCAT:NETWORKVARiable:DATa:SIZe",
+    "mnemonics": ["SEARCH", "SEARCH<x>", "TRIGger", "A", "BUS", "ETHERCAT", "NETWORKVARiable", "DATa", "SIZe"],
+    "commandType": "both",
+    "description": "This command sets or queries the length of the network variable data string in bytes to be used for EtherCAT bus searching.",
+    "shortDescription": "Set or query EtherCAT network variable data size",
+    "instruments": {
+      "families": ["MSO4", "MSO5", "MSO6", "MSO7"],
+      "models": ["MSO44", "MSO46", "MSO54", "MSO56", "MSO58", "MSO64", "MSO66", "MSO68", "MSO70", "MSO74", "MSO76"],
+      "exclusions": []
+    },
+    "arguments": [
+      {
+        "name": "search",
+        "type": "mnemonic",
+        "required": true,
+        "position": 0,
+        "description": "Search slot selector.",
+        "mnemonicType": "search",
+        "validValues": {
+          "type": "mnemonic_range",
+          "pattern": "SEARCH<x>",
+          "examples": ["SEARCH1", "SEARCH2"]
+        }
+      },
+      {
+        "name": "data_size_bytes",
+        "type": "numeric",
+        "required": true,
+        "position": 1,
+        "description": "Length of the network variable data string in bytes.",
+        "validValues": {
+          "type": "numeric",
+          "format": "NR1",
+          "min": 1
+        }
+      }
+    ],
+    "relatedCommands": [
+      "SEARCH:SEARCH<x>:TRIGger:A:BUS:ETHERCAT:NETWORKVARiable:DATa:VALue",
+      "SEARCH:SEARCH<x>:TRIGger:A:BUS:ETHERCAT:CONDition"
+    ],
+    "commandGroup": "Search and Mark",
+    "subGroup": "EtherCAT Search",
+    "notes": [
+      "Added as a manual override because the vendor extract splits the DATa token with bad whitespace."
+    ],
+    "manualReference": {
+      "section": "Search and Mark",
+      "page": 114,
+      "subsection": "SEARCH:SEARCH<x>:TRIGger:A:BUS:ETHERCAT:NETWORKVARiable:DATa:SIZe"
+    },
+    "syntax": {
+      "set": "SEARCH:SEARCH<x>:TRIGger:A:BUS:ETHERCAT:NETWORKVARiable:DATa:SIZe <NR1>",
+      "query": "SEARCH:SEARCH<x>:TRIGger:A:BUS:ETHERCAT:NETWORKVARiable:DATa:SIZe?"
+    }
+  },
+  {
+    "command": "SEARCH:SEARCH1:TRIGger:A:BUS:MANChester:packetOffData:VALue",
+    "header": "SEARCH:SEARCH<x>:TRIGger:A:BUS:MANChester:packetOffData:VALue",
+    "mnemonics": ["SEARCH", "SEARCH<x>", "TRIGger", "A", "BUS", "MANChester", "packetOffData", "VALue"],
+    "commandType": "both",
+    "description": "This command specifies the binary string used for Manchester searching if the trigger condition is DATA.",
+    "shortDescription": "Set or query Manchester packet-off-data search value",
+    "instruments": {
+      "families": ["MSO4", "MSO5", "MSO6", "MSO7"],
+      "models": ["MSO44", "MSO46", "MSO54", "MSO56", "MSO58", "MSO64", "MSO66", "MSO68", "MSO70", "MSO74", "MSO76"],
+      "exclusions": []
+    },
+    "arguments": [
+      {
+        "name": "search",
+        "type": "mnemonic",
+        "required": true,
+        "position": 0,
+        "description": "Search slot selector.",
+        "mnemonicType": "search",
+        "validValues": {
+          "type": "mnemonic_range",
+          "pattern": "SEARCH<x>",
+          "examples": ["SEARCH1", "SEARCH2"]
+        }
+      },
+      {
+        "name": "data_value",
+        "type": "quoted_string",
+        "required": true,
+        "position": 1,
+        "description": "Binary Manchester data string to match.",
+        "validValues": {
+          "type": "binary_string"
+        }
+      }
+    ],
+    "relatedCommands": [
+      "SEARCH:SEARCH<x>:TRIGger:A:BUS:MANChester:CONDition",
+      "SEARCH:SEARCH<x>:TRIGger:A:BUS:MANChester:DATa:VALue"
+    ],
+    "commandGroup": "Search and Mark",
+    "subGroup": "Manchester Search",
+    "notes": [
+      "Added as a manual override because the vendor extract breaks the VALue token with embedded whitespace."
+    ],
+    "manualReference": {
+      "section": "Search and Mark",
+      "page": 120,
+      "subsection": "SEARCH:SEARCH<x>:TRIGger:A:BUS:MANChester:packetOffData:VALue"
+    },
+    "syntax": {
+      "set": "SEARCH:SEARCH<x>:TRIGger:A:BUS:MANChester:packetOffData:VALue <QString>",
+      "query": "SEARCH:SEARCH<x>:TRIGger:A:BUS:MANChester:packetOffData:VALue?"
+    }
+  },
+  {
+    "command": "SEARCH:SEARCH1:TRIGger:A:DDRREADWRITE:REFLevel:DATA:HIGH",
+    "header": "SEARCH:SEARCH<x>:TRIGger:A:DDRREADWRITE:REFLevel:DATA:HIGH",
+    "mnemonics": ["SEARCH", "SEARCH<x>", "TRIGger", "A", "DDRREADWRITE", "REFLevel", "DATA", "HIGH"],
+    "commandType": "both",
+    "description": "This command sets or queries the DDR read/write data high reference level value when the search type is DDR READWRITE.",
+    "shortDescription": "Set or query DDR read/write data high reference level",
+    "instruments": {
+      "families": ["MSO4", "MSO5", "MSO6", "MSO7"],
+      "models": ["MSO44", "MSO46", "MSO54", "MSO56", "MSO58", "MSO64", "MSO66", "MSO68", "MSO70", "MSO74", "MSO76"],
+      "exclusions": []
+    },
+    "arguments": [
+      {
+        "name": "search",
+        "type": "mnemonic",
+        "required": true,
+        "position": 0,
+        "description": "Search slot selector.",
+        "mnemonicType": "search",
+        "validValues": {
+          "type": "mnemonic_range",
+          "pattern": "SEARCH<x>",
+          "examples": ["SEARCH1", "SEARCH2"]
+        }
+      },
+      {
+        "name": "reference_level_high",
+        "type": "numeric",
+        "required": true,
+        "position": 1,
+        "description": "High reference level for DDR read/write data.",
+        "validValues": {
+          "type": "numeric",
+          "format": "NR3"
+        }
+      }
+    ],
+    "relatedCommands": [
+      "SEARCH:SEARCH<x>:TRIGger:A:DDRREADWRITE:REFLevel:DATA:LOW",
+      "SEARCH:SEARCH<x>:TRIGger:A:DDRREADWRITE:REFLevel:DATA:MID"
+    ],
+    "commandGroup": "Search and Mark",
+    "subGroup": "DDR Read/Write Search",
+    "notes": [
+      "Added as a manual override because the vendor extract does not preserve a clean canonical header for this reference-level command."
+    ],
+    "manualReference": {
+      "section": "Search and Mark",
+      "page": 131,
+      "subsection": "SEARCH:SEARCH<x>:TRIGger:A:DDRREADWRITE:REFLevel:DATA:HIGH"
+    },
+    "syntax": {
+      "set": "SEARCH:SEARCH<x>:TRIGger:A:DDRREADWRITE:REFLevel:DATA:HIGH <NR3>",
+      "query": "SEARCH:SEARCH<x>:TRIGger:A:DDRREADWRITE:REFLevel:DATA:HIGH?"
+    }
+  },
+  {
+    "command": "SEARCH:SEARCH1:TRIGger:A:DDRREADWRITE:REFLevel:DATA:LOW",
+    "header": "SEARCH:SEARCH<x>:TRIGger:A:DDRREADWRITE:REFLevel:DATA:LOW",
+    "mnemonics": ["SEARCH", "SEARCH<x>", "TRIGger", "A", "DDRREADWRITE", "REFLevel", "DATA", "LOW"],
+    "commandType": "both",
+    "description": "This command sets or queries the DDR read/write data low reference level value when the search type is DDR READWRITE.",
+    "shortDescription": "Set or query DDR read/write data low reference level",
+    "instruments": {
+      "families": ["MSO4", "MSO5", "MSO6", "MSO7"],
+      "models": ["MSO44", "MSO46", "MSO54", "MSO56", "MSO58", "MSO64", "MSO66", "MSO68", "MSO70", "MSO74", "MSO76"],
+      "exclusions": []
+    },
+    "arguments": [
+      {
+        "name": "search",
+        "type": "mnemonic",
+        "required": true,
+        "position": 0,
+        "description": "Search slot selector.",
+        "mnemonicType": "search",
+        "validValues": {
+          "type": "mnemonic_range",
+          "pattern": "SEARCH<x>",
+          "examples": ["SEARCH1", "SEARCH2"]
+        }
+      },
+      {
+        "name": "reference_level_low",
+        "type": "numeric",
+        "required": true,
+        "position": 1,
+        "description": "Low reference level for DDR read/write data.",
+        "validValues": {
+          "type": "numeric",
+          "format": "NR3"
+        }
+      }
+    ],
+    "relatedCommands": [
+      "SEARCH:SEARCH<x>:TRIGger:A:DDRREADWRITE:REFLevel:DATA:HIGH",
+      "SEARCH:SEARCH<x>:TRIGger:A:DDRREADWRITE:REFLevel:DATA:MID"
+    ],
+    "commandGroup": "Search and Mark",
+    "subGroup": "DDR Read/Write Search",
+    "notes": [
+      "Added as a manual override because the vendor extract does not preserve a clean canonical header for this reference-level command."
+    ],
+    "manualReference": {
+      "section": "Search and Mark",
+      "page": 131,
+      "subsection": "SEARCH:SEARCH<x>:TRIGger:A:DDRREADWRITE:REFLevel:DATA:LOW"
+    },
+    "syntax": {
+      "set": "SEARCH:SEARCH<x>:TRIGger:A:DDRREADWRITE:REFLevel:DATA:LOW <NR3>",
+      "query": "SEARCH:SEARCH<x>:TRIGger:A:DDRREADWRITE:REFLevel:DATA:LOW?"
+    }
+  },
+  {
+    "command": "SEARCH:SEARCH1:TRIGger:A:DDRREADWRITE:REFLevel:STROBE:HIGH",
+    "header": "SEARCH:SEARCH<x>:TRIGger:A:DDRREADWRITE:REFLevel:STROBE:HIGH",
+    "mnemonics": ["SEARCH", "SEARCH<x>", "TRIGger", "A", "DDRREADWRITE", "REFLevel", "STROBE", "HIGH"],
+    "commandType": "both",
+    "description": "This command sets or queries the DDR read/write reference level strobe high value when the search type is DDR READWRITE.",
+    "shortDescription": "Set or query DDR read/write strobe high reference level",
+    "instruments": {
+      "families": ["MSO4", "MSO5", "MSO6", "MSO7"],
+      "models": ["MSO44", "MSO46", "MSO54", "MSO56", "MSO58", "MSO64", "MSO66", "MSO68", "MSO70", "MSO74", "MSO76"],
+      "exclusions": []
+    },
+    "arguments": [
+      {
+        "name": "search",
+        "type": "mnemonic",
+        "required": true,
+        "position": 0,
+        "description": "Search slot selector.",
+        "mnemonicType": "search",
+        "validValues": {
+          "type": "mnemonic_range",
+          "pattern": "SEARCH<x>",
+          "examples": ["SEARCH1", "SEARCH2"]
+        }
+      },
+      {
+        "name": "strobe_reference_level_high",
+        "type": "numeric",
+        "required": true,
+        "position": 1,
+        "description": "High reference level for the DDR read/write strobe.",
+        "validValues": {
+          "type": "numeric",
+          "format": "NR3"
+        }
+      }
+    ],
+    "relatedCommands": [
+      "SEARCH:SEARCH<x>:TRIGger:A:DDRREADWRITE:REFLevel:STROBE:MID",
+      "SEARCH:SEARCH<x>:TRIGger:A:DDRREADWRITE:REFLevel:STROBE:LOW"
+    ],
+    "commandGroup": "Search and Mark",
+    "subGroup": "DDR Read/Write Search",
+    "notes": [
+      "Added as a manual override because the vendor extract does not preserve a clean canonical header for this reference-level command."
+    ],
+    "manualReference": {
+      "section": "Search and Mark",
+      "page": 131,
+      "subsection": "SEARCH:SEARCH<x>:TRIGger:A:DDRREADWRITE:REFLevel:STROBE:HIGH"
+    },
+    "syntax": {
+      "set": "SEARCH:SEARCH<x>:TRIGger:A:DDRREADWRITE:REFLevel:STROBE:HIGH <NR3>",
+      "query": "SEARCH:SEARCH<x>:TRIGger:A:DDRREADWRITE:REFLevel:STROBE:HIGH?"
+    }
+  },
+  {
+    "command": "SEARCH:SEARCH1:TRIGger:A:DDRREADWRITE:REFLevel:STROBE:MID",
+    "header": "SEARCH:SEARCH<x>:TRIGger:A:DDRREADWRITE:REFLevel:STROBE:MID",
+    "mnemonics": ["SEARCH", "SEARCH<x>", "TRIGger", "A", "DDRREADWRITE", "REFLevel", "STROBE", "MID"],
+    "commandType": "both",
+    "description": "This command sets or queries the DDR read/write reference level strobe mid value when the search type is DDR READWRITE.",
+    "shortDescription": "Set or query DDR read/write strobe mid reference level",
+    "instruments": {
+      "families": ["MSO4", "MSO5", "MSO6", "MSO7"],
+      "models": ["MSO44", "MSO46", "MSO54", "MSO56", "MSO58", "MSO64", "MSO66", "MSO68", "MSO70", "MSO74", "MSO76"],
+      "exclusions": []
+    },
+    "arguments": [
+      {
+        "name": "search",
+        "type": "mnemonic",
+        "required": true,
+        "position": 0,
+        "description": "Search slot selector.",
+        "mnemonicType": "search",
+        "validValues": {
+          "type": "mnemonic_range",
+          "pattern": "SEARCH<x>",
+          "examples": ["SEARCH1", "SEARCH2"]
+        }
+      },
+      {
+        "name": "strobe_reference_level_mid",
+        "type": "numeric",
+        "required": true,
+        "position": 1,
+        "description": "Mid reference level for the DDR read/write strobe.",
+        "validValues": {
+          "type": "numeric",
+          "format": "NR3"
+        }
+      }
+    ],
+    "relatedCommands": [
+      "SEARCH:SEARCH<x>:TRIGger:A:DDRREADWRITE:REFLevel:STROBE:HIGH",
+      "SEARCH:SEARCH<x>:TRIGger:A:DDRREADWRITE:REFLevel:STROBE:LOW"
+    ],
+    "commandGroup": "Search and Mark",
+    "subGroup": "DDR Read/Write Search",
+    "notes": [
+      "Added as a manual override because the vendor extract does not preserve a clean canonical header for this reference-level command."
+    ],
+    "manualReference": {
+      "section": "Search and Mark",
+      "page": 131,
+      "subsection": "SEARCH:SEARCH<x>:TRIGger:A:DDRREADWRITE:REFLevel:STROBE:MID"
+    },
+    "syntax": {
+      "set": "SEARCH:SEARCH<x>:TRIGger:A:DDRREADWRITE:REFLevel:STROBE:MID <NR3>",
+      "query": "SEARCH:SEARCH<x>:TRIGger:A:DDRREADWRITE:REFLevel:STROBE:MID?"
+    }
+  },
+  {
+    "command": "HORizontal:MODe:AUTOmatic:FASTAcq:RECOrdlength:MAXimum:VALue",
+    "header": "HORizontal:MODe:AUTOmatic:FASTAcq:RECOrdlength:MAXimum:VALue",
+    "mnemonics": ["HORizontal", "MODe", "AUTOmatic", "FASTAcq", "RECOrdlength", "MAXimum", "VALue"],
+    "commandType": "both",
+    "description": "Sets or queries the horizontal FastAcq maximum record length.",
+    "shortDescription": "Set or query horizontal FastAcq maximum record length",
+    "instruments": {
+      "families": ["MSO4", "MSO5", "MSO6", "MSO7"],
+      "models": ["MSO44", "MSO46", "MSO54", "MSO56", "MSO58", "MSO64", "MSO66", "MSO68", "MSO70", "MSO74", "MSO76"],
+      "exclusions": []
+    },
+    "arguments": [
+      {
+        "name": "maximum_record_length",
+        "type": "numeric",
+        "required": true,
+        "position": 0,
+        "description": "Horizontal FastAcq maximum record length.",
+        "validValues": {
+          "type": "numeric",
+          "format": "NR1"
+        }
+      }
+    ],
+    "relatedCommands": [
+      "HORizontal:MODe:AUTOmatic:FASTAcq:RECOrdlength:MAXimum:ZOOMOVERride",
+      "HORizontal:RECOrdlength"
+    ],
+    "commandGroup": "Horizontal",
+    "subGroup": "FastAcq Record Length",
+    "notes": [
+      "Added as a manual override because the vendor extract split the trailing VALue token with embedded whitespace."
+    ],
+    "manualReference": {
+      "section": "Horizontal",
+      "subsection": "HORizontal:MODe:AUTOmatic:FASTAcq:RECOrdlength:MAXimum:VALue"
+    },
+    "syntax": {
+      "set": "HORizontal:MODe:AUTOmatic:FASTAcq:RECOrdlength:MAXimum:VALue <NR1>",
+      "query": "HORizontal:MODe:AUTOmatic:FASTAcq:RECOrdlength:MAXimum:VALue?"
+    }
+  },
+  {
+    "command": "MASK:MASK1:SEG1:COUNT:HITS?",
+    "header": "MASK:MASK<x>:SEG<x>:COUNT:HITS?",
+    "mnemonics": ["MASK", "MASK<x>", "SEG<x>", "COUNT", "HITS"],
+    "commandType": "query",
+    "description": "Returns the total number of mask hits in the specified mask segment of the specified mask test.",
+    "shortDescription": "Query mask hits for a specific segment",
+    "instruments": {
+      "families": ["MSO4", "MSO5", "MSO6", "MSO7"],
+      "models": ["MSO44", "MSO46", "MSO54", "MSO56", "MSO58", "MSO64", "MSO66", "MSO68", "MSO70", "MSO74", "MSO76"],
+      "exclusions": []
+    },
+    "arguments": [
+      {
+        "name": "mask",
+        "type": "mnemonic",
+        "required": true,
+        "position": 0,
+        "description": "Mask test selector.",
+        "mnemonicType": "mask",
+        "validValues": {
+          "type": "mnemonic_range",
+          "pattern": "MASK<x>",
+          "examples": ["MASK1", "MASK2"]
+        }
+      },
+      {
+        "name": "segment",
+        "type": "mnemonic",
+        "required": true,
+        "position": 1,
+        "description": "Mask segment selector.",
+        "mnemonicType": "segment",
+        "validValues": {
+          "type": "mnemonic_range",
+          "pattern": "SEG<x>",
+          "examples": ["SEG1", "SEG2"]
+        }
+      }
+    ],
+    "queryResponse": {
+      "type": "numeric",
+      "format": "Returns the hit count for the selected mask segment.",
+      "description": "The returned value is the number of waveform hits recorded in the specified segment."
+    },
+    "examples": [
+      {
+        "scpi": "MASK:MASK1:SEG2:COUNT:HITS?",
+        "description": "Might return :MASK:MASK1:SEG2:COUNT:HITS 211, indicating 211 hits in segment 2 of mask test 1."
+      }
+    ],
+    "relatedCommands": ["MASK:MASK<x>:COUNT:HITS?", "MASK:MASK<x>:SEG<x>:POINTS", "MASK:MASK<x>:TESt:STATUS?"],
+    "commandGroup": "Mask",
+    "subGroup": "Mask Segment Counts",
+    "notes": [
+      "Added as a manual override because the vendor JSON reverses the SEG and COUNT mnemonic order.",
+      "The source-of-truth manual and tm_devices bindings both use MASK:MASK<x>:SEG<x>:COUNT:HITS?."
+    ],
+    "manualReference": {
+      "section": "Mask",
+      "subsection": "MASK:MASK<x>:SEG<x>:COUNT:HITS?"
+    },
+    "syntax": {
+      "query": "MASK:MASK<x>:SEG<x>:COUNT:HITS?"
+    }
+  },
+  {
+    "command": "CH1:BANdwidth:ACTUal",
+    "header": "CH<x>:BANdwidth:ACTUal",
+    "mnemonics": ["CH<x>", "BANdwidth", "ACTUal"],
+    "commandType": "query",
+    "description": "Returns the actual bandwidth for the current setup on the specified channel.",
+    "shortDescription": "Query actual channel bandwidth",
+    "instruments": {
+      "families": ["MSO4", "MSO5", "MSO6", "MSO7"],
+      "models": ["MSO44", "MSO46", "MSO54", "MSO56", "MSO58", "MSO64", "MSO66", "MSO68", "MSO70", "MSO74", "MSO76"],
+      "exclusions": []
+    },
+    "arguments": [
+      {
+        "name": "channel",
+        "type": "mnemonic",
+        "required": true,
+        "position": 0,
+        "description": "Analog channel selector.",
+        "mnemonicType": "channel",
+        "validValues": {
+          "type": "mnemonic_range",
+          "pattern": "CH<x>",
+          "examples": ["CH1", "CH2", "CH3", "CH4"]
+        }
+      }
+    ],
+    "queryResponse": {
+      "type": "numeric",
+      "format": "Returns the actual channel bandwidth for the current setup.",
+      "description": "The returned value reflects the realized bandwidth after the current channel configuration and accessories are applied."
+    },
+    "examples": [
+      {
+        "scpi": "CH1:BANdwidth:ACTUal?",
+        "description": "Query the actual realized bandwidth on channel 1."
+      }
+    ],
+    "relatedCommands": ["CH<x>:BANdwidth", "CH<x>:BANdwidth:FILTer:OPTIMIZation"],
+    "commandGroup": "Miscellaneous",
+    "subGroup": "Channel Bandwidth",
+    "notes": [
+      "Added as a manual override because the command-group table preserves this header while the vendor JSON does not expose a clean canonical record for it."
+    ],
+    "manualReference": {
+      "section": "Miscellaneous",
+      "subsection": "CH<x>:BANdwidth:ACTUal"
+    },
+    "syntax": {
+      "query": "CH<x>:BANdwidth:ACTUal?"
+    }
+  },
+  {
+    "command": "SCOPEApp REBOOT",
+    "header": "SCOPEApp REBOOT",
+    "mnemonics": ["SCOPEApp", "REBOOT"],
+    "commandType": "set",
+    "description": "This command reboots the scope.",
+    "shortDescription": "Reboot the scope application",
+    "instruments": {
+      "families": ["MSO4", "MSO5", "MSO6", "MSO7"],
+      "models": ["MSO44", "MSO46", "MSO54", "MSO56", "MSO58", "MSO64", "MSO66", "MSO68", "MSO70", "MSO74", "MSO76"],
+      "exclusions": []
+    },
+    "arguments": [],
+    "examples": [
+      {
+        "scpi": "SCOPEApp REBOOT",
+        "description": "Reboot the scope."
+      }
+    ],
+    "relatedCommands": [],
+    "commandGroup": "Miscellaneous",
+    "subGroup": "Scope Application",
+    "notes": [
+      "Added as a manual override because the real command uses a space, not a colon.",
+      "The vendor extract stores this in malformed example text instead of a clean canonical record."
+    ],
+    "manualReference": {
+      "section": "Miscellaneous",
+      "subsection": "SCOPEApp REBOOT"
+    },
+    "syntax": {
+      "set": "SCOPEApp REBOOT"
+    }
+  },
+  {
+    "command": "PLOT:PLOT1:TRESponse:RTYPe",
+    "header": "PLOT:PLOT<x>:TRESponse:RTYPe",
+    "mnemonics": ["PLOT", "PLOT<x>", "TRESponse", "RTYPe"],
+    "commandType": "both",
+    "description": "Sets the plot response type.",
+    "shortDescription": "Set or query plot response type",
+    "instruments": {
+      "families": ["MSO4", "MSO5", "MSO6", "MSO7"],
+      "models": ["MSO44", "MSO46", "MSO54", "MSO56", "MSO58", "MSO64", "MSO66", "MSO68", "MSO70", "MSO74", "MSO76"],
+      "exclusions": []
+    },
+    "arguments": [
+      {
+        "name": "plot",
+        "type": "mnemonic",
+        "required": true,
+        "position": 0,
+        "description": "Plot selector.",
+        "mnemonicType": "plot",
+        "validValues": {
+          "type": "mnemonic_range",
+          "pattern": "PLOT<x>",
+          "examples": ["PLOT1", "PLOT2"]
+        }
+      },
+      {
+        "name": "response_type",
+        "type": "enum",
+        "required": true,
+        "position": 1,
+        "description": "Plot response type.",
+        "validValues": {
+          "type": "enum",
+          "values": ["PHASE", "GRPDELAY", "GDELAY"]
+        }
+      }
+    ],
+    "examples": [
+      {
+        "scpi": "PLOT:PLOT1:TRESponse:RTYPe PHASE",
+        "description": "Set plot 1 response type to phase."
+      },
+      {
+        "scpi": "PLOT:PLOT1:TRESponse:RTYPe?",
+        "description": "Query the current response type for plot 1."
+      }
+    ],
+    "relatedCommands": ["PLOT:PLOT<x>:TYPe"],
+    "commandGroup": "Plot",
+    "subGroup": "Plot Response",
+    "notes": [
+      "Added as a manual override because the command-group table and tm_devices bindings confirm the canonical header while the vendor JSON does not expose a clean record."
+    ],
+    "manualReference": {
+      "section": "Plot",
+      "subsection": "PLOT:PLOT<x>:TRESponse:RTYPe"
+    },
+    "syntax": {
+      "set": "PLOT:PLOT<x>:TRESponse:RTYPe {PHASE|GRPDELAY|GDELAY}",
+      "query": "PLOT:PLOT<x>:TRESponse:RTYPe?"
+    }
+  },
+  {
+    "command": "CURSor:FUNCtion",
+    "header": "CURSor:FUNCtion",
+    "mnemonics": ["CURSor", "FUNCtion"],
+    "commandType": "both",
+    "description": "Sets or queries the cursor function or mode.",
+    "shortDescription": "Set or query cursor function",
+    "instruments": {
+      "families": ["MSO4", "MSO5", "MSO6", "MSO7"],
+      "models": ["MSO44", "MSO46", "MSO54", "MSO56", "MSO58", "MSO64", "MSO66", "MSO68", "MSO70", "MSO74", "MSO76"],
+      "exclusions": []
+    },
+    "arguments": [
+      {
+        "name": "function",
+        "type": "enum",
+        "required": true,
+        "position": 0,
+        "description": "Cursor function mode.",
+        "validValues": {
+          "type": "enum",
+          "values": ["OFF", "SCREEN", "WAVEform", "VBArs", "HBArs"]
+        }
+      }
+    ],
+    "examples": [
+      {
+        "scpi": "CURSor:FUNCtion WAVEform",
+        "description": "Enable waveform cursor mode."
+      }
+    ],
+    "relatedCommands": ["CURSor:WAVEform:SOUrce1", "CURSor:WAVEform:HDELTA", "CURSor:WAVEform:VDELTA"],
+    "commandGroup": "Cursor",
+    "subGroup": "Cursor Mode",
+    "notes": [
+      "Added as a manual override because the tm_devices bindings preserve the canonical cursor function header while the vendor JSON does not expose a clean modern-scope record."
+    ],
+    "manualReference": {
+      "section": "Cursor",
+      "subsection": "CURSor:FUNCtion"
+    },
+    "syntax": {
+      "set": "CURSor:FUNCtion {OFF|SCREEN|WAVEform|VBArs|HBArs}",
+      "query": "CURSor:FUNCtion?"
+    }
+  },
+  {
+    "command": "CURSor:WAVEform:SOUrce1",
+    "header": "CURSor:WAVEform:SOUrce1",
+    "mnemonics": ["CURSor", "WAVEform", "SOUrce1"],
+    "commandType": "both",
+    "description": "Sets or queries the waveform cursor source.",
+    "shortDescription": "Set or query waveform cursor source",
+    "instruments": {
+      "families": ["MSO4", "MSO5", "MSO6", "MSO7"],
+      "models": ["MSO44", "MSO46", "MSO54", "MSO56", "MSO58", "MSO64", "MSO66", "MSO68", "MSO70", "MSO74", "MSO76"],
+      "exclusions": []
+    },
+    "arguments": [
+      {
+        "name": "source",
+        "type": "enum",
+        "required": true,
+        "position": 0,
+        "description": "Waveform source for the cursor.",
+        "validValues": {
+          "type": "mnemonic_examples",
+          "examples": ["CH1", "CH2", "MATH1", "REF1"]
+        }
+      }
+    ],
+    "examples": [
+      {
+        "scpi": "CURSor:WAVEform:SOUrce1 CH1",
+        "description": "Use CH1 as the waveform cursor source."
+      }
+    ],
+    "relatedCommands": ["CURSor:FUNCtion", "CURSor:WAVEform:HDELTA", "CURSor:WAVEform:VDELTA"],
+    "commandGroup": "Cursor",
+    "subGroup": "Waveform Cursor",
+    "notes": [
+      "Added as a manual override because the tm_devices bindings preserve the canonical waveform cursor source header while the vendor JSON does not expose a clean modern-scope record."
+    ],
+    "manualReference": {
+      "section": "Cursor",
+      "subsection": "CURSor:WAVEform:SOUrce1"
+    },
+    "syntax": {
+      "set": "CURSor:WAVEform:SOUrce1 {CH<x>|MATH<x>|REF<x>}",
+      "query": "CURSor:WAVEform:SOUrce1?"
+    }
+  },
+  {
+    "command": "CURSor:WAVEform:HDELTA",
+    "header": "CURSor:WAVEform:HDELTA",
+    "mnemonics": ["CURSor", "WAVEform", "HDELTA"],
+    "commandType": "query",
+    "description": "Queries the horizontal delta between the waveform cursors.",
+    "shortDescription": "Query waveform cursor horizontal delta",
+    "instruments": {
+      "families": ["MSO4", "MSO5", "MSO6", "MSO7"],
+      "models": ["MSO44", "MSO46", "MSO54", "MSO56", "MSO58", "MSO64", "MSO66", "MSO68", "MSO70", "MSO74", "MSO76"],
+      "exclusions": []
+    },
+    "arguments": [],
+    "examples": [
+      {
+        "scpi": "CURSor:WAVEform:HDELTA?",
+        "description": "Read horizontal delta between waveform cursors."
+      }
+    ],
+    "relatedCommands": ["CURSor:FUNCtion", "CURSor:WAVEform:SOUrce1", "CURSor:WAVEform:VDELTA"],
+    "commandGroup": "Cursor",
+    "subGroup": "Waveform Cursor",
+    "notes": [
+      "Added as a manual override because the tm_devices bindings preserve this canonical query while the vendor JSON does not expose a clean modern-scope record."
+    ],
+    "manualReference": {
+      "section": "Cursor",
+      "subsection": "CURSor:WAVEform:HDELTA"
+    },
+    "syntax": {
+      "query": "CURSor:WAVEform:HDELTA?"
+    }
+  },
+  {
+    "command": "CURSor:WAVEform:VDELTA",
+    "header": "CURSor:WAVEform:VDELTA",
+    "mnemonics": ["CURSor", "WAVEform", "VDELTA"],
+    "commandType": "query",
+    "description": "Queries the vertical delta between the waveform cursors.",
+    "shortDescription": "Query waveform cursor vertical delta",
+    "instruments": {
+      "families": ["MSO4", "MSO5", "MSO6", "MSO7"],
+      "models": ["MSO44", "MSO46", "MSO54", "MSO56", "MSO58", "MSO64", "MSO66", "MSO68", "MSO70", "MSO74", "MSO76"],
+      "exclusions": []
+    },
+    "arguments": [],
+    "examples": [
+      {
+        "scpi": "CURSor:WAVEform:VDELTA?",
+        "description": "Read vertical delta between waveform cursors."
+      }
+    ],
+    "relatedCommands": ["CURSor:FUNCtion", "CURSor:WAVEform:SOUrce1", "CURSor:WAVEform:HDELTA"],
+    "commandGroup": "Cursor",
+    "subGroup": "Waveform Cursor",
+    "notes": [
+      "Added as a manual override because the tm_devices bindings preserve this canonical query while the vendor JSON does not expose a clean modern-scope record."
+    ],
+    "manualReference": {
+      "section": "Cursor",
+      "subsection": "CURSor:WAVEform:VDELTA"
+    },
+    "syntax": {
+      "query": "CURSor:WAVEform:VDELTA?"
+    }
+  },
+  {
+    "command": "SV:SPAN",
+    "header": "SV:SPAN",
+    "mnemonics": ["SV", "SPAN"],
+    "commandType": "both",
+    "description": "This command sets or queries the Spectrum View span for all channels in the Spectrum View display. The span is the range of frequencies observed around the center frequency.",
+    "shortDescription": "Set or query Spectrum View span",
+    "instruments": {
+      "families": ["MSO4", "MSO5", "MSO6", "MSO7"],
+      "models": ["MSO44", "MSO46", "MSO54", "MSO56", "MSO58", "MSO64", "MSO66", "MSO68", "MSO70", "MSO74", "MSO76"],
+      "exclusions": []
+    },
+    "arguments": [
+      {
+        "name": "span_hz",
+        "type": "numeric",
+        "required": true,
+        "position": 0,
+        "description": "Spectrum View span in hertz.",
+        "validValues": {
+          "type": "numeric"
+        }
+      }
+    ],
+    "examples": [
+      {
+        "scpi": "SV:SPAN 200000000",
+        "description": "Set Spectrum View span to 200 MHz."
+      },
+      {
+        "scpi": "SV:SPAN?",
+        "description": "Query the current Spectrum View span."
+      }
+    ],
+    "relatedCommands": ["CH<x>:SV:CENTERFrequency", "CH<x>:SV:STATE", "SV:SPANRBWRatio"],
+    "commandGroup": "Spectrum View",
+    "subGroup": "Spectrum Span",
+    "notes": [
+      "Added as a manual override because the vendor command JSON only exposes related query-side span commands while the tm_devices command corpus preserves the canonical Spectrum View span header.",
+      "Use with CH<x>:SV:CENTERFrequency for per-channel center frequency and the global SV:SPAN command for the display span."
+    ],
+    "manualReference": {
+      "section": "Spectrum View",
+      "subsection": "SV:SPAN"
+    },
+    "syntax": {
+      "set": "SV:SPAN <NR3>",
+      "query": "SV:SPAN?"
+    }
+  },
+  {
+    "command": "MEASUrement:MEAS<x>:TYPe",
+    "header": "MEASUrement:MEAS<x>:TYPe",
+    "commandType": "query",
+    "commandGroup": "Measurement",
+    "group": "Measurement",
+    "description": "Returns the measurement type for the specified measurement slot. Use to identify what type of measurement (FREQUENCY, PERIOD, IMDAPOWERQUALITY, IMDAEFFICIENCY, JITTERSUMMARY, etc.) is configured in each slot.",
+    "shortDescription": "Query measurement type for a given measurement slot",
+    "instruments": { "families": ["MSO2", "MSO4", "MSO5", "MSO6", "MSO7"], "models": [], "exclusions": [] },
+    "arguments": [{ "name": "meas_number", "type": "mnemonic", "required": true, "position": 0, "description": "Measurement slot number.", "validValues": { "type": "mnemonic_range", "pattern": "MEAS<x>", "examples": ["MEAS1", "MEAS2", "MEAS3"] } }],
+    "syntax": { "query": "MEASUrement:MEAS<x>:TYPe?" },
+    "relatedCommands": ["MEASUrement:ADDMEAS", "MEASUrement:LIST?", "MEASUrement:MEAS<x>:RESUlts:CURRentacq:MEAN?"]
+  },
+  {
+    "command": "MEASUrement:LIST?",
+    "header": "MEASUrement:LIST?",
+    "commandType": "query",
+    "commandGroup": "Measurement",
+    "group": "Measurement",
+    "description": "Returns a comma-separated list of all active measurement slots (e.g. MEAS1,MEAS2,MEAS3). Use this to discover which measurements exist before reading results or adding new ones.",
+    "shortDescription": "Query list of all active measurement slots",
+    "instruments": { "families": ["MSO2", "MSO4", "MSO5", "MSO6", "MSO7"], "models": [], "exclusions": [] },
+    "arguments": [],
+    "syntax": { "query": "MEASUrement:LIST?" },
+    "relatedCommands": ["MEASUrement:ADDMEAS", "MEASUrement:DELete", "MEASUrement:MEAS<x>:TYPe"]
+  },
+  {
+    "command": "MEASUrement:MEAS<x>:IMDA:MEAS:TYPe",
+    "header": "MEASUrement:MEAS<x>:IMDA:MEAS:TYPe",
+    "commandType": "both",
+    "commandGroup": "Inverter Motors and Drive Analysis",
+    "group": "Inverter Motors and Drive Analysis",
+    "description": "Sets or queries the IMDA measurement type. IMDA types include: IMDAPOWERQUALITY (3-phase power quality with phasor diagram), IMDAEFFICIENCY (motor efficiency), IMDAHARMONICS (harmonic analysis), IMDATORQUE (torque measurement), IMDASPEED (speed measurement), IMDASYSEFF (system efficiency), IMDAANGLE (angle), IMDADIRECTION (direction), IMDADQ0 (DQ0 transform), IMDAMECHPWR (mechanical power).",
+    "shortDescription": "Set or query IMDA measurement type (power quality, efficiency, harmonics, etc.)",
+    "instruments": { "families": ["MSO4", "MSO5", "MSO6", "MSO7"], "models": [], "exclusions": [] },
+    "arguments": [
+      { "name": "meas_number", "type": "mnemonic", "required": true, "position": 0, "description": "Measurement slot number.", "validValues": { "type": "mnemonic_range", "pattern": "MEAS<x>", "examples": ["MEAS1"] } },
+      { "name": "type", "type": "enum", "required": true, "position": 1, "description": "IMDA measurement type.", "validValues": { "type": "enum", "values": ["IMDAPOWERQUALITY", "IMDAEFFICIENCY", "IMDAHARMONICS", "IMDATORQUE", "IMDASPEED", "IMDASYSEFF", "IMDAANGLE", "IMDADIRECTION", "IMDADQ0", "IMDAMECHPWR"] } }
+    ],
+    "syntax": { "set": "MEASUrement:MEAS<x>:IMDA:MEAS:TYPe {IMDAPOWERQUALITY|IMDAEFFICIENCY|IMDAHARMONICS|IMDATORQUE|IMDASPEED|IMDASYSEFF}", "query": "MEASUrement:MEAS<x>:IMDA:MEAS:TYPe?" },
+    "relatedCommands": ["MEASUrement:ADDMEAS", "MEASUrement:MEAS<x>:RESUlts:CURRentacq:MEAN?"]
+  },
+  {
+    "command": "MEASUrement:MEAS<x>:RESUlts:CURRentacq:MEAN?",
+    "header": "MEASUrement:MEAS<x>:RESUlts:CURRentacq:MEAN?",
+    "commandType": "query",
+    "commandGroup": "Measurement",
+    "group": "Measurement",
+    "description": "Returns the mean value from the current acquisition for the specified measurement. Works for both standard measurements (FREQUENCY, PERIOD, etc.) and IMDA measurements. For IMDA Power Quality, this returns the summary mean value.",
+    "shortDescription": "Query mean result value for current acquisition",
+    "instruments": { "families": ["MSO2", "MSO4", "MSO5", "MSO6", "MSO7"], "models": [], "exclusions": [] },
+    "arguments": [{ "name": "meas_number", "type": "mnemonic", "required": true, "position": 0, "description": "Measurement slot number.", "validValues": { "type": "mnemonic_range", "pattern": "MEAS<x>", "examples": ["MEAS1", "MEAS2"] } }],
+    "syntax": { "query": "MEASUrement:MEAS<x>:RESUlts:CURRentacq:MEAN?" },
+    "relatedCommands": ["MEASUrement:MEAS<x>:RESUlts:CURRentacq:MAXimum?", "MEASUrement:MEAS<x>:RESUlts:CURRentacq:MINimum?", "MEASUrement:MEAS<x>:TYPe"]
+  },
+  {
+    "command": "MEASUrement:MEAS<x>:RESUlts:CURRentacq:MAXimum?",
+    "header": "MEASUrement:MEAS<x>:RESUlts:CURRentacq:MAXimum?",
+    "commandType": "query",
+    "commandGroup": "Measurement",
+    "group": "Measurement",
+    "description": "Returns the maximum value from the current acquisition for the specified measurement.",
+    "shortDescription": "Query maximum result value for current acquisition",
+    "instruments": { "families": ["MSO2", "MSO4", "MSO5", "MSO6", "MSO7"], "models": [], "exclusions": [] },
+    "arguments": [{ "name": "meas_number", "type": "mnemonic", "required": true, "position": 0, "description": "Measurement slot number.", "validValues": { "type": "mnemonic_range", "pattern": "MEAS<x>", "examples": ["MEAS1", "MEAS2"] } }],
+    "syntax": { "query": "MEASUrement:MEAS<x>:RESUlts:CURRentacq:MAXimum?" },
+    "relatedCommands": ["MEASUrement:MEAS<x>:RESUlts:CURRentacq:MEAN?", "MEASUrement:MEAS<x>:RESUlts:CURRentacq:MINimum?"]
+  },
+  {
+    "command": "MEASUrement:MEAS<x>:RESUlts:CURRentacq:MINimum?",
+    "header": "MEASUrement:MEAS<x>:RESUlts:CURRentacq:MINimum?",
+    "commandType": "query",
+    "commandGroup": "Measurement",
+    "group": "Measurement",
+    "description": "Returns the minimum value from the current acquisition for the specified measurement.",
+    "shortDescription": "Query minimum result value for current acquisition",
+    "instruments": { "families": ["MSO2", "MSO4", "MSO5", "MSO6", "MSO7"], "models": [], "exclusions": [] },
+    "arguments": [{ "name": "meas_number", "type": "mnemonic", "required": true, "position": 0, "description": "Measurement slot number.", "validValues": { "type": "mnemonic_range", "pattern": "MEAS<x>", "examples": ["MEAS1", "MEAS2"] } }],
+    "syntax": { "query": "MEASUrement:MEAS<x>:RESUlts:CURRentacq:MINimum?" },
+    "relatedCommands": ["MEASUrement:MEAS<x>:RESUlts:CURRentacq:MEAN?", "MEASUrement:MEAS<x>:RESUlts:CURRentacq:MAXimum?"]
+  },
+  {
+    "command": "MEASUrement:MEAS<x>:RESUlts:ALLAcqs:MEAN?",
+    "header": "MEASUrement:MEAS<x>:RESUlts:ALLAcqs:MEAN?",
+    "commandType": "query",
+    "commandGroup": "Measurement",
+    "group": "Measurement",
+    "description": "Returns the mean value across all acquisitions for the specified measurement.",
+    "shortDescription": "Query mean result value across all acquisitions",
+    "instruments": { "families": ["MSO2", "MSO4", "MSO5", "MSO6", "MSO7"], "models": [], "exclusions": [] },
+    "arguments": [{ "name": "meas_number", "type": "mnemonic", "required": true, "position": 0, "description": "Measurement slot number.", "validValues": { "type": "mnemonic_range", "pattern": "MEAS<x>", "examples": ["MEAS1", "MEAS2"] } }],
+    "syntax": { "query": "MEASUrement:MEAS<x>:RESUlts:ALLAcqs:MEAN?" },
+    "relatedCommands": ["MEASUrement:MEAS<x>:RESUlts:ALLAcqs:MAXimum?", "MEASUrement:MEAS<x>:RESUlts:CURRentacq:MEAN?"]
+  },
+  {
+    "command": "TRIGger:A:EDGE:SOUrce",
+    "header": "TRIGger:{A|B}:EDGE:SOUrce",
+    "mnemonics": ["TRIGger", "{A|B}", "EDGE", "SOUrce"],
+    "commandType": "both",
+    "group": "Trigger",
+    "description": "Sets or queries the source for an edge trigger. In addition to standard analog channels, digital channels, LINE, and AUXiliary, Spectrum View derived traces can also be used as trigger sources when Spectrum View is active. The scope accepts CH<x>_MAG (Magnitude vs. Time), CH<x>_FREQ (Frequency vs. Time), and CH<x>_PHASE (Phase vs. Time) as extended trigger source identifiers. When queried, CH<x>_MAG is returned as CH<x>_MAG_VS_TIME.",
+    "shortDescription": "Set or query edge trigger source (includes Spectrum View trace sources)",
+    "instruments": {
+      "families": ["MSO4", "MSO5", "MSO6", "MSO7"],
+      "models": [],
+      "exclusions": []
+    },
+    "arguments": [
+      {
+        "name": "trigger_instance", "type": "mnemonic", "required": true, "position": 0,
+        "description": "Trigger instance (A or B).",
+        "validValues": { "type": "enum", "values": ["A", "B"] }
+      },
+      {
+        "name": "source", "type": "enum_like", "required": true, "position": 1,
+        "description": "Trigger source. Standard sources: CH<x>, CH<x>_D<y>, LINE, AUXiliary. Spectrum View sources (when SV active): CH<x>_MAG (Magnitude vs Time, returned as CH<x>_MAG_VS_TIME), CH<x>_FREQ (Frequency vs Time), CH<x>_PHASE (Phase vs Time).",
+        "validValues": {
+          "type": "enum_like",
+          "values": ["CH1", "CH2", "CH3", "CH4", "CH5", "CH6", "CH7", "CH8", "CH1_D0", "CH1_D1", "LINE", "AUXiliary", "CH1_MAG", "CH2_MAG", "CH3_MAG", "CH4_MAG", "CH1_FREQ", "CH2_FREQ", "CH1_PHASE", "CH2_PHASE"],
+          "pattern": "CH<x> | CH<x>_D<y> | LINE | AUXiliary | CH<x>_MAG | CH<x>_FREQ | CH<x>_PHASE"
+        }
+      }
+    ],
+    "syntax": {
+      "set": "TRIGger:{A|B}:EDGE:SOUrce {CH<x>|CH<x>_D<y>|LINE|AUXiliary|CH<x>_MAG|CH<x>_FREQ|CH<x>_PHASE}",
+      "query": "TRIGger:{A|B}:EDGE:SOUrce?"
+    },
+    "examples": [
+      { "scpi": "TRIGger:A:EDGE:SOUrce CH1", "description": "Set edge trigger source to Channel 1." },
+      { "scpi": "TRIGger:A:EDGE:SOUrce CH1_MAG", "description": "Set edge trigger source to Channel 1 Spectrum View Magnitude vs Time trace. Scope returns CH1_MAG_VS_TIME when queried." },
+      { "scpi": "TRIGger:A:EDGE:SOUrce?", "description": "Query the current edge trigger source." }
+    ],
+    "relatedCommands": ["TRIGger:{A|B}:EDGE:SLOpe", "TRIGger:{A|B}:EDGE:LEVel", "SV:CH<x>:SELect:RF_MAGnitude", "CH<x>:SV:STATE"],
+    "commandGroup": "Trigger",
+    "subGroup": "Edge Trigger",
+    "notes": [
+      "UNDOCUMENTED: CH<x>_MAG, CH<x>_FREQ, CH<x>_PHASE trigger sources are accepted by MSO4/5/6/7 when Spectrum View is active but are not listed in the official SCPI programmer manual.",
+      "When queried, CH<x>_MAG is returned as CH<x>_MAG_VS_TIME by the scope firmware.",
+      "Requires SV:CH<x>:SELect:RF_MAGnitude ON (or equivalent) to be set first.",
+      "Discovered via real-world testing on MSO6B firmware."
+    ],
+    "manualReference": { "section": "Trigger", "subsection": "TRIGger:{A|B}:EDGE:SOUrce" }
+  },
+  {
+    "command": "SV:CH1:SELect:RF_MAGnitude",
+    "header": "SV:CH<x>:SELect:RF_MAGnitude",
+    "mnemonics": ["SV", "CH<x>", "SELect", "RF_MAGnitude"],
+    "commandType": "both",
+    "group": "Spectrum View",
+    "description": "Enables or disables the RF Magnitude vs Time trace for the specified channel's Spectrum View display. When ON, the Magnitude vs Time derived trace is visible and can be used as a trigger source (CH<x>_MAG).",
+    "shortDescription": "Enable/disable Spectrum View Magnitude vs Time trace",
+    "instruments": {
+      "families": ["MSO4", "MSO5", "MSO6", "MSO7"],
+      "models": [],
+      "exclusions": []
+    },
+    "arguments": [
+      {
+        "name": "channel", "type": "mnemonic", "required": true, "position": 0,
+        "description": "Analog channel selector.",
+        "validValues": { "type": "mnemonic_range", "pattern": "CH<x>", "examples": ["CH1", "CH2", "CH3", "CH4"] }
+      },
+      {
+        "name": "state", "type": "enum", "required": true, "position": 1,
+        "description": "ON or OFF (1 or 0).",
+        "validValues": { "type": "enum", "values": ["ON", "OFF", "1", "0"] }
+      }
+    ],
+    "syntax": {
+      "set": "SV:CH<x>:SELect:RF_MAGnitude {ON|OFF|1|0}",
+      "query": "SV:CH<x>:SELect:RF_MAGnitude?"
+    },
+    "examples": [
+      { "scpi": "SV:CH1:SELect:RF_MAGnitude ON", "description": "Enable Magnitude vs Time trace for Channel 1 Spectrum View." },
+      { "scpi": "SV:CH1:SELect:RF_MAGnitude?", "description": "Query if Magnitude vs Time trace is enabled for Channel 1." }
+    ],
+    "relatedCommands": ["CH<x>:SV:STATE", "CH<x>:SV:CENTERFrequency", "SV:SPAN", "TRIGger:{A|B}:EDGE:SOUrce"],
+    "commandGroup": "Spectrum View",
+    "subGroup": "RF Trace Selection",
+    "notes": [
+      "Must be ON before using CH<x>_MAG as a trigger source.",
+      "Part of the Spectrum View derived trace family alongside RF_FREQuency and RF_PHASe."
+    ],
+    "manualReference": { "section": "Spectrum View", "subsection": "SV:CH<x>:SELect:RF_MAGnitude" }
+  },
+  {
+    "command": "MEASUrement:MEAS<x>:SOUrce<x>",
+    "header": "MEASUrement:MEAS<x>:SOUrce<x>",
+    "mnemonics": ["MEASUrement", "MEAS<x>", "SOUrce<x>"],
+    "commandType": "both",
+    "group": "Measurement",
+    "description": "This command sets or queries the measurement source. The measurement number and source number are specified by x.",
+    "shortDescription": "Set or query measurement source channel",
+    "instruments": { "families": ["MSO2", "MSO4", "MSO5", "MSO6", "MSO7"], "models": [], "exclusions": [] },
+    "arguments": [
+      { "name": "measurement", "type": "integer", "required": true, "position": 0, "description": "MEAS<x> where x is measurement number (1-8)", "validValues": { "default": 1 } },
+      { "name": "source", "type": "mnemonic", "required": true, "position": 1, "description": "Source channel or reference", "validValues": { "type": "mnemonic", "examples": ["CH1", "CH2", "CH3", "CH4", "MATH1", "REF1"] } }
+    ],
+    "syntax": { "set": "MEASUrement:MEAS<x>:SOUrce<x> {CH<x>|MATH<x>|REF<x>}", "query": "MEASUrement:MEAS<x>:SOUrce<x>?" },
+    "relatedCommands": ["MEASUrement:MEAS<x>:TYPe", "MEASUrement:ADDMEAS"]
+  },
+  {
+    "command": "TRIGger:{A|B}:RUNT:THReshold:HIGH",
+    "header": "TRIGger:{A|B}:RUNT:THReshold:HIGH",
+    "mnemonics": ["TRIGger", "{A|B}", "RUNT", "THReshold", "HIGH"],
+    "commandType": "both",
+    "group": "Trigger",
+    "description": "This command sets or queries the upper threshold for a runt trigger. Use this command along with TRIGger:{A|B}:RUNT:THReshold:LOW to define the runt pulse boundaries.",
+    "shortDescription": "Set or query upper runt trigger threshold voltage",
+    "instruments": { "families": ["MSO2", "MSO4", "MSO5", "MSO6", "MSO7"], "models": [], "exclusions": [] },
+    "arguments": [
+      { "name": "trigger", "type": "enumeration", "required": true, "position": 0, "description": "Trigger: A or B", "validValues": { "values": ["A", "B"] } },
+      { "name": "voltage", "type": "numeric", "required": true, "position": 1, "description": "Threshold voltage in volts", "validValues": { "type": "NR3" } }
+    ],
+    "syntax": { "set": "TRIGger:{A|B}:RUNT:THReshold:HIGH <NR3>", "query": "TRIGger:{A|B}:RUNT:THReshold:HIGH?" },
+    "relatedCommands": ["TRIGger:{A|B}:RUNT:THReshold:LOW", "TRIGger:{A|B}:RUNT:POLarity", "TRIGger:{A|B}:RUNT:WIDth"]
+  },
+  {
+    "command": "TRIGger:{A|B}:RUNT:THReshold:LOW",
+    "header": "TRIGger:{A|B}:RUNT:THReshold:LOW",
+    "mnemonics": ["TRIGger", "{A|B}", "RUNT", "THReshold", "LOW"],
+    "commandType": "both",
+    "group": "Trigger",
+    "description": "This command sets or queries the lower threshold for a runt trigger. Use this command along with TRIGger:{A|B}:RUNT:THReshold:HIGH to define the runt pulse boundaries.",
+    "shortDescription": "Set or query lower runt trigger threshold voltage",
+    "instruments": { "families": ["MSO2", "MSO4", "MSO5", "MSO6", "MSO7"], "models": [], "exclusions": [] },
+    "arguments": [
+      { "name": "trigger", "type": "enumeration", "required": true, "position": 0, "description": "Trigger: A or B", "validValues": { "values": ["A", "B"] } },
+      { "name": "voltage", "type": "numeric", "required": true, "position": 1, "description": "Threshold voltage in volts", "validValues": { "type": "NR3" } }
+    ],
+    "syntax": { "set": "TRIGger:{A|B}:RUNT:THReshold:LOW <NR3>", "query": "TRIGger:{A|B}:RUNT:THReshold:LOW?" },
+    "relatedCommands": ["TRIGger:{A|B}:RUNT:THReshold:HIGH", "TRIGger:{A|B}:RUNT:POLarity", "TRIGger:{A|B}:RUNT:WIDth"]
+  },
+  {
+    "command": "SV:CH<x>:FREQuency:OFFSet",
+    "header": "SV:CH<x>:FREQuency:OFFSet",
+    "mnemonics": ["SV", "CH<x>", "FREQuency", "OFFSet"],
+    "commandType": "both",
+    "group": "Spectrum view",
+    "description": "This command sets or queries the frequency offset for the specified Spectrum View channel. The offset shifts the displayed frequency axis.",
+    "shortDescription": "Set or query Spectrum View channel frequency offset",
+    "instruments": { "families": ["MSO5", "MSO6", "MSO7"], "models": [], "exclusions": [] },
+    "arguments": [
+      { "name": "channel", "type": "mnemonic", "required": true, "position": 0, "description": "CH<x> where x is the channel number", "validValues": { "type": "mnemonic_range", "pattern": "CH<x>", "examples": ["CH1", "CH2"] } },
+      { "name": "offset", "type": "numeric", "required": true, "position": 1, "description": "Frequency offset in Hz", "validValues": { "type": "NR3" } }
+    ],
+    "syntax": { "set": "SV:CH<x>:FREQuency:OFFSet <NR3>", "query": "SV:CH<x>:FREQuency:OFFSet?" },
+    "relatedCommands": ["SV:CENTERFrequency", "SV:SPAN", "SV:CH<x>:SELect:RF_FREQuency"]
+  }
+]

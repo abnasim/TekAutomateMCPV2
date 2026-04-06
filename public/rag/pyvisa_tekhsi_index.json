@@ -1,0 +1,617 @@
+[
+  {
+    "id": "conn_pyvisa_overview",
+    "type": "backend_guide",
+    "tags": [
+      "pyvisa",
+      "overview",
+      "cross_platform",
+      "visa",
+      "backend_guide"
+    ],
+    "title": "PyVISA Overview — What It Is and When to Use",
+    "body": "PyVISA is the industry-standard Python library for controlling test & measurement instruments via the VISA (Virtual Instrument Software Architecture) protocol. It provides a unified API for communicating over TCP/IP, USB, GPIB, and serial interfaces. Cross-platform: works on Windows, Linux, macOS. Works with both old and new Tektronix devices. Most reliable and widely used backend. Recommended as the DEFAULT choice for most users. Good for DPO70k series (older scopes) and all modern scopes. Works with any VISA backend: NI-VISA, TekVISA, or PyVISA-py (pure Python). Install: pip install pyvisa. When NOT to use: when you need high-level device-specific APIs (use tm_devices), command validation/autocomplete (use tm_devices), or high-speed waveform streaming (use TekHSI).\nimport pyvisa\nrm = pyvisa.ResourceManager()\nscope = rm.open_resource('TCPIP::192.168.1.10::INSTR')\nprint(scope.query('*IDN?'))\nscope.close()",
+    "code": "import pyvisa\nrm = pyvisa.ResourceManager()\nscope = rm.open_resource('TCPIP::192.168.1.10::INSTR')\nprint(scope.query('*IDN?'))\nscope.close()",
+    "corpus": "pyvisa_tekhsi",
+    "source": "rag/corpus/pyvisa_tekhsi/pyvisa_tekhsi_index.json"
+  },
+  {
+    "id": "conn_resource_manager",
+    "type": "connection_pattern",
+    "tags": [
+      "pyvisa",
+      "resource_manager",
+      "setup",
+      "backend_selection",
+      "connection_pattern"
+    ],
+    "title": "PyVISA Resource Manager Setup",
+    "body": "The ResourceManager is the entry point for all PyVISA operations. Create it with pyvisa.ResourceManager(). By default, it uses the system VISA library (NI-VISA on Windows). To use the pure-Python backend (no drivers needed): pyvisa.ResourceManager('@py'). The ResourceManager handles connection lifecycle, resource discovery, and session management. Always close the ResourceManager when done. For TekAutomate, the RM is created once and shared across all device connections.\nimport pyvisa\n\n# Default: uses system VISA (NI-VISA, TekVISA)\nrm = pyvisa.ResourceManager()\n\n# Pure Python backend (no drivers needed)\nrm = pyvisa.ResourceManager('@py')\n\n# Open an instrument\nscope = rm.open_resource('TCPIP::192.168.1.10::INSTR')\n\n# List all connected instruments\nprint(rm.list_resources())\n\n# Cleanup\nscope.close()\nrm.close()",
+    "code": "import pyvisa\n\n# Default: uses system VISA (NI-VISA, TekVISA)\nrm = pyvisa.ResourceManager()\n\n# Pure Python backend (no drivers needed)\nrm = pyvisa.ResourceManager('@py')\n\n# Open an instrument\nscope = rm.open_resource('TCPIP::192.168.1.10::INSTR')\n\n# List all connected instruments\nprint(rm.list_resources())\n\n# Cleanup\nscope.close()\nrm.close()",
+    "corpus": "pyvisa_tekhsi",
+    "source": "rag/corpus/pyvisa_tekhsi/pyvisa_tekhsi_index.json"
+  },
+  {
+    "id": "conn_visa_resource_strings",
+    "type": "connection_pattern",
+    "tags": [
+      "pyvisa",
+      "resource_string",
+      "tcpip",
+      "usb",
+      "gpib",
+      "socket",
+      "format",
+      "connection_pattern"
+    ],
+    "title": "VISA Resource Strings — All Formats with Examples",
+    "body": "VISA resource strings identify instruments. Formats: 1) TCP/IP VXI-11: TCPIP::<host>::INSTR — uses VXI-11 protocol via RPC portmapper, no port needed (auto-discovered). Example: TCPIP::192.168.1.10::INSTR. 2) TCP/IP Socket: TCPIP::<host>::<port>::SOCKET — raw socket, typically port 4000. Example: TCPIP::192.168.1.10::4000::SOCKET. 3) USB: USB::<vendor_id>::<product_id>::<serial>::INSTR. Example: USB0::0x0699::0x0522::INSTR. 4) GPIB: GPIB<board>::<address>::INSTR, address 1-30. Example: GPIB0::1::INSTR. The resource string format determines the transport protocol. VXI-11 (INSTR) is recommended for most scope SCPI operations. SOCKET is required for TekExpress (port 5000). TekAutomate generates these strings from device configuration (host, connectionType, port).\n# TCP/IP via VXI-11 (recommended for scopes)\nscope = rm.open_resource('TCPIP::192.168.1.10::INSTR')\n\n# TCP/IP via raw socket (port 4000)\nscope = rm.open_resource('TCPIP::192.168.1.10::4000::SOCKET')\n\n# TekExpress (socket on port 5000)\ntekexp = rm.open_resource('TCPIP::localhost::5000::SOCKET')\n\n# USB connection\nscope = rm.open_resource('USB0::0x0699::0x0522::INSTR')\n\n# GPIB connection\nscope = rm.open_resource('GPIB0::1::INSTR')",
+    "code": "# TCP/IP via VXI-11 (recommended for scopes)\nscope = rm.open_resource('TCPIP::192.168.1.10::INSTR')\n\n# TCP/IP via raw socket (port 4000)\nscope = rm.open_resource('TCPIP::192.168.1.10::4000::SOCKET')\n\n# TekExpress (socket on port 5000)\ntekexp = rm.open_resource('TCPIP::localhost::5000::SOCKET')\n\n# USB connection\nscope = rm.open_resource('USB0::0x0699::0x0522::INSTR')\n\n# GPIB connection\nscope = rm.open_resource('GPIB0::1::INSTR')",
+    "corpus": "pyvisa_tekhsi",
+    "source": "rag/corpus/pyvisa_tekhsi/pyvisa_tekhsi_index.json"
+  },
+  {
+    "id": "conn_vxi11_protocol",
+    "type": "protocol_detail",
+    "tags": [
+      "vxi11",
+      "protocol",
+      "rpc",
+      "portmapper",
+      "auto_discovery",
+      "protocol_detail"
+    ],
+    "title": "VXI-11 Protocol — RPC Portmapper, Auto-Discovery",
+    "body": "VXI-11 is the protocol used by TCPIP::host::INSTR connections. It uses RPC (Remote Procedure Call) portmapper service to discover the instrument's SCPI server automatically — no specific port configuration needed. The protocol handles message framing, termination, and transfer completion natively. This is why INSTR connections are more reliable than SOCKET for most operations. VXI-11 works with both NI-VISA and the standalone python-vxi11 library (pip install vxi11). For Linux systems without VISA drivers, python-vxi11 provides a lightweight alternative. VXI-11 only works over TCP/IP (not USB or GPIB). PyVISA-py also supports VXI-11 natively.\n# VXI-11 via PyVISA\nscope = rm.open_resource('TCPIP::192.168.1.10::INSTR')\n\n# VXI-11 via standalone library (Linux-friendly)\nimport vxi11\nscope = vxi11.Instrument('192.168.1.10')\nprint(scope.ask('*IDN?'))\nscope.close()",
+    "code": "# VXI-11 via PyVISA\nscope = rm.open_resource('TCPIP::192.168.1.10::INSTR')\n\n# VXI-11 via standalone library (Linux-friendly)\nimport vxi11\nscope = vxi11.Instrument('192.168.1.10')\nprint(scope.ask('*IDN?'))\nscope.close()",
+    "corpus": "pyvisa_tekhsi",
+    "source": "rag/corpus/pyvisa_tekhsi/pyvisa_tekhsi_index.json"
+  },
+  {
+    "id": "conn_socket_connection",
+    "type": "connection_pattern",
+    "tags": [
+      "socket",
+      "port_4000",
+      "termination",
+      "raw_socket",
+      "connection_pattern"
+    ],
+    "title": "Socket Connection — Raw Socket on Port 4000",
+    "body": "Raw socket connections use TCPIP::host::port::SOCKET. Default port 4000 for Tektronix scopes. Requires explicit termination handling — set write_termination and read_termination. SOCKET mode is simpler transport but lacks VXI-11 message framing. Required for: TekExpress (port 5000), some legacy instruments. PyVISA SOCKET mode still enforces VISA read semantics — it does NOT give you raw socket behavior. For true raw socket access (needed for FILESYSTEM:READFILE binary transfers), use Python's built-in socket module directly. IMPORTANT: tm_devices does NOT support SOCKET connection type.\n# PyVISA socket connection\nscope = rm.open_resource('TCPIP::192.168.1.10::4000::SOCKET')\nscope.write_termination = '\\n'\nscope.read_termination = '\\n'\nscope.timeout = 5000  # 5 seconds\n\n# TekExpress socket\ntekexp = rm.open_resource('TCPIP::localhost::5000::SOCKET')\ntekexp.write_termination = '\\n'\ntekexp.read_termination = '\\n'\ntekexp.timeout = 30000  # 30 seconds",
+    "code": "# PyVISA socket connection\nscope = rm.open_resource('TCPIP::192.168.1.10::4000::SOCKET')\nscope.write_termination = '\\n'\nscope.read_termination = '\\n'\nscope.timeout = 5000  # 5 seconds\n\n# TekExpress socket\ntekexp = rm.open_resource('TCPIP::localhost::5000::SOCKET')\ntekexp.write_termination = '\\n'\ntekexp.read_termination = '\\n'\ntekexp.timeout = 30000  # 30 seconds",
+    "corpus": "pyvisa_tekhsi",
+    "source": "rag/corpus/pyvisa_tekhsi/pyvisa_tekhsi_index.json"
+  },
+  {
+    "id": "conn_timeout_handling",
+    "type": "connection_pattern",
+    "tags": [
+      "timeout",
+      "pyvisa",
+      "error_handling",
+      "default_values",
+      "connection_pattern"
+    ],
+    "title": "Timeout Handling — Property, Defaults, When to Increase",
+    "body": "PyVISA timeout is in milliseconds. Default: 5000ms (5 seconds). Access via scope.timeout property. When to increase: FILESYSTEM:READFILE file transfers (set to 30000), TekExpress state polling (set to 30000), large waveform captures (set to 60000), after SAVE:IMAGE or HARDCOPY (set to 30000). Save and restore pattern: old_timeout = scope.timeout; scope.timeout = 30000; <operation>; scope.timeout = old_timeout. CRITICAL: In VISA, timeout is an ERROR condition, not EOF. If you need timeout-as-EOF (for FILESYSTEM:READFILE binary stream), you must use raw sockets, not PyVISA. PyVISA treats timeout as VI_ERROR_TMO and discards partial data.\n# Default timeout\nscope.timeout = 5000  # 5 seconds (default)\n\n# For file transfers\nold_timeout = scope.timeout\nscope.timeout = 30000  # 30 seconds\nscope.write('FILESYSTEM:READFILE \"C:/Temp/screenshot.png\"')\ndata = scope.read_raw()\nscope.timeout = old_timeout  # Restore\n\n# For TekExpress\ntekexp.timeout = 30000",
+    "code": "# Default timeout\nscope.timeout = 5000  # 5 seconds (default)\n\n# For file transfers\nold_timeout = scope.timeout\nscope.timeout = 30000  # 30 seconds\nscope.write('FILESYSTEM:READFILE \"C:/Temp/screenshot.png\"')\ndata = scope.read_raw()\nscope.timeout = old_timeout  # Restore\n\n# For TekExpress\ntekexp.timeout = 30000",
+    "corpus": "pyvisa_tekhsi",
+    "source": "rag/corpus/pyvisa_tekhsi/pyvisa_tekhsi_index.json"
+  },
+  {
+    "id": "conn_write_query_pattern",
+    "type": "connection_pattern",
+    "tags": [
+      "pyvisa",
+      "write",
+      "query",
+      "read_raw",
+      "scpi",
+      "connection_pattern"
+    ],
+    "title": "Write/Query Pattern — scope.write(), scope.query(), scope.read_raw()",
+    "body": "Three primary I/O methods: 1) scope.write(cmd) — sends SCPI command, no response expected. Used for settings, configuration, trigger commands. 2) scope.query(cmd) — sends query and reads text response. Returns string. Used for *IDN?, CH1:SCALE?, measurement queries. Response is auto-stripped of termination. 3) scope.read_raw() — reads raw binary bytes. Used after write() for binary data (waveforms, screenshots). No termination handling. For TekAutomate: write steps use write(), query steps use query() with saveAs, python blocks can use any method directly via 'scpi' variable.\n# Write (no response)\nscope.write('CH1:SCALE 1.0')\nscope.write('*RST')\n\n# Query (text response)\nidn = scope.query('*IDN?')\nscale = scope.query('CH1:SCALE?')\n\n# Read raw binary (after a write that produces binary output)\nscope.write('FILESYSTEM:READFILE \"C:/Temp/data.png\"')\nraw_data = scope.read_raw()\n\n# Query with strip (common pattern)\nvalue = scope.query('MEASUrement:MEAS1:RESUlts:CURRentacq:MEAN?').strip()",
+    "code": "# Write (no response)\nscope.write('CH1:SCALE 1.0')\nscope.write('*RST')\n\n# Query (text response)\nidn = scope.query('*IDN?')\nscale = scope.query('CH1:SCALE?')\n\n# Read raw binary (after a write that produces binary output)\nscope.write('FILESYSTEM:READFILE \"C:/Temp/data.png\"')\nraw_data = scope.read_raw()\n\n# Query with strip (common pattern)\nvalue = scope.query('MEASUrement:MEAS1:RESUlts:CURRentacq:MEAN?').strip()",
+    "corpus": "pyvisa_tekhsi",
+    "source": "rag/corpus/pyvisa_tekhsi/pyvisa_tekhsi_index.json"
+  },
+  {
+    "id": "conn_binary_data_transfer",
+    "type": "connection_pattern",
+    "tags": [
+      "pyvisa",
+      "binary",
+      "waveform",
+      "query_binary_values",
+      "read_raw",
+      "connection_pattern"
+    ],
+    "title": "Binary Data Transfer — query_binary_values() and read_raw()",
+    "body": "For binary data (waveforms, screenshots): 1) query_binary_values(cmd, datatype, container) — for IEEE 488.2 definite-length block data. Used with CURVe? for waveform data. datatype='b' (int8), 'h' (int16), 'B' (uint8). container=bytes or list. 2) read_raw() — reads raw bytes without parsing. Used after FILESYSTEM:READFILE. No IEEE header parsing. 3) visalib.read(session, count) — low-level read with status code. For reliable binary transfer when read_raw() times out. Checks StatusCode.success_max_count_read to know if more data available. CRITICAL: FILESYSTEM:READFILE produces unframed binary (no IEEE header, no termination) — read_raw() may timeout. For screenshots, use raw sockets or visalib.read() loop.\n# IEEE 488.2 binary block (waveforms)\nscope.write('DATa:SOUrce CH1')\nscope.write('DATa:ENCdg SRIBinary')\nscope.write('DATa:WIDth 1')\ndata = scope.query_binary_values('CURVe?', datatype='b', container=bytes)\n\n# Raw binary (screenshots via FILESYSTEM:READFILE)\nscope.write('FILESYSTEM:READFILE \"C:/Temp/screen.png\"')\nraw = scope.read_raw()  # May timeout for large files\n\n# visalib.read() loop (most reliable for binary)\nimage_data = bytearray()\nscope.timeout = 5000\nwhile True:\n    try:\n        chunk, status = scope.visalib.read(scope.session, 65536)\n        if chunk:\n            image_data.extend(bytes(chunk))\n        if status != pyvisa.constants.StatusCode.success_max_count_read:\n            break\n    except pyvisa.errors.VisaIOError:\n        break",
+    "code": "# IEEE 488.2 binary block (waveforms)\nscope.write('DATa:SOUrce CH1')\nscope.write('DATa:ENCdg SRIBinary')\nscope.write('DATa:WIDth 1')\ndata = scope.query_binary_values('CURVe?', datatype='b', container=bytes)\n\n# Raw binary (screenshots via FILESYSTEM:READFILE)\nscope.write('FILESYSTEM:READFILE \"C:/Temp/screen.png\"')\nraw = scope.read_raw()  # May timeout for large files\n\n# visalib.read() loop (most reliable for binary)\nimage_data = bytearray()\nscope.timeout = 5000\nwhile True:\n    try:\n        chunk, status = scope.visalib.read(scope.session, 65536)\n        if chunk:\n            image_data.extend(bytes(chunk))\n        if status != pyvisa.constants.StatusCode.success_max_count_read:\n            break\n    except pyvisa.errors.VisaIOError:\n        break",
+    "corpus": "pyvisa_tekhsi",
+    "source": "rag/corpus/pyvisa_tekhsi/pyvisa_tekhsi_index.json"
+  },
+  {
+    "id": "conn_termination_characters",
+    "type": "connection_pattern",
+    "tags": [
+      "termination",
+      "newline",
+      "write_termination",
+      "read_termination",
+      "connection_pattern"
+    ],
+    "title": "Termination Characters — write_termination, read_termination",
+    "body": "Termination characters tell PyVISA when a message is complete. write_termination: appended to every write() call. Default for INSTR: '\\n'. read_termination: expected at end of every response. Default for INSTR: '\\n'. For SOCKET connections: MUST set both explicitly. For TekExpress: write_termination='\\n', read_termination='\\n'. CRITICAL: Don't add \\n manually in command strings when using PyVISA — it's added automatically by write_termination. Common error: tekexp.write('TEKEXP:STATE RUN\\n') — wrong! The \\n is doubled. Correct: tekexp.write('TEKEXP:STATE RUN'). For binary data: termination can cause issues — newlines in PNG data may be interpreted as terminators. Use read_raw() which ignores termination.\n# INSTR connection (defaults usually work)\nscope = rm.open_resource('TCPIP::192.168.1.10::INSTR')\n# write_termination defaults to '\\n'\n# read_termination defaults to '\\n'\n\n# SOCKET connection (must set explicitly)\nscope = rm.open_resource('TCPIP::192.168.1.10::4000::SOCKET')\nscope.write_termination = '\\n'\nscope.read_termination = '\\n'\n\n# TekExpress\ntekexp = rm.open_resource('TCPIP::localhost::5000::SOCKET')\ntekexp.write_termination = '\\n'\ntekexp.read_termination = '\\n'",
+    "code": "# INSTR connection (defaults usually work)\nscope = rm.open_resource('TCPIP::192.168.1.10::INSTR')\n# write_termination defaults to '\\n'\n# read_termination defaults to '\\n'\n\n# SOCKET connection (must set explicitly)\nscope = rm.open_resource('TCPIP::192.168.1.10::4000::SOCKET')\nscope.write_termination = '\\n'\nscope.read_termination = '\\n'\n\n# TekExpress\ntekexp = rm.open_resource('TCPIP::localhost::5000::SOCKET')\ntekexp.write_termination = '\\n'\ntekexp.read_termination = '\\n'",
+    "corpus": "pyvisa_tekhsi",
+    "source": "rag/corpus/pyvisa_tekhsi/pyvisa_tekhsi_index.json"
+  },
+  {
+    "id": "conn_error_handling",
+    "type": "connection_pattern",
+    "tags": [
+      "pyvisa",
+      "error_handling",
+      "timeout",
+      "visa_error",
+      "try_except",
+      "connection_pattern"
+    ],
+    "title": "Error Handling — VISA Errors, Timeouts, Best Practices",
+    "body": "Always wrap VISA operations in try/except. Key exception types: pyvisa.errors.VisaIOError — timeout, connection lost, transfer error. pyvisa.errors.InvalidSession — device disconnected. ConnectionRefusedError — instrument not reachable. Timeout errors (VI_ERROR_TMO): scope.timeout too short, or instrument not responding. Pattern: try/except/finally with cleanup in finally block. Always close connections even on error. For TekAutomate generated code: uses devices dictionary with cleanup loop in finally. Check instrument error queue with ALLEV? or SYSTem:ERRor? after operations.\nimport pyvisa\n\ntry:\n    rm = pyvisa.ResourceManager()\n    scope = rm.open_resource('TCPIP::192.168.1.10::INSTR')\n    scope.timeout = 5000\n    \n    idn = scope.query('*IDN?')\n    scope.write('CH1:SCALE 1.0')\n    \n    # Check instrument errors\n    errors = scope.query('ALLEV?')\n    if '0,\"No events to report\"' not in errors:\n        print(f'Instrument error: {errors}')\n        \nexcept pyvisa.errors.VisaIOError as e:\n    print(f'VISA error: {e}')\nexcept ConnectionRefusedError:\n    print('Cannot connect to instrument')\nexcept Exception as e:\n    print(f'Error: {e}')\n    raise\nfinally:\n    try:\n        scope.close()\n    except:\n        pass\n    try:\n        rm.close()\n    except:\n        pass",
+    "code": "import pyvisa\n\ntry:\n    rm = pyvisa.ResourceManager()\n    scope = rm.open_resource('TCPIP::192.168.1.10::INSTR')\n    scope.timeout = 5000\n    \n    idn = scope.query('*IDN?')\n    scope.write('CH1:SCALE 1.0')\n    \n    # Check instrument errors\n    errors = scope.query('ALLEV?')\n    if '0,\"No events to report\"' not in errors:\n        print(f'Instrument error: {errors}')\n        \nexcept pyvisa.errors.VisaIOError as e:\n    print(f'VISA error: {e}')\nexcept ConnectionRefusedError:\n    print('Cannot connect to instrument')\nexcept Exception as e:\n    print(f'Error: {e}')\n    raise\nfinally:\n    try:\n        scope.close()\n    except:\n        pass\n    try:\n        rm.close()\n    except:\n        pass",
+    "corpus": "pyvisa_tekhsi",
+    "source": "rag/corpus/pyvisa_tekhsi/pyvisa_tekhsi_index.json"
+  },
+  {
+    "id": "conn_pyvisa_py_backend",
+    "type": "backend_guide",
+    "tags": [
+      "pyvisa_py",
+      "pure_python",
+      "no_drivers",
+      "linux",
+      "backend_guide"
+    ],
+    "title": "PyVISA-py Backend — Pure Python, No NI-VISA Drivers",
+    "body": "PyVISA-py is a pure Python VISA backend that doesn't require NI-VISA or TekVISA drivers. Install: pip install pyvisa-py. Activate: rm = pyvisa.ResourceManager('@py'). Supports: TCP/IP (VXI-11 and socket), USB (via pyusb), Serial. Ideal for: Linux systems, Docker containers, embedded controllers, CI/CD environments. Limitations: may not support all VISA features, slightly slower than NI-VISA for some operations. tm_devices can also use PyVISA-py as its underlying transport.\n# Install\n# pip install pyvisa pyvisa-py\n\n# Use pure Python backend\nimport pyvisa\nrm = pyvisa.ResourceManager('@py')\n\n# Works the same as NI-VISA\nscope = rm.open_resource('TCPIP::192.168.1.10::INSTR')\nprint(scope.query('*IDN?'))\nscope.close()",
+    "code": "# Install\n# pip install pyvisa pyvisa-py\n\n# Use pure Python backend\nimport pyvisa\nrm = pyvisa.ResourceManager('@py')\n\n# Works the same as NI-VISA\nscope = rm.open_resource('TCPIP::192.168.1.10::INSTR')\nprint(scope.query('*IDN?'))\nscope.close()",
+    "corpus": "pyvisa_tekhsi",
+    "source": "rag/corpus/pyvisa_tekhsi/pyvisa_tekhsi_index.json"
+  },
+  {
+    "id": "conn_resource_discovery",
+    "type": "connection_pattern",
+    "tags": [
+      "pyvisa",
+      "discovery",
+      "list_resources",
+      "find_instruments",
+      "connection_pattern"
+    ],
+    "title": "Resource Discovery — rm.list_resources() for Finding Instruments",
+    "body": "Use rm.list_resources() to discover connected instruments. Returns tuple of VISA resource strings. Filters: list_resources('TCPIP?*') for TCP/IP only, list_resources('USB?*') for USB only, list_resources('GPIB?*') for GPIB only. Note: only discovers instruments reachable via the current VISA backend. TCP/IP instruments must be on same network. USB instruments must be physically connected. GPIB requires GPIB adapter. For TekAutomate: device discovery is manual (user enters IP/connection info) but list_resources() can verify connectivity.\nimport pyvisa\nrm = pyvisa.ResourceManager()\n\n# List all instruments\nresources = rm.list_resources()\nprint(f'Found {len(resources)} instruments:')\nfor r in resources:\n    print(f'  {r}')\n\n# Filter by type\ntcpip = rm.list_resources('TCPIP?*')\nusb = rm.list_resources('USB?*')\ngpib = rm.list_resources('GPIB?*')",
+    "code": "import pyvisa\nrm = pyvisa.ResourceManager()\n\n# List all instruments\nresources = rm.list_resources()\nprint(f'Found {len(resources)} instruments:')\nfor r in resources:\n    print(f'  {r}')\n\n# Filter by type\ntcpip = rm.list_resources('TCPIP?*')\nusb = rm.list_resources('USB?*')\ngpib = rm.list_resources('GPIB?*')",
+    "corpus": "pyvisa_tekhsi",
+    "source": "rag/corpus/pyvisa_tekhsi/pyvisa_tekhsi_index.json"
+  },
+  {
+    "id": "conn_tekhsi_overview",
+    "type": "backend_guide",
+    "tags": [
+      "tekhsi",
+      "overview",
+      "grpc",
+      "high_speed",
+      "waveform",
+      "backend_guide"
+    ],
+    "title": "TekHSI Overview — ONLY for High-Speed Waveform Capture, NOT for SCPI",
+    "body": "TekHSI (Tektronix High-Speed Interface) is a gRPC-based protocol for high-speed waveform data transfer from newer Tektronix scopes. CRITICAL: TekHSI is ONLY for waveform data acquisition. It is NOT a replacement for SCPI commands. You CANNOT use TekHSI for: instrument configuration, measurements, search, histogram, trigger setup, screenshots, or any SCPI command. TekHSI connects on port 5000 using gRPC protocol. Install: pip install tekhsi. Supported scopes: MSO5/6 series, MSO5B/6B, DPO7K. NOT supported: DPO70k, MSO/DPO 5k legacy, any non-Tektronix instrument.\nfrom tekhsi import TekHSIConnect\n\n# TekHSI for waveform data ONLY\nwith TekHSIConnect('192.168.1.10:5000') as connection:\n    connection.connect()\n    # Get waveform data\n    waveform = connection.get_data('CH1')\n    print(f'Got {len(waveform)} samples')",
+    "code": "from tekhsi import TekHSIConnect\n\n# TekHSI for waveform data ONLY\nwith TekHSIConnect('192.168.1.10:5000') as connection:\n    connection.connect()\n    # Get waveform data\n    waveform = connection.get_data('CH1')\n    print(f'Got {len(waveform)} samples')",
+    "corpus": "pyvisa_tekhsi",
+    "source": "rag/corpus/pyvisa_tekhsi/pyvisa_tekhsi_index.json"
+  },
+  {
+    "id": "conn_tekhsi_connection",
+    "type": "connection_pattern",
+    "tags": [
+      "tekhsi",
+      "connection",
+      "context_manager",
+      "port_5000",
+      "connection_pattern"
+    ],
+    "title": "TekHSI Connection — TekHSIConnect Context Manager, Port 5000",
+    "body": "TekHSI uses a context manager pattern with TekHSIConnect. Connection string format: 'host:5000' (always port 5000, gRPC). The context manager ensures proper cleanup. Usage: with TekHSIConnect('host:5000') as conn: conn.connect(); data = conn.get_data('CH1'). The connection object provides: get_data(channel) for waveform data, acquire() for triggering, and metadata access. TekHSI runs independently of any VISA connection — you can have both PyVISA and TekHSI connected to the same scope simultaneously.\nfrom tekhsi import TekHSIConnect\n\n# Basic connection\nwith TekHSIConnect('192.168.1.10:5000') as connection:\n    connection.connect()\n    \n    # Acquire waveform\n    data = connection.get_data('CH1')\n    \n    # Access metadata\n    print(f'Sample rate: {data.sample_rate}')\n    print(f'Record length: {data.record_length}')",
+    "code": "from tekhsi import TekHSIConnect\n\n# Basic connection\nwith TekHSIConnect('192.168.1.10:5000') as connection:\n    connection.connect()\n    \n    # Acquire waveform\n    data = connection.get_data('CH1')\n    \n    # Access metadata\n    print(f'Sample rate: {data.sample_rate}')\n    print(f'Record length: {data.record_length}')",
+    "corpus": "pyvisa_tekhsi",
+    "source": "rag/corpus/pyvisa_tekhsi/pyvisa_tekhsi_index.json"
+  },
+  {
+    "id": "conn_tekhsi_when_to_use",
+    "type": "backend_guide",
+    "tags": [
+      "tekhsi",
+      "fastframe",
+      "fastacq",
+      "bulk_transfer",
+      "when_to_use",
+      "backend_guide"
+    ],
+    "title": "When to Use TekHSI — FastFrame, FastAcq, Bulk Waveform Transfer",
+    "body": "Use TekHSI ONLY when: 1) FastFrame mode — need to capture and transfer many frames quickly, 2) FastAcq mode — high-speed continuous acquisition, 3) Bulk waveform transfer — need to move large amounts of waveform data (100M+ samples) faster than SCPI CURVe? allows, 4) Real-time streaming — continuous waveform data pipeline. TekHSI is 5-10x faster than PyVISA for waveform data because it uses gRPC binary streaming instead of SCPI text protocol. But for anything other than waveform data, use PyVISA or tm_devices.",
+    "corpus": "pyvisa_tekhsi",
+    "source": "rag/corpus/pyvisa_tekhsi/pyvisa_tekhsi_index.json"
+  },
+  {
+    "id": "conn_tekhsi_when_not",
+    "type": "backend_guide",
+    "tags": [
+      "tekhsi",
+      "limitations",
+      "not_for_scpi",
+      "backend_guide"
+    ],
+    "title": "When NOT to Use TekHSI — Measurements, Search, SCPI",
+    "body": "DO NOT use TekHSI for: 1) Instrument configuration (CH1:SCALE, HORizontal:SCALE, etc.), 2) Trigger setup, 3) Measurements (MEASUrement:ADDMEAS, MEASUrement:MEAS1:RESUlts), 4) Search (SEArch commands), 5) Histogram operations, 6) Screenshot capture, 7) File operations (FILESYSTEM:READFILE, SAVE:IMAGE), 8) Error checking (ALLEV?, *ESR?), 9) Any standard SCPI command. TekHSI only transfers waveform sample data. All configuration, measurement, and control operations MUST go through PyVISA or tm_devices. DPO70k and older scopes don't support TekHSI at all.",
+    "corpus": "pyvisa_tekhsi",
+    "source": "rag/corpus/pyvisa_tekhsi/pyvisa_tekhsi_index.json"
+  },
+  {
+    "id": "conn_tekhsi_hybrid",
+    "type": "connection_pattern",
+    "tags": [
+      "tekhsi",
+      "pyvisa",
+      "hybrid",
+      "simultaneous",
+      "best_of_both",
+      "connection_pattern"
+    ],
+    "title": "TekHSI + PyVISA Hybrid — Using Both for Different Operations",
+    "body": "The hybrid approach uses PyVISA for SCPI commands and TekHSI for waveform data simultaneously. Both connections can be active to the same scope at the same time — they use different ports (VXI-11 vs 5000). In TekAutomate, hybrid backend automatically routes: SCPI commands → PyVISA connection (scpi.write/query), waveform data → TekHSI connection (scope.get_data). Detection: commands starting with 'scope.' (not .commands.) go to TekHSI; everything else goes to PyVISA. This gives maximum performance for data-heavy workflows.\nimport pyvisa\nfrom tekhsi import TekHSIConnect\n\n# PyVISA for SCPI configuration\nrm = pyvisa.ResourceManager()\nscpi = rm.open_resource('TCPIP::192.168.1.10::INSTR')\nscpi.write('CH1:SCALE 1.0')  # Configuration via SCPI\nscpi.write('ACQuire:STOPAfter SEQUENCE')\nscpi.write('ACQuire:STATE ON')\nscpi.query('*OPC?')\n\n# TekHSI for fast waveform data\nwith TekHSIConnect('192.168.1.10:5000') as hsi:\n    hsi.connect()\n    data = hsi.get_data('CH1')  # Fast waveform transfer\n\n# Back to SCPI for measurements\nmeas = scpi.query('MEASUrement:MEAS1:RESUlts:CURRentacq:MEAN?')\nscpi.close()",
+    "code": "import pyvisa\nfrom tekhsi import TekHSIConnect\n\n# PyVISA for SCPI configuration\nrm = pyvisa.ResourceManager()\nscpi = rm.open_resource('TCPIP::192.168.1.10::INSTR')\nscpi.write('CH1:SCALE 1.0')  # Configuration via SCPI\nscpi.write('ACQuire:STOPAfter SEQUENCE')\nscpi.write('ACQuire:STATE ON')\nscpi.query('*OPC?')\n\n# TekHSI for fast waveform data\nwith TekHSIConnect('192.168.1.10:5000') as hsi:\n    hsi.connect()\n    data = hsi.get_data('CH1')  # Fast waveform transfer\n\n# Back to SCPI for measurements\nmeas = scpi.query('MEASUrement:MEAS1:RESUlts:CURRentacq:MEAN?')\nscpi.close()",
+    "corpus": "pyvisa_tekhsi",
+    "source": "rag/corpus/pyvisa_tekhsi/pyvisa_tekhsi_index.json"
+  },
+  {
+    "id": "conn_raw_socket_overview",
+    "type": "socket_pattern",
+    "tags": [
+      "raw_socket",
+      "overview",
+      "when_needed",
+      "performance",
+      "socket_pattern"
+    ],
+    "title": "Raw Socket Overview — When PyVISA Limitations Prevent Operations",
+    "body": "Raw TCP sockets provide direct low-level communication with Tektronix scopes on port 4000. Use when: 1) FILESYSTEM:READFILE for screenshots (PyVISA times out — unframed binary), 2) Large waveform transfers (100M+ samples), 3) Maximum throughput needed, 4) Non-VISA environments (embedded, containers). Raw sockets allow: timeout-based EOF detection, arbitrary chunk reads, no SCPI framing assumptions, no termination character issues. Helper module: socket_instr.py mimics PyVISA API (write, query, read_bytes). Performance: screenshot via raw socket = 2-3 seconds vs PyVISA timeout failure; 10M waveform via socket = 4-6 sec vs 8-12 sec via PyVISA.\nimport socket\nimport time\n\nsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\nsock.settimeout(10)\nsock.connect(('192.168.1.10', 4000))\n\n# Send SCPI command\nsock.sendall(b'*IDN?\\n')\ntime.sleep(0.1)\n\n# Read response\ndata = b''\nsock.settimeout(2)\ntry:\n    while True:\n        b = sock.recv(1)\n        if not b or b == b'\\n':\n            break\n        data += b\nexcept socket.timeout:\n    pass\nprint(data.decode().strip())\nsock.close()",
+    "code": "import socket\nimport time\n\nsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\nsock.settimeout(10)\nsock.connect(('192.168.1.10', 4000))\n\n# Send SCPI command\nsock.sendall(b'*IDN?\\n')\ntime.sleep(0.1)\n\n# Read response\ndata = b''\nsock.settimeout(2)\ntry:\n    while True:\n        b = sock.recv(1)\n        if not b or b == b'\\n':\n            break\n        data += b\nexcept socket.timeout:\n    pass\nprint(data.decode().strip())\nsock.close()",
+    "corpus": "pyvisa_tekhsi",
+    "source": "rag/corpus/pyvisa_tekhsi/pyvisa_tekhsi_index.json"
+  },
+  {
+    "id": "conn_socket_instr_class",
+    "type": "socket_pattern",
+    "tags": [
+      "socket_instr",
+      "helper",
+      "api",
+      "mimics_pyvisa",
+      "socket_pattern"
+    ],
+    "title": "SocketInstr Class — socket_instr.py Helper, Mimics PyVISA API",
+    "body": "The socket_instr.py helper provides a SocketInstr class that wraps raw sockets with a PyVISA-like API. Methods: write(cmd) — sends SCPI with newline termination, query(cmd) — sends and reads text response, read_bytes(count) — reads specified bytes, read_timeout_based() — reads until timeout (for binary streams), close() — clean shutdown. Features: timeout-based EOF detection, non-blocking reads, binary/ASCII handling, error checking. Usage: scope = SocketInstr(host='192.168.1.10', port=4000, timeout=10). This is the recommended abstraction for raw socket operations in TekAutomate helper scripts.\nfrom socket_instr import SocketInstr\n\n# Connect\nscope = SocketInstr(host='192.168.1.10', port=4000, timeout=10)\n\n# Standard SCPI (like PyVISA)\nidn = scope.query('*IDN?')\nscope.write('ACQuire:STATE ON')\n\n# Binary data transfer\nwaveform_data = scope.read_bytes(5000000)\n\n# Timeout-based binary read (for READFILE)\nscope.write('FILESYSTEM:READFILE \"C:/Temp/file.png\"')\ndata = scope.read_timeout_based()\n\nscope.close()",
+    "code": "from socket_instr import SocketInstr\n\n# Connect\nscope = SocketInstr(host='192.168.1.10', port=4000, timeout=10)\n\n# Standard SCPI (like PyVISA)\nidn = scope.query('*IDN?')\nscope.write('ACQuire:STATE ON')\n\n# Binary data transfer\nwaveform_data = scope.read_bytes(5000000)\n\n# Timeout-based binary read (for READFILE)\nscope.write('FILESYSTEM:READFILE \"C:/Temp/file.png\"')\ndata = scope.read_timeout_based()\n\nscope.close()",
+    "corpus": "pyvisa_tekhsi",
+    "source": "rag/corpus/pyvisa_tekhsi/pyvisa_tekhsi_index.json"
+  },
+  {
+    "id": "conn_socket_screenshot_state_machine",
+    "type": "socket_pattern",
+    "tags": [
+      "socket",
+      "screenshot",
+      "state_machine",
+      "pipeline_priming",
+      "readfile",
+      "socket_pattern"
+    ],
+    "title": "Socket Screenshot Capture — The State Machine: Prime → *CLS → READFILE → Binary Window",
+    "body": "CRITICAL: Screenshot capture via raw socket requires exact pipeline priming. The scope's socket daemon is extremely state-sensitive. Four requirements for success: 1) EXACT COMMAND ORDERING — prime UI subsystems with queries: SAVE:IMAGe:FILEFormat?, SAVE:IMAGe:COMPosition?, SAVE:IMAGe:VIEWTYpe?, SAVE:IMAGe:INKSaver?, SAVE:IMAGe:LAYout?, FILESystem:CWD? — these initialize internal UI state machines, not just information queries. 2) HARD RESET BETWEEN EVERY STEP — *CLS between each query clears event queues and prevents stray text from contaminating binary stream. 3) ONE-SHOT BINARY WINDOW — after FILESYSTEM:READFILE, do NOT query anything (*OPC?, *ESR?), do NOT send *CLS. Let socket stay in raw streaming mode until timeout. This is the only moment the daemon passes binary through. 4) HEADER RESYNCHRONIZATION — socket may prepend stray ASCII before PNG data. Search for PNG magic bytes (89 50 4E 47 0D 0A 1A 0A) and strip everything before it.\nimport socket\nimport time\n\nsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\nsock.settimeout(10)\nsock.connect(('192.168.1.10', 4000))\n\ndef send(cmd): sock.sendall((cmd + '\\n').encode()); time.sleep(0.05)\ndef query(cmd): send(cmd); return recv_line()\n\n# 1. PIPELINE PRIMING (not optional!)\nfor cmd in ['SAVE:IMAGe:FILEFormat?', 'SAVE:IMAGe:COMPosition?',\n            'SAVE:IMAGe:VIEWTYpe?', 'SAVE:IMAGe:INKSaver?',\n            'SAVE:IMAGe:LAYout?', 'FILESystem:CWD?']:\n    send('*CLS')\n    query(cmd)\n\n# 2. Save screenshot on scope\nsend('SAVE:IMAGe \"C:/Temp/screenshot.png\"')\nquery('*OPC?')\ntime.sleep(1)\n\n# 3. ONE-SHOT BINARY WINDOW\nsend('FILESystem:READFile \"C:/Temp/screenshot.png\"')\nsock.settimeout(5)\ndata = bytearray()\ntry:\n    while True:\n        chunk = sock.recv(65536)\n        if chunk: data.extend(chunk)\n        else: break\nexcept socket.timeout:\n    pass  # Timeout = EOF\n\n# 4. HEADER RESYNC\npng_magic = b'\\x89PNG\\r\\n\\x1a\\n'\nif data[:8] != png_magic:\n    idx = data.find(png_magic)\n    if idx > 0: data = data[idx:]\n\nwith open('screenshot.png', 'wb') as f:\n    f.write(bytes(data))\nsock.close()",
+    "code": "import socket\nimport time\n\nsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\nsock.settimeout(10)\nsock.connect(('192.168.1.10', 4000))\n\ndef send(cmd): sock.sendall((cmd + '\\n').encode()); time.sleep(0.05)\ndef query(cmd): send(cmd); return recv_line()\n\n# 1. PIPELINE PRIMING (not optional!)\nfor cmd in ['SAVE:IMAGe:FILEFormat?', 'SAVE:IMAGe:COMPosition?',\n            'SAVE:IMAGe:VIEWTYpe?', 'SAVE:IMAGe:INKSaver?',\n            'SAVE:IMAGe:LAYout?', 'FILESystem:CWD?']:\n    send('*CLS')\n    query(cmd)\n\n# 2. Save screenshot on scope\nsend('SAVE:IMAGe \"C:/Temp/screenshot.png\"')\nquery('*OPC?')\ntime.sleep(1)\n\n# 3. ONE-SHOT BINARY WINDOW\nsend('FILESystem:READFile \"C:/Temp/screenshot.png\"')\nsock.settimeout(5)\ndata = bytearray()\ntry:\n    while True:\n        chunk = sock.recv(65536)\n        if chunk: data.extend(chunk)\n        else: break\nexcept socket.timeout:\n    pass  # Timeout = EOF\n\n# 4. HEADER RESYNC\npng_magic = b'\\x89PNG\\r\\n\\x1a\\n'\nif data[:8] != png_magic:\n    idx = data.find(png_magic)\n    if idx > 0: data = data[idx:]\n\nwith open('screenshot.png', 'wb') as f:\n    f.write(bytes(data))\nsock.close()",
+    "corpus": "pyvisa_tekhsi",
+    "source": "rag/corpus/pyvisa_tekhsi/pyvisa_tekhsi_index.json"
+  },
+  {
+    "id": "conn_binary_transfer_pitfalls",
+    "type": "troubleshooting",
+    "tags": [
+      "binary",
+      "pitfalls",
+      "png_header",
+      "timeout_eof",
+      "readfile",
+      "troubleshooting"
+    ],
+    "title": "Binary Transfer Pitfalls — PNG Header, Timeout EOF, READFILE",
+    "body": "FILESYSTEM:READFILE is intentionally non-SCPI-compliant. Per Tektronix manual: 'This command is not IEEE 488.2 compliant' — it's a command that produces output (violates SCPI rules where only queries produce output). It omits IEEE 488.2 block headers (#<n><length><data>), sends raw binary, and terminates only by EOI (not newline). PITFALLS: 1) PyVISA read_raw() blocks forever — VISA expects framing that doesn't exist. 2) PNG data may contain newlines — read_termination='\\n' will truncate. 3) Stray ASCII before binary — scope may prepend response text. 4) No length indicator — must use timeout to detect end. 5) *OPC? after READFILE causes UnicodeDecodeError — leftover PNG bytes in buffer. 6) Increasing PyVISA timeout doesn't help — timeout is treated as error, not EOF. SOLUTION: Use raw sockets with timeout-based EOF, or visalib.read() loop.\n# WRONG: PyVISA read_raw blocks forever\n# scope.write('FILESYSTEM:READFILE \"path\"')\n# data = scope.read_raw()  # ❌ VI_ERROR_TMO\n\n# WRONG: query after READFILE\n# scope.write('FILESYSTEM:READFILE \"path\"')\n# data = scope.read_raw()\n# scope.query('*OPC?')  # ❌ UnicodeDecodeError from PNG bytes\n\n# RIGHT: Raw socket with timeout EOF\nimport socket\nsock.settimeout(5)\ndata = bytearray()\ntry:\n    while True:\n        chunk = sock.recv(65536)\n        if chunk: data.extend(chunk)\n        else: break\nexcept socket.timeout:\n    if len(data) > 0: pass  # ✅ Timeout = EOF\n\n# RIGHT: visalib.read loop\nimage_data = bytearray()\nwhile True:\n    try:\n        chunk, status = scope.visalib.read(scope.session, 65536)\n        image_data.extend(bytes(chunk))\n        if status != pyvisa.constants.StatusCode.success_max_count_read:\n            break  # ✅ Transfer complete\n    except pyvisa.errors.VisaIOError:\n        break",
+    "code": "# WRONG: PyVISA read_raw blocks forever\n# scope.write('FILESYSTEM:READFILE \"path\"')\n# data = scope.read_raw()  # ❌ VI_ERROR_TMO\n\n# WRONG: query after READFILE\n# scope.write('FILESYSTEM:READFILE \"path\"')\n# data = scope.read_raw()\n# scope.query('*OPC?')  # ❌ UnicodeDecodeError from PNG bytes\n\n# RIGHT: Raw socket with timeout EOF\nimport socket\nsock.settimeout(5)\ndata = bytearray()\ntry:\n    while True:\n        chunk = sock.recv(65536)\n        if chunk: data.extend(chunk)\n        else: break\nexcept socket.timeout:\n    if len(data) > 0: pass  # ✅ Timeout = EOF\n\n# RIGHT: visalib.read loop\nimage_data = bytearray()\nwhile True:\n    try:\n        chunk, status = scope.visalib.read(scope.session, 65536)\n        image_data.extend(bytes(chunk))\n        if status != pyvisa.constants.StatusCode.success_max_count_read:\n            break  # ✅ Transfer complete\n    except pyvisa.errors.VisaIOError:\n        break",
+    "corpus": "pyvisa_tekhsi",
+    "source": "rag/corpus/pyvisa_tekhsi/pyvisa_tekhsi_index.json"
+  },
+  {
+    "id": "conn_socket_vs_pyvisa",
+    "type": "backend_guide",
+    "tags": [
+      "socket",
+      "pyvisa",
+      "decision",
+      "when_to_use",
+      "comparison",
+      "backend_guide"
+    ],
+    "title": "Socket vs PyVISA Decision — When Raw Socket Is Needed",
+    "body": "Use PyVISA (INSTR) for: standard SCPI commands, queries, session management, device discovery, cross-platform compatibility, simple automation. Use Raw Socket when: FILESYSTEM:READFILE binary transfers (screenshots, files), large waveform data (100M+ samples), maximum throughput critical, working in non-VISA environments. Use PyVISA SOCKET mode for: TekExpress on port 5000, instruments requiring socket transport. NEVER use raw socket when: simple SCPI write/query suffices, cross-platform compatibility needed, debugging/error handling important. Performance comparison: Screenshot PyVISA=timeout failure, Socket=2-3 sec. 10M waveform PyVISA=8-12 sec, Socket=4-6 sec. Simple query PyVISA=50-100ms, Socket=30-50ms. Recommended: hybrid approach — PyVISA for SCPI, raw socket for binary transfers.",
+    "corpus": "pyvisa_tekhsi",
+    "source": "rag/corpus/pyvisa_tekhsi/pyvisa_tekhsi_index.json"
+  },
+  {
+    "id": "conn_tekexpress_socket",
+    "type": "connection_pattern",
+    "tags": [
+      "tekexpress",
+      "socket",
+      "port_5000",
+      "compliance",
+      "pyvisa_socket",
+      "connection_pattern"
+    ],
+    "title": "TekExpress SOCKET — TCPIP::host::5000::SOCKET, PyVISA Abstraction",
+    "body": "TekExpress compliance test applications (USB4Tx, PCIe, Thunderbolt, DisplayPort) are controlled via PyVISA SOCKET on port 5000. Connection: rm.open_resource('TCPIP::localhost::5000::SOCKET'). MUST set: write_termination='\\n', read_termination='\\n', timeout=30000. Commands use TEKEXP:* namespace (e.g. TEKEXP:STATE RUN, TEKEXP:SELECT DEVICE). CRITICAL: TekExpress is an SCPI endpoint — ALWAYS use .write()/.query(), NEVER raw socket.sendall(). Termination handled by PyVISA config — don't embed \\n in commands. Backend compatibility: only PyVISA SOCKET works. NOT: PyVISA INSTR, tm_devices, TekHSI, VXI-11.\nimport pyvisa\nimport time\n\nrm = pyvisa.ResourceManager()\ntekexp = rm.open_resource('TCPIP::localhost::5000::SOCKET')\ntekexp.write_termination = '\\n'\ntekexp.read_termination = '\\n'\ntekexp.timeout = 30000\n\n# SCPI commands (same as scope)\ntekexp.write('TEKEXP:ACQUIRE_MODE LIVE')\ntekexp.write('TEKEXP:SELECT DEVICE,\"Device\"')\ntekexp.write('TEKEXP:STATE RUN')\n\n# Query state\nstate = tekexp.query('TEKEXP:STATE?')\nprint(f'State: {state}')\n\ntekexp.close()",
+    "code": "import pyvisa\nimport time\n\nrm = pyvisa.ResourceManager()\ntekexp = rm.open_resource('TCPIP::localhost::5000::SOCKET')\ntekexp.write_termination = '\\n'\ntekexp.read_termination = '\\n'\ntekexp.timeout = 30000\n\n# SCPI commands (same as scope)\ntekexp.write('TEKEXP:ACQUIRE_MODE LIVE')\ntekexp.write('TEKEXP:SELECT DEVICE,\"Device\"')\ntekexp.write('TEKEXP:STATE RUN')\n\n# Query state\nstate = tekexp.query('TEKEXP:STATE?')\nprint(f'State: {state}')\n\ntekexp.close()",
+    "corpus": "pyvisa_tekhsi",
+    "source": "rag/corpus/pyvisa_tekhsi/pyvisa_tekhsi_index.json"
+  },
+  {
+    "id": "conn_tekexpress_no_opc",
+    "type": "connection_pattern",
+    "tags": [
+      "tekexpress",
+      "state_polling",
+      "no_opc",
+      "async",
+      "state_machine",
+      "connection_pattern"
+    ],
+    "title": "TekExpress: No *OPC? — Use TEKEXP:STATE? Polling Loop",
+    "body": "TekExpress does NOT support *OPC? for synchronization. Unlike scope SCPI which executes immediately, TekExpress uses an asynchronous state machine: RUN → RUNNING → COMPLETE (or WAIT/ERROR). You MUST poll TEKEXP:STATE? in a loop. Pattern: tekexp.write('TEKEXP:STATE RUN'), then loop: state = tekexp.query('TEKEXP:STATE?').strip(), if state == 'COMPLETE' break, if state in ('WAIT','ERROR') handle popup, sleep(2), check timeout. Tests can run for minutes — set generous timeout (300+ seconds). Sleep between polls (2 seconds recommended) to avoid flooding the instrument.\nimport time\n\ntekexp.write('TEKEXP:STATE RUN')\n\nstart_time = time.time()\ntimeout = 300  # 5 minutes\n\nwhile True:\n    state = tekexp.query('TEKEXP:STATE?').strip()\n    \n    if state == 'COMPLETE':\n        print('Test completed successfully')\n        break\n    \n    if state in ('WAIT', 'ERROR'):\n        # Handle popup\n        popup = tekexp.query('TEKEXP:POPUP?')\n        print(f'Popup: {popup}')\n        tekexp.write('TEKEXP:POPUP \"OK\"')\n    \n    if time.time() - start_time > timeout:\n        raise TimeoutError('TekExpress did not complete in time')\n    \n    time.sleep(2)  # Poll every 2 seconds",
+    "code": "import time\n\ntekexp.write('TEKEXP:STATE RUN')\n\nstart_time = time.time()\ntimeout = 300  # 5 minutes\n\nwhile True:\n    state = tekexp.query('TEKEXP:STATE?').strip()\n    \n    if state == 'COMPLETE':\n        print('Test completed successfully')\n        break\n    \n    if state in ('WAIT', 'ERROR'):\n        # Handle popup\n        popup = tekexp.query('TEKEXP:POPUP?')\n        print(f'Popup: {popup}')\n        tekexp.write('TEKEXP:POPUP \"OK\"')\n    \n    if time.time() - start_time > timeout:\n        raise TimeoutError('TekExpress did not complete in time')\n    \n    time.sleep(2)  # Poll every 2 seconds",
+    "corpus": "pyvisa_tekhsi",
+    "source": "rag/corpus/pyvisa_tekhsi/pyvisa_tekhsi_index.json"
+  },
+  {
+    "id": "conn_tekexpress_popup",
+    "type": "connection_pattern",
+    "tags": [
+      "tekexpress",
+      "popup",
+      "wait_state",
+      "user_interaction",
+      "connection_pattern"
+    ],
+    "title": "TekExpress Popup Handling — TEKEXP:POPUP? During State Polling",
+    "body": "TekExpress may pause for user interaction (popup dialogs). During state polling, when TEKEXP:STATE? returns 'WAIT' or 'ERROR', check for popups: popup = tekexp.query('TEKEXP:POPUP?'). If popup exists, respond: tekexp.write('TEKEXP:POPUP \"OK\"'). Common popups: calibration reminders, test warnings, configuration confirmations. Without popup handling, TekExpress test will hang indefinitely in WAIT state. Always include popup handling in the polling loop. The Blockly tekexp_wait_state block automatically generates popup handling code.\n# Inside state polling loop\nstate = tekexp.query('TEKEXP:STATE?').strip()\n\nif state in ('WAIT', 'ERROR'):\n    popup_msg = tekexp.query('TEKEXP:POPUP?').strip()\n    if popup_msg:\n        print(f'TekExpress popup: {popup_msg}')\n        tekexp.write('TEKEXP:POPUP \"OK\"')\n    else:\n        print(f'TekExpress state: {state} (no popup)')",
+    "code": "# Inside state polling loop\nstate = tekexp.query('TEKEXP:STATE?').strip()\n\nif state in ('WAIT', 'ERROR'):\n    popup_msg = tekexp.query('TEKEXP:POPUP?').strip()\n    if popup_msg:\n        print(f'TekExpress popup: {popup_msg}')\n        tekexp.write('TEKEXP:POPUP \"OK\"')\n    else:\n        print(f'TekExpress state: {state} (no popup)')",
+    "corpus": "pyvisa_tekhsi",
+    "source": "rag/corpus/pyvisa_tekhsi/pyvisa_tekhsi_index.json"
+  },
+  {
+    "id": "conn_tekexpress_generator_rules",
+    "type": "backend_guide",
+    "tags": [
+      "tekexpress",
+      "generator",
+      "rules",
+      "never_raw_socket",
+      "backend_guide"
+    ],
+    "title": "TekExpress Generator Rules — Never Raw Socket, Always PyVISA",
+    "body": "CRITICAL RULES for generating TekExpress code: 1) NEVER generate raw socket code (socket.sendall) — only .write()/.query(). 2) Termination handled by resource config — don't add \\n in commands. 3) Use TEKEXP:STATE? instead of *OPC? for synchronization. 4) Always handle popups in wait loops. 5) Connection is SOCKET type (TCPIP::host::5000::SOCKET). 6) All TEKEXP:* commands are SCPI strings via PyVISA abstraction. Root cause of previous failures: GPT was given raw socket scripts and literally translated socket.sendall() into generated code instead of abstracting through PyVISA.",
+    "corpus": "pyvisa_tekhsi",
+    "source": "rag/corpus/pyvisa_tekhsi/pyvisa_tekhsi_index.json"
+  },
+  {
+    "id": "conn_decision_matrix",
+    "type": "backend_guide",
+    "tags": [
+      "decision_matrix",
+      "backend_selection",
+      "comparison",
+      "backend_guide"
+    ],
+    "title": "Backend Decision Matrix — Full Matrix: Instrument × Use Case → Backend",
+    "body": "DECISION TREE: 1) DPO70k or older scope? → PyVISA (most reliable). 2) MSO5/6 or newer? → Need high-level APIs? → tm_devices. Need fast waveforms? → Hybrid (TekHSI + PyVISA). Simple automation? → PyVISA. 3) Linux without VISA? → VXI-11 or PyVISA-py. 4) Multi-device automation? → tm_devices. 5) TekExpress compliance? → PyVISA SOCKET on port 5000. 6) Screenshots via file transfer? → Raw socket (PyVISA can't handle READFILE binary). COMPATIBILITY MATRIX: PyVISA — TCP/IP ✅, Socket ✅, USB ✅, GPIB ✅, All devices. tm_devices — TCP/IP ✅, Socket ❌, USB ✅, GPIB ✅, MSO4/5/6 + DPO5K/7K. VXI-11 — TCP/IP only ✅. TekHSI — Port 5000 only, MSO5/6 + DPO7K only. Hybrid — TCP/IP ✅, USB ✅, GPIB ✅, MSO5/6 + DPO7K only.",
+    "corpus": "pyvisa_tekhsi",
+    "source": "rag/corpus/pyvisa_tekhsi/pyvisa_tekhsi_index.json"
+  },
+  {
+    "id": "conn_pyvisa_default_choice",
+    "type": "backend_guide",
+    "tags": [
+      "pyvisa",
+      "default",
+      "recommended",
+      "compatibility",
+      "backend_guide"
+    ],
+    "title": "PyVISA: Default Choice — Most Compatible, Works Everywhere",
+    "body": "PyVISA should be the DEFAULT backend for TekAutomate templates unless there's a specific reason to use another. Reasons: 1) Works with ALL Tektronix instruments (old and new), 2) Supports ALL connection types (TCP/IP, USB, GPIB, Socket), 3) Cross-platform (Windows, Linux, macOS), 4) Largest community and documentation, 5) Can use NI-VISA or PyVISA-py backend, 6) Standard SCPI commands work everywhere, 7) Simplest code generation. Use PyVISA unless you need: high-level APIs (→ tm_devices), fast waveform streaming (→ TekHSI/hybrid), or binary file transfers (→ raw socket for that specific operation).",
+    "corpus": "pyvisa_tekhsi",
+    "source": "rag/corpus/pyvisa_tekhsi/pyvisa_tekhsi_index.json"
+  },
+  {
+    "id": "conn_tm_devices_when",
+    "type": "backend_guide",
+    "tags": [
+      "tm_devices",
+      "official",
+      "tektronix",
+      "high_level_api",
+      "command_validation",
+      "backend_guide"
+    ],
+    "title": "tm_devices: When to Use — Official Tektronix Framework",
+    "body": "tm_devices is the official Tektronix Python framework. Best for: MSO4/5/6 series (newer scopes), need command validation and type hints, want high-level device APIs (scope.turn_channel_on(), scope.set_and_check()), multi-device automation, IDE autocomplete support. NOT for: DPO70k and older (limited support), lightweight solutions, Linux without VISA setup. Install: pip install tm-devices. Auto-detects device driver from *IDN? response (e.g. MSO73304DX → MSO70KDX driver). Device support: MSO2/4/5/6 ✅, DPO5K/7K ✅, AWG5K/7K ✅, AFG3K ✅, PSU/SMU/DMM ✅. Connection uses VISA resource strings (same as PyVISA). Does NOT support SOCKET connection type.\nfrom tm_devices import DeviceManager\n\ndm = DeviceManager()\nscope = dm.add_scope('TCPIP::192.168.1.10::INSTR')\n\n# High-level API\nscope.turn_channel_on('CH1')\nscope.set_and_check(':HORIZONTAL:SCALE', 100e-9)\n\n# Low-level SCPI still works\nscope.write('CH1:SCALE 1.0')\nresult = scope.query('*IDN?')\n\nscope.close()",
+    "code": "from tm_devices import DeviceManager\n\ndm = DeviceManager()\nscope = dm.add_scope('TCPIP::192.168.1.10::INSTR')\n\n# High-level API\nscope.turn_channel_on('CH1')\nscope.set_and_check(':HORIZONTAL:SCALE', 100e-9)\n\n# Low-level SCPI still works\nscope.write('CH1:SCALE 1.0')\nresult = scope.query('*IDN?')\n\nscope.close()",
+    "corpus": "pyvisa_tekhsi",
+    "source": "rag/corpus/pyvisa_tekhsi/pyvisa_tekhsi_index.json"
+  },
+  {
+    "id": "conn_tekhsi_only_data",
+    "type": "backend_guide",
+    "tags": [
+      "tekhsi",
+      "data_only",
+      "not_scpi",
+      "fastframe",
+      "fastacq",
+      "backend_guide"
+    ],
+    "title": "TekHSI: Only for Waveform Data — FastFrame/FastAcq Only",
+    "body": "TekHSI is exclusively for high-speed waveform data transfer. It uses gRPC on port 5000. ONLY supported on MSO5/6, MSO5B/6B, DPO7K. NOT supported on DPO70k or older. Cannot send SCPI commands through TekHSI. For any instrument control, configuration, measurements, or screenshots, you MUST use PyVISA or tm_devices. TekHSI should only be chosen when: FastFrame mode, FastAcq mode, bulk waveform transfer (100M+ samples), real-time waveform streaming. In all other cases, PyVISA is sufficient for waveform data via CURVe?.",
+    "corpus": "pyvisa_tekhsi",
+    "source": "rag/corpus/pyvisa_tekhsi/pyvisa_tekhsi_index.json"
+  },
+  {
+    "id": "conn_hybrid_mixed",
+    "type": "backend_guide",
+    "tags": [
+      "hybrid",
+      "mixed",
+      "pyvisa_plus_tekhsi",
+      "simultaneous",
+      "backend_guide"
+    ],
+    "title": "Hybrid Backend: Mixed Operations — Same Workflow, Different Backends",
+    "body": "Hybrid mode combines PyVISA and TekHSI in a single workflow. PyVISA handles: configuration, trigger setup, measurements, screenshots, SCPI queries. TekHSI handles: fast waveform data acquisition. Both connections are active simultaneously to the same scope (different ports). In TekAutomate code generation: SCPI commands → scpi.write()/query(), TekHSI calls → scope.get_data(). Detection logic: commands with 'scope.' prefix (not .commands.) route to TekHSI; all other SCPI commands route to PyVISA. Only for MSO5/6 and DPO7K series. Overkill for simple automation — use PyVISA alone unless you need high-speed waveform streaming.",
+    "corpus": "pyvisa_tekhsi",
+    "source": "rag/corpus/pyvisa_tekhsi/pyvisa_tekhsi_index.json"
+  },
+  {
+    "id": "conn_transport_rules",
+    "type": "protocol_detail",
+    "tags": [
+      "transport",
+      "rules",
+      "readfile",
+      "visa_limitations",
+      "authoritative",
+      "protocol_detail"
+    ],
+    "title": "TekAutomate Transport Rules — READFILE Requires Raw Socket",
+    "body": "AUTHORITATIVE SPECIFICATION: Transport layers are NOT interchangeable. VISA enforces message-based completion rules; raw sockets allow stream-based reads. Rule 1: FILESYSTEM:READFILE is a raw binary stream — no SCPI header, no termination, no EOF marker. End-of-file implied by silence on TCP stream. VISA cannot determine when read is complete → mandatory raw socket. Rule 2: VISA timeouts are ERRORS, not EOF. Timeout discards partial data. This directly conflicts with Tek file streaming where timeout = end of data. Rule 3: HARDCopy:DATA? works over VISA INSTR (VXI-11/HiSLIP), NOT over VISA SOCKET. SAVE:IMAGe + READFILE works over raw socket, NOT over VISA. Rule 4: Mixed-transport is required — PyVISA for config/measurements, raw socket for screenshots/file transfers. Rule 5: AI agents must select transport per command, not per user preference.",
+    "corpus": "pyvisa_tekhsi",
+    "source": "rag/corpus/pyvisa_tekhsi/pyvisa_tekhsi_index.json"
+  },
+  {
+    "id": "conn_readfile_deep_dive",
+    "type": "protocol_detail",
+    "tags": [
+      "readfile",
+      "ieee488",
+      "non_compliant",
+      "binary_stream",
+      "eoi",
+      "protocol_detail"
+    ],
+    "title": "FILESYSTEM:READFILE — Non-IEEE 488.2 Binary Stream",
+    "body": "FILESYSTEM:READFILE is explicitly non-IEEE 488.2 compliant per Tektronix manual. Key facts: 1) It's a COMMAND that produces output (violates SCPI rule that only queries produce output), 2) Omits IEEE 488.2 block header (#<n><length><data>) — sends raw bytes only, 3) Newlines CAN appear in output data — not reliable terminators, 4) Output terminated only by EOI — raw sockets see this as silence/timeout, 5) Errors during data output may not be recognized. This is why: PyVISA read_raw() blocks forever (no framing), *OPC? after READFILE returns PNG garbage (UnicodeDecodeError), responses get misaligned (IDN returning PNG data). The ONLY robust solution: raw TCP socket + timeout-based EOF + PNG header realignment.",
+    "corpus": "pyvisa_tekhsi",
+    "source": "rag/corpus/pyvisa_tekhsi/pyvisa_tekhsi_index.json"
+  },
+  {
+    "id": "conn_generated_code_pattern",
+    "type": "connection_pattern",
+    "tags": [
+      "generated_code",
+      "devices_dict",
+      "cleanup",
+      "multi_device",
+      "connection_pattern"
+    ],
+    "title": "Connection Management in TekAutomate Generated Code",
+    "body": "TekAutomate generates Python code with a devices dictionary pattern. Each enabled device is connected based on its backend: tm_devices → DeviceManager(resource_string), tekhsi → tekhsi.connect(resource_string), pyvisa → rm.open_resource(resource_string). All connections stored in devices dict by alias. Commands reference devices: devices['scope1'].write('*RST'). Cleanup in finally block iterates devices and closes all. For hybrid mode: both scpi and scope variables exist simultaneously. Variable context maintained in context dict for saveAs values.\nimport pyvisa\n\ndevices = {}\ntry:\n    rm = pyvisa.ResourceManager()\n    \n    # Connect devices by alias\n    devices['scope'] = rm.open_resource('TCPIP::192.168.1.10::INSTR')\n    devices['scope'].timeout = 5000\n    \n    devices['smu'] = rm.open_resource('TCPIP::192.168.1.20::INSTR')\n    devices['smu'].timeout = 5000\n    \n    # Use by alias\n    devices['scope'].write('CH1:SCALE 1.0')\n    devices['smu'].write('SOURce:VOLTage 3.3')\n    \nexcept Exception as e:\n    print(f'Error: {e}')\n    raise\nfinally:\n    for alias, device in devices.items():\n        try:\n            device.close()\n        except:\n            pass",
+    "code": "import pyvisa\n\ndevices = {}\ntry:\n    rm = pyvisa.ResourceManager()\n    \n    # Connect devices by alias\n    devices['scope'] = rm.open_resource('TCPIP::192.168.1.10::INSTR')\n    devices['scope'].timeout = 5000\n    \n    devices['smu'] = rm.open_resource('TCPIP::192.168.1.20::INSTR')\n    devices['smu'].timeout = 5000\n    \n    # Use by alias\n    devices['scope'].write('CH1:SCALE 1.0')\n    devices['smu'].write('SOURce:VOLTage 3.3')\n    \nexcept Exception as e:\n    print(f'Error: {e}')\n    raise\nfinally:\n    for alias, device in devices.items():\n        try:\n            device.close()\n        except:\n            pass",
+    "corpus": "pyvisa_tekhsi",
+    "source": "rag/corpus/pyvisa_tekhsi/pyvisa_tekhsi_index.json"
+  },
+  {
+    "id": "conn_troubleshoot_screenshot_timeout",
+    "type": "troubleshooting",
+    "tags": [
+      "troubleshooting",
+      "screenshot",
+      "timeout",
+      "unicode_error",
+      "readfile",
+      "troubleshooting"
+    ],
+    "title": "Troubleshooting: Screenshot Returns Timeout or UnicodeDecodeError",
+    "body": "Problem 1: FILESYSTEM:READFILE timeout. Cause: PyVISA cannot handle unframed binary stream. Solution: Use raw socket with timeout-based EOF, or visalib.read() loop. Problem 2: UnicodeDecodeError: 'ascii' codec can't decode byte 0xe5. Cause: Using query('*OPC?') after READFILE — leftover PNG binary data in buffer interpreted as ASCII. Solution: Replace query('*OPC?') with time.sleep(1.0) after file operations. Problem 3: Corrupted PNG data. Cause: Pipeline not primed, stray ASCII before binary. Solution: Run all priming queries with *CLS between each. Problem 4: Connection refused on port 4000. Cause: Socket server disabled on scope. Solution: Enable in Utility > I/O > Socket Server. Problem 5: OSError access violation. Cause: READFILE called before save completed. Solution: Add time.sleep(1.0) after SAVE:IMAGE or HARDCOPY START.",
+    "corpus": "pyvisa_tekhsi",
+    "source": "rag/corpus/pyvisa_tekhsi/pyvisa_tekhsi_index.json"
+  },
+  {
+    "id": "conn_troubleshoot_tekexpress",
+    "type": "troubleshooting",
+    "tags": [
+      "troubleshooting",
+      "tekexpress",
+      "connection",
+      "socket",
+      "timeout",
+      "troubleshooting"
+    ],
+    "title": "Troubleshooting: TekExpress Connection and Execution Issues",
+    "body": "Problem 1: Connection refused on port 5000. Cause: TekExpress application not running. Solution: Start TekExpress on the scope/PC first. Problem 2: Test hangs in RUNNING state. Cause: Popup waiting for user response. Solution: Add popup handling in polling loop. Problem 3: TEKEXP:STATE? returns unexpected value. Cause: Multiple states possible (RUNNING, WAIT, ERROR, COMPLETE, DONE). Solution: Handle all states in polling loop. Problem 4: Timeout during long test. Cause: Default timeout too short. Solution: Set tekexp.timeout = 30000, and use polling loop with 300+ second total timeout. Problem 5: Raw socket code generated instead of PyVISA. Cause: Agent copied from socket example script. Solution: TekExpress MUST use PyVISA .write()/.query() — never socket.sendall().",
+    "corpus": "pyvisa_tekhsi",
+    "source": "rag/corpus/pyvisa_tekhsi/pyvisa_tekhsi_index.json"
+  },
+  {
+    "id": "conn_waveform_transfer_pyvisa",
+    "type": "connection_pattern",
+    "tags": [
+      "waveform",
+      "pyvisa",
+      "curve",
+      "binary",
+      "scaling",
+      "connection_pattern"
+    ],
+    "title": "Waveform Data Transfer via PyVISA — CURVe? with Binary Encoding",
+    "body": "Standard waveform transfer uses SCPI CURVe? query with binary encoding. Setup: DATa:SOUrce CH1, DATa:ENCdg SRIBinary (signed) or SRPBinary (unsigned), DATa:WIDth 1 (8-bit) or 2 (16-bit). Read scaling: WFMOutpre:YMUlt?, WFMOutpre:YOFf?, WFMOutpre:YZEro?, WFMOutpre:XINcr?. Fetch: query_binary_values('CURVe?', datatype='b', container=bytes). Scale: voltage = (raw - yoff) * ymult + yzero. Time: t[i] = i * xincr. For large waveforms (100M+ samples), raw socket is faster. For normal record lengths (<10M), PyVISA is fine.\n# Configure data transfer\nscope.write('DATa:SOUrce CH1')\nscope.write('DATa:ENCdg SRIBinary')\nscope.write('DATa:WIDth 1')\n\n# Get scaling\ny_mult = float(scope.query('WFMOutpre:YMUlt?'))\ny_off = float(scope.query('WFMOutpre:YOFf?'))\ny_zero = float(scope.query('WFMOutpre:YZEro?'))\nx_incr = float(scope.query('WFMOutpre:XINcr?'))\n\n# Fetch waveform\nraw = scope.query_binary_values('CURVe?', datatype='b', container=bytes)\n\n# Scale to voltage\nimport numpy as np\nraw_array = np.frombuffer(raw, dtype=np.int8)\nvoltage = (raw_array - y_off) * y_mult + y_zero\ntime_axis = np.arange(len(voltage)) * x_incr",
+    "code": "# Configure data transfer\nscope.write('DATa:SOUrce CH1')\nscope.write('DATa:ENCdg SRIBinary')\nscope.write('DATa:WIDth 1')\n\n# Get scaling\ny_mult = float(scope.query('WFMOutpre:YMUlt?'))\ny_off = float(scope.query('WFMOutpre:YOFf?'))\ny_zero = float(scope.query('WFMOutpre:YZEro?'))\nx_incr = float(scope.query('WFMOutpre:XINcr?'))\n\n# Fetch waveform\nraw = scope.query_binary_values('CURVe?', datatype='b', container=bytes)\n\n# Scale to voltage\nimport numpy as np\nraw_array = np.frombuffer(raw, dtype=np.int8)\nvoltage = (raw_array - y_off) * y_mult + y_zero\ntime_axis = np.arange(len(voltage)) * x_incr",
+    "corpus": "pyvisa_tekhsi",
+    "source": "rag/corpus/pyvisa_tekhsi/pyvisa_tekhsi_index.json"
+  },
+  {
+    "id": "conn_backend_compatibility_matrix",
+    "type": "backend_guide",
+    "tags": [
+      "compatibility",
+      "matrix",
+      "transport",
+      "device_support",
+      "backend_guide"
+    ],
+    "title": "Backend Compatibility Matrix — Transport × Device Support",
+    "body": "Backend compatibility matrix: PyVISA: TCP/IP ✅, Socket ✅, USB ✅, GPIB ✅, All devices ✅. tm_devices: TCP/IP ✅, Socket ❌, USB ✅, GPIB ✅, MSO2/4/5/6 ✅, DPO5K/7K ✅, AWG ✅, AFG ✅, PSU/SMU/DMM ✅. VXI-11: TCP/IP ✅, Socket ❌, USB ❌, GPIB ❌, All TCP devices ✅. TekHSI: Port 5000 only ✅, Socket ❌, USB ❌, GPIB ❌, MSO5/6+DPO7K only ✅. Hybrid: TCP/IP ✅, Socket ❌, USB ✅, GPIB ✅, MSO5/6+DPO7K only ✅. TekExpress: SOCKET port 5000 only ✅, uses PyVISA SOCKET backend. Per-device backend: each device in TekAutomate can have its own backend. Per-command override: individual commands can override device backend.",
+    "corpus": "pyvisa_tekhsi",
+    "source": "rag/corpus/pyvisa_tekhsi/pyvisa_tekhsi_index.json"
+  }
+]

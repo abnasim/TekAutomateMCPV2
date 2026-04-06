@@ -1,0 +1,669 @@
+{
+  "category": "Advanced",
+  "templates": [
+    {
+      "name": "Automated Measurements Suite (Legacy 5k/7k/70k)",
+      "description": "Setup and read multiple measurements with statistics - for MSO/DPO 5k, 7k, 70k series",
+      "backend": "pyvisa",
+      "deviceType": "SCOPE",
+      "commandSet": "MSO_DPO_5k_7k_70K",
+      "steps": [
+        {
+          "id": "1",
+          "type": "connect",
+          "label": "Connect",
+          "params": {}
+        },
+        {
+          "id": "2",
+          "type": "write",
+          "label": "Enable Statistics",
+          "params": {
+            "command": "MEASUrement:STATIstics:MODe ALL"
+          }
+        },
+        {
+          "id": "g1",
+          "type": "group",
+          "label": "Configure Measurements",
+          "params": {},
+          "collapsed": false,
+          "children": [
+            {
+              "id": "3",
+              "type": "write",
+              "label": "Meas1: Frequency",
+              "params": {
+                "command": "MEASUrement:MEAS1:TYPe FREQuency"
+              }
+            },
+            {
+              "id": "4",
+              "type": "write",
+              "label": "Meas1 Source",
+              "params": {
+                "command": "MEASUrement:MEAS1:SOUrce1 CH1"
+              }
+            },
+            {
+              "id": "5",
+              "type": "write",
+              "label": "Meas2: Amplitude",
+              "params": {
+                "command": "MEASUrement:MEAS2:TYPe AMPlitude"
+              }
+            },
+            {
+              "id": "6",
+              "type": "write",
+              "label": "Meas2 Source",
+              "params": {
+                "command": "MEASUrement:MEAS2:SOUrce1 CH1"
+              }
+            },
+            {
+              "id": "7",
+              "type": "write",
+              "label": "Meas3: Rise Time",
+              "params": {
+                "command": "MEASUrement:MEAS3:TYPe RISe"
+              }
+            },
+            {
+              "id": "8",
+              "type": "write",
+              "label": "Meas3 Source",
+              "params": {
+                "command": "MEASUrement:MEAS3:SOUrce1 CH1"
+              }
+            },
+            {
+              "id": "9",
+              "type": "write",
+              "label": "Meas4: Duty Cycle",
+              "params": {
+                "command": "MEASUrement:MEAS4:TYPe PDUty"
+              }
+            },
+            {
+              "id": "10",
+              "type": "write",
+              "label": "Meas4 Source",
+              "params": {
+                "command": "MEASUrement:MEAS4:SOUrce1 CH1"
+              }
+            }
+          ]
+        },
+        {
+          "id": "11",
+          "type": "write",
+          "label": "Single Acquisition",
+          "params": {
+            "command": "ACQuire:STOPAfter SEQUENCE"
+          }
+        },
+        {
+          "id": "12",
+          "type": "write",
+          "label": "Start",
+          "params": {
+            "command": "ACQuire:STATE ON"
+          }
+        },
+        {
+          "id": "13",
+          "type": "sleep",
+          "label": "Wait for Complete",
+          "params": {
+            "duration": 1.0
+          }
+        },
+        {
+          "id": "g2",
+          "type": "group",
+          "label": "Read All Results",
+          "params": {},
+          "collapsed": false,
+          "children": [
+            {
+              "id": "14",
+              "type": "query",
+              "label": "Read Frequency",
+              "params": {
+                "command": "MEASUrement:MEAS1:VALue?",
+                "saveAs": "frequency"
+              }
+            },
+            {
+              "id": "15",
+              "type": "query",
+              "label": "Read Amplitude",
+              "params": {
+                "command": "MEASUrement:MEAS2:VALue?",
+                "saveAs": "amplitude"
+              }
+            },
+            {
+              "id": "16",
+              "type": "query",
+              "label": "Read Rise Time",
+              "params": {
+                "command": "MEASUrement:MEAS3:VALue?",
+                "saveAs": "risetime"
+              }
+            },
+            {
+              "id": "17",
+              "type": "query",
+              "label": "Read Duty Cycle",
+              "params": {
+                "command": "MEASUrement:MEAS4:VALue?",
+                "saveAs": "duty"
+              }
+            }
+          ]
+        },
+        {
+          "id": "18",
+          "type": "disconnect",
+          "label": "Disconnect",
+          "params": {}
+        }
+      ]
+    },
+    {
+      "name": "FFT Spectrum Analysis",
+      "description": "Capture FFT spectrum with custom window",
+      "backend": "pyvisa",
+      "steps": [
+        {
+          "id": "1",
+          "type": "connect",
+          "label": "Connect",
+          "params": {}
+        },
+        {
+          "id": "g1",
+          "type": "group",
+          "label": "Configure FFT",
+          "params": {},
+          "collapsed": false,
+          "children": [
+            {
+              "id": "2",
+              "type": "write",
+              "label": "Enable Math1",
+              "params": {
+                "command": "DISplay:WAVEView1:MATH1:STATE ON"
+              }
+            },
+            {
+              "id": "3",
+              "type": "write",
+              "label": "Set FFT Type",
+              "params": {
+                "command": "MATH1:TYPe FFT"
+              }
+            },
+            {
+              "id": "4",
+              "type": "write",
+              "label": "FFT Source CH1",
+              "params": {
+                "command": "MATH1:SPECtral:SOUrce CH1"
+              }
+            },
+            {
+              "id": "5",
+              "type": "write",
+              "label": "Set Hanning Window",
+              "params": {
+                "command": "MATH1:SPECtral:WINdow HANning"
+              }
+            },
+            {
+              "id": "6",
+              "type": "write",
+              "label": "Set dB Display",
+              "params": {
+                "command": "MATH1:SPECtral:MAG DB"
+              }
+            }
+          ]
+        },
+        {
+          "id": "7",
+          "type": "write",
+          "label": "Single Acquisition",
+          "params": {
+            "command": "ACQuire:STOPAfter SEQUENCE;:ACQuire:STATE ON"
+          }
+        },
+        {
+          "id": "8",
+          "type": "sleep",
+          "label": "Wait",
+          "params": {
+            "duration": 1.0
+          }
+        },
+        {
+          "id": "9",
+          "type": "write",
+          "label": "Select FFT Data",
+          "params": {
+            "command": "DATa:SOUrce MATH1"
+          }
+        },
+        {
+          "id": "10",
+          "type": "save_waveform",
+          "label": "Save FFT Spectrum",
+          "params": {
+            "command": "CURVe?",
+            "filename": "fft_spectrum.bin"
+          }
+        },
+        {
+          "id": "11",
+          "type": "disconnect",
+          "label": "Disconnect",
+          "params": {}
+        }
+      ]
+    },
+    {
+      "name": "AWG Signal Generation",
+      "description": "Configure and start AWG output",
+      "backend": "pyvisa",
+      "steps": [
+        {
+          "id": "1",
+          "type": "connect",
+          "label": "Connect AWG",
+          "params": {}
+        },
+        {
+          "id": "2",
+          "type": "query",
+          "label": "Query IDN",
+          "params": {
+            "command": "*IDN?",
+            "saveAs": "idn"
+          }
+        },
+        {
+          "id": "g1",
+          "type": "group",
+          "label": "Configure Channel 1",
+          "params": {},
+          "collapsed": false,
+          "children": [
+            {
+              "id": "3",
+              "type": "write",
+              "label": "Load Sine Wave",
+              "params": {
+                "command": "SOURce1:WAVeform 'SINE'"
+              }
+            },
+            {
+              "id": "4",
+              "type": "write",
+              "label": "Set Frequency 1MHz",
+              "params": {
+                "command": "SOURce1:FREQuency 1e6"
+              }
+            },
+            {
+              "id": "5",
+              "type": "write",
+              "label": "Set Amplitude 1Vpp",
+              "params": {
+                "command": "SOURce1:VOLTage:AMPLitude 1.0"
+              }
+            },
+            {
+              "id": "6",
+              "type": "write",
+              "label": "Set Offset 0V",
+              "params": {
+                "command": "SOURce1:VOLTage:OFFSet 0.0"
+              }
+            },
+            {
+              "id": "7",
+              "type": "write",
+              "label": "Enable Output",
+              "params": {
+                "command": "OUTPut1:STATE ON"
+              }
+            }
+          ]
+        },
+        {
+          "id": "g2",
+          "type": "group",
+          "label": "Configure Channel 2",
+          "params": {},
+          "collapsed": false,
+          "children": [
+            {
+              "id": "8",
+              "type": "write",
+              "label": "Load Square Wave",
+              "params": {
+                "command": "SOURce2:WAVeform 'SQUARE'"
+              }
+            },
+            {
+              "id": "9",
+              "type": "write",
+              "label": "Set Frequency 500kHz",
+              "params": {
+                "command": "SOURce2:FREQuency 5e5"
+              }
+            },
+            {
+              "id": "10",
+              "type": "write",
+              "label": "Set Amplitude 2Vpp",
+              "params": {
+                "command": "SOURce2:VOLTage:AMPLitude 2.0"
+              }
+            },
+            {
+              "id": "11",
+              "type": "write",
+              "label": "Enable Output",
+              "params": {
+                "command": "OUTPut2:STATE ON"
+              }
+            }
+          ]
+        },
+        {
+          "id": "12",
+          "type": "write",
+          "label": "Start AWG",
+          "params": {
+            "command": "AWGControl:RUN"
+          }
+        },
+        {
+          "id": "13",
+          "type": "sleep",
+          "label": "Run for 10 seconds",
+          "params": {
+            "duration": 10.0
+          }
+        },
+        {
+          "id": "14",
+          "type": "write",
+          "label": "Stop AWG",
+          "params": {
+            "command": "AWGControl:STOP"
+          }
+        },
+        {
+          "id": "15",
+          "type": "disconnect",
+          "label": "Disconnect",
+          "params": {}
+        }
+      ]
+    },
+    {
+      "name": "Complete Validation Workflow (Legacy 5k/7k/70k)",
+      "description": "Full validation: setup, acquire, measure, validate, save - for MSO/DPO 5k, 7k, 70k series",
+      "backend": "pyvisa",
+      "deviceType": "SCOPE",
+      "commandSet": "MSO_DPO_5k_7k_70K",
+      "steps": [
+        {
+          "id": "1",
+          "type": "connect",
+          "label": "Connect",
+          "params": {}
+        },
+        {
+          "id": "2",
+          "type": "write",
+          "label": "Clear Status",
+          "params": {
+            "command": "*CLS"
+          }
+        },
+        {
+          "id": "g1",
+          "type": "group",
+          "label": "System Check",
+          "params": {},
+          "collapsed": false,
+          "children": [
+            {
+              "id": "3",
+              "type": "query",
+              "label": "Query IDN",
+              "params": {
+                "command": "*IDN?",
+                "saveAs": "idn"
+              }
+            },
+            {
+              "id": "4",
+              "type": "query",
+              "label": "Query Options",
+              "params": {
+                "command": "*OPT?",
+                "saveAs": "options"
+              }
+            },
+            {
+              "id": "5",
+              "type": "query",
+              "label": "Check Errors",
+              "params": {
+                "command": "ALLEV?",
+                "saveAs": "errors"
+              }
+            }
+          ]
+        },
+        {
+          "id": "g2",
+          "type": "group",
+          "label": "Configure Scope",
+          "params": {},
+          "collapsed": false,
+          "children": [
+            {
+              "id": "6",
+              "type": "write",
+              "label": "Stop Acquisition",
+              "params": {
+                "command": "ACQuire:STATE OFF"
+              }
+            },
+            {
+              "id": "7",
+              "type": "write",
+              "label": "Set Record Length",
+              "params": {
+                "command": "HORizontal:RECOrdlength 1000000"
+              }
+            },
+            {
+              "id": "8",
+              "type": "write",
+              "label": "Configure CH1",
+              "params": {
+                "command": "CH1:SCAle 1.0;:CH1:POSition 0"
+              }
+            },
+            {
+              "id": "9",
+              "type": "write",
+              "label": "Set Trigger",
+              "params": {
+                "command": "TRIGger:A:EDGE:SOUrce CH1;:TRIGger:A:LEVel:CH1 0.5"
+              }
+            }
+          ]
+        },
+        {
+          "id": "g3",
+          "type": "group",
+          "label": "Acquire Data",
+          "params": {},
+          "collapsed": false,
+          "children": [
+            {
+              "id": "10",
+              "type": "write",
+              "label": "Configure Data Transfer",
+              "params": {
+                "command": "DATa:SOUrce CH1;:DATa:ENC RIBinary;:DATa:WIDth 1"
+              }
+            },
+            {
+              "id": "11",
+              "type": "write",
+              "label": "Single Acquisition",
+              "params": {
+                "command": "ACQuire:STOPAfter SEQUENCE;:ACQuire:STATE ON"
+              }
+            },
+            {
+              "id": "12",
+              "type": "sleep",
+              "label": "Wait",
+              "params": {
+                "duration": 1.0
+              }
+            },
+            {
+              "id": "13",
+              "type": "query",
+              "label": "Wait Complete",
+              "params": {
+                "command": "*OPC?",
+                "saveAs": "_"
+              }
+            }
+          ]
+        },
+        {
+          "id": "g4",
+          "type": "group",
+          "label": "Measurements & Validation",
+          "params": {},
+          "collapsed": false,
+          "children": [
+            {
+              "id": "14",
+              "type": "write",
+              "label": "Add Frequency Meas",
+              "params": {
+                "command": "MEASUrement:MEAS1:TYPe FREQuency;:MEASUrement:MEAS1:SOUrce1 CH1"
+              }
+            },
+            {
+              "id": "15",
+              "type": "query",
+              "label": "Read Frequency",
+              "params": {
+                "command": "MEASUrement:MEAS1:VALue?",
+                "saveAs": "freq"
+              }
+            },
+            {
+              "id": "16",
+              "type": "write",
+              "label": "Add Amplitude Meas",
+              "params": {
+                "command": "MEASUrement:MEAS2:TYPe AMPlitude;:MEASUrement:MEAS2:SOUrce1 CH1"
+              }
+            },
+            {
+              "id": "17",
+              "type": "query",
+              "label": "Read Amplitude",
+              "params": {
+                "command": "MEASUrement:MEAS2:VALue?",
+                "saveAs": "amp"
+              }
+            }
+          ]
+        },
+        {
+          "id": "g5",
+          "type": "group",
+          "label": "Save Results",
+          "params": {},
+          "collapsed": false,
+          "children": [
+            {
+              "id": "18",
+              "type": "save_waveform",
+              "label": "Save Waveform",
+              "params": {
+                "command": "CURVe?",
+                "filename": "validation_waveform.bin"
+              }
+            },
+            {
+              "id": "19",
+              "type": "write",
+              "label": "Save Setup",
+              "params": {
+                "command": "SAVe:SETUp 'validation.set'"
+              }
+            },
+            {
+              "id": "20",
+              "type": "write",
+              "label": "Save Screen",
+              "params": {
+                "command": "HARDCopy:FORMat PNG;:HARDCopy:STARt"
+              }
+            },
+            {
+              "id": "21",
+              "type": "sleep",
+              "label": "Wait",
+              "params": {
+                "duration": 1.0
+              }
+            },
+            {
+              "id": "22",
+              "type": "save_screenshot",
+              "label": "Save Screen Image",
+              "params": {
+                "filename": "validation_screen.png",
+                "scopeType": "legacy"
+              }
+            }
+          ]
+        },
+        {
+          "id": "23",
+          "type": "error_check",
+          "label": "Final Error Check",
+          "params": {
+            "command": "ALLEV?"
+          }
+        },
+        {
+          "id": "24",
+          "type": "disconnect",
+          "label": "Disconnect",
+          "params": {}
+        }
+      ]
+    }
+  ]
+}

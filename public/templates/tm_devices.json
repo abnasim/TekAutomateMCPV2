@@ -1,0 +1,575 @@
+{
+  "category": "tm_devices",
+  "templates": [
+    {
+      "name": "DPOJET Analysis Suite",
+      "description": "Full DPOJET measurement workflow with plots",
+      "backend": "tm_devices",
+      "source": "tm_devices/examples/scopes/dpojet.py",
+      "steps": [
+        {
+          "id": "1",
+          "type": "connect",
+          "label": "Connect Scope",
+          "params": {}
+        },
+        {
+          "id": "2",
+          "type": "write",
+          "label": "Activate DPOJET",
+          "params": {
+            "command": "DPOJET:ACTIVATE"
+          }
+        },
+        {
+          "id": "3",
+          "type": "query",
+          "label": "DPOJET Version",
+          "params": {
+            "command": "DPOJET:VERSION?",
+            "saveAs": "version"
+          }
+        },
+        {
+          "id": "4",
+          "type": "write",
+          "label": "Clear All Measurements",
+          "params": {
+            "command": "DPOJET:CLEARALLMEAS"
+          }
+        },
+        {
+          "id": "g1",
+          "type": "group",
+          "label": "Add Measurements",
+          "params": {},
+          "collapsed": false,
+          "children": [
+            {
+              "id": "5",
+              "type": "write",
+              "label": "Add Period",
+              "params": {
+                "command": "DPOJET:ADDMEAS Period"
+              }
+            },
+            {
+              "id": "6",
+              "type": "write",
+              "label": "Add Duty Cycle",
+              "params": {
+                "command": "DPOJET:ADDMEAS Pduty"
+              }
+            },
+            {
+              "id": "7",
+              "type": "write",
+              "label": "Add Rise Time",
+              "params": {
+                "command": "DPOJET:ADDMEAS RiseTime"
+              }
+            },
+            {
+              "id": "8",
+              "type": "write",
+              "label": "Add AC RMS",
+              "params": {
+                "command": "DPOJET:ADDMEAS acrms"
+              }
+            }
+          ]
+        },
+        {
+          "id": "g2",
+          "type": "group",
+          "label": "Add Plots",
+          "params": {},
+          "collapsed": false,
+          "children": [
+            {
+              "id": "9",
+              "type": "write",
+              "label": "Spectrum Plot",
+              "params": {
+                "command": "DPOJET:ADDPLOT spectrum,MEAS1"
+              }
+            },
+            {
+              "id": "10",
+              "type": "write",
+              "label": "Data Array Plot",
+              "params": {
+                "command": "DPOJET:ADDPLOT dataarray,MEAS2"
+              }
+            },
+            {
+              "id": "11",
+              "type": "write",
+              "label": "Time Trend Plot",
+              "params": {
+                "command": "DPOJET:ADDPLOT TimeTrend,MEAS3"
+              }
+            },
+            {
+              "id": "12",
+              "type": "write",
+              "label": "Histogram Plot",
+              "params": {
+                "command": "DPOJET:ADDPLOT histogram,MEAS4"
+              }
+            }
+          ]
+        },
+        {
+          "id": "13",
+          "type": "write",
+          "label": "Start Single Measurement",
+          "params": {
+            "command": "DPOJET:STATE SINGLE"
+          }
+        },
+        {
+          "id": "g3",
+          "type": "group",
+          "label": "Read Results",
+          "params": {},
+          "collapsed": false,
+          "children": [
+            {
+              "id": "14",
+              "type": "query",
+              "label": "MEAS1 Max",
+              "params": {
+                "command": "DPOJET:MEAS1:RESUlts:CURRentacq:MAX?",
+                "saveAs": "meas1_max"
+              }
+            },
+            {
+              "id": "15",
+              "type": "query",
+              "label": "MEAS1 Population",
+              "params": {
+                "command": "DPOJET:MEAS1:RESUlts:CURRentacq:POPUlation?",
+                "saveAs": "meas1_pop"
+              }
+            }
+          ]
+        },
+        {
+          "id": "16",
+          "type": "write",
+          "label": "Save All Plots",
+          "params": {
+            "command": "DPOJET:SAVEALLPLOTS"
+          }
+        },
+        {
+          "id": "17",
+          "type": "write",
+          "label": "Enable Waveforms in Report",
+          "params": {
+            "command": "DPOJET:REPORT:SAVEWaveforms 1"
+          }
+        },
+        {
+          "id": "18",
+          "type": "write",
+          "label": "Execute Report",
+          "params": {
+            "command": "DPOJET:REPORT EXECUTE"
+          }
+        },
+        {
+          "id": "19",
+          "type": "disconnect",
+          "label": "Disconnect",
+          "params": {}
+        }
+      ]
+    },
+    {
+      "name": "Multi-Channel Validation",
+      "description": "Capture and validate multiple channels with statistics",
+      "backend": "tm_devices",
+      "steps": [
+        {
+          "id": "1",
+          "type": "connect",
+          "label": "Connect",
+          "params": {}
+        },
+        {
+          "id": "2",
+          "type": "write",
+          "label": "Stop Acquisition",
+          "params": {
+            "command": "ACQuire:STATE OFF"
+          }
+        },
+        {
+          "id": "g1",
+          "type": "group",
+          "label": "Configure All Channels",
+          "params": {},
+          "collapsed": false,
+          "children": [
+            {
+              "id": "3",
+              "type": "write",
+              "label": "Enable CH1",
+              "params": {
+                "command": "DISplay:WAVEView1:CH1:STATE ON"
+              }
+            },
+            {
+              "id": "4",
+              "type": "write",
+              "label": "CH1 Scale 1V",
+              "params": {
+                "command": "CH1:SCAle 1.0"
+              }
+            },
+            {
+              "id": "5",
+              "type": "write",
+              "label": "Enable CH2",
+              "params": {
+                "command": "DISplay:WAVEView1:CH2:STATE ON"
+              }
+            },
+            {
+              "id": "6",
+              "type": "write",
+              "label": "CH2 Scale 2V",
+              "params": {
+                "command": "CH2:SCAle 2.0"
+              }
+            },
+            {
+              "id": "7",
+              "type": "write",
+              "label": "Enable CH3",
+              "params": {
+                "command": "DISplay:WAVEView1:CH3:STATE ON"
+              }
+            },
+            {
+              "id": "8",
+              "type": "write",
+              "label": "CH3 Scale 500mV",
+              "params": {
+                "command": "CH3:SCAle 0.5"
+              }
+            },
+            {
+              "id": "9",
+              "type": "write",
+              "label": "Enable CH4",
+              "params": {
+                "command": "DISplay:WAVEView1:CH4:STATE ON"
+              }
+            },
+            {
+              "id": "10",
+              "type": "write",
+              "label": "CH4 Scale 5V",
+              "params": {
+                "command": "CH4:SCAle 5.0"
+              }
+            }
+          ]
+        },
+        {
+          "id": "11",
+          "type": "write",
+          "label": "Set Record Length",
+          "params": {
+            "command": "HORizontal:RECOrdlength 500000"
+          }
+        },
+        {
+          "id": "12",
+          "type": "write",
+          "label": "Configure Data Format",
+          "params": {
+            "command": "DATa:ENCdg RIBinary;:DATa:WIDth 1"
+          }
+        },
+        {
+          "id": "13",
+          "type": "write",
+          "label": "Start Acquisition",
+          "params": {
+            "command": "ACQuire:STATE ON"
+          }
+        },
+        {
+          "id": "14",
+          "type": "sleep",
+          "label": "Wait",
+          "params": {
+            "duration": 0.5
+          }
+        },
+        {
+          "id": "15",
+          "type": "write",
+          "label": "Stop",
+          "params": {
+            "command": "ACQuire:STATE OFF"
+          }
+        },
+        {
+          "id": "g2",
+          "type": "group",
+          "label": "Save All Channels",
+          "params": {},
+          "collapsed": false,
+          "children": [
+            {
+              "id": "16",
+              "type": "write",
+              "label": "Select CH1",
+              "params": {
+                "command": "DATa:SOUrce CH1"
+              }
+            },
+            {
+              "id": "17",
+              "type": "save_waveform",
+              "label": "Save CH1",
+              "params": {
+                "command": "CURVe?",
+                "filename": "ch1.bin"
+              }
+            },
+            {
+              "id": "18",
+              "type": "write",
+              "label": "Select CH2",
+              "params": {
+                "command": "DATa:SOUrce CH2"
+              }
+            },
+            {
+              "id": "19",
+              "type": "save_waveform",
+              "label": "Save CH2",
+              "params": {
+                "command": "CURVe?",
+                "filename": "ch2.bin"
+              }
+            },
+            {
+              "id": "20",
+              "type": "write",
+              "label": "Select CH3",
+              "params": {
+                "command": "DATa:SOUrce CH3"
+              }
+            },
+            {
+              "id": "21",
+              "type": "save_waveform",
+              "label": "Save CH3",
+              "params": {
+                "command": "CURVe?",
+                "filename": "ch3.bin"
+              }
+            },
+            {
+              "id": "22",
+              "type": "write",
+              "label": "Select CH4",
+              "params": {
+                "command": "DATa:SOUrce CH4"
+              }
+            },
+            {
+              "id": "23",
+              "type": "save_waveform",
+              "label": "Save CH4",
+              "params": {
+                "command": "CURVe?",
+                "filename": "ch4.bin"
+              }
+            }
+          ]
+        },
+        {
+          "id": "24",
+          "type": "disconnect",
+          "label": "Disconnect",
+          "params": {}
+        }
+      ]
+    },
+    {
+      "name": "DPOJET Analysis (High-Level API)",
+      "description": "Complete DPOJET using tm_devices Python API",
+      "backend": "tm_devices",
+      "deviceType": "SCOPE",
+      "deviceDriver": "MSO70KDX",
+      "steps": [
+        {
+          "id": "1",
+          "type": "write",
+          "label": "Activate DPOJET",
+          "params": { "command": "scope.commands.dpojet.activate.write()" }
+        },
+        {
+          "id": "2",
+          "type": "query",
+          "label": "Get DPOJET Version",
+          "params": { 
+            "command": "scope.commands.dpojet.version.query()",
+            "saveAs": "version"
+          }
+        },
+        {
+          "id": "3",
+          "type": "write",
+          "label": "Clear All Measurements",
+          "params": { "command": "scope.commands.dpojet.clearallmeas.write()" }
+        },
+        {
+          "id": "4",
+          "type": "write",
+          "label": "Add Period Measurement",
+          "params": { "command": "scope.commands.dpojet.addmeas.write(\"Period\")" }
+        },
+        {
+          "id": "5",
+          "type": "write",
+          "label": "Add Duty Cycle Measurement",
+          "params": { "command": "scope.commands.dpojet.addmeas.write(\"Pduty\")" }
+        },
+        {
+          "id": "6",
+          "type": "write",
+          "label": "Add Rise Time Measurement",
+          "params": { "command": "scope.commands.dpojet.addmeas.write(\"RiseTime\")" }
+        },
+        {
+          "id": "7",
+          "type": "write",
+          "label": "Add AC RMS Measurement",
+          "params": { "command": "scope.commands.dpojet.addmeas.write(\"acrms\")" }
+        },
+        {
+          "id": "8",
+          "type": "write",
+          "label": "Add Spectrum Plot",
+          "params": { "command": "scope.commands.dpojet.addplot.write(\"spectrum, MEAS1\")" }
+        },
+        {
+          "id": "9",
+          "type": "write",
+          "label": "Add Data Array Plot",
+          "params": { "command": "scope.commands.dpojet.addplot.write(\"dataarray, MEAS2\")" }
+        },
+        {
+          "id": "10",
+          "type": "write",
+          "label": "Add Time Trend Plot",
+          "params": { "command": "scope.commands.dpojet.addplot.write(\"TimeTrend, MEAS3\")" }
+        },
+        {
+          "id": "11",
+          "type": "write",
+          "label": "Add Histogram Plot",
+          "params": { "command": "scope.commands.dpojet.addplot.write(\"histogram, MEAS4\")" }
+        },
+        {
+          "id": "12",
+          "type": "write",
+          "label": "Start Single Measurement",
+          "params": { "command": "scope.commands.dpojet.state.write(\"single\")" }
+        },
+        {
+          "id": "13",
+          "type": "query",
+          "label": "Get MEAS1 Max Value",
+          "params": { 
+            "command": "scope.commands.dpojet.meas[1].results.currentacq.max.query()",
+            "saveAs": "meas1_max"
+          }
+        },
+        {
+          "id": "14",
+          "type": "query",
+          "label": "Get MEAS1 Population",
+          "params": { 
+            "command": "scope.commands.dpojet.meas[1].results.currentacq.population.query()",
+            "saveAs": "meas1_population"
+          }
+        },
+        {
+          "id": "15",
+          "type": "write",
+          "label": "Save All Plots",
+          "params": { "command": "scope.commands.dpojet.saveallplots.write()" }
+        },
+        {
+          "id": "16",
+          "type": "write",
+          "label": "Enable Report Waveforms",
+          "params": { "command": "scope.commands.dpojet.report.savewaveforms.write(\"1\")" }
+        },
+        {
+          "id": "17",
+          "type": "write",
+          "label": "Execute Report",
+          "params": { "command": "scope.commands.dpojet.report.write(\"EXECUTE\")" }
+        }
+      ]
+    },
+    {
+      "name": "Screenshot Examples (Newer Scopes)",
+      "description": "Various screenshot capture methods with tm_devices",
+      "backend": "tm_devices",
+      "deviceType": "SCOPE",
+      "deviceDriver": "MSO6B",
+      "steps": [
+        {
+          "id": "1",
+          "type": "write",
+          "label": "Add MATH Channel",
+          "params": { "command": "scope.add_new_math(\"MATH1\", \"CH1\")" }
+        },
+        {
+          "id": "2",
+          "type": "write",
+          "label": "Turn On CH2",
+          "params": { "command": "scope.turn_channel_on(\"CH2\")" }
+        },
+        {
+          "id": "3",
+          "type": "write",
+          "label": "Set Horizontal Scale",
+          "params": { "command": "scope.set_and_check(\":HORIZONTAL:SCALE\", 100e-9)" }
+        },
+        {
+          "id": "4",
+          "type": "write",
+          "label": "Screenshot - Timestamped",
+          "params": { "command": "scope.save_screenshot()" }
+        },
+        {
+          "id": "5",
+          "type": "write",
+          "label": "Screenshot - Named",
+          "params": { "command": "scope.save_screenshot(\"example.png\")" }
+        },
+        {
+          "id": "6",
+          "type": "write",
+          "label": "Screenshot - Advanced Options",
+          "params": { 
+            "command": "scope.save_screenshot(\"example.jpg\", colors=\"INVERTED\", local_folder=\"./images\", device_folder=\"./device_folder\", keep_device_file=True)" 
+          }
+        }
+      ]
+    }
+  ]
+}

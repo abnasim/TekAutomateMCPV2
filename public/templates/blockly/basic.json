@@ -1,0 +1,22 @@
+{
+  "category": "Basic",
+  "builderType": "blockly",
+  "templates": [
+    {
+      "name": "Basic Scope Setup & Waveform",
+      "description": "Connect to scope, configure channel, capture single acquisition, save waveform to CSV",
+      "backend": "pyvisa",
+      "deviceType": "SCOPE",
+      "builderType": "blockly",
+      "xml": "<xml xmlns=\"https://developers.google.com/blockly/xml\">\n  <variables></variables>\n\n  <block type=\"connect_scope\" id=\"c1\" x=\"20\" y=\"20\">\n    <mutation show_advanced=\"false\" current_backend=\"pyvisa\" current_dev_type=\"SCOPE\" current_conn_type=\"INSTR\" host=\"192.168.1.100\"></mutation>\n    <field name=\"DEVICE_NAME\">scope</field>\n    <field name=\"BACKEND\">pyvisa</field>\n    <next>\n      <block type=\"set_device_context\" id=\"ctx1\">\n        <mutation device=\"scope\"></mutation>\n        <field name=\"DEVICE\">scope</field>\n        <next>\n          <block type=\"enable_channel\" id=\"ch1_en\">\n            <field name=\"CHANNEL\">CH1</field>\n            <field name=\"STATE\">ON</field>\n            <next>\n              <block type=\"configure_channel\" id=\"ch1_cfg\">\n                <field name=\"CHANNEL\">CH1</field>\n                <field name=\"SCALE\">1.0</field>\n                <field name=\"OFFSET\">0.0</field>\n                <field name=\"COUPLING\">DC</field>\n                <field name=\"TERMINATION\">ONEMEG</field>\n                <next>\n                  <block type=\"scpi_write\" id=\"hor_scale\">\n                    <field name=\"DEVICE_CONTEXT\">(scope)</field>\n                    <field name=\"COMMAND\">HORizontal:SCAle 1e-6</field>\n                    <next>\n                      <block type=\"acquisition_reset\" id=\"acq_rst\">\n                        <field name=\"DEVICE_CONTEXT\">(scope)</field>\n                        <next>\n                          <block type=\"single_acquisition\" id=\"acq_single\">\n                            <next>\n                              <block type=\"wait_for_opc\" id=\"opc1\">\n                                <field name=\"DEVICE_CONTEXT\">(scope)</field>\n                                <field name=\"TIMEOUT\">10</field>\n                                <next>\n                                  <block type=\"save_waveform\" id=\"save_wf1\">\n                                    <mutation></mutation>\n                                    <field name=\"DEVICE_CONTEXT\">(scope)</field>\n                                    <field name=\"SOURCE\">CH1</field>\n                                    <field name=\"FILENAME\">ch1.csv</field>\n                                    <field name=\"FORMAT\">CSV</field>\n                                    <next>\n                                      <block type=\"disconnect\" id=\"d1\">\n                                        <field name=\"DEVICE_CONTEXT\">(scope)</field>\n                                      </block>\n                                    </next>\n                                  </block>\n                                </next>\n                              </block>\n                            </next>\n                          </block>\n                        </next>\n                      </block>\n                    </next>\n                  </block>\n                </next>\n              </block>\n            </next>\n          </block>\n        </next>\n      </block>\n    </next>\n  </block>\n</xml>"
+    },
+    {
+      "name": "Hello Scope (Blockly)",
+      "description": "Simple connect, query IDN, and disconnect using Blockly blocks",
+      "backend": "pyvisa",
+      "deviceType": "SCOPE",
+      "builderType": "blockly",
+      "xml": "<xml xmlns=\"https://developers.google.com/blockly/xml\">\n  <variables></variables>\n  <block type=\"connect_scope\" id=\"c1\" x=\"20\" y=\"20\">\n    <mutation show_advanced=\"false\" current_backend=\"pyvisa\" current_dev_type=\"SCOPE\" current_conn_type=\"INSTR\" host=\"192.168.1.100\"></mutation>\n    <field name=\"DEVICE_NAME\">scope</field>\n    <field name=\"BACKEND\">pyvisa</field>\n    <next>\n      <block type=\"scpi_query\" id=\"q1\">\n        <field name=\"DEVICE_CONTEXT\">(scope)</field>\n        <field name=\"COMMAND\">*IDN?</field>\n        <field name=\"VARIABLE\">idn</field>\n        <next>\n          <block type=\"disconnect\" id=\"d1\">\n            <field name=\"DEVICE_CONTEXT\">(scope)</field>\n          </block>\n        </next>\n      </block>\n    </next>\n  </block>\n</xml>"
+    }
+  ]
+}

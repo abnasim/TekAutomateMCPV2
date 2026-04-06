@@ -1,0 +1,250 @@
+{
+  "category": "TekHSI",
+  "templates": [
+    {
+      "name": "PyVISA + TekHSI Hybrid",
+      "description": "Command & control using PyVISA and waveform data via TekHSI",
+      "backend": "hybrid",
+      "source": "TekHSI/examples/hybrid_pyvisa.py",
+      "steps": [
+        {
+          "id": "1",
+          "type": "query",
+          "label": "Identify Instrument",
+          "params": {
+            "command": "*IDN?",
+            "saveAs": "idn"
+          }
+        },
+        {
+          "id": "2",
+          "type": "write",
+          "label": "Hide Waveform",
+          "params": {
+            "command": "DISPlay:WAVEform OFF"
+          }
+        },
+        {
+          "id": "3",
+          "type": "write",
+          "label": "Manual Timebase",
+          "params": {
+            "command": "HOR:MODE MAN"
+          }
+        },
+        {
+          "id": "4",
+          "type": "write",
+          "label": "Record Length",
+          "params": {
+            "command": "HOR:MODE:RECO 2500"
+          }
+        },
+        {
+          "id": "5",
+          "type": "python",
+          "label": "Stream Loop",
+          "params": {
+            "code": "for i in range(10):\n    with scope.access_data():\n        waveform = scope.get_data('ch1')\n        print(f\"{waveform.source_name}_{i}:{waveform.record_length}\")"
+          }
+        },
+        {
+          "id": "6",
+          "type": "write",
+          "label": "Show Waveform",
+          "params": {
+            "command": "DISPlay:WAVEform ON"
+          }
+        },
+        {
+          "id": "7",
+          "type": "disconnect",
+          "label": "Disconnect",
+          "params": {}
+        }
+      ]
+    },
+    {
+      "name": "tm_devices + TekHSI Hybrid",
+      "description": "Command & control using tm_devices and waveform data via TekHSI",
+      "backend": "hybrid",
+      "source": "TekHSI/examples/hybrid_tm_devices.py",
+      "deviceType": "SCOPE",
+      "steps": [
+        {
+          "id": "1",
+          "type": "query",
+          "label": "Identify Instrument",
+          "params": {
+            "command": "scope.commands.idn.query()",
+            "saveAs": "idn"
+          }
+        },
+        {
+          "id": "2",
+          "type": "write",
+          "label": "Hide Waveform",
+          "params": {
+            "command": "scope.commands.display.waveform.write('OFF')"
+          }
+        },
+        {
+          "id": "3",
+          "type": "write",
+          "label": "Manual Timebase",
+          "params": {
+            "command": "scope.commands.horizontal.mode.write('MAN')"
+          }
+        },
+        {
+          "id": "4",
+          "type": "write",
+          "label": "Record Length",
+          "params": {
+            "command": "scope.commands.horizontal.mode.recordlength.write('2500')"
+          }
+        },
+        {
+          "id": "5",
+          "type": "python",
+          "label": "Stream Loop",
+          "params": {
+            "code": "for i in range(10):\n    with scope.access_data():\n        waveform = scope.get_data('ch1')\n        print(f\"{waveform.source_name}_{i}:{waveform.record_length}\")"
+          }
+        },
+        {
+          "id": "6",
+          "type": "write",
+          "label": "Show Waveform",
+          "params": {
+            "command": "scope.commands.display.waveform.write('ON')"
+          }
+        },
+        {
+          "id": "7",
+          "type": "disconnect",
+          "label": "Disconnect",
+          "params": {}
+        }
+      ]
+    },
+    {
+      "name": "TekHSI Standalone with Plotting",
+      "description": "Pure TekHSI waveform capture and plotting with matplotlib",
+      "backend": "tekhsi",
+      "source": "TekHSI/examples/plotting.py",
+      "steps": [
+        {
+          "id": "1",
+          "type": "connect",
+          "label": "Connect via TekHSI gRPC",
+          "params": {}
+        },
+        {
+          "id": "2",
+          "type": "python",
+          "label": "Import matplotlib",
+          "params": {
+            "code": "import matplotlib.pyplot as plt"
+          }
+        },
+        {
+          "id": "3",
+          "type": "python",
+          "label": "Get Waveform Data",
+          "params": {
+            "code": "with scope.access_data():\n    waveform = scope.get_data('ch1')"
+          }
+        },
+        {
+          "id": "4",
+          "type": "python",
+          "label": "Extract Data Arrays",
+          "params": {
+            "code": "vd = waveform.normalized_vertical_values\nhd = waveform.normalized_horizontal_values"
+          }
+        },
+        {
+          "id": "5",
+          "type": "python",
+          "label": "Plot Waveform",
+          "params": {
+            "code": "_, ax = plt.subplots()\nax.plot(hd, vd)\nax.set(xlabel=waveform.x_axis_units, ylabel=waveform.y_axis_units, title=\"Simple Plot\")\nplt.show()"
+          }
+        },
+        {
+          "id": "6",
+          "type": "disconnect",
+          "label": "Disconnect",
+          "params": {}
+        }
+      ]
+    },
+    {
+      "name": "TekHSI Streaming Acquisition",
+      "description": "Stream multiple waveforms efficiently",
+      "backend": "tekhsi",
+      "source": "TekHSI/examples/streaming.py",
+      "steps": [
+        {
+          "id": "1",
+          "type": "connect",
+          "label": "Connect via gRPC",
+          "params": {}
+        },
+        {
+          "id": "2",
+          "type": "python",
+          "label": "Stream 1000 Waveforms",
+          "params": {
+            "code": "for wf in scope.stream_waveforms('ch1', count=1000):\n    process_waveform(wf)"
+          }
+        },
+        {
+          "id": "3",
+          "type": "disconnect",
+          "label": "Disconnect",
+          "params": {}
+        }
+      ]
+    },
+    {
+      "name": "TekHSI CSV Capture Loop",
+      "description": "Capture 10 acquisitions on CH1 and save to CSV files",
+      "backend": "tekhsi",
+      "source": "TekHSI/examples/save_waveform.py",
+      "steps": [
+        {
+          "id": "1",
+          "type": "python",
+          "label": "Import writer",
+          "params": {
+            "code": "from tm_data_types import write_file"
+          }
+        },
+        {
+          "id": "2",
+          "type": "python",
+          "label": "Select Channels",
+          "params": {
+            "code": "scope.select_channels(['ch1'])"
+          }
+        },
+        {
+          "id": "3",
+          "type": "python",
+          "label": "Capture Loop",
+          "params": {
+            "code": "for i in range(10):\n    with scope.access_data():\n        wf = scope.get_data('ch1')\n    write_file(f\"CH1_{i}.csv\", wf)"
+          }
+        },
+        {
+          "id": "4",
+          "type": "disconnect",
+          "label": "Disconnect",
+          "params": {}
+        }
+      ]
+    }
+  ]
+}

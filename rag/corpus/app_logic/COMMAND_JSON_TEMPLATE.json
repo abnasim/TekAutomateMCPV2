@@ -1,0 +1,162 @@
+{
+  "_comment": "Complete JSON Template for SCPI Command Entry",
+  "_description": "This template shows all possible fields for a command entry in mso_commands.json",
+  
+  "id": "command_unique_id",
+  "category": "acquisition",
+  "scpi": "ACQuire:SEQuence:NUMSEQuence",
+  "header": "ACQuire:SEQuence:NUMSEQuence",
+  "mnemonics": ["ACQuire", "SEQuence", "NUMSEQuence"],
+  "commandType": "both",
+  "shortDescription": "Set or query number of acquisitions in sequence",
+  "description": "In single sequence acquisition mode, specify the number of acquisitions or measurements that comprise the sequence. The default is 1. This command sets or queries how many acquisitions will be performed before stopping.",
+  
+  "instruments": {
+    "families": ["MSO4", "MSO5", "MSO6", "MSO7"],
+    "models": ["MSO4XB", "MSO5XB", "MSO6XB", "MSO58LP", "LPD64"],
+    "exclusions": []
+  },
+  
+  "arguments": [
+    {
+      "name": "numAcqs",
+      "type": "numeric",
+      "required": true,
+      "position": 0,
+      "description": "The number of acquisitions or measurements that comprise the sequence",
+      "validValues": {
+        "type": "numeric",
+        "format": "NR1",
+        "min": 1,
+        "max": 10000,
+        "unit": "acquisitions",
+        "increment": 1,
+        "default": 1,
+        "notes": "Must be a positive integer"
+      },
+      "defaultValue": 1
+    }
+  ],
+  
+  "queryResponse": {
+    "type": "numeric",
+    "format": "NR1",
+    "description": "Returns the number of acquisitions in a sequence",
+    "example": "1",
+    "unit": "acquisitions"
+  },
+  
+  "syntax": {
+    "set": "ACQuire:SEQuence:NUMSEQuence <NR1>",
+    "query": "ACQuire:SEQuence:NUMSEQuence?",
+    "argumentType": "NR1",
+    "description": "NR1 is the number of acquisitions or measurements that comprise the sequence"
+  },
+  
+  "codeExamples": [
+    {
+      "description": "Set sequence to 2 acquisitions",
+      "codeExamples": {
+        "scpi": {
+          "code": "ACQuire:SEQuence:NUMSEQuence 2",
+          "library": "SCPI",
+          "description": "Raw SCPI command to set sequence to 2 acquisitions"
+        },
+        "python": {
+          "code": "scope.write('ACQuire:SEQuence:NUMSEQuence 2')",
+          "library": "PyVISA",
+          "description": "Set sequence using PyVISA"
+        },
+        "tm_devices": {
+          "code": "scope.commands.acquire.sequence.numsequence.write(2)",
+          "library": "tm_devices",
+          "description": "Set sequence using tm_devices library"
+        }
+      },
+      "result": null,
+      "resultDescription": "Sequence set to 2 acquisitions"
+    },
+    {
+      "description": "Query current sequence number",
+      "codeExamples": {
+        "scpi": {
+          "code": "ACQuire:SEQuence:NUMSEQuence?",
+          "library": "SCPI",
+          "description": "Raw SCPI query"
+        },
+        "python": {
+          "code": "num = scope.query('ACQuire:SEQuence:NUMSEQuence?')",
+          "library": "PyVISA",
+          "description": "Query sequence number using PyVISA"
+        },
+        "tm_devices": {
+          "code": "num = scope.commands.acquire.sequence.numsequence.query()",
+          "library": "tm_devices",
+          "description": "Query sequence number using tm_devices"
+        }
+      },
+      "result": "1",
+      "resultDescription": "Returns the current sequence number, e.g., '1' indicating sequence is set to 1 acquisition"
+    },
+    {
+      "description": "Query sequence mode (shows related command usage)",
+      "codeExamples": {
+        "scpi": {
+          "code": "ACQuire:SEQuence:MODe?",
+          "library": "SCPI",
+          "description": "Query sequence mode - might return :ACQUIRE:SEQUENCE:MODE NUMACQS"
+        },
+        "python": {
+          "code": "mode = scope.query('ACQuire:SEQuence:MODe?')",
+          "library": "PyVISA",
+          "description": "Query sequence mode"
+        }
+      },
+      "result": ":ACQUIRE:SEQUENCE:MODE NUMACQS",
+      "resultDescription": "Returns sequence mode indicating the acquisition sequence mode is set to NUMACQS"
+    }
+  ],
+  
+  "relatedCommands": [
+    "ACQuire:SEQuence:MODe",
+    "ACQuire:SEQuence:CURrent?",
+    "ACQuire:STOPAfter",
+    "ACQuire:MODe"
+  ],
+  
+  "manualReference": {
+    "section": "Acquisition Commands",
+    "page": 164,
+    "subsection": "ACQuire:SEQuence:NUMSEQuence"
+  },
+  
+  "notes": [
+    "Default value is 1",
+    "Only applies in single sequence acquisition mode",
+    "Sequence stops after specified number of acquisitions",
+    "Related to ACQuire:SEQuence:MODe command"
+  ],
+  
+  "backwardCompatibility": {
+    "legacyCommands": [],
+    "notes": "No backward compatibility issues"
+  },
+  
+  "dynamicActivation": {
+    "implicitlyActivates": false,
+    "createsObject": null,
+    "defaultType": null,
+    "notes": "Does not create new objects"
+  },
+  
+  "concatenation": {
+    "canConcatenate": true,
+    "requiresColon": true,
+    "example": "ACQuire:MODe SAMple;:ACQuire:SEQuence:NUMSEQuence 2"
+  },
+  
+  "commandGroup": "Acquisition",
+  "subGroup": "Sequence"
+}
+
+

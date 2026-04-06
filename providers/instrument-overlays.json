@@ -1,0 +1,53 @@
+[
+  {
+    "id": "afg-burst-setup",
+    "name": "AFG Burst Setup",
+    "description": "Configure a simple burst-mode setup for an AFG workflow that is not part of the standalone command sample set.",
+    "triggers": ["afg burst", "burst setup", "function generator burst"],
+    "tags": ["afg", "burst", "instrument", "overlay"],
+    "author": "Abdul / Lab Team",
+    "version": "1.0",
+    "tested": true,
+    "match": {
+      "keywords": [
+        "afg burst",
+        "burst setup",
+        "burst mode setup",
+        "function generator burst"
+      ],
+      "operations": [
+        "burst mode",
+        "cycle count",
+        "trigger source"
+      ],
+      "backends": ["pyvisa"],
+      "deviceTypes": ["AFG"],
+      "priority": 4,
+      "minScore": 0.75
+    },
+    "category": "instrument",
+    "handlerRef": "echo_args",
+    "handlerConfig": {
+      "text": "AFG burst overlay received args.",
+      "data": {
+        "checks": ["burst mode", "trigger source", "cycle count"]
+      }
+    }
+  },
+  {
+    "id": "afg-safe-output-check",
+    "name": "AFG Safe Output Check",
+    "description": "Run a lightweight preflight check before enabling AFG output in a manual workflow.",
+    "triggers": ["afg safe output", "output preflight", "generator preflight"],
+    "tags": ["afg", "safety", "preflight", "instrument"],
+    "category": "validator",
+    "handlerRef": "static_result",
+    "handlerConfig": {
+      "ok": true,
+      "text": "AFG preflight checklist returned.",
+      "data": {
+        "checks": ["amplitude", "offset", "termination", "output state"]
+      }
+    }
+  }
+]

@@ -1,0 +1,1640 @@
+[
+  {
+    "id": "command_groups_academy_md_2_p1",
+    "corpus": "app_logic",
+    "title": "Overview",
+    "body": "The Tektronix MSO (Mixed Signal Oscilloscope) Programmer Manual organizes SCPI commands into logical groups. Understanding these command groups helps you navigate the extensive command set and find the right commands for your automation tasks.\n\n**Note:** Some commands may not be available on all instrument models. Also, some commands are only available if your instrument has the associated option installed.",
+    "tags": [
+      "command_groups_academy_md"
+    ],
+    "source": "rag/corpus/app_logic/COMMAND_GROUPS_ACADEMY.md"
+  },
+  {
+    "id": "command_groups_academy_md_3_p1",
+    "corpus": "app_logic",
+    "title": "Command Groups Overview",
+    "body": "The MSO Programmer Manual defines **34 command groups** containing **2,952 total commands**. Each group focuses on a specific aspect of instrument control and measurement.\n\n---",
+    "tags": [
+      "command_groups_academy_md"
+    ],
+    "source": "rag/corpus/app_logic/COMMAND_GROUPS_ACADEMY.md"
+  },
+  {
+    "id": "command_groups_academy_md_6_p1",
+    "corpus": "app_logic",
+    "title": "Acquisition (15 commands)",
+    "body": "Acquisition commands set up the modes and functions that control how the instrument acquires signals and processes them into waveforms. Using these commands for acquiring waveforms, you can:\n- Start and stop acquisitions\n- Control whether each waveform is simply acquired, averaged, or enveloped over successive acquisitions\n- Set the controls or conditions that start and stop acquisitions\n- Control acquisition of acquired channel waveforms\n- Set acquisition parameters",
+    "tags": [
+      "command_groups_academy_md"
+    ],
+    "source": "rag/corpus/app_logic/COMMAND_GROUPS_ACADEMY.md"
+  },
+  {
+    "id": "command_groups_academy_md_7_p1",
+    "corpus": "app_logic",
+    "title": "Measurement (367 commands)",
+    "body": "Use the commands in the Measurement Command Group to control the automated measurement system. Measurement commands can set and query measurement parameters. You can assign parameters, such as waveform sources and reference levels, differently for each measurement.",
+    "tags": [
+      "command_groups_academy_md"
+    ],
+    "source": "rag/corpus/app_logic/COMMAND_GROUPS_ACADEMY.md"
+  },
+  {
+    "id": "command_groups_academy_md_8_p1",
+    "corpus": "app_logic",
+    "title": "Digital Power Management (26 commands)",
+    "body": "Use the commands in the DPM command group for Digital Power Management functionality. Requires option 5-DPM (5 Series MSO instruments) or 6-DPM (6 Series MSO instrument).",
+    "tags": [
+      "command_groups_academy_md"
+    ],
+    "source": "rag/corpus/app_logic/COMMAND_GROUPS_ACADEMY.md"
+  },
+  {
+    "id": "command_groups_academy_md_9_p1",
+    "corpus": "app_logic",
+    "title": "Inverter Motors and Drive Analysis (81 commands)",
+    "body": "Use the commands in the IMDA group for input analysis, output analysis, ripple analysis measurements.",
+    "tags": [
+      "command_groups_academy_md"
+    ],
+    "source": "rag/corpus/app_logic/COMMAND_GROUPS_ACADEMY.md"
+  },
+  {
+    "id": "command_groups_academy_md_10_p1",
+    "corpus": "app_logic",
+    "title": "Wide Band Gap Analysis (WBG) (47 commands)",
+    "body": "Use the commands in the Wide Band Gap Analysis (WBG) command group for WBG-DPT (Wide Band Gap Device Power Test) measurements.\n\n---",
+    "tags": [
+      "command_groups_academy_md"
+    ],
+    "source": "rag/corpus/app_logic/COMMAND_GROUPS_ACADEMY.md"
+  },
+  {
+    "id": "command_groups_academy_md_12_p1",
+    "corpus": "app_logic",
+    "title": "Display (130 commands)",
+    "body": "Display commands control general instrument settings, such as the intensity of the graticule, stacked or overlay display mode, and the fastacq color palette. Display commands also control how and where waveforms are shown, their position on screen, and zoom settings applied to the view.",
+    "tags": [
+      "command_groups_academy_md"
+    ],
+    "source": "rag/corpus/app_logic/COMMAND_GROUPS_ACADEMY.md"
+  },
+  {
+    "id": "command_groups_academy_md_13_p1",
+    "corpus": "app_logic",
+    "title": "Cursor (121 commands)",
+    "body": "Use the commands in the Cursor Command Group to control the cursor display and readout. You can use these commands to control the setups for each cursor, such as waveform source, and cursor position.",
+    "tags": [
+      "command_groups_academy_md"
+    ],
+    "source": "rag/corpus/app_logic/COMMAND_GROUPS_ACADEMY.md"
+  },
+  {
+    "id": "command_groups_academy_md_14_p1",
+    "corpus": "app_logic",
+    "title": "Zoom (20 commands)",
+    "body": "Zoom commands let you expand and position the waveform display horizontally and vertically, without changing the time base or vertical settings. Note: Zoom commands are available once a view has been added.",
+    "tags": [
+      "command_groups_academy_md"
+    ],
+    "source": "rag/corpus/app_logic/COMMAND_GROUPS_ACADEMY.md"
+  },
+  {
+    "id": "command_groups_academy_md_15_p1",
+    "corpus": "app_logic",
+    "title": "Histogram (28 commands)",
+    "body": "Use the commands in the Histogram command group for Histogram functionality.",
+    "tags": [
+      "command_groups_academy_md"
+    ],
+    "source": "rag/corpus/app_logic/COMMAND_GROUPS_ACADEMY.md"
+  },
+  {
+    "id": "command_groups_academy_md_16_p1",
+    "corpus": "app_logic",
+    "title": "Plot (47 commands)",
+    "body": "Plot commands let you select the type and control the appearance of your plots.",
+    "tags": [
+      "command_groups_academy_md"
+    ],
+    "source": "rag/corpus/app_logic/COMMAND_GROUPS_ACADEMY.md"
+  },
+  {
+    "id": "command_groups_academy_md_17_p1",
+    "corpus": "app_logic",
+    "title": "Spectrum view (52 commands)",
+    "body": "The Spectrum view commands control the selection and execution of spectrum analysis.\n\n---",
+    "tags": [
+      "command_groups_academy_md"
+    ],
+    "source": "rag/corpus/app_logic/COMMAND_GROUPS_ACADEMY.md"
+  },
+  {
+    "id": "command_groups_academy_md_19_p1",
+    "corpus": "app_logic",
+    "title": "Trigger (266 commands)",
+    "body": "Use the commands in the Trigger Command Group to control all aspects of triggering for the instrument. There are two triggers: A and B. Where appropriate, the command set has parallel constructions for each trigger. You can set the A or B triggers to edge mode, pulse mode, or logic modes. The trigger types of Pulse Width, Timeout, Runt, Window, and Rise/Fall Time can be further qualified by a logic pattern.",
+    "tags": [
+      "command_groups_academy_md"
+    ],
+    "source": "rag/corpus/app_logic/COMMAND_GROUPS_ACADEMY.md"
+  },
+  {
+    "id": "command_groups_academy_md_20_p1",
+    "corpus": "app_logic",
+    "title": "Search and Mark (650 commands)",
+    "body": "Use search and mark commands to seek out and identify information in waveform records that warrant further investigation. This is the largest command group, covering extensive bus protocol search capabilities.\n\n---",
+    "tags": [
+      "command_groups_academy_md"
+    ],
+    "source": "rag/corpus/app_logic/COMMAND_GROUPS_ACADEMY.md"
+  },
+  {
+    "id": "command_groups_academy_md_22_p1",
+    "corpus": "app_logic",
+    "title": "Bus (339 commands)",
+    "body": "Use the commands in the Bus Command Group to configure a bus. These commands let you:\n- Specify the bus type\n- Specify the signals to be used in the bus\n- Specify its display style\n\nNote: Bus commands are present once a bus has been added. This group supports numerous bus protocols including CAN, I2C, SPI, USB, Ethernet, ARINC429A, FlexRay, LIN, MIL-STD-1553B, and many more.\n\n---",
+    "tags": [
+      "command_groups_academy_md"
+    ],
+    "source": "rag/corpus/app_logic/COMMAND_GROUPS_ACADEMY.md"
+  },
+  {
+    "id": "command_groups_academy_md_24_p1",
+    "corpus": "app_logic",
+    "title": "Math (85 commands)",
+    "body": "Use the commands in the Math Command Group to create and define math waveforms. Use the available math functions to define your math waveform.",
+    "tags": [
+      "command_groups_academy_md"
+    ],
+    "source": "rag/corpus/app_logic/COMMAND_GROUPS_ACADEMY.md"
+  },
+  {
+    "id": "command_groups_academy_md_25_p1",
+    "corpus": "app_logic",
+    "title": "Waveform Transfer (41 commands)",
+    "body": "Use the commands in the Waveform Transfer Command Group to transfer waveform data points from the instrument. Waveform data points are a collection of values that define a waveform. One data value usually represents one data point in the waveform record. When working with envelope waveforms, each data value is either the minimum or maximum of a min/max pair.\n\n**Data Formats:**\n- **Acquired waveform data** uses eight or more bits to represent each data point, depending on acquisition mode\n- **ASCII format**: More readable but requires more bytes\n- **Binary formats**: RIBinary, SRIBinary, RFBinary, SRFBinary for efficient data transfer\n\nBefore you transfer waveform data, you must specify the data format, record length, and waveform source.\n\n---",
+    "tags": [
+      "command_groups_academy_md"
+    ],
+    "source": "rag/corpus/app_logic/COMMAND_GROUPS_ACADEMY.md"
+  },
+  {
+    "id": "command_groups_academy_md_27_p1",
+    "corpus": "app_logic",
+    "title": "Power (268 commands)",
+    "body": "Use the commands in the Power command group for power measurement functionality. This comprehensive group includes commands for:\n- Control Loop Response\n- Impedance measurements\n- Efficiency measurements\n- Harmonics analysis\n- Switching loss measurements\n- And many more power-related measurements\n\n---",
+    "tags": [
+      "command_groups_academy_md"
+    ],
+    "source": "rag/corpus/app_logic/COMMAND_GROUPS_ACADEMY.md"
+  },
+  {
+    "id": "command_groups_academy_md_29_p1",
+    "corpus": "app_logic",
+    "title": "Save and Recall (26 commands)",
+    "body": "Use the commands in the Save and Recall Command Group to store and retrieve internal waveforms and settings. When you save a setup, you save all the settings of the instrument. When you recall a setup, the instrument restores itself to the state that it was in when you originally saved that setting.",
+    "tags": [
+      "command_groups_academy_md"
+    ],
+    "source": "rag/corpus/app_logic/COMMAND_GROUPS_ACADEMY.md"
+  },
+  {
+    "id": "command_groups_academy_md_30_p1",
+    "corpus": "app_logic",
+    "title": "Save on (8 commands)",
+    "body": "Use this group of commands to program the instrument to save images, measurements, waveforms, or the instrument setup, on triggers that you select. These commands still function, however the Act On Event commands are preferred.",
+    "tags": [
+      "command_groups_academy_md"
+    ],
+    "source": "rag/corpus/app_logic/COMMAND_GROUPS_ACADEMY.md"
+  },
+  {
+    "id": "command_groups_academy_md_31_p1",
+    "corpus": "app_logic",
+    "title": "File System (19 commands)",
+    "body": "Use the commands in the File System Command Group to help you use the built-in hard disk drive. You can use the commands to list directory contents, create and delete directories, and create, copy, read, rename, or delete files.\n\n---",
+    "tags": [
+      "command_groups_academy_md"
+    ],
+    "source": "rag/corpus/app_logic/COMMAND_GROUPS_ACADEMY.md"
+  },
+  {
+    "id": "command_groups_academy_md_33_p1",
+    "corpus": "app_logic",
+    "title": "Miscellaneous (71 commands)",
+    "body": "Miscellaneous commands do not fit into other categories. Several commands and queries are common to all devices. The 488.2-1987 standard defines these commands. The common commands begin with an asterisk (*) character.",
+    "tags": [
+      "command_groups_academy_md"
+    ],
+    "source": "rag/corpus/app_logic/COMMAND_GROUPS_ACADEMY.md"
+  },
+  {
+    "id": "command_groups_academy_md_35_p1",
+    "corpus": "app_logic",
+    "title": "Calibration (8 commands)",
+    "body": "The Calibration commands provide information about the current state of instrument calibration and allow you to initiate signal path calibration (SPC).",
+    "tags": [
+      "command_groups_academy_md"
+    ],
+    "source": "rag/corpus/app_logic/COMMAND_GROUPS_ACADEMY.md"
+  },
+  {
+    "id": "command_groups_academy_md_36_p1",
+    "corpus": "app_logic",
+    "title": "Self Test (10 commands)",
+    "body": "The Self test commands control the selection and execution of diagnostic tests.\n\n---",
+    "tags": [
+      "command_groups_academy_md"
+    ],
+    "source": "rag/corpus/app_logic/COMMAND_GROUPS_ACADEMY.md"
+  },
+  {
+    "id": "command_groups_academy_md_38_p1",
+    "corpus": "app_logic",
+    "title": "Act On Event (32 commands)",
+    "body": "Use this group of commands to program the instrument to perform an action on trigger, search, measurement limit, and mask test events.",
+    "tags": [
+      "command_groups_academy_md"
+    ],
+    "source": "rag/corpus/app_logic/COMMAND_GROUPS_ACADEMY.md"
+  },
+  {
+    "id": "command_groups_academy_md_39_p1",
+    "corpus": "app_logic",
+    "title": "Mask (29 commands)",
+    "body": "Mask commands compare incoming waveforms to standard or user-defined masks. A mask is a set of polygonal regions on the screen. Unlike limit testing, the inside of a mask is the region where waveform data would not normally fall.",
+    "tags": [
+      "command_groups_academy_md"
+    ],
+    "source": "rag/corpus/app_logic/COMMAND_GROUPS_ACADEMY.md"
+  },
+  {
+    "id": "command_groups_academy_md_40_p1",
+    "corpus": "app_logic",
+    "title": "Alias (7 commands)",
+    "body": "Alias commands allow you to define new commands as a sequence of standard commands. You might find this useful when repeatedly using the same commands to perform certain tasks like setting up measurements.",
+    "tags": [
+      "command_groups_academy_md"
+    ],
+    "source": "rag/corpus/app_logic/COMMAND_GROUPS_ACADEMY.md"
+  },
+  {
+    "id": "command_groups_academy_md_41_p1",
+    "corpus": "app_logic",
+    "title": "Callout (14 commands)",
+    "body": "The Callout commands creates custom callouts to document specific details of your test results.\n\n---",
+    "tags": [
+      "command_groups_academy_md"
+    ],
+    "source": "rag/corpus/app_logic/COMMAND_GROUPS_ACADEMY.md"
+  },
+  {
+    "id": "command_groups_academy_md_43_p1",
+    "corpus": "app_logic",
+    "title": "Digital (33 commands)",
+    "body": "Use the commands in the Digital Command Group to acquire up to 64 digital signals and analyze them. Digital channels are only available when a digital probe is attached to the super channel.",
+    "tags": [
+      "command_groups_academy_md"
+    ],
+    "source": "rag/corpus/app_logic/COMMAND_GROUPS_ACADEMY.md"
+  },
+  {
+    "id": "command_groups_academy_md_44_p1",
+    "corpus": "app_logic",
+    "title": "Horizontal (48 commands)",
+    "body": "Horizontal commands control the time base of the instrument. You can set the time per division (or time per point) of the main time base.",
+    "tags": [
+      "command_groups_academy_md"
+    ],
+    "source": "rag/corpus/app_logic/COMMAND_GROUPS_ACADEMY.md"
+  },
+  {
+    "id": "command_groups_academy_md_45_p1",
+    "corpus": "app_logic",
+    "title": "DVM (12 commands)",
+    "body": "Use the commands in the DVM command group for Digital Voltmeter functionality. Requires DVM option (free with product registration).\n\n---",
+    "tags": [
+      "command_groups_academy_md"
+    ],
+    "source": "rag/corpus/app_logic/COMMAND_GROUPS_ACADEMY.md"
+  },
+  {
+    "id": "command_groups_academy_md_47_p1",
+    "corpus": "app_logic",
+    "title": "Ethernet (14 commands)",
+    "body": "Use the commands in the Ethernet Command Group to set up the 10BASE-T, 100BASE-TX, 1000BASE-TX or 100BASE-T Ethernet remote interface.\n\n---",
+    "tags": [
+      "command_groups_academy_md"
+    ],
+    "source": "rag/corpus/app_logic/COMMAND_GROUPS_ACADEMY.md"
+  },
+  {
+    "id": "command_groups_academy_md_49_p1",
+    "corpus": "app_logic",
+    "title": "AFG (18 commands)",
+    "body": "Use the AFG commands for Arbitrary Function Generator functionality. Requires option AFG.",
+    "tags": [
+      "command_groups_academy_md"
+    ],
+    "source": "rag/corpus/app_logic/COMMAND_GROUPS_ACADEMY.md"
+  },
+  {
+    "id": "command_groups_academy_md_50_p1",
+    "corpus": "app_logic",
+    "title": "History (3 commands)",
+    "body": "Use the commands in the History command group for History mode functionality.\n\n---",
+    "tags": [
+      "command_groups_academy_md"
+    ],
+    "source": "rag/corpus/app_logic/COMMAND_GROUPS_ACADEMY.md"
+  },
+  {
+    "id": "command_groups_academy_md_51_p1",
+    "corpus": "app_logic",
+    "title": "Using Command Groups in TekAutomate",
+    "body": "The command groups mapping provides several benefits for automation:\n\n1. **Group Validation**: When extracting commands from the PDF, we can validate that each command belongs to the correct group.\n\n2. **Organized Navigation**: Commands are logically organized, making it easier to find related functionality.\n\n3. **Academy Articles**: Each command group has a detailed description that can be used to create educational content.\n\n4. **Command Discovery**: Users can browse commands by functional area rather than alphabetically.",
+    "tags": [
+      "command_groups_academy_md"
+    ],
+    "source": "rag/corpus/app_logic/COMMAND_GROUPS_ACADEMY.md"
+  },
+  {
+    "id": "command_groups_academy_md_52_p1",
+    "corpus": "app_logic",
+    "title": "Command Structure",
+    "body": "Each command in the extracted JSON includes:\n- **scpi**: The SCPI command string\n- **description**: Detailed description of what the command does\n- **group**: The command group it belongs to (validated against our mapping)\n- **syntax**: One or more syntax examples\n- **arguments**: Parameter descriptions (when applicable)\n- **examples**: Usage examples (when available)\n- **relatedCommands**: Related commands (when available)\n- **conditions**: Special conditions or requirements (when applicable)\n- **returns**: Return value descriptions (for query commands)",
+    "tags": [
+      "command_groups_academy_md"
+    ],
+    "source": "rag/corpus/app_logic/COMMAND_GROUPS_ACADEMY.md"
+  },
+  {
+    "id": "command_groups_academy_md_53_p1",
+    "corpus": "app_logic",
+    "title": "Summary",
+    "body": "Understanding command groups helps you:\n- Navigate the extensive command set efficiently\n- Find related commands for your automation tasks\n- Understand the instrument's capabilities by functional area\n- Create better automation scripts by grouping related operations\n\nWith 34 command groups and 2,952 commands, the MSO provides comprehensive programmatic control over all aspects of signal acquisition, analysis, and measurement.",
+    "tags": [
+      "command_groups_academy_md"
+    ],
+    "source": "rag/corpus/app_logic/COMMAND_GROUPS_ACADEMY.md"
+  },
+  {
+    "id": "command_groups_academy_md_54_p1",
+    "corpus": "app_logic",
+    "title": "Command Compatibility and Migration",
+    "body": "When migrating automation scripts from older Tektronix oscilloscopes (DPO7000, MSO/DPO5000) to newer models (2 Series MSO, 4 Series MSO, 5 Series MSO, 6 Series MSO), you may encounter command syntax differences.\n\n**PI Command Translator**: Modern Tektronix oscilloscopes (firmware v1.30+) include a built-in Programming Interface (PI) Command Translator that automatically converts legacy commands to modern equivalents. This feature allows existing automation scripts to work on new hardware without immediate code changes.\n\nFor detailed information on:\n- How the PI Translator works\n- Enabling and configuring the translator\n- Creating custom command translations\n- Migration strategies\n\nSee the Academy article: **\"PI Command Translator: Migrating Legacy Commands to Modern Oscilloscopes\"** in the Measurements & Commands section.\n\n**Source**: [Tektronix Technical Brief - PI Command Translator](https://www.tek.com/en/documents/technical-brief/pi-command-translator-on-oscilloscopes-tech-brief)",
+    "tags": [
+      "command_groups_academy_md"
+    ],
+    "source": "rag/corpus/app_logic/COMMAND_GROUPS_ACADEMY.md"
+  },
+  {
+    "id": "command_json_field_reference_md_1_p1",
+    "corpus": "app_logic",
+    "title": "Command JSON Field Reference",
+    "body": "Complete reference for all fields in a command JSON entry.",
+    "tags": [
+      "command_json_field_reference_md"
+    ],
+    "source": "rag/corpus/app_logic/COMMAND_JSON_FIELD_REFERENCE.md"
+  },
+  {
+    "id": "command_json_field_reference_md_2_p1",
+    "corpus": "app_logic",
+    "title": "Required Fields",
+    "body": "- `id` - Unique identifier for the command (string)\n- `category` - Category ID (string, e.g., \"acquisition\", \"channels\")\n- `scpi` - Full SCPI command string (string, e.g., \"ACQuire:STATE\")\n- `header` - Command header without arguments (string)\n- `commandType` - \"set\", \"query\", or \"both\"",
+    "tags": [
+      "command_json_field_reference_md"
+    ],
+    "source": "rag/corpus/app_logic/COMMAND_JSON_FIELD_REFERENCE.md"
+  },
+  {
+    "id": "command_json_field_reference_md_3_p1",
+    "corpus": "app_logic",
+    "title": "Basic Information",
+    "body": "- `shortDescription` - Brief one-line description (string)\n- `description` - Full detailed description (string)\n- `mnemonics` - Array of mnemonic components (string[])\n- `commandGroup` - Display name for command group (string)\n- `subGroup` - Optional subgroup name (string)",
+    "tags": [
+      "command_json_field_reference_md"
+    ],
+    "source": "rag/corpus/app_logic/COMMAND_JSON_FIELD_REFERENCE.md"
+  },
+  {
+    "id": "command_json_field_reference_md_4_p1",
+    "corpus": "app_logic",
+    "title": "Instrument Compatibility",
+    "body": "```json\n\"instruments\": {\n  \"families\": [\"MSO4\", \"MSO5\", \"MSO6\", \"MSO7\"],\n  \"models\": [\"MSO4XB\", \"MSO5XB\", \"MSO6XB\"],\n  \"exclusions\": [\"AWG70000\"]\n}\n```",
+    "tags": [
+      "command_json_field_reference_md"
+    ],
+    "source": "rag/corpus/app_logic/COMMAND_JSON_FIELD_REFERENCE.md"
+  },
+  {
+    "id": "command_json_field_reference_md_5_p1",
+    "corpus": "app_logic",
+    "title": "Arguments",
+    "body": "Array of argument definitions:\n\n```json\n\"arguments\": [\n  {\n    \"name\": \"argumentName\",\n    \"type\": \"numeric|enumeration|mnemonic|quoted_string|block\",\n    \"required\": true|false,\n    \"position\": 0,\n    \"description\": \"What this argument does\",\n    \"mnemonicType\": \"channel|reference|math|bus|measurement\" (if type is mnemonic),\n    \"validValues\": { /* see below */ },\n    \"defaultValue\": \"default value\"\n  }\n]\n```",
+    "tags": [
+      "command_json_field_reference_md"
+    ],
+    "source": "rag/corpus/app_logic/COMMAND_JSON_FIELD_REFERENCE.md"
+  },
+  {
+    "id": "command_json_field_reference_md_6_p1",
+    "corpus": "app_logic",
+    "title": "Valid Values by Type",
+    "body": "**Numeric:**\n```json\n\"validValues\": {\n  \"type\": \"numeric\",\n  \"format\": \"NR1|NR2|NR3\",\n  \"min\": 0.001,\n  \"max\": 1000,\n  \"unit\": \"volts\",\n  \"increment\": 0.001,\n  \"default\": 1.0,\n  \"notes\": \"Additional notes\"\n}\n```\n\n**Enumeration:**\n```json\n\"validValues\": {\n  \"type\": \"enumeration\",\n  \"values\": [\"OPTION1\", \"OPTION2\", \"OPTION3\"],\n  \"caseSensitive\": false,\n  \"default\": \"OPTION1\",\n  \"notes\": \"Case insensitive\"\n}\n```\n\n**Mnemonic:**\n```json\n\"validValues\": {\n  \"type\": \"mnemonic_range\",\n  \"pattern\": \"CH<x>|REF<x>|MATH<x>\",\n  \"examples\": [\"CH1\", \"CH2\", \"REF1\"],\n  \"range\": {\n    \"channels\": { \"min\": 1, \"max\": 4 },\n    \"references\": { \"min\": 1, \"max\": 4 },\n    \"math\": { \"min\": 1, \"max\": 4 }\n  }\n}\n```",
+    "tags": [
+      "command_json_field_reference_md"
+    ],
+    "source": "rag/corpus/app_logic/COMMAND_JSON_FIELD_REFERENCE.md"
+  },
+  {
+    "id": "command_json_field_reference_md_7_p1",
+    "corpus": "app_logic",
+    "title": "Query Response",
+    "body": "```json\n\"queryResponse\": {\n  \"type\": \"numeric|enumeration|string\",\n  \"format\": \"NR1|NR2|NR3|Enumeration string|Quoted string\",\n  \"description\": \"What the query returns\",\n  \"example\": \"1.0\",\n  \"unit\": \"volts\" (optional)\n}\n```",
+    "tags": [
+      "command_json_field_reference_md"
+    ],
+    "source": "rag/corpus/app_logic/COMMAND_JSON_FIELD_REFERENCE.md"
+  },
+  {
+    "id": "command_json_field_reference_md_8_p1",
+    "corpus": "app_logic",
+    "title": "Syntax",
+    "body": "```json\n\"syntax\": {\n  \"set\": \"ACQuire:MODe <enumeration>\",\n  \"query\": \"ACQuire:MODe?\",\n  \"argumentType\": \"enumeration|NR1|NR2|NR3|mnemonic\",\n  \"description\": \"Detailed syntax description\"\n}\n```",
+    "tags": [
+      "command_json_field_reference_md"
+    ],
+    "source": "rag/corpus/app_logic/COMMAND_JSON_FIELD_REFERENCE.md"
+  },
+  {
+    "id": "command_json_field_reference_md_9_p1",
+    "corpus": "app_logic",
+    "title": "Code Examples",
+    "body": "Array of example objects, each with multiple language examples:\n\n```json\n\"codeExamples\": [\n  {\n    \"description\": \"What this example demonstrates\",\n    \"codeExamples\": {\n      \"scpi\": {\n        \"code\": \"ACQuire:STATE RUN\",\n        \"library\": \"SCPI\",\n        \"description\": \"Raw SCPI command\"\n      },\n      \"python\": {\n        \"code\": \"scope.write('ACQuire:STATE RUN')\",\n        \"library\": \"PyVISA\",\n        \"description\": \"PyVISA example\"\n      },\n      \"tm_devices\": {\n        \"code\": \"scope.commands.acquire.state.write(1)\",\n        \"library\": \"tm_devices\",\n        \"description\": \"TM Devices library\"\n      }\n    },\n    \"result\": \"1\",\n    \"resultDescription\": \"What the result means\"\n  }\n]\n```",
+    "tags": [
+      "command_json_field_reference_md"
+    ],
+    "source": "rag/corpus/app_logic/COMMAND_JSON_FIELD_REFERENCE.md"
+  },
+  {
+    "id": "command_json_field_reference_md_10_p1",
+    "corpus": "app_logic",
+    "title": "Related Commands",
+    "body": "Array of related command headers:\n\n```json\n\"relatedCommands\": [\n  \"ACQuire:STOPAfter\",\n  \"ACQuire:MODe\",\n  \"ACQuire:NUMAVg\"\n]\n```",
+    "tags": [
+      "command_json_field_reference_md"
+    ],
+    "source": "rag/corpus/app_logic/COMMAND_JSON_FIELD_REFERENCE.md"
+  },
+  {
+    "id": "command_json_field_reference_md_11_p1",
+    "corpus": "app_logic",
+    "title": "Manual Reference",
+    "body": "```json\n\"manualReference\": {\n  \"section\": \"Acquisition Commands\",\n  \"page\": 164,\n  \"subsection\": \"ACQuire:STATE\"\n}\n```",
+    "tags": [
+      "command_json_field_reference_md"
+    ],
+    "source": "rag/corpus/app_logic/COMMAND_JSON_FIELD_REFERENCE.md"
+  },
+  {
+    "id": "command_json_field_reference_md_12_p1",
+    "corpus": "app_logic",
+    "title": "Notes",
+    "body": "Array of additional notes:\n\n```json\n\"notes\": [\n  \"Note 1\",\n  \"Note 2\",\n  \"Note 3\"\n]\n```",
+    "tags": [
+      "command_json_field_reference_md"
+    ],
+    "source": "rag/corpus/app_logic/COMMAND_JSON_FIELD_REFERENCE.md"
+  },
+  {
+    "id": "command_json_field_reference_md_13_p1",
+    "corpus": "app_logic",
+    "title": "Backward Compatibility",
+    "body": "```json\n\"backwardCompatibility\": {\n  \"legacyCommands\": [\"OLD:COMMAND\"],\n  \"notes\": \"Legacy command mapping notes\"\n}\n```",
+    "tags": [
+      "command_json_field_reference_md"
+    ],
+    "source": "rag/corpus/app_logic/COMMAND_JSON_FIELD_REFERENCE.md"
+  },
+  {
+    "id": "command_json_field_reference_md_14_p1",
+    "corpus": "app_logic",
+    "title": "Dynamic Activation",
+    "body": "For commands that create objects implicitly:\n\n```json\n\"dynamicActivation\": {\n  \"implicitlyActivates\": true,\n  \"createsObject\": \"measurement|math|bus\",\n  \"defaultType\": \"PERIod\",\n  \"notes\": \"Querying creates measurement with default type\"\n}\n```",
+    "tags": [
+      "command_json_field_reference_md"
+    ],
+    "source": "rag/corpus/app_logic/COMMAND_JSON_FIELD_REFERENCE.md"
+  },
+  {
+    "id": "command_json_field_reference_md_15_p1",
+    "corpus": "app_logic",
+    "title": "Concatenation",
+    "body": "```json\n\"concatenation\": {\n  \"canConcatenate\": true,\n  \"requiresColon\": true,\n  \"example\": \"ACQuire:MODe AVErage;:ACQuire:NUMAVg 8\"\n}\n```",
+    "tags": [
+      "command_json_field_reference_md"
+    ],
+    "source": "rag/corpus/app_logic/COMMAND_JSON_FIELD_REFERENCE.md"
+  },
+  {
+    "id": "command_json_field_reference_md_16_p1",
+    "corpus": "app_logic",
+    "title": "Field Summary",
+    "body": "| Field | Required | Type | Description |\n|-------|----------|------|-------------|\n| `id` | Yes | string | Unique identifier |\n| `category` | Yes | string | Category ID |\n| `scpi` | Yes | string | Full SCPI command |\n| `header` | Yes | string | Command header |\n| `commandType` | Yes | string | \"set\", \"query\", or \"both\" |\n| `shortDescription` | Yes | string | Brief description |\n| `description` | Yes | string | Full description |\n| `mnemonics` | Yes | string[] | Mnemonic components |\n| `instruments` | Yes | object | Instrument compatibility |\n| `arguments` | No | array | Argument definitions |\n| `queryResponse` | No | object | Query response format |\n| `syntax` | No | object | Syntax specification |\n| `codeExamples` | No | array | Code examples |\n| `relatedCommands` | No | string[] | Related commands |\n| `manualReference` | No | object | Manual reference |\n| `notes` | No | string[] | Additional notes |\n| `backwardCompatibility` | No | object | Legacy compatibility |\n| `dynamicActivation` | No | object | Dynamic object creation |\n| `concatenation` | No | object | Concatenation rules |\n| `commandGroup` | No | string | Display group name |\n| `subGroup` | No | string | Subgroup name |",
+    "tags": [
+      "command_json_field_reference_md"
+    ],
+    "source": "rag/corpus/app_logic/COMMAND_JSON_FIELD_REFERENCE.md"
+  },
+  {
+    "id": "screenshot_methods_complete_md_2_p1",
+    "corpus": "app_logic",
+    "title": "Summary Table",
+    "body": "| Method | Scope Models | Protocol | Speed | Complexity |\n|--------|-------------|----------|-------|------------|\n| **HARDCOPY:DATA?** | Legacy only (MSO/DPO 5k/7k/70k) | Query (stream bytes) | Fast | Simple |\n| **HARDCOPY PORT FILE** | Legacy only (MSO/DPO 5k/7k/70k) | Write to file + transfer | Medium | Medium |\n| **SAVE:IMAGE + FILESYSTEM** | Modern only (MSO5/6/MSO6B) | Write to file + transfer | Medium | Medium |\n\n---",
+    "tags": [
+      "screenshot_methods_complete_md"
+    ],
+    "source": "rag/corpus/app_logic/SCREENSHOT_METHODS_COMPLETE.md"
+  },
+  {
+    "id": "screenshot_methods_complete_md_3_p1",
+    "corpus": "app_logic",
+    "title": "Method 1: HARDCOPY:DATA? (Direct Stream - LEGACY ONLY)",
+    "body": "**Supported Models:** MSO/DPO 5k/7k/70k series ONLY",
+    "tags": [
+      "screenshot_methods_complete_md"
+    ],
+    "source": "rag/corpus/app_logic/SCREENSHOT_METHODS_COMPLETE.md"
+  },
+  {
+    "id": "screenshot_methods_complete_md_4_p1",
+    "corpus": "app_logic",
+    "title": "Advantages",
+    "body": "- ✅ Fastest method (no file I/O on scope)\n- ✅ No need to manage files on scope\n- ✅ Simplest code\n- ✅ No temp file cleanup needed",
+    "tags": [
+      "screenshot_methods_complete_md"
+    ],
+    "source": "rag/corpus/app_logic/SCREENSHOT_METHODS_COMPLETE.md"
+  },
+  {
+    "id": "screenshot_methods_complete_md_5_p1",
+    "corpus": "app_logic",
+    "title": "Python Example",
+    "body": "```python",
+    "tags": [
+      "screenshot_methods_complete_md"
+    ],
+    "source": "rag/corpus/app_logic/SCREENSHOT_METHODS_COMPLETE.md"
+  },
+  {
+    "id": "screenshot_methods_complete_md_6_p1",
+    "corpus": "app_logic",
+    "title": "Set format and layout",
+    "body": "scope.write(\"HARDCopy:FORMat PNG\")\nscope.write(\"HARDCopy:LAYout PORTrait\")",
+    "tags": [
+      "screenshot_methods_complete_md"
+    ],
+    "source": "rag/corpus/app_logic/SCREENSHOT_METHODS_COMPLETE.md"
+  },
+  {
+    "id": "screenshot_methods_complete_md_7_p1",
+    "corpus": "app_logic",
+    "title": "Query image data directly",
+    "body": "image_data = scope.query_binary_values('HARDCopy:DATA?', datatype='B', container=bytes)",
+    "tags": [
+      "screenshot_methods_complete_md"
+    ],
+    "source": "rag/corpus/app_logic/SCREENSHOT_METHODS_COMPLETE.md"
+  },
+  {
+    "id": "screenshot_methods_complete_md_8_p1",
+    "corpus": "app_logic",
+    "title": "Save to PC",
+    "body": "with open(\"screenshot.png\", \"wb\") as f:\n    f.write(bytes(image_data))\n```",
+    "tags": [
+      "screenshot_methods_complete_md"
+    ],
+    "source": "rag/corpus/app_logic/SCREENSHOT_METHODS_COMPLETE.md"
+  },
+  {
+    "id": "screenshot_methods_complete_md_9_p1",
+    "corpus": "app_logic",
+    "title": "⚠️ CRITICAL NOTES",
+    "body": "- **ONLY for MSO/DPO 5k/7k/70k** (Legacy scopes)\n- **DOES NOT WORK on MSO5/6/MSO6B** (Modern scopes)\n- Modern scopes don't support HARDCOPY:DATA?\n- This is the FASTEST method for legacy scopes\n\n---",
+    "tags": [
+      "screenshot_methods_complete_md"
+    ],
+    "source": "rag/corpus/app_logic/SCREENSHOT_METHODS_COMPLETE.md"
+  },
+  {
+    "id": "screenshot_methods_complete_md_10_p1",
+    "corpus": "app_logic",
+    "title": "Method 2: HARDCOPY PORT FILE (Save + Transfer - LEGACY ONLY)",
+    "body": "**Supported Models:** MSO/DPO 5k/7k/70k series ONLY",
+    "tags": [
+      "screenshot_methods_complete_md"
+    ],
+    "source": "rag/corpus/app_logic/SCREENSHOT_METHODS_COMPLETE.md"
+  },
+  {
+    "id": "screenshot_methods_complete_md_11_p1",
+    "corpus": "app_logic",
+    "title": "Advantages",
+    "body": "- ✅ Works on all legacy scopes\n- ✅ Can verify file exists before transfer\n- ✅ Image stays on scope if needed\n- ✅ Proven working method",
+    "tags": [
+      "screenshot_methods_complete_md"
+    ],
+    "source": "rag/corpus/app_logic/SCREENSHOT_METHODS_COMPLETE.md"
+  },
+  {
+    "id": "screenshot_methods_complete_md_12_p1",
+    "corpus": "app_logic",
+    "title": "Python Example (CURRENT IMPLEMENTATION)",
+    "body": "```python\nimport os\nimport time\nos.makedirs(\"./screenshots\", exist_ok=True)",
+    "tags": [
+      "screenshot_methods_complete_md"
+    ],
+    "source": "rag/corpus/app_logic/SCREENSHOT_METHODS_COMPLETE.md"
+  },
+  {
+    "id": "screenshot_methods_complete_md_13_p1",
+    "corpus": "app_logic",
+    "title": "Define paths",
+    "body": "local_file = \"./screenshots/screenshot.png\"\nscope_temp = \"C:/TekScope/Temp/screenshot.png\"",
+    "tags": [
+      "screenshot_methods_complete_md"
+    ],
+    "source": "rag/corpus/app_logic/SCREENSHOT_METHODS_COMPLETE.md"
+  },
+  {
+    "id": "screenshot_methods_complete_md_14_p1",
+    "corpus": "app_logic",
+    "title": "Create directories on scope",
+    "body": "try:\n    scope.write('FILESYSTEM:MKDIR \"C:/TekScope\"')\nexcept:\n    pass\ntry:\n    scope.write('FILESYSTEM:MKDIR \"C:/TekScope/Temp\"')\nexcept:\n    pass",
+    "tags": [
+      "screenshot_methods_complete_md"
+    ],
+    "source": "rag/corpus/app_logic/SCREENSHOT_METHODS_COMPLETE.md"
+  },
+  {
+    "id": "screenshot_methods_complete_md_15_p1",
+    "corpus": "app_logic",
+    "title": "Configure hardcopy to save to file",
+    "body": "scope.write('HARDCOPY:PORT FILE')\nscope.write('HARDCOPY:FORMAT PNG')  # ← Fixed\nscope.write(f'HARDCOPY:FILENAME \"{scope_temp}\"')\nscope.write('HARDCOPY START')\ntime.sleep(1.0)  # Wait for hardcopy to complete",
+    "tags": [
+      "screenshot_methods_complete_md"
+    ],
+    "source": "rag/corpus/app_logic/SCREENSHOT_METHODS_COMPLETE.md"
+  },
+  {
+    "id": "screenshot_methods_complete_md_16_p1",
+    "corpus": "app_logic",
+    "title": "Transfer file from scope to PC",
+    "body": "old_timeout = scope.timeout\nscope.timeout = 30000  # 30 seconds for file transfer\nscope.write(f'FILESYSTEM:READFILE \"{scope_temp}\"')\nimage_data = scope.read_raw()\nscope.timeout = old_timeout  # Restore original timeout",
+    "tags": [
+      "screenshot_methods_complete_md"
+    ],
+    "source": "rag/corpus/app_logic/SCREENSHOT_METHODS_COMPLETE.md"
+  },
+  {
+    "id": "screenshot_methods_complete_md_17_p1",
+    "corpus": "app_logic",
+    "title": "Save to PC",
+    "body": "with open(local_file, 'wb') as f:\n    f.write(image_data)",
+    "tags": [
+      "screenshot_methods_complete_md"
+    ],
+    "source": "rag/corpus/app_logic/SCREENSHOT_METHODS_COMPLETE.md"
+  },
+  {
+    "id": "screenshot_methods_complete_md_18_p1",
+    "corpus": "app_logic",
+    "title": "Delete temp file from scope",
+    "body": "scope.write(f'FILESYSTEM:DELETE \"{scope_temp}\"')\nprint(f\"Saved screenshot to {local_file}\")\n```",
+    "tags": [
+      "screenshot_methods_complete_md"
+    ],
+    "source": "rag/corpus/app_logic/SCREENSHOT_METHODS_COMPLETE.md"
+  },
+  {
+    "id": "screenshot_methods_complete_md_20_p1",
+    "corpus": "app_logic",
+    "title": "Method 3: SAVE:IMAGE + FILESYSTEM (Modern Scopes ONLY)",
+    "body": "**Supported Models:** MSO5, MSO6, MSO5B, MSO6B series",
+    "tags": [
+      "screenshot_methods_complete_md"
+    ],
+    "source": "rag/corpus/app_logic/SCREENSHOT_METHODS_COMPLETE.md"
+  },
+  {
+    "id": "screenshot_methods_complete_md_21_p1",
+    "corpus": "app_logic",
+    "title": "Advantages",
+    "body": "- ✅ Official method for modern scopes\n- ✅ Can verify file exists before transfer\n- ✅ Image stays on scope if needed\n- ✅ Supports multiple formats",
+    "tags": [
+      "screenshot_methods_complete_md"
+    ],
+    "source": "rag/corpus/app_logic/SCREENSHOT_METHODS_COMPLETE.md"
+  },
+  {
+    "id": "screenshot_methods_complete_md_22_p1",
+    "corpus": "app_logic",
+    "title": "Python Example (CURRENT IMPLEMENTATION)",
+    "body": "```python\nimport os\nimport time\nos.makedirs(\"./screenshots\", exist_ok=True)",
+    "tags": [
+      "screenshot_methods_complete_md"
+    ],
+    "source": "rag/corpus/app_logic/SCREENSHOT_METHODS_COMPLETE.md"
+  },
+  {
+    "id": "screenshot_methods_complete_md_23_p1",
+    "corpus": "app_logic",
+    "title": "Define paths",
+    "body": "local_file = \"./screenshots/screenshot.png\"\nscope_temp = \"C:/Temp/TekAutomate_Temp.png\"",
+    "tags": [
+      "screenshot_methods_complete_md"
+    ],
+    "source": "rag/corpus/app_logic/SCREENSHOT_METHODS_COMPLETE.md"
+  },
+  {
+    "id": "screenshot_methods_complete_md_24_p1",
+    "corpus": "app_logic",
+    "title": "Create temp directory on scope",
+    "body": "try:\n    scope.write('FILESYSTEM:MKDIR \"C:/Temp\"')\nexcept:\n    pass  # Directory may already exist",
+    "tags": [
+      "screenshot_methods_complete_md"
+    ],
+    "source": "rag/corpus/app_logic/SCREENSHOT_METHODS_COMPLETE.md"
+  },
+  {
+    "id": "screenshot_methods_complete_md_25_p1",
+    "corpus": "app_logic",
+    "title": "Save image on scope",
+    "body": "scope.write('SAVE:IMAGE:COMPOSITION NORMAL')\nscope.write(f'SAVE:IMAGE \"{scope_temp}\"')\ntime.sleep(1.0)  # Wait for save to complete",
+    "tags": [
+      "screenshot_methods_complete_md"
+    ],
+    "source": "rag/corpus/app_logic/SCREENSHOT_METHODS_COMPLETE.md"
+  },
+  {
+    "id": "screenshot_methods_complete_md_26_p1",
+    "corpus": "app_logic",
+    "title": "Transfer file from scope to PC",
+    "body": "old_timeout = scope.timeout\nscope.timeout = 30000  # 30 seconds for file transfer\nscope.write(f'FILESYSTEM:READFILE \"{scope_temp}\"')\nimage_data = scope.read_raw()\nscope.timeout = old_timeout  # Restore original timeout",
+    "tags": [
+      "screenshot_methods_complete_md"
+    ],
+    "source": "rag/corpus/app_logic/SCREENSHOT_METHODS_COMPLETE.md"
+  },
+  {
+    "id": "screenshot_methods_complete_md_27_p1",
+    "corpus": "app_logic",
+    "title": "Save to PC",
+    "body": "with open(local_file, 'wb') as f:\n    f.write(image_data)",
+    "tags": [
+      "screenshot_methods_complete_md"
+    ],
+    "source": "rag/corpus/app_logic/SCREENSHOT_METHODS_COMPLETE.md"
+  },
+  {
+    "id": "screenshot_methods_complete_md_28_p1",
+    "corpus": "app_logic",
+    "title": "Delete temp file from scope",
+    "body": "scope.write(f'FILESYSTEM:DELETE \"{scope_temp}\"')\nprint(f\"Saved screenshot to {local_file}\")\n```",
+    "tags": [
+      "screenshot_methods_complete_md"
+    ],
+    "source": "rag/corpus/app_logic/SCREENSHOT_METHODS_COMPLETE.md"
+  },
+  {
+    "id": "screenshot_methods_complete_md_29_p1",
+    "corpus": "app_logic",
+    "title": "⚠️ CRITICAL NOTES",
+    "body": "- **ONLY for MSO5/6/MSO5B/MSO6B** (Modern scopes)\n- **DOES NOT WORK on MSO/DPO 5k/7k/70k** (Legacy scopes)\n- Legacy scopes use HARDCOPY commands instead\n- Use `time.sleep(1.0)` to wait for save completion\n- C:/Temp is the recommended path for modern scopes\n\n---",
+    "tags": [
+      "screenshot_methods_complete_md"
+    ],
+    "source": "rag/corpus/app_logic/SCREENSHOT_METHODS_COMPLETE.md"
+  },
+  {
+    "id": "screenshot_methods_complete_md_36_p1",
+    "corpus": "app_logic",
+    "title": "For Legacy Scopes (MSO/DPO 5k/7k/70k):",
+    "body": "1. **HARDCOPY:DATA?** - Fastest, simplest (RECOMMENDED)\n2. **HARDCOPY PORT FILE** - Slower but proven",
+    "tags": [
+      "screenshot_methods_complete_md"
+    ],
+    "source": "rag/corpus/app_logic/SCREENSHOT_METHODS_COMPLETE.md"
+  },
+  {
+    "id": "screenshot_methods_complete_md_37_p1",
+    "corpus": "app_logic",
+    "title": "For Modern Scopes (MSO5/6/MSO6B):",
+    "body": "1. **SAVE:IMAGE + FILESYSTEM** - Only option (REQUIRED)\n2. **HARDCOPY commands will NOT work**\n\n---",
+    "tags": [
+      "screenshot_methods_complete_md"
+    ],
+    "source": "rag/corpus/app_logic/SCREENSHOT_METHODS_COMPLETE.md"
+  },
+  {
+    "id": "screenshot_methods_complete_md_39_p1",
+    "corpus": "app_logic",
+    "title": "Current TekAutomate Implementation:",
+    "body": "- ✅ Method 2 (HARDCOPY PORT FILE) - Legacy - **NOW FIXED**\n- ✅ Method 3 (SAVE:IMAGE + FILESYSTEM) - Modern - **WORKING**\n- ❌ Method 1 (HARDCOPY:DATA?) - Not implemented (could add as optimization)",
+    "tags": [
+      "screenshot_methods_complete_md"
+    ],
+    "source": "rag/corpus/app_logic/SCREENSHOT_METHODS_COMPLETE.md"
+  },
+  {
+    "id": "screenshot_methods_complete_md_41_p1",
+    "corpus": "app_logic",
+    "title": "References",
+    "body": "- Tektronix Programmer Manual 077001026 (DPO5000/DPO7000 series)\n- Tektronix MSO5/6 Programmer Manual 077189801\n- TekAutomate Documentation: TekAcademy_Export/measurements_commands/hardcopy_vs_filesystem.md",
+    "tags": [
+      "screenshot_methods_complete_md"
+    ],
+    "source": "rag/corpus/app_logic/SCREENSHOT_METHODS_COMPLETE.md"
+  },
+  {
+    "id": "tekexpress_integration_md_2_p1",
+    "corpus": "app_logic",
+    "title": "Overview",
+    "body": "TekExpress is Tektronix's automated compliance test application suite (USB4Tx, PCIe, Thunderbolt, etc.). This guide explains how to properly integrate TekExpress automation into TekAutomate's Blockly and Steps UI systems.\n\n---",
+    "tags": [
+      "tekexpress_integration_md"
+    ],
+    "source": "rag/corpus/app_logic/TEKEXPRESS_INTEGRATION.md"
+  },
+  {
+    "id": "tekexpress_integration_md_3_p1",
+    "corpus": "app_logic",
+    "title": "Critical Principle",
+    "body": "> **TekExpress automation uses PyVISA SOCKET transport (TCPIP::host::5000::SOCKET). All TekExpress commands are SCPI strings sent via .write() and .query(). Never generate raw socket code or embed line terminators in command text.**\n\nTekExpress is an **SCPI endpoint**, not a Python socket program. The transport is abstracted exactly like PyVISA for oscilloscopes.\n\n---",
+    "tags": [
+      "tekexpress_integration_md"
+    ],
+    "source": "rag/corpus/app_logic/TEKEXPRESS_INTEGRATION.md"
+  },
+  {
+    "id": "tekexpress_integration_md_5_p1",
+    "corpus": "app_logic",
+    "title": "Control Plane Separation",
+    "body": "TekAutomate supports three independent control planes:\n\n| Control Plane | Transport | Default Port | Library | Commands |\n|--------------|-----------|--------------|---------|----------|\n| **Scope Control** | VXI-11 / HiSLIP / Socket | 4000 | PyVISA or tm_devices | `ACQuire:`, `CH1:`, `MEASurement:` |\n| **TekExpress Control** | TCP Socket | 5000 | PyVISA SOCKET | `TEKEXP:*` |\n| **File Transfer** | Same as TekExpress | 5000 | PyVISA SOCKET | Binary data after TEKEXP:EXPORT |",
+    "tags": [
+      "tekexpress_integration_md"
+    ],
+    "source": "rag/corpus/app_logic/TEKEXPRESS_INTEGRATION.md"
+  },
+  {
+    "id": "tekexpress_integration_md_6_p1",
+    "corpus": "app_logic",
+    "title": "Backend Type",
+    "body": "TekExpress uses the **PyVISA SOCKET backend** - the same library as scope automation, just different transport:\n\n```\nBackend: pyvisa (with SOCKET connection type)\nResource String: TCPIP::<host>::5000::SOCKET\nWrite Termination: \\n\nRead Termination: \\n\n```\n\n---",
+    "tags": [
+      "tekexpress_integration_md"
+    ],
+    "source": "rag/corpus/app_logic/TEKEXPRESS_INTEGRATION.md"
+  },
+  {
+    "id": "tekexpress_integration_md_8_p1",
+    "corpus": "app_logic",
+    "title": "The Problem",
+    "body": "GPT was given a raw Python socket script like:\n\n```python\nskt = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\nskt.connect((\"localhost\", 5000))\nskt.sendall(\"TEKEXP:STATE RUN\\n\".encode())\nresponse = skt.recv(1024).decode()\n```\n\nAnd GPT **literally translated** this as:\n- `socket.sendall()` → embedded in Blockly\n- `\\n` terminators → embedded in command strings\n- Low-level I/O → preserved in generated code",
+    "tags": [
+      "tekexpress_integration_md"
+    ],
+    "source": "rag/corpus/app_logic/TEKEXPRESS_INTEGRATION.md"
+  },
+  {
+    "id": "tekexpress_integration_md_9_p1",
+    "corpus": "app_logic",
+    "title": "The Root Cause",
+    "body": "The prompt did not clearly state:\n> \"Treat TEKEXP:* as SCPI commands, not as Python socket code\"\n\nSo GPT had no abstraction boundary and copied the socket API instead of abstracting transport.",
+    "tags": [
+      "tekexpress_integration_md"
+    ],
+    "source": "rag/corpus/app_logic/TEKEXPRESS_INTEGRATION.md"
+  },
+  {
+    "id": "tekexpress_integration_md_10_p1",
+    "corpus": "app_logic",
+    "title": "The Solution",
+    "body": "TekExpress must be modeled as:\n1. **SCPI commands** (same semantics as scope commands)\n2. **Different transport** (socket instead of VXI-11)\n3. **Same Blockly abstraction** (connect → write/query → disconnect)\n\n---",
+    "tags": [
+      "tekexpress_integration_md"
+    ],
+    "source": "rag/corpus/app_logic/TEKEXPRESS_INTEGRATION.md"
+  },
+  {
+    "id": "tekexpress_integration_md_12_p1",
+    "corpus": "app_logic",
+    "title": "Connection (PyVISA SOCKET)",
+    "body": "```python\nimport pyvisa\n\nrm = pyvisa.ResourceManager()\ntekexp = rm.open_resource(\"TCPIP::localhost::5000::SOCKET\")\ntekexp.write_termination = \"\\n\"\ntekexp.read_termination = \"\\n\"\ntekexp.timeout = 30000  # 30 seconds\n```",
+    "tags": [
+      "tekexpress_integration_md"
+    ],
+    "source": "rag/corpus/app_logic/TEKEXPRESS_INTEGRATION.md"
+  },
+  {
+    "id": "tekexpress_integration_md_13_p1",
+    "corpus": "app_logic",
+    "title": "SCPI Write",
+    "body": "```python",
+    "tags": [
+      "tekexpress_integration_md"
+    ],
+    "source": "rag/corpus/app_logic/TEKEXPRESS_INTEGRATION.md"
+  },
+  {
+    "id": "tekexpress_integration_md_14_p1",
+    "corpus": "app_logic",
+    "title": "Correct - uses PyVISA abstraction",
+    "body": "tekexp.write(\"TEKEXP:ACQUIRE_MODE LIVE\")\ntekexp.write('TEKEXP:SELECT DEVICE,\"Device\"')\ntekexp.write(\"TEKEXP:STATE RUN\")\n```\n\n**NOT** this (wrong - raw socket):\n```python",
+    "tags": [
+      "tekexpress_integration_md"
+    ],
+    "source": "rag/corpus/app_logic/TEKEXPRESS_INTEGRATION.md"
+  },
+  {
+    "id": "tekexpress_integration_md_15_p1",
+    "corpus": "app_logic",
+    "title": "WRONG - never generate this",
+    "body": "skt.sendall(\"TEKEXP:STATE RUN\\n\".encode())\n```",
+    "tags": [
+      "tekexpress_integration_md"
+    ],
+    "source": "rag/corpus/app_logic/TEKEXPRESS_INTEGRATION.md"
+  },
+  {
+    "id": "tekexpress_integration_md_16_p1",
+    "corpus": "app_logic",
+    "title": "SCPI Query",
+    "body": "```python",
+    "tags": [
+      "tekexpress_integration_md"
+    ],
+    "source": "rag/corpus/app_logic/TEKEXPRESS_INTEGRATION.md"
+  },
+  {
+    "id": "tekexpress_integration_md_17_p1",
+    "corpus": "app_logic",
+    "title": "Correct",
+    "body": "state = tekexp.query(\"TEKEXP:STATE?\")\npopup = tekexp.query(\"TEKEXP:POPUP?\")\ndevice = tekexp.query(\"TEKEXP:SELECT? DEVICE\")\n```",
+    "tags": [
+      "tekexpress_integration_md"
+    ],
+    "source": "rag/corpus/app_logic/TEKEXPRESS_INTEGRATION.md"
+  },
+  {
+    "id": "tekexpress_integration_md_18_p1",
+    "corpus": "app_logic",
+    "title": "Disconnect",
+    "body": "```python\ntekexp.close()\n```\n\n---",
+    "tags": [
+      "tekexpress_integration_md"
+    ],
+    "source": "rag/corpus/app_logic/TEKEXPRESS_INTEGRATION.md"
+  },
+  {
+    "id": "tekexpress_integration_md_19_p1",
+    "corpus": "app_logic",
+    "title": "TekExpress Execution Model",
+    "body": "Unlike scope SCPI which is mostly synchronous, TekExpress uses a **state machine** execution model:",
+    "tags": [
+      "tekexpress_integration_md"
+    ],
+    "source": "rag/corpus/app_logic/TEKEXPRESS_INTEGRATION.md"
+  },
+  {
+    "id": "tekexpress_integration_md_21_p1",
+    "corpus": "app_logic",
+    "title": "Key Differences from Scope SCPI",
+    "body": "| Feature | Scope SCPI | TekExpress SCPI |\n|---------|------------|-----------------|\n| Synchronization | `*OPC?` supported | Use `TEKEXP:STATE?` polling |\n| Execution | Immediate | State machine (async) |\n| User Interaction | None | Popup handling required |\n| Timeouts | Standard | Extended (tests can run minutes) |\n\n---",
+    "tags": [
+      "tekexpress_integration_md"
+    ],
+    "source": "rag/corpus/app_logic/TEKEXPRESS_INTEGRATION.md"
+  },
+  {
+    "id": "tekexpress_integration_md_24_p1",
+    "corpus": "app_logic",
+    "title": "1. Connection Block",
+    "body": "**Block Type:** `connect_tekexpress`\n\n**Fields:**\n- HOST: IP address or hostname\n- PORT: Default 5000\n- TIMEOUT: Default 30000ms\n\n**Generated Python:**\n```python\nrm = pyvisa.ResourceManager()\ntekexp = rm.open_resource(f\"TCPIP::{host}::{port}::SOCKET\")\ntekexp.write_termination = \"\\n\"\ntekexp.read_termination = \"\\n\"\ntekexp.timeout = timeout\n```",
+    "tags": [
+      "tekexpress_integration_md"
+    ],
+    "source": "rag/corpus/app_logic/TEKEXPRESS_INTEGRATION.md"
+  },
+  {
+    "id": "tekexpress_integration_md_25_p1",
+    "corpus": "app_logic",
+    "title": "2. SCPI Write Block (TekExpress)",
+    "body": "**Block Type:** `tekexp_write` (or reuse `scpi_write` with backend guard)\n\n**Fields:**\n- COMMAND: SCPI command string\n\n**Generated Python:**\n```python\ntekexp.write(\"TEKEXP:STATE RUN\")\n```\n\n**CRITICAL:** Termination is added by PyVISA, NOT in command string.",
+    "tags": [
+      "tekexpress_integration_md"
+    ],
+    "source": "rag/corpus/app_logic/TEKEXPRESS_INTEGRATION.md"
+  },
+  {
+    "id": "tekexpress_integration_md_26_p1",
+    "corpus": "app_logic",
+    "title": "3. SCPI Query Block (TekExpress)",
+    "body": "**Block Type:** `tekexp_query` (or reuse `scpi_query` with backend guard)\n\n**Fields:**\n- COMMAND: SCPI query string\n- VARIABLE: Output variable name\n\n**Generated Python:**\n```python\nstatus = tekexp.query(\"TEKEXP:STATE?\")\n```",
+    "tags": [
+      "tekexpress_integration_md"
+    ],
+    "source": "rag/corpus/app_logic/TEKEXPRESS_INTEGRATION.md"
+  },
+  {
+    "id": "tekexpress_integration_md_28_p1",
+    "corpus": "app_logic",
+    "title": "5. Popup Handling Block",
+    "body": "**Block Type:** `tekexp_popup`\n\n**Fields:**\n- RESPONSE: User response string (default \"OK\")\n\n**Generated Python:**\n```python\npopup_msg = tekexp.query(\"TEKEXP:POPUP?\")\ntekexp.write(f'TEKEXP:POPUP \"{response}\"')\n```",
+    "tags": [
+      "tekexpress_integration_md"
+    ],
+    "source": "rag/corpus/app_logic/TEKEXPRESS_INTEGRATION.md"
+  },
+  {
+    "id": "tekexpress_integration_md_29_p1",
+    "corpus": "app_logic",
+    "title": "6. Run Measurement Block",
+    "body": "**Block Type:** `tekexp_run`\n\n**Fields:** None (high-level helper)\n\n**Generated Python:**\n```python\ntekexp.write(\"TEKEXP:STATE RUN\")\n```",
+    "tags": [
+      "tekexpress_integration_md"
+    ],
+    "source": "rag/corpus/app_logic/TEKEXPRESS_INTEGRATION.md"
+  },
+  {
+    "id": "tekexpress_integration_md_30_p1",
+    "corpus": "app_logic",
+    "title": "7. Export Report Block",
+    "body": "**Block Type:** `tekexp_export_report`\n\n**Fields:**\n- REPORT_TYPE: `REPORT`, `LOG`, `CSV`\n- FILENAME: Output filename\n\n**Generated Python:**\n```python\ntekexp.write(\"TEKEXP:EXPORT REPORT\")",
+    "tags": [
+      "tekexpress_integration_md"
+    ],
+    "source": "rag/corpus/app_logic/TEKEXPRESS_INTEGRATION.md"
+  },
+  {
+    "id": "tekexpress_integration_md_31_p1",
+    "corpus": "app_logic",
+    "title": "Binary transfer handling",
+    "body": "```\n\n---",
+    "tags": [
+      "tekexpress_integration_md"
+    ],
+    "source": "rag/corpus/app_logic/TEKEXPRESS_INTEGRATION.md"
+  },
+  {
+    "id": "tekexpress_integration_md_33_p1",
+    "corpus": "app_logic",
+    "title": "Conceptual Flow",
+    "body": "```xml\n<xml xmlns=\"https://developers.google.com/blockly/xml\">\n  <variables>\n    <variable>state</variable>\n    <variable>popup</variable>\n  </variables>\n  \n  <!-- Connect to TekExpress -->\n  <block type=\"connect_tekexpress\" id=\"c1\" x=\"20\" y=\"20\">\n    <field name=\"HOST\">localhost</field>\n    <field name=\"PORT\">5000</field>\n    <field name=\"TIMEOUT\">30000</field>\n    <next>\n    \n      <!-- Configure Device -->\n      <block type=\"tekexp_write\" id=\"w1\">\n        <field name=\"COMMAND\">TEKEXP:ACQUIRE_MODE LIVE</field>\n        <next>\n        \n          <block type=\"tekexp_write\" id=\"w2\">\n            <field name=\"COMMAND\">TEKEXP:SELECT DEVICE,\"Device\"</field>\n            <next>\n            \n              <!-- Select Test -->\n              <block type=\"tekexp_write\" id=\"w3\">\n                <field name=\"COMMAND\">TEKEXP:SELECT TEST,\"UI-Unit Interval\",1</field>\n                <next>\n                \n                  <!-- Run -->\n                  <block type=\"tekexp_run\" id=\"r1\">\n                    <next>\n                    \n                      <!-- Wait for completion with popup handling -->\n                      <block type=\"tekexp_wait_state\" id=\"ws1\">\n                        <field name=\"EXPECTED\">COMPLETE</field>\n                        <field name=\"POLL_INTERVAL\">2</field>\n                        <field name=\"TIMEOUT\">300</field>\n                        <next>\n                        \n                          <!-- Disconnect -->\n                          <block type=\"disconnect\" id=\"d1\">\n                            <field name=\"DEVICE_CONTEXT\">(tekexp)</field>\n                          </block>\n                          \n                        </next>\n                      </block>\n                    </next>\n                  </block>\n                </next>\n              </block>\n            </next>\n          </block>\n        </next>\n      </block>\n    </next>\n  </block>\n</xml>\n```\n\n---",
+    "tags": [
+      "tekexpress_integration_md"
+    ],
+    "source": "rag/corpus/app_logic/TEKEXPRESS_INTEGRATION.md"
+  },
+  {
+    "id": "tekexpress_integration_md_36_p1",
+    "corpus": "app_logic",
+    "title": "Rule 1: Never Generate Raw Socket Code",
+    "body": "**WRONG:**\n```python\nimport socket\nskt = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\nskt.sendall(\"TEKEXP:STATE RUN\\n\".encode())\n```\n\n**CORRECT:**\n```python\nimport pyvisa\ntekexp = rm.open_resource(\"TCPIP::host::5000::SOCKET\")\ntekexp.write(\"TEKEXP:STATE RUN\")\n```",
+    "tags": [
+      "tekexpress_integration_md"
+    ],
+    "source": "rag/corpus/app_logic/TEKEXPRESS_INTEGRATION.md"
+  },
+  {
+    "id": "tekexpress_integration_md_37_p1",
+    "corpus": "app_logic",
+    "title": "Rule 2: Termination Handled by Resource Config",
+    "body": "**WRONG:**\n```python\ntekexp.write(\"TEKEXP:STATE RUN\\n\")  # Don't add \\n manually\n```\n\n**CORRECT:**\n```python\ntekexp.write_termination = \"\\n\"  # Set once at connection\ntekexp.write(\"TEKEXP:STATE RUN\")  # Termination added automatically\n```",
+    "tags": [
+      "tekexpress_integration_md"
+    ],
+    "source": "rag/corpus/app_logic/TEKEXPRESS_INTEGRATION.md"
+  },
+  {
+    "id": "tekexpress_integration_md_38_p1",
+    "corpus": "app_logic",
+    "title": "Rule 3: Use TEKEXP:STATE? Instead of *OPC?",
+    "body": "**WRONG:**\n```python\ntekexp.query(\"*OPC?\")  # Not supported by TekExpress\n```\n\n**CORRECT:**\n```python\nstate = tekexp.query(\"TEKEXP:STATE?\")\n```",
+    "tags": [
+      "tekexpress_integration_md"
+    ],
+    "source": "rag/corpus/app_logic/TEKEXPRESS_INTEGRATION.md"
+  },
+  {
+    "id": "tekexpress_integration_md_39_p1",
+    "corpus": "app_logic",
+    "title": "Rule 4: Handle Popups",
+    "body": "TekExpress may pause for user input. Always include popup handling in wait loops.\n\n---",
+    "tags": [
+      "tekexpress_integration_md"
+    ],
+    "source": "rag/corpus/app_logic/TEKEXPRESS_INTEGRATION.md"
+  },
+  {
+    "id": "tekexpress_integration_md_41_p1",
+    "corpus": "app_logic",
+    "title": "Backend Compatibility Matrix",
+    "body": "| Backend | TekExpress Support | Notes |\n|---------|-------------------|-------|\n| PyVISA (SOCKET) | ✅ Full | Recommended |\n| PyVISA (INSTR) | ❌ No | TekExpress requires socket |\n| tm_devices | ❌ No | Not designed for TekExpress |\n| TekHSI | ❌ No | Different protocol (gRPC) |\n| VXI-11 | ❌ No | TekExpress requires socket |\n\n---",
+    "tags": [
+      "tekexpress_integration_md"
+    ],
+    "source": "rag/corpus/app_logic/TEKEXPRESS_INTEGRATION.md"
+  },
+  {
+    "id": "tekexpress_integration_md_42_p1",
+    "corpus": "app_logic",
+    "title": "Summary",
+    "body": "1. **TekExpress uses PyVISA SOCKET backend** - same library, different transport\n2. **Commands are standard SCPI** - `TEKEXP:*` namespace\n3. **Never generate raw socket code** - only `.write()`/`.query()` methods\n4. **Termination is handled by config** - don't embed `\\n` in commands\n5. **Use state polling** - `TEKEXP:STATE?` instead of `*OPC?`\n6. **Handle popups** - TekExpress may pause for user input\n7. **Blockly blocks work the same** - just different device type/transport\n\n---",
+    "tags": [
+      "tekexpress_integration_md"
+    ],
+    "source": "rag/corpus/app_logic/TEKEXPRESS_INTEGRATION.md"
+  },
+  {
+    "id": "tekexpress_integration_md_43_p1",
+    "corpus": "app_logic",
+    "title": "Version History",
+    "body": "- **v1.0** (2026-01-25): Initial TekExpress integration guide",
+    "tags": [
+      "tekexpress_integration_md"
+    ],
+    "source": "rag/corpus/app_logic/TEKEXPRESS_INTEGRATION.md"
+  },
+  {
+    "id": "tekexpress_ui_requirements_md_2_p1",
+    "corpus": "app_logic",
+    "title": "Problem Statement",
+    "body": "TekExpress commands have special requirements that need UI support:\n\n1. **Conditional Arguments**: Some arguments' valid values depend on another argument's value\n   - Example: `TEKEXP:VALUE GENERAL` - the `value` argument depends on which `parametername` is selected\n\n2. **Query vs Set Arguments**: Query commands should NOT show set-only arguments\n   - Example: `TEKEXP:SELECT? TEST` should only show the command, not the `testname` and `value` arguments\n\n3. **Large Enumerations**: Some commands have 100+ valid values that need special UI (tree view, card selection)",
+    "tags": [
+      "tekexpress_ui_requirements_md"
+    ],
+    "source": "rag/corpus/app_logic/TEKEXPRESS_UI_REQUIREMENTS.md"
+  },
+  {
+    "id": "tekexpress_ui_requirements_md_4_p1",
+    "corpus": "app_logic",
+    "title": "1. Conditional Arguments",
+    "body": "Arguments that depend on other arguments now have:\n```json\n{\n  \"name\": \"value\",\n  \"dependsOn\": \"parametername\",\n  \"validValues\": {\n    \"type\": \"enumeration\",\n    \"conditionalValues\": {\n      \"ParameterName1\": [\"Value1\", \"Value2\"],\n      \"ParameterName2\": [\"Value3\", \"Value4\"]\n    }\n  }\n}\n```",
+    "tags": [
+      "tekexpress_ui_requirements_md"
+    ],
+    "source": "rag/corpus/app_logic/TEKEXPRESS_UI_REQUIREMENTS.md"
+  },
+  {
+    "id": "tekexpress_ui_requirements_md_5_p1",
+    "corpus": "app_logic",
+    "title": "2. Query-Only Arguments",
+    "body": "Arguments that should NOT appear in queries:\n```json\n{\n  \"name\": \"value\",\n  \"queryOnly\": true  // Only show in SET commands, hide in QUERY commands\n}\n```",
+    "tags": [
+      "tekexpress_ui_requirements_md"
+    ],
+    "source": "rag/corpus/app_logic/TEKEXPRESS_UI_REQUIREMENTS.md"
+  },
+  {
+    "id": "tekexpress_ui_requirements_md_6_p1",
+    "corpus": "app_logic",
+    "title": "3. Query Arguments Specification",
+    "body": "In syntax object:\n```json\n{\n  \"syntax\": {\n    \"set\": \"TEKEXP:VALUE GENERAL,\\\"<ParameterName>\\\",\\\"<Value>\\\"\",\n    \"query\": \"TEKEXP:VALUE? GENERAL,\\\"<ParameterName>\\\"\",\n    \"queryArguments\": [\"parametername\"]  // Only these args are used in queries\n  }\n}\n```",
+    "tags": [
+      "tekexpress_ui_requirements_md"
+    ],
+    "source": "rag/corpus/app_logic/TEKEXPRESS_UI_REQUIREMENTS.md"
+  },
+  {
+    "id": "tekexpress_ui_requirements_md_8_p1",
+    "corpus": "app_logic",
+    "title": "1. Conditional Value Filtering",
+    "body": "When rendering argument dropdowns:\n- Check if argument has `dependsOn` field\n- If yes, watch the parent argument's value\n- Filter `conditionalValues` based on parent's current value\n- Update dropdown options dynamically\n\n**Example Code:**\n```typescript\nconst getValidValues = (arg: Argument, parentValues: Record<string, any>) => {\n  if (arg.dependsOn && arg.validValues?.conditionalValues) {\n    const parentValue = parentValues[arg.dependsOn];\n    return arg.validValues.conditionalValues[parentValue] || [];\n  }\n  return arg.validValues?.values || [];\n};\n```",
+    "tags": [
+      "tekexpress_ui_requirements_md"
+    ],
+    "source": "rag/corpus/app_logic/TEKEXPRESS_UI_REQUIREMENTS.md"
+  },
+  {
+    "id": "tekexpress_ui_requirements_md_9_p1",
+    "corpus": "app_logic",
+    "title": "2. Query Command Argument Filtering",
+    "body": "When command type is \"query\" or \"both\":\n- Check `syntax.queryArguments` to see which arguments are used in queries\n- OR check each argument's `queryOnly` flag\n- Hide arguments that are `queryOnly: true` when in query mode\n- Only show arguments listed in `queryArguments` for queries\n\n**Example Code:**\n```typescript\nconst shouldShowArgument = (arg: Argument, isQuery: boolean, queryArguments: string[]) => {\n  if (isQuery) {\n    // Only show arguments specified in queryArguments\n    return queryArguments.includes(arg.name);\n  }\n  // In set mode, show all arguments except those marked queryOnly\n  return !arg.queryOnly;\n};\n```",
+    "tags": [
+      "tekexpress_ui_requirements_md"
+    ],
+    "source": "rag/corpus/app_logic/TEKEXPRESS_UI_REQUIREMENTS.md"
+  },
+  {
+    "id": "tekexpress_ui_requirements_md_10_p1",
+    "corpus": "app_logic",
+    "title": "3. Command Generation",
+    "body": "When generating the command string:\n- For queries: Only substitute arguments listed in `queryArguments`\n- For sets: Substitute all arguments (except those marked `queryOnly` if somehow shown)\n\n**Example Code:**\n```typescript\nconst generateCommand = (syntax: Syntax, isQuery: boolean, paramValues: Record<string, any>) => {\n  const template = isQuery ? syntax.query : syntax.set;\n  const argsToUse = isQuery \n    ? (syntax.queryArguments || [])\n    : Object.keys(paramValues);\n  \n  // Only substitute arguments that should be used\n  // ... substitution logic\n};\n```",
+    "tags": [
+      "tekexpress_ui_requirements_md"
+    ],
+    "source": "rag/corpus/app_logic/TEKEXPRESS_UI_REQUIREMENTS.md"
+  },
+  {
+    "id": "tekexpress_ui_requirements_md_12_p1",
+    "corpus": "app_logic",
+    "title": "1. TEKEXP:SELECT TEST",
+    "body": "- **Issue**: 100+ test names in enumeration\n- **Solution**: Use tree view or card selection UI\n- **JSON**: Has `uiHint` field with `type: \"tree_view\"`",
+    "tags": [
+      "tekexpress_ui_requirements_md"
+    ],
+    "source": "rag/corpus/app_logic/TEKEXPRESS_UI_REQUIREMENTS.md"
+  },
+  {
+    "id": "tekexpress_ui_requirements_md_13_p1",
+    "corpus": "app_logic",
+    "title": "2. TEKEXP:VALUE GENERAL",
+    "body": "- **Issue**: Value depends on ParameterName\n- **Solution**: Dynamic filtering based on `conditionalValues`\n- **JSON**: Has `dependsOn` and `conditionalValues` structure",
+    "tags": [
+      "tekexpress_ui_requirements_md"
+    ],
+    "source": "rag/corpus/app_logic/TEKEXPRESS_UI_REQUIREMENTS.md"
+  },
+  {
+    "id": "tekexpress_ui_requirements_md_14_p1",
+    "corpus": "app_logic",
+    "title": "3. All Query Commands",
+    "body": "- **Issue**: Queries showing set arguments\n- **Solution**: Use `queryArguments` or `queryOnly` flags\n- **JSON**: Syntax object has `queryArguments` array",
+    "tags": [
+      "tekexpress_ui_requirements_md"
+    ],
+    "source": "rag/corpus/app_logic/TEKEXPRESS_UI_REQUIREMENTS.md"
+  },
+  {
+    "id": "tekexpress_ui_requirements_md_15_p1",
+    "corpus": "app_logic",
+    "title": "Testing Checklist",
+    "body": "- [ ] Conditional arguments update when parent changes\n- [ ] Query commands don't show set-only arguments\n- [ ] Query command generation uses correct syntax\n- [ ] Large enumerations use appropriate UI (tree/card)\n- [ ] Command preview updates correctly for both set and query modes",
+    "tags": [
+      "tekexpress_ui_requirements_md"
+    ],
+    "source": "rag/corpus/app_logic/TEKEXPRESS_UI_REQUIREMENTS.md"
+  },
+  {
+    "id": "al_what_is_tekautomate",
+    "corpus": "app_logic",
+    "title": "What TekAutomate Is",
+    "body": "TekAutomate is an automation authoring environment for Tektronix and Keithley test & measurement instruments.\nUsers build workflows that control oscilloscopes, power supplies, SMUs, DMMs, AFGs, and TekExpress applications, then export runnable Python scripts.\nDelivery: Web app (http://dev.tek.com/TekAutomate); optional Electron desktop packaging.\nStack: React, TypeScript, Google Blockly, CodeMirror. Python is generated entirely client-side — no backend server.\nUsers: Test/validation engineers, R&D, researchers, educators, AEs.",
+    "tags": [
+      "architecture",
+      "overview",
+      "stack",
+      "react",
+      "typescript"
+    ],
+    "source": "rag/corpus/app_logic/app_logic_index.json"
+  },
+  {
+    "id": "al_two_builders",
+    "corpus": "app_logic",
+    "title": "Two Authoring Modes: Steps Builder vs Blockly Builder",
+    "body": "Steps Builder: Linear step list, command library browser, single-device only. Exports legacy Python.\nBlockly Builder: Drag-and-drop blocks, loops, variables, full multi-device support. Exports clean Python.\nWorkflows convert bidirectionally: Steps → Blockly via stepToBlock.ts, Blockly → Steps via blockToStep.ts.\nRULE: For multi-device workflows, always use Blockly Builder. Steps UI cannot generate correct multi-device Python.",
+    "tags": [
+      "architecture",
+      "steps",
+      "blockly",
+      "multi_device",
+      "builder"
+    ],
+    "source": "rag/corpus/app_logic/app_logic_index.json"
+  },
+  {
+    "id": "al_connection_types",
+    "corpus": "app_logic",
+    "title": "Connection Types and VISA Resource Strings",
+    "body": "TCP/IP (VXI-11): TCPIP::<host>::INSTR — no port needed, uses RPC portmapper.\nSocket: TCPIP::<host>::<port>::SOCKET — raw socket, default port 4000. NOT supported with tm_devices backend.\nUSB: USB::<vendor>::<product>::<serial>::INSTR — e.g. USB::0x0699::0x0522::INSTR\nGPIB: GPIB<board>::<address>::INSTR — address 1-30, e.g. GPIB0::1::INSTR\nSocket connection is NOT supported with tm_devices backend — use TCP/IP instead.",
+    "tags": [
+      "connection",
+      "visa",
+      "tcpip",
+      "socket",
+      "usb",
+      "gpib",
+      "resource_string"
+    ],
+    "source": "rag/corpus/app_logic/app_logic_index.json"
+  },
+  {
+    "id": "al_step_types",
+    "corpus": "app_logic",
+    "title": "All Valid Step Types in Steps Builder",
+    "body": "connect: Opens device connections. Key params: instrumentIds[], printIdn.\nwrite: SCPI write (no return). Key param: command.\nquery: SCPI query (returns value). Key params: command, saveAs (REQUIRED).\nset_and_query: Write then verify readback. Key params: command, queryCommand, saveAs.\nsleep: Wait N seconds. Key param: duration.\npython: Custom inline Python code. Key param: code.\nsave_waveform: Waveform save. Key params: source, filename, format.\nsave_screenshot: Capture screenshot. Key params: filename, scopeType (modern|legacy).\nrecall: Recall waveform/setup. Key params: recallType, filePath, reference.\nsweep: Parameter sweep loop. Key params: variableName, start, stop, step, saveResults.\nerror_check: Validate response. Key params: command, expectedValue.\ncomment: Annotation only, no code generated. Key param: text.\ngroup: Container for nested steps. Key params: children[], instrumentAlias.\ndisconnect: Close all connections.",
+    "tags": [
+      "step_types",
+      "schema",
+      "write",
+      "query",
+      "sleep",
+      "sweep",
+      "group"
+    ],
+    "source": "rag/corpus/app_logic/app_logic_index.json"
+  },
+  {
+    "id": "al_query_saveas_rule",
+    "corpus": "app_logic",
+    "title": "Query Steps MUST Have saveAs Parameter",
+    "body": "Every query step MUST have a saveAs (or outputVariable) parameter. This is REQUIRED.\nWithout saveAs, the query result is not stored and cannot be used in subsequent steps.\nCorrect: { type: 'query', params: { command: 'CH1:SCALE?', saveAs: 'scale_value' } }\nWrong:   { type: 'query', params: { command: 'CH1:SCALE?' } }  ← Missing saveAs, will fail.",
+    "tags": [
+      "query",
+      "saveas",
+      "outputvariable",
+      "required",
+      "validation"
+    ],
+    "source": "rag/corpus/app_logic/app_logic_index.json"
+  },
+  {
+    "id": "al_device_binding",
+    "corpus": "app_logic",
+    "title": "Device Binding Rules and Resolution Order",
+    "body": "Steps bind to devices via boundDeviceId. Commands reference devices by instrumentAlias or instrumentId.\nResolution order (highest to lowest priority):\n1. Command-level instrumentAlias\n2. Group-level instrumentAlias  \n3. Default device (first enabled device in DeviceEntry list)\nIn generated Python: each device alias becomes a Python variable (scope, psu, dmm, smu).",
+    "tags": [
+      "device_binding",
+      "instrumentalias",
+      "bounddeviceid",
+      "resolution"
+    ],
+    "source": "rag/corpus/app_logic/app_logic_index.json"
+  },
+  {
+    "id": "al_backends_overview",
+    "corpus": "app_logic",
+    "title": "Supported Backends Overview",
+    "body": "PyVISA (pyvisa): Industry standard. TCP/IP, Socket, USB, GPIB. All devices. pip install pyvisa.\ntm_devices (tm_devices): Official Tektronix framework. TCP/IP, USB, GPIB. NO Socket support. pip install tm-devices.\nVXI-11 (vxi11): Lightweight, no VISA drivers. TCP/IP only. All devices. pip install vxi11.\nTekHSI (tekhsi): High-speed gRPC. TCP/IP port 5000 only. MSO5/6, DPO7K only. pip install tekhsi.\nHybrid: NOT a fifth backend. It is a mode where one workflow uses PyVISA (SCPI) + TekHSI (waveforms) simultaneously.\nSocket connection: ONLY supported by PyVISA. tm_devices, VXI-11, TekHSI do NOT support Socket.",
+    "tags": [
+      "backend",
+      "pyvisa",
+      "tm_devices",
+      "vxi11",
+      "tekhsi",
+      "hybrid",
+      "socket"
+    ],
+    "source": "rag/corpus/app_logic/app_logic_index.json"
+  },
+  {
+    "id": "al_tm_devices_restrictions",
+    "corpus": "app_logic",
+    "title": "tm_devices Backend Restrictions — CRITICAL",
+    "body": "tm_devices backend FORBIDS these step types:\n  ❌ scpi_write / write — Use tm_devices API blocks instead (e.g. scope.commands.acquire.state.write('RUN'))\n  ❌ scpi_query / query — Use tm_devices API blocks instead\n  ❌ save_screenshot — Use scope.save_screenshot(name) method\n  ❌ save_waveform — Switch backend to PyVISA or use scope.curve_query()\nException: python_code blocks bypass validation — raw scope.write() is allowed inside python_code even with tm_devices.\nWhen violated, generator aborts with: BACKEND CAPABILITY VIOLATION DETECTED.",
+    "tags": [
+      "tm_devices",
+      "backend",
+      "restriction",
+      "violation",
+      "critical",
+      "scpi_write",
+      "scpi_query"
+    ],
+    "source": "rag/corpus/app_logic/app_logic_index.json"
+  },
+  {
+    "id": "al_hybrid_mode",
+    "corpus": "app_logic",
+    "title": "Hybrid Mode — Not a Fifth Backend",
+    "body": "Hybrid is NOT a fifth backend. It is a mode where a single workflow uses more than one backend per device.\nTypically: SCPI commands via PyVISA + waveform capture via TekHSI.\nGenerated code uses two connection objects for the same device:\n  scpi = rm.open_resource('TCPIP::192.168.1.10::INSTR')  # PyVISA for SCPI\n  scope = TekHSIConnect('192.168.1.10:5000')              # TekHSI for waveforms\nSupported devices: MSO5/6, DPO7K only.",
+    "tags": [
+      "hybrid",
+      "backend",
+      "tekhsi",
+      "pyvisa",
+      "waveform"
+    ],
+    "source": "rag/corpus/app_logic/app_logic_index.json"
+  },
+  {
+    "id": "al_backend_decision_tree",
+    "corpus": "app_logic",
+    "title": "Backend Selection Decision Tree",
+    "body": "FastFrame/FastAcq waveform capture ONLY → TekHSI\nMeasurements/search/histogram → PyVISA (NOT TekHSI)\nModern Python API on MSO6B → tm_devices\nTekExpress compliance testing → PyVISA SOCKET (port 5000)\nUnsure or maximum compatibility → PyVISA\nDPO70k or older scope → PyVISA\nLinux without VISA drivers → VXI-11 or PyVISA-py\nMulti-device management → tm_devices\nTekscopePC → tm_devices with HOST=127.0.0.1",
+    "tags": [
+      "backend",
+      "decision",
+      "selection",
+      "tekscopepc",
+      "tekhsi",
+      "pyvisa"
+    ],
+    "source": "rag/corpus/app_logic/app_logic_index.json"
+  },
+  {
+    "id": "al_codegen_pipeline",
+    "corpus": "app_logic",
+    "title": "Python Code Generation Pipeline",
+    "body": "Steps UI or Blockly workspace → Converter/Generator → Analyze devices → determine backends → resolve imports\n→ Generate: imports → connections → command body → cleanup → Downloadable .py file.\nKey files:\n  src/App.tsx — Steps UI Python generator\n  src/components/BlocklyBuilder/generators/pythonGenerators.ts — Blockly Python generator\n  src/components/BlocklyBuilder/converters/blockToStep.ts — Blockly→Steps\n  src/components/BlocklyBuilder/converters/stepToBlock.ts — Steps→Blockly",
+    "tags": [
+      "codegen",
+      "pipeline",
+      "python",
+      "generator",
+      "files"
+    ],
+    "source": "rag/corpus/app_logic/app_logic_index.json"
+  },
+  {
+    "id": "al_opc_rules",
+    "corpus": "app_logic",
+    "title": "OPC Query Rules — Critical",
+    "body": "NEVER use query('*OPC?') after FILESYSTEM:READFILE + read_raw(). This causes UnicodeDecodeError.\nThe PNG binary data contaminates the read buffer. The subsequent *OPC? reads leftover binary bytes.\nFix: Use time.sleep(1.0) instead of *OPC? after all binary file transfer operations.\nFor tm_devices: use scope.commands.opc.query().strip() == '1' (string comparison, not int).\nFor PyVISA: result = device.query('*OPC?').strip() — always .strip() before comparison.",
+    "tags": [
+      "opc",
+      "critical",
+      "unicode",
+      "filesystem",
+      "readfile",
+      "screenshot",
+      "sleep"
+    ],
+    "source": "rag/corpus/app_logic/app_logic_index.json"
+  },
+  {
+    "id": "al_filesystem_readfile_rule",
+    "corpus": "app_logic",
+    "title": "FILESystem:READFile — Raw Socket Required",
+    "body": "FILESystem:READFile is a command (not a query) that produces unframed binary output.\nIt omits IEEE 488.2 block headers and is terminated only by EOI.\nVISA-based APIs (PyVISA, tm_devices) CANNOT reliably consume this output.\nRaw TCP socket access with timeout-based EOF detection is REQUIRED.\nAfter sending FILESystem:READFile: do NOT query anything, do NOT send other SCPI commands.\nLet the socket stay in raw streaming mode until timeout. This is the One-Shot Binary Window Rule.",
+    "tags": [
+      "filesystem",
+      "readfile",
+      "raw_socket",
+      "binary",
+      "critical",
+      "visa",
+      "transport"
+    ],
+    "source": "rag/corpus/app_logic/app_logic_index.json"
+  },
+  {
+    "id": "al_tekscopepc_rules",
+    "corpus": "app_logic",
+    "title": "TekscopePC-Specific Rules",
+    "body": "Connection: Use tm_devices backend with HOST=127.0.0.1.\nReset: Use scpi_write('*RST') NOT scope.reset() — scope.reset() causes AttributeError with PyVISA.\nMeasurements: Must query explicitly — no SAVE:MEASUREMENT:ALL command.\nFastFrame: Standard commands work normally.",
+    "tags": [
+      "tekscopepc",
+      "reset",
+      "tm_devices",
+      "local",
+      "127_0_0_1"
+    ],
+    "source": "rag/corpus/app_logic/app_logic_index.json"
+  },
+  {
+    "id": "al_screenshot_rules",
+    "corpus": "app_logic",
+    "title": "Screenshot Capture Rules by Scope Family",
+    "body": "MSO 4/5/6 Series (modern):\n  Use SAVE:IMAGe \"C:/Temp/screenshot.png\" — format comes from file extension.\n  Do NOT use EXPort or HARDCopy commands on MSO 4/5/6.\n  After capture: time.sleep(1.0) then FILESystem:READFile via raw socket.\n\nMSO/DPO 70000 Series (legacy):\n  Use EXPort:FILEName + EXPort:FORMat PNG + EXPort START (case sensitive: START not STARt).\n  Do NOT use SAVE:IMAGe on 70000 series.\n  After capture: time.sleep(1.0) then FILESystem:READFile via raw socket.\n\nNEVER use *OPC? after file transfer. Use time.sleep(1.0) instead.",
+    "tags": [
+      "screenshot",
+      "save_image",
+      "export",
+      "hardcopy",
+      "mso456",
+      "mso70k",
+      "family"
+    ],
+    "source": "rag/corpus/app_logic/app_logic_index.json"
+  },
+  {
+    "id": "al_blockly_controls_for_mutation",
+    "corpus": "app_logic",
+    "title": "Blockly controls_for MUST Include mutation/variable",
+    "body": "controls_for (for loop) blocks MUST include the mutation element with variable name.\nWithout mutation, Blockly variable scoping breaks and round-trip import/export is unstable.\nCORRECT XML:\n  <block type=\"controls_for\" id=\"loop1\">\n    <field name=\"VAR\">frame</field>\n    <mutation><variable>frame</variable></mutation>\n  </block>\nWRONG XML (missing mutation):\n  <block type=\"controls_for\" id=\"loop1\">\n    <field name=\"VAR\">frame</field>\n  </block>",
+    "tags": [
+      "blockly",
+      "controls_for",
+      "mutation",
+      "variable",
+      "xml",
+      "critical"
+    ],
+    "source": "rag/corpus/app_logic/app_logic_index.json"
+  },
+  {
+    "id": "al_blockly_device_context",
+    "corpus": "app_logic",
+    "title": "Blockly DEVICE_CONTEXT Field Rules",
+    "body": "DEVICE_CONTEXT field on SCPI blocks determines which instrument gets the command.\nResolution priority:\n1. Explicit DEVICE_CONTEXT field on block (absolute priority — return immediately)\n2. Walk getPreviousBlock() chain to find nearest connect_to_instrument\n3. Walk parent blocks (for blocks inside loops/conditions)\n4. Fall back to currentDeviceContext module variable\n\nCommand prefix → DEVICE_CONTEXT mapping:\n  CH1:|ACQuire:|MEASU:|DATa: → (scope)\n  :SOURce:|:OUTPut:|:MEASure: → (smu)/(psu)\n  TEKEXP: → (tekexp)\n\nCommon GPT error: Scope commands (CH1:SCAle) given SMU device context.",
+    "tags": [
+      "blockly",
+      "device_context",
+      "scope",
+      "smu",
+      "context",
+      "gpt"
+    ],
+    "source": "rag/corpus/app_logic/app_logic_index.json"
+  },
+  {
+    "id": "al_blockly_variable_names",
+    "corpus": "app_logic",
+    "title": "Blockly Variable Name Resolution — Critical Fix",
+    "body": "PROBLEM: block.getFieldValue('VAR') returns Blockly's internal UUID, not the human-readable name.\nThis causes Python output like: N%hHHhp:Bg=T0!BWtnrB = 0 instead of i = 0.\nFIX: Always use workspace API to resolve variable names:\n  const varModel = workspace.getVariableById(id);\n  const varName = varModel.getName();  // 'voltage', not 'abc-123-def'\nApplied at 3 locations in blockToStep.ts.",
+    "tags": [
+      "blockly",
+      "variable",
+      "uuid",
+      "name_resolution",
+      "bug",
+      "critical"
+    ],
+    "source": "rag/corpus/app_logic/app_logic_index.json"
+  },
+  {
+    "id": "al_float_loop_rule",
+    "corpus": "app_logic",
+    "title": "Float Loop Must Use while, Not range()",
+    "body": "Python's range() does not accept float arguments.\nWhen loop start/stop/step are floats, generator MUST produce a while loop, not for i in range().\nCORRECT (float values):\n  v = 0.5\n  while v <= 2.5:\n      # loop body\n      v += 0.5\nWRONG (causes TypeError):\n  for v in range(0.5, 2.5, 0.5):  ← Python range() rejects floats",
+    "tags": [
+      "codegen",
+      "sweep",
+      "float",
+      "range",
+      "while_loop",
+      "bug",
+      "critical"
+    ],
+    "source": "rag/corpus/app_logic/app_logic_index.json"
+  },
+  {
+    "id": "al_ai_action_schema",
+    "corpus": "app_logic",
+    "title": "AiAction Schema — Do Not Break This Contract",
+    "body": "AiAction interface (must remain unchanged for apply-engine compatibility):\n  type: 'replace_command' | 'insert_step' | 'delete_step' | 'change_param' | 'change_backend' | 'change_device' | 'reorder'\n  targetStepId: string | null  — step ID this action targets (null for flow-level)\n  suggestedFix: string         — human-readable description of the fix\n  severity: 'critical' | 'warning' | 'info'\n  payload?: Record<string, unknown>  — optional: concrete new value (command text, param value, etc.)\nonApplyAiActions is the ONLY mutation path for AI-suggested fixes. It lives in App.tsx.",
+    "tags": [
+      "ai",
+      "action",
+      "schema",
+      "apply",
+      "mutation",
+      "contract"
+    ],
+    "source": "rag/corpus/app_logic/app_logic_index.json"
+  },
+  {
+    "id": "al_ai_finding_schema",
+    "corpus": "app_logic",
+    "title": "AiFinding Schema",
+    "body": "AiFinding interface:\n  symptom: string  — human-readable symptom description\n  affectedStepId: string | null  — step ID (null for flow-level findings)\n  category: 'scpi_error' | 'timeout' | 'device_mismatch' | 'missing_step' | 'parameter_issue' | 'backend_conflict' | 'performance' | 'general'\n  confidence: number  — 0-1 confidence that this finding is correct",
+    "tags": [
+      "ai",
+      "finding",
+      "schema",
+      "diagnostic"
+    ],
+    "source": "rag/corpus/app_logic/app_logic_index.json"
+  },
+  {
+    "id": "al_tekexpress_rules",
+    "corpus": "app_logic",
+    "title": "TekExpress Integration Rules",
+    "body": "TekExpress commands are SCPI strings sent over PyVISA SOCKET backend. NEVER raw socket.sendall().\nConnection: TCPIP::localhost::5000::SOCKET with write_termination='\n' read_termination='\n' timeout=30000.\nSynchronization: Use TEKEXP:STATE? polling, NOT *OPC? (*OPC? not supported by TekExpress).\nExecution is async/state-machine — must poll TEKEXP:STATE? until COMPLETE.\nHandle popups: query TEKEXP:POPUP? and respond with TEKEXP:POPUP 'OK'.\nBackends: ONLY PyVISA SOCKET supported. tm_devices, TekHSI, VXI-11 all unsupported for TekExpress.",
+    "tags": [
+      "tekexpress",
+      "socket",
+      "pyvisa",
+      "state_machine",
+      "popup",
+      "compliance"
+    ],
+    "source": "rag/corpus/app_logic/app_logic_index.json"
+  },
+  {
+    "id": "al_scpi_command_structure",
+    "corpus": "app_logic",
+    "title": "SCPI Command JSON Schema",
+    "body": "Each command in public/commands/*.json has these fields:\n  id, category, scpi, header, commandType (set|query|both)\n  shortDescription, description, mnemonics[]\n  instruments: { families: [], models: [] }\n  arguments: [{ name, type, validValues }]\n  syntax: { set, query }\n  codeExamples: [{ scpi: {code}, python: {code}, tm_devices: {code} }]\nQuery vs Write detection: ends with ? OR type='query' → query; no ? OR type='write' → write.\nParameter substitution: CH${channel}:SCALE ${scale} with values → CH2:SCALE 0.5",
+    "tags": [
+      "scpi",
+      "schema",
+      "json",
+      "command",
+      "syntax",
+      "arguments"
+    ],
+    "source": "rag/corpus/app_logic/app_logic_index.json"
+  },
+  {
+    "id": "al_multi_device_rule",
+    "corpus": "app_logic",
+    "title": "Multi-Device Workflow Rules",
+    "body": "Steps UI is single-device only. For multi-device: always use Blockly Builder.\nEach device gets its own Python variable based on its alias: scope, psu, dmm, smu, awg, afg, sa.\nConnect first, disconnect last — every workflow must begin with connect and end with disconnect.\nIP Conflict Detection: generator aborts if multiple devices share same IP address.\nCleanup must close ALL connected devices, not just the first one.",
+    "tags": [
+      "multi_device",
+      "blockly",
+      "cleanup",
+      "connect",
+      "disconnect",
+      "ip_conflict"
+    ],
+    "source": "rag/corpus/app_logic/app_logic_index.json"
+  }
+]

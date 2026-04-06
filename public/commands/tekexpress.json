@@ -1,0 +1,3079 @@
+{
+  "version": "1.0",
+  "manual": "TekExpress Manual",
+  "groups": {
+    "USB4Tx": {
+      "name": "USB4Tx",
+      "description": "TekExpress USB4Tx Automated Test Solution",
+      "commands": [
+        {
+          "id": "tekexp_select_device",
+          "category": "tekexpress",
+          "scpi": "TEKEXP:SELECT DEVICE,\"<DeviceName>\"",
+          "header": "TEKEXP:SELECT DEVICE",
+          "mnemonics": ["TEKEXP", "SELECT", "DEVICE"],
+          "commandType": "both",
+          "shortDescription": "Set or query the device name of application",
+          "description": "This command sets or queries the device name of the application.",
+          "instruments": {
+            "families": [],
+            "models": [],
+            "exclusions": []
+          },
+          "commandGroup": "USB4Tx",
+          "arguments": [
+            {
+              "name": "devicename",
+              "type": "quoted_string",
+              "required": true,
+              "position": 0,
+              "description": "Device name",
+              "validValues": {
+                "type": "quoted_string"
+              }
+            }
+          ],
+          "queryResponse": {
+            "type": "string",
+            "format": "String",
+            "description": "Returns the selected device name",
+            "example": ""
+          },
+          "syntax": {
+            "set": "TEKEXP:SELECT DEVICE,\"<DeviceName>\"",
+            "query": "TEKEXP:SELECT? DEVICE"
+          },
+          "codeExamples": [
+            {
+              "description": "Set device name",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:SELECT DEVICE,\"<DeviceName>\"",
+                  "library": "SCPI",
+                  "description": "Raw SCPI command"
+                }
+              },
+              "result": null,
+              "resultDescription": "Sets the device name of the application"
+            },
+            {
+              "description": "Query device name",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:SELECT? DEVICE",
+                  "library": "SCPI",
+                  "description": "Raw SCPI query"
+                }
+              },
+              "result": "<String>",
+              "resultDescription": "Returns the selected device name of the application"
+            }
+          ]
+        },
+        {
+          "id": "tekexp_select_suite",
+          "category": "tekexpress",
+          "scpi": "TEKEXP:SELECT SUITE,\"<SuiteName>\"",
+          "header": "TEKEXP:SELECT SUITE",
+          "mnemonics": ["TEKEXP", "SELECT", "SUITE"],
+          "commandType": "both",
+          "shortDescription": "Set or query the suite name of the application",
+          "description": "This command sets or queries the suite name of the application.",
+          "instruments": {
+            "families": [],
+            "models": [],
+            "exclusions": []
+          },
+          "commandGroup": "USB4Tx",
+          "arguments": [
+            {
+              "name": "suitename",
+              "type": "enumeration",
+              "required": true,
+              "position": 0,
+              "description": "Suite name",
+              "validValues": {
+                "type": "enumeration",
+                "values": ["Device", "Host"],
+                "caseSensitive": false
+              }
+            }
+          ],
+          "queryResponse": {
+            "type": "string",
+            "format": "String",
+            "description": "Returns the selected suite name",
+            "example": ""
+          },
+          "syntax": {
+            "set": "TEKEXP:SELECT SUITE,\"<SuiteName>\"",
+            "query": "TEKEXP:SELECT? SUITE"
+          },
+          "codeExamples": [
+            {
+              "description": "Set suite name",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:SELECT SUITE,\"<SuiteName>\"",
+                  "library": "SCPI",
+                  "description": "Raw SCPI command"
+                }
+              },
+              "result": null,
+              "resultDescription": "Sets the suite name of the application"
+            },
+            {
+              "description": "Query suite name",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:SELECT? SUITE",
+                  "library": "SCPI",
+                  "description": "Raw SCPI query"
+                }
+              },
+              "result": "<String>",
+              "resultDescription": "Returns the selected suite of the application"
+            }
+          ]
+        },
+        {
+          "id": "tekexp_select_test",
+          "category": "tekexpress",
+          "scpi": "TEKEXP:SELECT TEST,\"<TestName>\",<Value>",
+          "header": "TEKEXP:SELECT TEST",
+          "mnemonics": ["TEKEXP", "SELECT", "TEST"],
+          "commandType": "both",
+          "shortDescription": "Set or query the test name of the application",
+          "description": "This command selects or deselects the specified test name of the application.",
+          "instruments": {
+            "families": [],
+            "models": [],
+            "exclusions": []
+          },
+          "commandGroup": "USB4Tx",
+          "arguments": [
+            {
+              "name": "testname",
+              "type": "enumeration",
+              "required": true,
+              "position": 0,
+              "description": "Test name to select or deselect",
+              "queryOnly": true,
+              "validValues": {
+                "type": "enumeration",
+                "values": [
+                  "AC Common Mode 10G",
+                  "AC Common Mode 10p3G",
+                  "AC Common Mode 20G",
+                  "AC Common Mode 20p6G",
+                  "Average Unit Interval 10p3G",
+                  "DDJ (Data Dependent Jitter) 10G",
+                  "DDJ (Data Dependent Jitter) 10p3G",
+                  "DDJ (Data Dependent Jitter) 20G",
+                  "DDJ (Data Dependent Jitter) 20p6G",
+                  "Duty Cycle Distortion 10G",
+                  "Duty Cycle Distortion 10p3G",
+                  "Duty Cycle Distortion 20G",
+                  "Duty Cycle Distortion 20p6G",
+                  "Electrical Idle 10G",
+                  "Electrical Idle 10p3G",
+                  "Electrical Idle 20G",
+                  "Electrical Idle 20p6G",
+                  "Eye Diagram TP2 10G",
+                  "Eye Diagram TP2 10p3G",
+                  "Eye Diagram TP2 20G",
+                  "Eye Diagram TP2 20p6G",
+                  "Eye Diagram TP3 10G",
+                  "Eye Diagram TP3 10p3G",
+                  "Eye Diagram TP3 20G",
+                  "Eye Diagram TP3 20p6G",
+                  "Frequency Variation Training 10G",
+                  "Frequency Variation Training 20G",
+                  "Minimum Unit Interval 10G",
+                  "Minimum Unit Interval 10p3G",
+                  "Minimum Unit Interval 20G",
+                  "Minimum Unit Interval 20p6G",
+                  "Preset0 10G",
+                  "Preset0 10p3G",
+                  "Preset0 20G",
+                  "Preset0 20p6G",
+                  "Preset1 10G",
+                  "Preset1 10p3G",
+                  "Preset1 20G",
+                  "Preset1 20p6G",
+                  "Preset2 10G",
+                  "Preset2 10p3G",
+                  "Preset2 20G",
+                  "Preset2 20p6G",
+                  "Preset3 10G",
+                  "Preset3 10p3G",
+                  "Preset3 20G",
+                  "Preset3 20p6G",
+                  "Preset4 10G",
+                  "Preset4 10p3G",
+                  "Preset4 20G",
+                  "Preset4 20p6G",
+                  "Preset5 10G",
+                  "Preset5 10p3G",
+                  "Preset5 20G",
+                  "Preset5 20p6G",
+                  "Preset6 10G",
+                  "Preset6 10p3G",
+                  "Preset6 20G",
+                  "Preset6 20p6G",
+                  "Preset7 10G",
+                  "Preset7 10p3G",
+                  "Preset7 20G",
+                  "Preset7 20p6G",
+                  "Preset8 10G",
+                  "Preset8 10p3G",
+                  "Preset8 20G",
+                  "Preset8 20p6G",
+                  "Preset9 10G",
+                  "Preset9 10p3G",
+                  "Preset9 20G",
+                  "Preset9 20p6G",
+                  "Preset10 10G",
+                  "Preset10 10p3G",
+                  "Preset10 20G",
+                  "Preset10 20p6G",
+                  "Preset11 10G",
+                  "Preset11 10p3G",
+                  "Preset11 20G",
+                  "Preset11 20p6G",
+                  "Preset12 10G",
+                  "Preset12 10p3G",
+                  "Preset12 20G",
+                  "Preset12 20p6G",
+                  "Preset13 10G",
+                  "Preset13 10p3G",
+                  "Preset13 20G",
+                  "Preset13 20p6G",
+                  "Preset14 10G",
+                  "Preset14 10p3G",
+                  "Preset14 20G",
+                  "Preset14 20p6G",
+                  "Preset15 10G",
+                  "Preset15 10p3G",
+                  "Preset15 20G",
+                  "Preset15 20p6G",
+                  "Rise Fall Time 10G",
+                  "Rise Fall Time 10p3G",
+                  "Rise Fall Time 20G",
+                  "Rise Fall Time 20p6G",
+                  "SSC Down Spread Range 10G",
+                  "SSC Down Spread Range 10p3G",
+                  "SSC Down Spread Range 20G",
+                  "SSC Down Spread Range 20p6G",
+                  "SSC Down Spread Rate 10G",
+                  "SSC Down Spread Rate 10p3G",
+                  "SSC Down Spread Rate 20G",
+                  "SSC Down Spread Rate 20p6G",
+                  "SSC Phase Deviation 10G",
+                  "SSC Phase Deviation 10p3G",
+                  "SSC Phase Deviation 20G",
+                  "SSC Phase Deviation 20p6G",
+                  "SSC Slew Rate 10G",
+                  "SSC Slew Rate 10p3G",
+                  "SSC Slew Rate 20G",
+                  "SSC Slew Rate 20p6G",
+                  "TJ (Total Jitter) 10G",
+                  "TJ (Total Jitter) 10p3G",
+                  "TJ (Total Jitter) 20G",
+                  "TJ (Total Jitter) 20p6G",
+                  "TJ (Total Jitter) TP3 10G",
+                  "TJ (Total Jitter) TP3 10p3G",
+                  "TJ (Total Jitter) TP3 20G",
+                  "TJ (Total Jitter) TP3 20p6G",
+                  "TJ TP3 using PRBS15 10G",
+                  "TJ TP3 using PRBS15 10p3G",
+                  "TJ TP3 using PRBS15 20G",
+                  "TJ TP3 using PRBS15 20p6G",
+                  "TJ TP3 using SQ2 10G",
+                  "TJ TP3 using SQ2 10p3G",
+                  "TJ TP3 using SQ2 20G",
+                  "TJ TP3 using SQ2 20p6G",
+                  "TJ using PRBS15 10G",
+                  "TJ using PRBS15 10p3G",
+                  "TJ using PRBS15 20G",
+                  "TJ using PRBS15 20p6G",
+                  "TJ using SQ2 10G",
+                  "TJ using SQ2 10p3G",
+                  "TJ using SQ2 20G",
+                  "TJ using SQ2 20p6G",
+                  "TXEQ Preset 0 10G",
+                  "TXEQ Preset 0 10p3G",
+                  "TXEQ Preset 0 20G",
+                  "TXEQ Preset 0 20p6G",
+                  "TXEQ Preset 1 10G",
+                  "TXEQ Preset 1 10p3G",
+                  "TXEQ Preset 1 20G",
+                  "TXEQ Preset 1 20p6G",
+                  "TXEQ Preset 10 10G",
+                  "TXEQ Preset 10 10p3G",
+                  "TXEQ Preset 10 20G",
+                  "TXEQ Preset 10 20p6G",
+                  "TXEQ Preset 11 10G",
+                  "TXEQ Preset 11 10p3G",
+                  "TXEQ Preset 11 20G",
+                  "TXEQ Preset 11 20p6G",
+                  "TXEQ Preset 12 10G",
+                  "TXEQ Preset 12 10p3G",
+                  "TXEQ Preset 12 20G",
+                  "TXEQ Preset 12 20p6G",
+                  "TXEQ Preset 13 10G",
+                  "TXEQ Preset 13 10p3G",
+                  "TXEQ Preset 13 20G",
+                  "TXEQ Preset 13 20p6G",
+                  "TXEQ Preset 14 10G",
+                  "TXEQ Preset 14 10p3G",
+                  "TXEQ Preset 14 20G",
+                  "TXEQ Preset 14 20p6G",
+                  "TXEQ Preset 15 10G",
+                  "TXEQ Preset 15 10p3G",
+                  "TXEQ Preset 15 20G",
+                  "TXEQ Preset 15 20p6G",
+                  "TXEQ Preset 2 10G",
+                  "TXEQ Preset 2 10p3G",
+                  "TXEQ Preset 2 20G",
+                  "TXEQ Preset 2 20p6G",
+                  "TXEQ Preset 3 10G",
+                  "TXEQ Preset 3 10p3G",
+                  "TXEQ Preset 3 20G",
+                  "TXEQ Preset 3 20p6G",
+                  "TXEQ Preset 4 10G",
+                  "TXEQ Preset 4 10p3G",
+                  "TXEQ Preset 4 20G",
+                  "TXEQ Preset 4 20p6G",
+                  "TXEQ Preset 5 10G",
+                  "TXEQ Preset 5 10p3G",
+                  "TXEQ Preset 5 20G",
+                  "TXEQ Preset 5 20p6G",
+                  "TXEQ Preset 6 10G",
+                  "TXEQ Preset 6 10p3G",
+                  "TXEQ Preset 6 20G",
+                  "TXEQ Preset 6 20p6G",
+                  "TXEQ Preset 7 10G",
+                  "TXEQ Preset 7 10p3G",
+                  "TXEQ Preset 7 20G",
+                  "TXEQ Preset 7 20p6G",
+                  "TXEQ Preset 8 10G",
+                  "TXEQ Preset 8 10p3G",
+                  "TXEQ Preset 8 20G",
+                  "TXEQ Preset 8 20p6G",
+                  "TXEQ Preset 9 10G",
+                  "TXEQ Preset 9 10p3G",
+                  "TXEQ Preset 9 20G",
+                  "TXEQ Preset 9 20p6G",
+                  "UDJ (Uncorrelated Deterministic Jitter) 10G",
+                  "UDJ (Uncorrelated Deterministic Jitter) 10p3G",
+                  "UDJ (Uncorrelated Deterministic Jitter) 20G",
+                  "UDJ (Uncorrelated Deterministic Jitter) 20p6G",
+                  "UDJ TP3(Uncorrelated Deterministic Jitter TP3) 10G",
+                  "UDJ TP3(Uncorrelated Deterministic Jitter TP3) 10p3G",
+                  "UDJ TP3(Uncorrelated Deterministic Jitter TP3) 20G",
+                  "UDJ TP3(Uncorrelated Deterministic Jitter TP3) 20p6G",
+                  "UDJ_LF (Low Frequency Uncorrelated Deterministic Jitter) 10G",
+                  "UDJ_LF (Low Frequency Uncorrelated Deterministic Jitter) 10p3G",
+                  "UDJ_LF (Low Frequency Uncorrelated Deterministic Jitter) 20G",
+                  "UDJ_LF (Low Frequency Uncorrelated Deterministic Jitter) 20p6G",
+                  "UJ (Uncorrelated Jitter) 10G",
+                  "UJ (Uncorrelated Jitter) 10p3G",
+                  "UJ (Uncorrelated Jitter) 20G",
+                  "UJ (Uncorrelated Jitter) 20p6G",
+                  "UJ TP3 (Uncorrelated Jitter TP3) 10G",
+                  "UJ TP3 (Uncorrelated Jitter TP3) 10p3G",
+                  "UJ TP3 (Uncorrelated Jitter TP3) 20G",
+                  "UJ TP3 (Uncorrelated Jitter TP3) 20p6G"
+                ],
+                "caseSensitive": false
+              },
+              "uiHint": {
+                "type": "tree_view",
+                "description": "Use tree view or card selection for large enumeration"
+              }
+            },
+            {
+              "name": "value",
+              "type": "enumeration",
+              "required": true,
+              "position": 1,
+              "description": "Value: Included or Excluded (1 for Included, 0 for Excluded)",
+              "queryOnly": true,
+              "validValues": {
+                "type": "enumeration",
+                "values": ["Included", "Excluded", "1", "0"],
+                "caseSensitive": false,
+                "notes": "1 or Included = enabled, 0 or Excluded = disabled"
+              }
+            }
+          ],
+          "queryResponse": {
+            "type": "enumeration",
+            "format": "{True | False} or {1 | 0}",
+            "description": "Returns True/1 for Included, False/0 for Excluded",
+            "example": "True"
+          },
+          "syntax": {
+            "set": "TEKEXP:SELECT TEST,\"<TestName>\",<Value>",
+            "query": "TEKEXP:SELECT? TEST",
+            "queryArguments": []
+          },
+          "codeExamples": [
+            {
+              "description": "Select a test",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:SELECT TEST,\"<TestName>\",1",
+                  "library": "SCPI",
+                  "description": "Raw SCPI command"
+                }
+              },
+              "result": null,
+              "resultDescription": "Selects the specified test in the Test Panel"
+            },
+            {
+              "description": "Query selected tests",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:SELECT? TEST",
+                  "library": "SCPI",
+                  "description": "Raw SCPI query"
+                }
+              },
+              "result": "{True | False} or {1 | 0}",
+              "resultDescription": "Returns the list of selected tests"
+            }
+          ],
+          "notes": [
+            "This command has a large enumeration (100+ test names). Consider using a tree view or card selection UI instead of a dropdown."
+          ]
+        },
+        {
+          "id": "tekexp_value_general",
+          "category": "tekexpress",
+          "scpi": "TEKEXP:VALUE GENERAL,\"<ParameterName>\",\"<Value>\"",
+          "header": "TEKEXP:VALUE GENERAL",
+          "mnemonics": ["TEKEXP", "VALUE", "GENERAL"],
+          "commandType": "both",
+          "shortDescription": "Set or query the general parameter values",
+          "description": "This command sets or queries the general parameter values of the application. The value depends on the selected parameter name.",
+          "instruments": {
+            "families": [],
+            "models": [],
+            "exclusions": []
+          },
+          "commandGroup": "USB4Tx",
+          "arguments": [
+            {
+              "name": "parametername",
+              "type": "enumeration",
+              "required": true,
+              "position": 0,
+              "description": "General parameter name",
+              "validValues": {
+                "type": "enumeration",
+                "values": [
+                  "DUT Automation Types",
+                  "PortNumberType",
+                  "TechVersion",
+                  "PortSelection1",
+                  "PortSelection2",
+                  "PortSelection3",
+                  "PortSelection4",
+                  "Gen2 CTLE Option",
+                  "Gen2 Ctle Index",
+                  "Gen2 Perform DFE Checkbox",
+                  "Gen3 Ctle Option",
+                  "Gen3 Ctle Index",
+                  "Gen3 Perform DFE Checkbox",
+                  "Gen3 Perform with DFE",
+                  "Gen2 Perform with DFE",
+                  "PresetGen2",
+                  "PresetGen3",
+                  "Data+",
+                  "Data-",
+                  "Report Update Mode",
+                  "Email when test setup change in needed",
+                  "Append Report",
+                  "Auto increment report name if duplicate",
+                  "Include pass/fail results summary",
+                  "Include detailed results",
+                  "Include plot images",
+                  "Include setup configuration",
+                  "Include user comments",
+                  "Include Header in apended reports",
+                  "Include report at the end",
+                  "Save As Type",
+                  "Report Generation Template Path",
+                  "Report Path",
+                  "View Report After Generating",
+                  "Report Group Mode",
+                  "Replace Run session Path",
+                  "Include Header In Appended Report",
+                  "Create report at the end",
+                  "Include pass/fail results Summary",
+                  "State",
+                  "InstrumentType",
+                  "DeviceName",
+                  "SuiteName",
+                  "DataRate Rounded 10 Gbps Option button",
+                  "DataRate Rounded 20 Gbps Option button",
+                  "Lane Selection",
+                  "DUT Automation",
+                  "Test Mode",
+                  "Test Method",
+                  "Acquisition and Save Options",
+                  "Signal Validation",
+                  "Mode",
+                  "Global Settings",
+                  "Measurements",
+                  "Auto close Warnings and informations during Sequencing Auto close after <no> Seconds",
+                  "Auto close Error Messages during Sequencing. Show in Reports. Auto close after <no> Seconds",
+                  "Show messages with a beep sound.",
+                  "Deskew Alert Enabled",
+                  "Enable Continuous Run"
+                ],
+                "caseSensitive": false
+              }
+            },
+            {
+              "name": "value",
+              "type": "enumeration",
+              "required": true,
+              "position": 1,
+              "description": "Parameter value (depends on ParameterName selected above)",
+              "dependsOn": "parametername",
+              "queryOnly": true,
+              "validValues": {
+                "type": "enumeration",
+                "caseSensitive": false,
+                "conditionalValues": {
+                  "DUT Automation Types": ["Goshen Ridge", "Tiger Lake", "Ice Lake", "Titan Ridge", "Alpine Ridge"],
+                  "PortNumberType": ["pa", "pb", "User-Defined", "pc"],
+                  "TechVersion": ["USB4", "TBT3", "TBT4"],
+                  "PortSelection1": ["Port1"],
+                  "PortSelection2": ["Port2", "Port3"],
+                  "PortSelection3": ["Port2", "Port3"],
+                  "PortSelection4": ["Port4"],
+                  "Gen2 CTLE Option": ["Fixed", "Optimize"],
+                  "Gen2 Ctle Index": ["0 db", "1 db", "2 db", "3 db", "4 db", "5 db", "6 db", "7 db", "8 db", "9 db"],
+                  "Gen2 Perform DFE Checkbox": ["Included", "Excluded"],
+                  "Gen3 Ctle Option": ["Fixed", "Optimize", "0 db", "1 db", "2 db", "3 db", "4 db", "5 db", "6 db", "7 db", "8 db", "9 db"],
+                  "Gen3 Perform DFE Checkbox": ["Included", "Excluded"],
+                  "PresetGen2": ["P0", "P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12", "P13", "P14", "P15"],
+                  "PresetGen3": ["P0", "P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12", "P13", "P14", "P15"],
+                  "Data+": ["CH1", "CH2", "CH3", "CH4"],
+                  "Data-": ["CH1", "CH2", "CH3", "CH4"],
+                  "Report Update Mode": ["New", "Append", "Replace", "Replace Any"],
+                  "Email when test setup change in needed": ["True", "False"],
+                  "Append Report": ["True", "False"],
+                  "Auto increment report name if duplicate": ["True", "False"],
+                  "Include pass/fail results summary": ["Included", "Excluded"],
+                  "Include detailed results": ["True", "False"],
+                  "Include plot images": ["True", "False"],
+                  "Include setup configuration": ["True", "False"],
+                  "Include user comments": ["True", "False"],
+                  "Include Header in apended reports": ["True", "False"],
+                  "Include report at the end": ["True", "False"],
+                  "Save As Type": ["PDF (*.pdf;)", "Web Archive (*.mht;*.mhtml)", "CSV (*.csv;)"],
+                  "Report Generation Template Path": ["<String>"],
+                  "Report Path": ["<String>"],
+                  "View Report After Generating": ["True", "False"],
+                  "Report Group Mode": ["Test Name", "Lane Name"],
+                  "Replace Run session Path": ["<String>"],
+                  "Include Header In Appended Report": ["True", "False"],
+                  "Create report at the end": ["True", "False"],
+                  "Include pass/fail results Summary": ["True", "False"],
+                  "State": ["RUN", "PAUSE", "RESUME", "STOP"],
+                  "InstrumentType": ["Real Time Scope"],
+                  "DeviceName": ["USB4"],
+                  "SuiteName": ["Device Host"],
+                  "DataRate Rounded 10 Gbps Option button": ["Included", "Excluded"],
+                  "DataRate Rounded 20 Gbps Option button": ["Included", "Excluded"],
+                  "Lane Selection": ["Lane0", "Lane1", "Both"],
+                  "DUT Automation": ["Manual", "Automated"],
+                  "Test Mode": ["Compliance"],
+                  "Test Method": ["DPOJET", "SigTest"],
+                  "Acquisition and Save Options": ["Save All Waveforms Before Analysis"],
+                  "Signal Validation": ["Prompt when signal fails", "Use signal as is - Dont Check", "Skip test if signal validation fails"],
+                  "Mode": ["Compliance Mode"],
+                  "Global Settings": ["Instruments Detected: Real Time Scope"],
+                  "Measurements": ["Displays the selected measurements to configure"],
+                  "Gen3 Ctle Index": ["0 db", "1 db", "2 db", "3 db", "4 db", "5 db", "6 db", "7 db", "8 db", "9 db"],
+                  "Gen3 Perform with DFE": ["Included", "Excluded"],
+                  "Gen2 Perform with DFE": ["Included", "Excluded"],
+                  "Auto close Warnings and informations during Sequencing Auto close after <no> Seconds": ["Included", "Excluded", "<String>"],
+                  "Auto close Error Messages during Sequencing. Show in Reports. Auto close after <no> Seconds": ["Included", "Excluded", "<String>"],
+                  "Show messages with a beep sound.": ["Included", "Excluded"],
+                  "Deskew Alert Enabled": ["TRUE", "FALSE", "True", "False"],
+                  "Enable Continuous Run": ["True", "False", "1", "0"]
+                },
+                "notes": "Value is conditional based on ParameterName. For PresetGen2 and PresetGen3, multiple presets can be combined with underscores (e.g., P1_P11_P7). When adding a preset, all existing presets along with the new one must be specified. Report Generation Template Path and Report Path accept file paths as strings."
+              }
+            }
+          ],
+          "queryResponse": {
+            "type": "string",
+            "format": "<NRf> or <String>",
+            "description": "Returns the parameter value as number or string",
+            "example": ""
+          },
+          "syntax": {
+            "set": "TEKEXP:VALUE GENERAL,\"<ParameterName>\",\"<Value>\"",
+            "query": "TEKEXP:VALUE? GENERAL,\"<ParameterName>\"",
+            "queryArguments": ["parametername"]
+          },
+          "codeExamples": [
+            {
+              "description": "Set general parameter value",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:VALUE GENERAL,\"<ParameterName>\",\"<Value>\"",
+                  "library": "SCPI",
+                  "description": "Raw SCPI command"
+                }
+              },
+              "result": null,
+              "resultDescription": "Sets the value for the specified general parameter"
+            },
+            {
+              "description": "Query general parameter value",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:VALUE? GENERAL,\"<ParameterName>\"",
+                  "library": "SCPI",
+                  "description": "Raw SCPI query"
+                }
+              },
+              "result": "<NRf> or <String>",
+              "resultDescription": "Returns the value for the specified general parameter"
+            },
+            {
+              "description": "Set PresetGen2 with multiple presets",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:VALUE GENERAL,\"PresetGen2\",\"P1_P11_P7\"",
+                  "library": "SCPI",
+                  "description": "Selects presets 1, 7, and 11 from preset cal Gen2"
+                }
+              },
+              "result": null,
+              "resultDescription": "Selects presets 1, 7, and 11 from preset cal Gen2"
+            }
+          ],
+          "notes": [
+            "The value depends on the ParameterName selected. Use the parameterMapping to see valid values for each parameter.",
+            "For PresetGen2 and PresetGen3, multiple presets can be combined with underscores (e.g., P1_P11_P7).",
+            "When adding a preset, all existing presets along with the new one must be specified.",
+            "Gen2 Ctle Index and Gen3 Ctle Option are applicable only when Test Method is selected DPOJET in DUT panel.",
+            "Report Generation Template Path and Report Path accept file path strings.",
+            "This command may benefit from a dynamic UI that updates available values based on the selected ParameterName."
+          ]
+        },
+        {
+          "id": "tekexp_list_device",
+          "category": "tekexpress",
+          "scpi": "TEKEXP:LIST? DEVICE",
+          "header": "TEKEXP:LIST DEVICE",
+          "mnemonics": ["TEKEXP", "LIST", "DEVICE"],
+          "commandType": "query",
+          "shortDescription": "Query the available devices in the DUT panel of the application",
+          "description": "This command queries the list of available devices on the DUT panel as comma separated values.",
+          "instruments": {
+            "families": [],
+            "models": [],
+            "exclusions": []
+          },
+          "commandGroup": "USB4Tx",
+          "arguments": [],
+          "queryResponse": {
+            "type": "string",
+            "format": "String",
+            "description": "Returns the list of available devices as comma separated values",
+            "example": ""
+          },
+          "syntax": {
+            "set": null,
+            "query": "TEKEXP:LIST? DEVICE",
+            "queryArguments": []
+          },
+          "codeExamples": [
+            {
+              "description": "Query available devices",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:LIST? DEVICE",
+                  "library": "SCPI",
+                  "description": "Raw SCPI query"
+                }
+              },
+              "result": "<String>",
+              "resultDescription": "Returns the list of available devices"
+            }
+          ]
+        },
+        {
+          "id": "tekexp_list_suite",
+          "category": "tekexpress",
+          "scpi": "TEKEXP:LIST? SUITE",
+          "header": "TEKEXP:LIST SUITE",
+          "mnemonics": ["TEKEXP", "LIST", "SUITE"],
+          "commandType": "query",
+          "shortDescription": "Query the available suites for the selected device",
+          "description": "This command queries the list of available suites for the selected device as comma separated values.",
+          "instruments": {
+            "families": [],
+            "models": [],
+            "exclusions": []
+          },
+          "commandGroup": "USB4Tx",
+          "arguments": [],
+          "queryResponse": {
+            "type": "string",
+            "format": "String",
+            "description": "Returns the list of available suites as comma separated values",
+            "example": ""
+          },
+          "syntax": {
+            "set": null,
+            "query": "TEKEXP:LIST? SUITE",
+            "queryArguments": []
+          },
+          "codeExamples": [
+            {
+              "description": "Query available suites",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:LIST? SUITE",
+                  "library": "SCPI",
+                  "description": "Raw SCPI query"
+                }
+              },
+              "result": "<String>",
+              "resultDescription": "Returns the list of available suites for the selected device"
+            }
+          ]
+        },
+        {
+          "id": "tekexp_list_test",
+          "category": "tekexpress",
+          "scpi": "TEKEXP:LIST? TEST",
+          "header": "TEKEXP:LIST TEST",
+          "mnemonics": ["TEKEXP", "LIST", "TEST"],
+          "commandType": "query",
+          "shortDescription": "Query the list of available tests of the application",
+          "description": "This command queries the list of available tests of the application for the selected device as comma separated values.",
+          "instruments": {
+            "families": [],
+            "models": [],
+            "exclusions": []
+          },
+          "commandGroup": "USB4Tx",
+          "arguments": [],
+          "queryResponse": {
+            "type": "string",
+            "format": "String",
+            "description": "Returns the list of available tests as comma separated values",
+            "example": ""
+          },
+          "syntax": {
+            "set": null,
+            "query": "TEKEXP:LIST? TEST",
+            "queryArguments": []
+          },
+          "codeExamples": [
+            {
+              "description": "Query available tests",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:LIST? TEST",
+                  "library": "SCPI",
+                  "description": "Raw SCPI query"
+                }
+              },
+              "result": "<String>",
+              "resultDescription": "Returns the list of available tests for the selected device"
+            }
+          ]
+        },
+        {
+          "id": "tekexp_list_version",
+          "category": "tekexpress",
+          "scpi": "TEKEXP:LIST? VERSION",
+          "header": "TEKEXP:LIST VERSION",
+          "mnemonics": ["TEKEXP", "LIST", "VERSION"],
+          "commandType": "query",
+          "shortDescription": "Query the available version names of the application",
+          "description": "This command queries the list of available version names of the application for the selected device as comma separated values.",
+          "instruments": {
+            "families": [],
+            "models": [],
+            "exclusions": []
+          },
+          "commandGroup": "USB4Tx",
+          "arguments": [],
+          "queryResponse": {
+            "type": "string",
+            "format": "String",
+            "description": "Returns the list of version names as comma separated values",
+            "example": ""
+          },
+          "syntax": {
+            "set": null,
+            "query": "TEKEXP:LIST? VERSION",
+            "queryArguments": []
+          },
+          "codeExamples": [
+            {
+              "description": "Query available versions",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:LIST? VERSION",
+                  "library": "SCPI",
+                  "description": "Raw SCPI query"
+                }
+              },
+              "result": "<String>",
+              "resultDescription": "Returns the list of version names for the selected device"
+            }
+          ]
+        },
+        {
+          "id": "tekexp_list_instrument",
+          "category": "tekexpress",
+          "scpi": "TEKEXP:LIST? INSTRUMENT,\"<InstrumentType>\"",
+          "header": "TEKEXP:LIST INSTRUMENT",
+          "mnemonics": ["TEKEXP", "LIST", "INSTRUMENT"],
+          "commandType": "query",
+          "shortDescription": "Query the list of available instruments based on the specified instrument type",
+          "description": "This command queries the list of available instruments based on the specified instrument type.",
+          "instruments": {
+            "families": [],
+            "models": [],
+            "exclusions": []
+          },
+          "commandGroup": "USB4Tx",
+          "arguments": [
+            {
+              "name": "instrumenttype",
+              "type": "quoted_string",
+              "required": true,
+              "position": 0,
+              "description": "Instrument type (e.g., \"Real Time Scope\")",
+              "validValues": {
+                "type": "quoted_string"
+              }
+            }
+          ],
+          "queryResponse": {
+            "type": "string",
+            "format": "String",
+            "description": "Returns the list of available instruments",
+            "example": ""
+          },
+          "syntax": {
+            "set": null,
+            "query": "TEKEXP:LIST? INSTRUMENT,\"<InstrumentType>\"",
+            "queryArguments": ["instrumenttype"]
+          },
+          "codeExamples": [
+            {
+              "description": "Query available instruments",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:LIST? INSTRUMENT,\"Real Time Scope\"",
+                  "library": "SCPI",
+                  "description": "Raw SCPI query"
+                }
+              },
+              "result": "<String>",
+              "resultDescription": "Returns the list of available instruments based on the real time scope type"
+            }
+          ]
+        },
+        {
+          "id": "tekexp_instrument",
+          "category": "tekexpress",
+          "scpi": "TEKEXP:INSTRUMENT, \"<InstrumentType>\",\"<Value>\"",
+          "header": "TEKEXP:INSTRUMENT",
+          "mnemonics": ["TEKEXP", "INSTRUMENT"],
+          "commandType": "both",
+          "shortDescription": "Set or query the IP address of the instrument based on the specified instrument type",
+          "description": "This command sets or queries the IP address of the instrument based on the specified instrument type.",
+          "instruments": {
+            "families": [],
+            "models": [],
+            "exclusions": []
+          },
+          "commandGroup": "USB4Tx",
+          "arguments": [
+            {
+              "name": "instrumenttype",
+              "type": "quoted_string",
+              "required": true,
+              "position": 0,
+              "description": "Instrument type",
+              "validValues": {
+                "type": "quoted_string"
+              }
+            },
+            {
+              "name": "value",
+              "type": "quoted_string",
+              "required": true,
+              "position": 1,
+              "description": "IP address in format TCPIP::XXX.XX.XXX.XXX::INSTR",
+              "queryOnly": true,
+              "validValues": {
+                "type": "quoted_string",
+                "format": "TCPIP::XXX.XX.XXX.XXX::INSTR"
+              }
+            }
+          ],
+          "queryResponse": {
+            "type": "string",
+            "format": "String",
+            "description": "Returns the IP address of the oscilloscope",
+            "example": ""
+          },
+          "syntax": {
+            "set": "TEKEXP:INSTRUMENT, \"<InstrumentType>\",\"<Value>\"",
+            "query": "TEKEXP:INSTRUMENT? \"<InstrumentType>\"",
+            "queryArguments": ["instrumenttype"]
+          },
+          "codeExamples": [
+            {
+              "description": "Set instrument IP address",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:INSTRUMENT, \"<InstrumentType>\",\"<value>\"",
+                  "library": "SCPI",
+                  "description": "Raw SCPI command"
+                }
+              },
+              "result": null,
+              "resultDescription": "Sets the oscilloscope to the specified IP address"
+            },
+            {
+              "description": "Query instrument IP address",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:INSTRUMENT? \"<InstrumentType>\"",
+                  "library": "SCPI",
+                  "description": "Raw SCPI query"
+                }
+              },
+              "result": "<String>",
+              "resultDescription": "Returns the IP address of the oscilloscope"
+            }
+          ]
+        },
+        {
+          "id": "tekexp_info_report",
+          "category": "tekexpress",
+          "scpi": "TEKEXP:INFO? REPORT",
+          "header": "TEKEXP:INFO REPORT",
+          "mnemonics": ["TEKEXP", "INFO", "REPORT"],
+          "commandType": "query",
+          "shortDescription": "Query the information of the generated report file",
+          "description": "This command queries the information of the generated report file in the format \"<FileSize>\",\"<FileName>\". A session should be run earlier and the report should be generated to get the information of the report.",
+          "instruments": {
+            "families": [],
+            "models": [],
+            "exclusions": []
+          },
+          "commandGroup": "USB4Tx",
+          "arguments": [],
+          "queryResponse": {
+            "type": "string",
+            "format": "\"<FileSize>\",\"<FileName>\"",
+            "description": "Returns the information of the generated report",
+            "example": "\"1215\",\"DUT001.mht\""
+          },
+          "syntax": {
+            "set": null,
+            "query": "TEKEXP:INFO? REPORT",
+            "queryArguments": []
+          },
+          "codeExamples": [
+            {
+              "description": "Query report information",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:INFO? REPORT",
+                  "library": "SCPI",
+                  "description": "Raw SCPI query"
+                }
+              },
+              "result": "\"<FileSize>\",\"<FileName>\"",
+              "resultDescription": "Returns the information of the generated report in the format (\"1215\",\"DUT001.mht\")"
+            }
+          ],
+          "notes": [
+            "A session should be run earlier and the report should be generated to get the information of the report."
+          ]
+        },
+        {
+          "id": "tekexp_info_wfm",
+          "category": "tekexpress",
+          "scpi": "TEKEXP:INFO? WFM",
+          "header": "TEKEXP:INFO WFM",
+          "mnemonics": ["TEKEXP", "INFO", "WFM"],
+          "commandType": "query",
+          "shortDescription": "Query the information of the generated waveform files",
+          "description": "This command queries the information of the generated waveform files. If there are more than one waveform, the waveform file names are displayed with the comma separated values.",
+          "instruments": {
+            "families": [],
+            "models": [],
+            "exclusions": []
+          },
+          "commandGroup": "USB4Tx",
+          "arguments": [],
+          "queryResponse": {
+            "type": "string",
+            "format": "<FileSize,\"FileName\"> or <File1Size,\"File1Name\">,<File2Size,\"File2Name\">",
+            "description": "Returns the information of the generated waveform files",
+            "example": "20000858,\"X:\\USB4\\Untitled Session\\DUT001\\20200916_041609\\Iter1_Short Record-length for SCOPE Period_NoSSC_DIFF.wfm\""
+          },
+          "syntax": {
+            "set": null,
+            "query": "TEKEXP:INFO? WFM",
+            "queryArguments": []
+          },
+          "codeExamples": [
+            {
+              "description": "Query waveform information",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:INFO? WFM",
+                  "library": "SCPI",
+                  "description": "Raw SCPI query"
+                }
+              },
+              "result": "<FileSize,\"FileName\">",
+              "resultDescription": "Returns the information of the generated waveform in the format (20000858,\"X:\\USB4\\Untitled Session\\DUT001\\20200916_041609\\Iter1_Short Record-length for SCOPE Period_NoSSC_DIFF.wfm\")"
+            }
+          ]
+        },
+        {
+          "id": "tekexp_info_image",
+          "category": "tekexpress",
+          "scpi": "TEKEXP:INFO? IMAGE",
+          "header": "TEKEXP:INFO IMAGE",
+          "mnemonics": ["TEKEXP", "INFO", "IMAGE"],
+          "commandType": "query",
+          "shortDescription": "Query the information of the generated image files",
+          "description": "This command queries the information of the generated image files. If there are more than one image, the image file names are displayed with the comma separated values.",
+          "instruments": {
+            "families": [],
+            "models": [],
+            "exclusions": []
+          },
+          "commandGroup": "USB4Tx",
+          "arguments": [],
+          "queryResponse": {
+            "type": "string",
+            "format": "<FileSize,\"FileName\"> or <File1Size,\"File1Name\">,<File2Size,\"File2Name\">",
+            "description": "Returns the information of the generated image files",
+            "example": "109058, \"X:\\USB4\\Untitled Session\\DUT001\\20200916_041609\\Iter1_Short Record-length for SCOPE Period_NoSSC_DIFF.png\";22794,\"X:\\USB4\\UntitledSession\\DUT001\\20200916_041609\\ScopePeriodPlot_Iteration1WithCursor.png\""
+          },
+          "syntax": {
+            "set": null,
+            "query": "TEKEXP:INFO? IMAGE",
+            "queryArguments": []
+          },
+          "codeExamples": [
+            {
+              "description": "Query image information",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:INFO? IMAGE",
+                  "library": "SCPI",
+                  "description": "Raw SCPI query"
+                }
+              },
+              "result": "<FileSize,\"FileName\">",
+              "resultDescription": "Returns the information of the generated image in the format (109058, \"X:\\USB4\\Untitled Session\\DUT001\\20200916_041609\\Iter1_Short Record-length for SCOPE Period_NoSSC_DIFF.png\";22794,\"X:\\USB4\\UntitledSession\\DUT001\\20200916_041609\\ScopePeriodPlot_Iteration1WithCursor.png\")"
+            }
+          ]
+        },
+        {
+          "id": "tekexp_idn",
+          "category": "tekexpress",
+          "scpi": "TEKEXP:*IDN?",
+          "header": "TEKEXP:*IDN",
+          "mnemonics": ["TEKEXP", "*IDN"],
+          "commandType": "query",
+          "shortDescription": "Query the active TekExpress application name",
+          "description": "This command queries the active TekExpress application name running on the oscilloscope.",
+          "instruments": {
+            "families": [],
+            "models": [],
+            "exclusions": []
+          },
+          "commandGroup": "USB4Tx",
+          "arguments": [],
+          "queryResponse": {
+            "type": "string",
+            "format": "String",
+            "description": "Returns the active TekExpress application name",
+            "example": ""
+          },
+          "syntax": {
+            "set": null,
+            "query": "TEKEXP:*IDN?",
+            "queryArguments": []
+          },
+          "codeExamples": [
+            {
+              "description": "Query application name",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:*IDN?",
+                  "library": "SCPI",
+                  "description": "Raw SCPI query"
+                }
+              },
+              "result": "<String>",
+              "resultDescription": "Returns the active TekExpress application name running on the oscilloscope"
+            }
+          ]
+        },
+        {
+          "id": "tekexp_value_dutid",
+          "category": "tekexpress",
+          "scpi": "TEKEXP:VALUE DUTID,\"<Value>\"",
+          "header": "TEKEXP:VALUE DUTID",
+          "mnemonics": ["TEKEXP", "VALUE", "DUTID"],
+          "commandType": "both",
+          "shortDescription": "Set or query the DUTID of application",
+          "description": "This command sets or queries the DUTID of the application.",
+          "instruments": {
+            "families": [],
+            "models": [],
+            "exclusions": []
+          },
+          "commandGroup": "USB4Tx",
+          "arguments": [
+            {
+              "name": "value",
+              "type": "quoted_string",
+              "required": true,
+              "position": 0,
+              "description": "DUT ID value",
+              "queryOnly": true,
+              "validValues": {
+                "type": "quoted_string"
+              }
+            }
+          ],
+          "queryResponse": {
+            "type": "string",
+            "format": "String",
+            "description": "Returns the DUTID of the application",
+            "example": ""
+          },
+          "syntax": {
+            "set": "TEKEXP:VALUE DUTID,\"<Value>\"",
+            "query": "TEKEXP:VALUE? DUTID",
+            "queryArguments": []
+          },
+          "codeExamples": [
+            {
+              "description": "Set DUT ID",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:VALUE DUTID,\"DUT001\"",
+                  "library": "SCPI",
+                  "description": "Raw SCPI command"
+                }
+              },
+              "result": null,
+              "resultDescription": "Sets the DUTID of the application to DUT001"
+            },
+            {
+              "description": "Query DUT ID",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:VALUE? DUTID",
+                  "library": "SCPI",
+                  "description": "Raw SCPI query"
+                }
+              },
+              "result": "<String>",
+              "resultDescription": "Returns the DUTID of the application"
+            }
+          ]
+        },
+        {
+          "id": "tekexp_acquire_mode",
+          "category": "tekexpress",
+          "scpi": "TEKEXP:ACQUIRE_MODE <Mode>",
+          "header": "TEKEXP:ACQUIRE_MODE",
+          "mnemonics": ["TEKEXP", "ACQUIRE_MODE"],
+          "commandType": "both",
+          "shortDescription": "Sets or query the acquire mode status",
+          "description": "This command sets or queries the acquire mode status.",
+          "instruments": {
+            "families": [],
+            "models": [],
+            "exclusions": []
+          },
+          "commandGroup": "USB4Tx",
+          "arguments": [
+            {
+              "name": "mode",
+              "type": "enumeration",
+              "required": true,
+              "position": 0,
+              "description": "Acquire mode",
+              "queryOnly": true,
+              "validValues": {
+                "type": "enumeration",
+                "values": ["LIVE", "PRE-RECORDED"],
+                "caseSensitive": false
+              }
+            }
+          ],
+          "queryResponse": {
+            "type": "enumeration",
+            "format": "LIVE | PRE-RECORDED",
+            "description": "Returns the current acquire mode",
+            "example": "LIVE"
+          },
+          "syntax": {
+            "set": "TEKEXP:ACQUIRE_MODE <Mode>",
+            "query": "TEKEXP:ACQUIRE_MODE?",
+            "queryArguments": []
+          },
+          "codeExamples": [
+            {
+              "description": "Set acquire mode to LIVE",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:ACQUIRE_MODE LIVE",
+                  "library": "SCPI",
+                  "description": "Raw SCPI command"
+                }
+              },
+              "result": null,
+              "resultDescription": "Sets the acquire mode to the Live mode"
+            },
+            {
+              "description": "Query acquire mode",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:ACQUIRE_MODE?",
+                  "library": "SCPI",
+                  "description": "Raw SCPI query"
+                }
+              },
+              "result": "LIVE | PRE-RECORDED",
+              "resultDescription": "Returns the current acquire mode"
+            }
+          ]
+        },
+        {
+          "id": "tekexp_mode",
+          "category": "tekexpress",
+          "scpi": "TEKEXP:MODE <Mode>",
+          "header": "TEKEXP:MODE",
+          "mnemonics": ["TEKEXP", "MODE"],
+          "commandType": "both",
+          "shortDescription": "Set or query the execution mode status",
+          "description": "This command sets or queries the execution mode status.",
+          "instruments": {
+            "families": [],
+            "models": [],
+            "exclusions": []
+          },
+          "commandGroup": "USB4Tx",
+          "arguments": [
+            {
+              "name": "mode",
+              "type": "enumeration",
+              "required": true,
+              "position": 0,
+              "description": "Execution mode",
+              "queryOnly": true,
+              "validValues": {
+                "type": "enumeration",
+                "values": ["COMPLIANCE", "USER-DEFINED"],
+                "caseSensitive": false
+              }
+            }
+          ],
+          "queryResponse": {
+            "type": "enumeration",
+            "format": "COMPLIANCE | USER-DEFINED",
+            "description": "Returns the current execution mode",
+            "example": "COMPLIANCE"
+          },
+          "syntax": {
+            "set": "TEKEXP:MODE <Mode>",
+            "query": "TEKEXP:MODE?",
+            "queryArguments": []
+          },
+          "codeExamples": [
+            {
+              "description": "Set execution mode to COMPLIANCE",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:MODE COMPLIANCE",
+                  "library": "SCPI",
+                  "description": "Raw SCPI command"
+                }
+              },
+              "result": null,
+              "resultDescription": "Sets the execution mode to the compliance mode"
+            },
+            {
+              "description": "Query execution mode",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:MODE?",
+                  "library": "SCPI",
+                  "description": "Raw SCPI query"
+                }
+              },
+              "result": "COMPLIANCE | USER-DEFINED",
+              "resultDescription": "Returns the current execution mode"
+            }
+          ]
+        },
+        {
+          "id": "tekexp_report_generate",
+          "category": "tekexpress",
+          "scpi": "TEKEXP:REPORT GENERATE",
+          "header": "TEKEXP:REPORT GENERATE",
+          "mnemonics": ["TEKEXP", "REPORT", "GENERATE"],
+          "commandType": "set",
+          "shortDescription": "Generate the report for the current session",
+          "description": "This command generates the report for the current session.",
+          "instruments": {
+            "families": [],
+            "models": [],
+            "exclusions": []
+          },
+          "commandGroup": "USB4Tx",
+          "arguments": [],
+          "queryResponse": null,
+          "syntax": {
+            "set": "TEKEXP:REPORT GENERATE",
+            "query": null,
+            "queryArguments": []
+          },
+          "codeExamples": [
+            {
+              "description": "Generate report",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:REPORT GENERATE",
+                  "library": "SCPI",
+                  "description": "Raw SCPI command"
+                }
+              },
+              "result": null,
+              "resultDescription": "Generates the report for the current session"
+            }
+          ]
+        },
+        {
+          "id": "tekexp_report_query",
+          "category": "tekexpress",
+          "scpi": "TEKEXP:REPORT? \"<Device Field>\"",
+          "header": "TEKEXP:REPORT",
+          "mnemonics": ["TEKEXP", "REPORT"],
+          "commandType": "query",
+          "shortDescription": "Query the value of specified report header field in the report",
+          "description": "This command queries the value of specified report header field in the report. Device field is the header name of each field in the setup information section of the report.",
+          "instruments": {
+            "families": [],
+            "models": [],
+            "exclusions": []
+          },
+          "commandGroup": "USB4Tx",
+          "arguments": [
+            {
+              "name": "devicefield",
+              "type": "quoted_string",
+              "required": true,
+              "position": 0,
+              "description": "Device field is the header name of each field in the setup information section of the report (e.g., \"DUT ID\")",
+              "validValues": {
+                "type": "quoted_string"
+              }
+            }
+          ],
+          "queryResponse": {
+            "type": "string",
+            "format": "String",
+            "description": "Returns the value of the specified report header field",
+            "example": ""
+          },
+          "syntax": {
+            "set": null,
+            "query": "TEKEXP:REPORT? \"<Device Field>\"",
+            "queryArguments": ["devicefield"]
+          },
+          "codeExamples": [
+            {
+              "description": "Query report field value",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:REPORT? \"DUT ID\"",
+                  "library": "SCPI",
+                  "description": "Raw SCPI query"
+                }
+              },
+              "result": "<String>",
+              "resultDescription": "Returns the value of DUT ID field in the report"
+            }
+          ]
+        },
+        {
+          "id": "tekexp_result",
+          "category": "tekexpress",
+          "scpi": "TEKEXP:RESULT? \"<TestName>\"",
+          "header": "TEKEXP:RESULT",
+          "mnemonics": ["TEKEXP", "RESULT"],
+          "commandType": "query",
+          "shortDescription": "Query the value of specified result detail available in report summary/details table",
+          "description": "This command queries the value of specified result detail available in report summary/details table. Can be used with 1-3 arguments: TestName only, TestName and ColumnName, or TestName, ColumnName, and RowNumber.",
+          "instruments": {
+            "families": [],
+            "models": [],
+            "exclusions": []
+          },
+          "commandGroup": "USB4Tx",
+          "arguments": [
+            {
+              "name": "testname",
+              "type": "quoted_string",
+              "required": true,
+              "position": 0,
+              "description": "Test name of which the details are required in the report",
+              "validValues": {
+                "type": "quoted_string"
+              }
+            },
+            {
+              "name": "columnname",
+              "type": "quoted_string",
+              "required": false,
+              "position": 1,
+              "description": "Column header name of which the details are required in the report",
+              "validValues": {
+                "type": "quoted_string"
+              }
+            },
+            {
+              "name": "rownumber",
+              "type": "string",
+              "required": false,
+              "position": 2,
+              "description": "Row number of which the details are required in the report",
+              "validValues": {
+                "type": "string"
+              }
+            }
+          ],
+          "queryResponse": {
+            "type": "string",
+            "format": "String",
+            "description": "Returns pass/fail status (TestName only), all row values of specific column (with ColumnName), or column value of specified row (with RowNumber)",
+            "example": ""
+          },
+          "syntax": {
+            "set": null,
+            "query": "TEKEXP:RESULT? \"<TestName>\",\"<ColumnName>\",<RowNumber>",
+            "queryArguments": ["testname", "columnname", "rownumber"]
+          },
+          "codeExamples": [
+            {
+              "description": "Query test pass/fail status",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:RESULT? \"<TestName>\"",
+                  "library": "SCPI",
+                  "description": "Raw SCPI query"
+                }
+              },
+              "result": "<String>",
+              "resultDescription": "Returns the pass fail status of test"
+            },
+            {
+              "description": "Query all row values of specific column",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:RESULT? \"<TestName>\",\"<ColumnName>\"",
+                  "library": "SCPI",
+                  "description": "Raw SCPI query"
+                }
+              },
+              "result": "<String>",
+              "resultDescription": "Returns all the row values of specific column for the test with comma separated values"
+            },
+            {
+              "description": "Query column value of specified row",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:RESULT? \"<TestName>\",\"<ColumnName>\",<RowNumber>",
+                  "library": "SCPI",
+                  "description": "Raw SCPI query"
+                }
+              },
+              "result": "<String>",
+              "resultDescription": "Returns the column value of specified row number"
+            }
+          ]
+        },
+        {
+          "id": "tekexp_setup_default",
+          "category": "tekexpress",
+          "scpi": "TEKEXP:SETUP Default",
+          "header": "TEKEXP:SETUP Default",
+          "mnemonics": ["TEKEXP", "SETUP", "Default"],
+          "commandType": "set",
+          "shortDescription": "Restore the setup to default settings",
+          "description": "This command restores the setup to default settings.",
+          "instruments": {
+            "families": [],
+            "models": [],
+            "exclusions": []
+          },
+          "commandGroup": "USB4Tx",
+          "arguments": [],
+          "queryResponse": null,
+          "syntax": {
+            "set": "TEKEXP:SETUP Default",
+            "query": null,
+            "queryArguments": []
+          },
+          "codeExamples": [
+            {
+              "description": "Restore setup to default",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:SETUP Default",
+                  "library": "SCPI",
+                  "description": "Raw SCPI command"
+                }
+              },
+              "result": null,
+              "resultDescription": "Restores the setup to default settings"
+            }
+          ]
+        },
+        {
+          "id": "tekexp_setup_save",
+          "category": "tekexpress",
+          "scpi": "TEKEXP:SETUP Save",
+          "header": "TEKEXP:SETUP Save",
+          "mnemonics": ["TEKEXP", "SETUP", "Save"],
+          "commandType": "set",
+          "shortDescription": "Save the setup",
+          "description": "This command saves the setup.",
+          "instruments": {
+            "families": [],
+            "models": [],
+            "exclusions": []
+          },
+          "commandGroup": "USB4Tx",
+          "arguments": [],
+          "queryResponse": null,
+          "syntax": {
+            "set": "TEKEXP:SETUP Save",
+            "query": null,
+            "queryArguments": []
+          },
+          "codeExamples": [
+            {
+              "description": "Save setup",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:SETUP Save",
+                  "library": "SCPI",
+                  "description": "Raw SCPI command"
+                }
+              },
+              "result": null,
+              "resultDescription": "Saves the setup"
+            }
+          ]
+        },
+        {
+          "id": "tekexp_setup_save_session",
+          "category": "tekexpress",
+          "scpi": "TEKEXP:SETUP Save,\"<SessionName>\"",
+          "header": "TEKEXP:SETUP Save",
+          "mnemonics": ["TEKEXP", "SETUP", "Save"],
+          "commandType": "set",
+          "shortDescription": "Save the settings to a specified session",
+          "description": "This command saves the settings to a specified session.",
+          "instruments": {
+            "families": [],
+            "models": [],
+            "exclusions": []
+          },
+          "commandGroup": "USB4Tx",
+          "arguments": [
+            {
+              "name": "sessionname",
+              "type": "quoted_string",
+              "required": true,
+              "position": 0,
+              "description": "Session name",
+              "validValues": {
+                "type": "quoted_string"
+              }
+            }
+          ],
+          "queryResponse": null,
+          "syntax": {
+            "set": "TEKEXP:SETUP Save,\"<SessionName>\"",
+            "query": null,
+            "queryArguments": []
+          },
+          "codeExamples": [
+            {
+              "description": "Save setup to session",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:SETUP Save,\"<SessionName>\"",
+                  "library": "SCPI",
+                  "description": "Raw SCPI command"
+                }
+              },
+              "result": null,
+              "resultDescription": "Saves the settings to a specified session"
+            }
+          ]
+        },
+        {
+          "id": "tekexp_setup_open",
+          "category": "tekexpress",
+          "scpi": "TEKEXP:SETUP Open,\"<SessionName>\"",
+          "header": "TEKEXP:SETUP Open",
+          "mnemonics": ["TEKEXP", "SETUP", "Open"],
+          "commandType": "set",
+          "shortDescription": "Open the setup from a specified session",
+          "description": "This command opens the setup from a specified session.",
+          "instruments": {
+            "families": [],
+            "models": [],
+            "exclusions": []
+          },
+          "commandGroup": "USB4Tx",
+          "arguments": [
+            {
+              "name": "sessionname",
+              "type": "quoted_string",
+              "required": true,
+              "position": 0,
+              "description": "Session name",
+              "validValues": {
+                "type": "quoted_string"
+              }
+            }
+          ],
+          "queryResponse": null,
+          "syntax": {
+            "set": "TEKEXP:SETUP Open,\"<SessionName>\"",
+            "query": null,
+            "queryArguments": []
+          },
+          "codeExamples": [
+            {
+              "description": "Open setup from session",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:SETUP Open,\"<SessionName>\"",
+                  "library": "SCPI",
+                  "description": "Raw SCPI command"
+                }
+              },
+              "result": null,
+              "resultDescription": "Opens the setup from a specified session"
+            }
+          ]
+        },
+        {
+          "id": "tekexp_setup_current",
+          "category": "tekexpress",
+          "scpi": "TEKEXP:SETUP? CURRENT",
+          "header": "TEKEXP:SETUP CURRENT",
+          "mnemonics": ["TEKEXP", "SETUP", "CURRENT"],
+          "commandType": "query",
+          "shortDescription": "Query the current setup file name",
+          "description": "This command queries the current setup file name.",
+          "instruments": {
+            "families": [],
+            "models": [],
+            "exclusions": []
+          },
+          "commandGroup": "USB4Tx",
+          "arguments": [],
+          "queryResponse": {
+            "type": "string",
+            "format": "String",
+            "description": "Returns the current setup file name",
+            "example": ""
+          },
+          "syntax": {
+            "set": null,
+            "query": "TEKEXP:SETUP? CURRENT",
+            "queryArguments": []
+          },
+          "codeExamples": [
+            {
+              "description": "Query current setup file name",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:SETUP? CURRENT",
+                  "library": "SCPI",
+                  "description": "Raw SCPI query"
+                }
+              },
+              "result": "<String>",
+              "resultDescription": "Returns the current setup file name"
+            }
+          ]
+        },
+        {
+          "id": "tekexp_state",
+          "category": "tekexpress",
+          "scpi": "TEKEXP:STATE <operation mode>",
+          "header": "TEKEXP:STATE",
+          "mnemonics": ["TEKEXP", "STATE"],
+          "commandType": "set",
+          "shortDescription": "Run/stop/pause/resume the selected measurements execution in the application",
+          "description": "This command run/stop/pause/resume the selected measurements execution in the application.",
+          "instruments": {
+            "families": [],
+            "models": [],
+            "exclusions": []
+          },
+          "commandGroup": "USB4Tx",
+          "arguments": [
+            {
+              "name": "operationmode",
+              "type": "enumeration",
+              "required": true,
+              "position": 0,
+              "description": "Operation mode",
+              "validValues": {
+                "type": "enumeration",
+                "values": ["RUN", "STOP", "PAUSE", "RESUME"],
+                "caseSensitive": false
+              }
+            }
+          ],
+          "queryResponse": {
+            "type": "enumeration",
+            "format": "RUN | STOP | PAUSE | RESUME",
+            "description": "Returns the operation mode",
+            "example": "RUN"
+          },
+          "syntax": {
+            "set": "TEKEXP:STATE <operation mode>",
+            "query": null,
+            "queryArguments": []
+          },
+          "codeExamples": [
+            {
+              "description": "Run measurements",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:STATE RUN",
+                  "library": "SCPI",
+                  "description": "Raw SCPI command"
+                }
+              },
+              "result": null,
+              "resultDescription": "Runs the execution for the selected measurements"
+            }
+          ]
+        },
+        {
+          "id": "tekexp_state_query",
+          "category": "tekexpress",
+          "scpi": "TEKEXP:STATE?",
+          "header": "TEKEXP:STATE",
+          "mnemonics": ["TEKEXP", "STATE"],
+          "commandType": "query",
+          "shortDescription": "Query the current measurement execution status",
+          "description": "This command queries the current measurement execution status.",
+          "instruments": {
+            "families": [],
+            "models": [],
+            "exclusions": []
+          },
+          "commandGroup": "USB4Tx",
+          "arguments": [],
+          "queryResponse": {
+            "type": "enumeration",
+            "format": "RUNNING | PAUSED | WAIT | ERROR | READY",
+            "description": "Returns the current measurement execution status",
+            "example": "RUNNING"
+          },
+          "syntax": {
+            "set": null,
+            "query": "TEKEXP:STATE?",
+            "queryArguments": []
+          },
+          "codeExamples": [
+            {
+              "description": "Query execution status",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:STATE?",
+                  "library": "SCPI",
+                  "description": "Raw SCPI query"
+                }
+              },
+              "result": "RUNNING | PAUSED | WAIT | ERROR | READY",
+              "resultDescription": "Returns the current measurement execution status"
+            }
+          ]
+        },
+        {
+          "id": "tekexp_state_setup",
+          "category": "tekexpress",
+          "scpi": "TEKEXP:STATE? SETUP",
+          "header": "TEKEXP:STATE SETUP",
+          "mnemonics": ["TEKEXP", "STATE", "SETUP"],
+          "commandType": "query",
+          "shortDescription": "Query whether the current setup is saved or not saved",
+          "description": "This command queries whether the current setup is saved or not saved.",
+          "instruments": {
+            "families": [],
+            "models": [],
+            "exclusions": []
+          },
+          "commandGroup": "USB4Tx",
+          "arguments": [],
+          "queryResponse": {
+            "type": "string",
+            "format": "Saved or Not-Saved",
+            "description": "Returns whether the current setup is saved or not saved",
+            "example": "Saved"
+          },
+          "syntax": {
+            "set": null,
+            "query": "TEKEXP:STATE? SETUP",
+            "queryArguments": []
+          },
+          "codeExamples": [
+            {
+              "description": "Query setup save status",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:STATE? SETUP",
+                  "library": "SCPI",
+                  "description": "Raw SCPI query"
+                }
+              },
+              "result": "Saved or Not-Saved",
+              "resultDescription": "Returns whether the current setup is saved or not saved"
+            }
+          ]
+        },
+        {
+          "id": "tekexp_exit",
+          "category": "tekexpress",
+          "scpi": "TEKEXP:EXIT",
+          "header": "TEKEXP:EXIT",
+          "mnemonics": ["TEKEXP", "EXIT"],
+          "commandType": "set",
+          "shortDescription": "Exit or close the application",
+          "description": "The command exits or close the application.",
+          "instruments": {
+            "families": [],
+            "models": [],
+            "exclusions": []
+          },
+          "commandGroup": "USB4Tx",
+          "arguments": [],
+          "queryResponse": null,
+          "syntax": {
+            "set": "TEKEXP:EXIT",
+            "query": null,
+            "queryArguments": []
+          },
+          "codeExamples": [
+            {
+              "description": "Exit application",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:EXIT",
+                  "library": "SCPI",
+                  "description": "Raw SCPI command"
+                }
+              },
+              "result": null,
+              "resultDescription": "Closes the application"
+            }
+          ]
+        },
+        {
+          "id": "tekexp_opc",
+          "category": "tekexpress",
+          "scpi": "TEKEXP:*OPC?",
+          "header": "TEKEXP:*OPC",
+          "mnemonics": ["TEKEXP", "*OPC"],
+          "commandType": "query",
+          "shortDescription": "Query the status of the previous command execution",
+          "description": "This command queries whether the previous command execution is completed successfully.",
+          "instruments": {
+            "families": [],
+            "models": [],
+            "exclusions": []
+          },
+          "commandGroup": "USB4Tx",
+          "arguments": [],
+          "queryResponse": {
+            "type": "enumeration",
+            "format": "{0 | 1} or {True | False}",
+            "description": "1 or True indicates that command execution is successful. 0 or False indicates that command execution is failed.",
+            "example": "1"
+          },
+          "syntax": {
+            "set": null,
+            "query": "TEKEXP:*OPC?",
+            "queryArguments": []
+          },
+          "codeExamples": [
+            {
+              "description": "Query command execution status",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:*OPC?",
+                  "library": "SCPI",
+                  "description": "Raw SCPI query"
+                }
+              },
+              "result": "{0 | 1} or {True | False}",
+              "resultDescription": "Returns whether the previous command operation is completed successfully"
+            }
+          ]
+        },
+        {
+          "id": "tekexp_lasterror",
+          "category": "tekexpress",
+          "scpi": "TEKEXP:LASTERROR?",
+          "header": "TEKEXP:LASTERROR",
+          "mnemonics": ["TEKEXP", "LASTERROR"],
+          "commandType": "query",
+          "shortDescription": "Query the last error occurred",
+          "description": "This command queries the last error occurred.",
+          "instruments": {
+            "families": [],
+            "models": [],
+            "exclusions": []
+          },
+          "commandGroup": "USB4Tx",
+          "arguments": [],
+          "queryResponse": {
+            "type": "string",
+            "format": "String",
+            "description": "Returns the last error occurred",
+            "example": ""
+          },
+          "syntax": {
+            "set": null,
+            "query": "TEKEXP:LASTERROR?",
+            "queryArguments": []
+          },
+          "codeExamples": [
+            {
+              "description": "Query last error",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:LASTERROR?",
+                  "library": "SCPI",
+                  "description": "Raw SCPI query"
+                }
+              },
+              "result": "<String>",
+              "resultDescription": "Returns the last error occurred"
+            }
+          ]
+        },
+        {
+          "id": "tekexp_popup",
+          "category": "tekexpress",
+          "scpi": "TEKEXP:POPUP \"<PopupResponse>\"",
+          "header": "TEKEXP:POPUP",
+          "mnemonics": ["TEKEXP", "POPUP"],
+          "commandType": "both",
+          "shortDescription": "Set or query the popup details",
+          "description": "This command sets or queries the popup details.",
+          "instruments": {
+            "families": [],
+            "models": [],
+            "exclusions": []
+          },
+          "commandGroup": "USB4Tx",
+          "arguments": [
+            {
+              "name": "popupresponse",
+              "type": "enumeration",
+              "required": true,
+              "position": 0,
+              "description": "Popup response",
+              "queryOnly": true,
+              "validValues": {
+                "type": "enumeration",
+                "values": ["Yes", "No"],
+                "caseSensitive": false
+              }
+            }
+          ],
+          "queryResponse": {
+            "type": "string",
+            "format": "\"<Title>\",\"<message>\",\"<response1>,<response2>\"",
+            "description": "Returns the pop-up details in format: Title, message, and available responses",
+            "example": "\"Do you really want to exit TekExpress?\",\"Responses: Yes, No\""
+          },
+          "syntax": {
+            "set": "TEKEXP:POPUP \"<PopupResponse>\"",
+            "query": "TEKEXP:POPUP?",
+            "queryArguments": []
+          },
+          "codeExamples": [
+            {
+              "description": "Set popup response",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:POPUP \"Yes\"",
+                  "library": "SCPI",
+                  "description": "Raw SCPI command"
+                }
+              },
+              "result": null,
+              "resultDescription": "Sets the popup response to Yes"
+            },
+            {
+              "description": "Query popup details",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:POPUP?",
+                  "library": "SCPI",
+                  "description": "Raw SCPI query"
+                }
+              },
+              "result": "\"<Title>\",\"<message>\",\"<response1>,<response2>\"",
+              "resultDescription": "Returns the popup details in following format: \"Do you really want to exit TekExpress?\";Responses: \"Yes, No\""
+            }
+          ]
+        },
+        {
+          "id": "tekexp_value_limit",
+          "category": "tekexpress",
+          "scpi": "TEKEXP:VALUE LIMIT,<TestName>,<LimitHeader>,<Value1>,<CompareString>,<Value2>",
+          "header": "TEKEXP:VALUE LIMIT",
+          "mnemonics": ["TEKEXP", "VALUE", "LIMIT"],
+          "commandType": "both",
+          "shortDescription": "Sets or query the limit values in the limits editor window",
+          "description": "This command sets or queries the limit values in the limits editor window.",
+          "instruments": {
+            "families": [],
+            "models": [],
+            "exclusions": []
+          },
+          "commandGroup": "USB4Tx",
+          "arguments": [
+            {
+              "name": "testname",
+              "type": "string",
+              "required": true,
+              "position": 0,
+              "description": "Test name",
+              "validValues": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "limitheader",
+              "type": "string",
+              "required": true,
+              "position": 1,
+              "description": "Limit header name",
+              "validValues": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "value1",
+              "type": "numeric",
+              "required": true,
+              "position": 2,
+              "description": "First limit value",
+              "queryOnly": true,
+              "validValues": {
+                "type": "numeric"
+              }
+            },
+            {
+              "name": "comparestring",
+              "type": "string",
+              "required": true,
+              "position": 3,
+              "description": "Comparison operator string",
+              "queryOnly": true,
+              "validValues": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "value2",
+              "type": "numeric",
+              "required": true,
+              "position": 4,
+              "description": "Second limit value",
+              "queryOnly": true,
+              "validValues": {
+                "type": "numeric"
+              }
+            }
+          ],
+          "queryResponse": {
+            "type": "string",
+            "format": "<String> or <NRf>",
+            "description": "Returns the limits value for the specified testname and limit header",
+            "example": ""
+          },
+          "syntax": {
+            "set": "TEKEXP:VALUE LIMIT,<TestName>,<LimitHeader>,<Value1>,<CompareString>,<Value2>",
+            "query": "TEKEXP:VALUE? LIMIT,<TestName>,<LimitHeader>",
+            "queryArguments": ["testname", "limitheader"]
+          },
+          "codeExamples": [
+            {
+              "description": "Set limit values",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:VALUE LIMIT,<TestName>,<LimitHeader>,<Value1>,<CompareString>,<Value2>",
+                  "library": "SCPI",
+                  "description": "Raw SCPI command"
+                }
+              },
+              "result": null,
+              "resultDescription": "Sets the limits value for the specified testname and limit header"
+            },
+            {
+              "description": "Query limit values",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:VALUE? LIMIT,<TestName>,<LimitHeader>",
+                  "library": "SCPI",
+                  "description": "Raw SCPI query"
+                }
+              },
+              "result": "<String> or <NRf>",
+              "resultDescription": "Returns the limits value for the specified testname and limit header"
+            }
+          ]
+        },
+        {
+          "id": "tekexp_value_wfmfile",
+          "category": "tekexpress",
+          "scpi": "TEKEXP:VALUE WFMFILE,<TestName>,<AcquireType>,<WaveformFileName>",
+          "header": "TEKEXP:VALUE WFMFILE",
+          "mnemonics": ["TEKEXP", "VALUE", "WFMFILE"],
+          "commandType": "both",
+          "shortDescription": "Set or query the waveform file recalled for the specified test name and acquire type",
+          "description": "This command set or queries the waveform file recalled for the specified test name and acquire type. If there are more than one waveform, the waveform file names are displayed with the symbol \"$\" separated values.",
+          "instruments": {
+            "families": [],
+            "models": [],
+            "exclusions": []
+          },
+          "commandGroup": "USB4Tx",
+          "arguments": [
+            {
+              "name": "testname",
+              "type": "string",
+              "required": true,
+              "position": 0,
+              "description": "Test name",
+              "validValues": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "acquiretype",
+              "type": "string",
+              "required": true,
+              "position": 1,
+              "description": "Acquire type",
+              "validValues": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "waveformfilename",
+              "type": "string",
+              "required": true,
+              "position": 2,
+              "description": "Waveform file name",
+              "queryOnly": true,
+              "validValues": {
+                "type": "string"
+              }
+            }
+          ],
+          "queryResponse": {
+            "type": "string",
+            "format": "String",
+            "description": "Returns the waveform file name recalled for the specified testname and acquire type",
+            "example": ""
+          },
+          "syntax": {
+            "set": "TEKEXP:VALUE WFMFILE,<TestName>,<AcquireType>,<WaveformFileName>",
+            "query": "TEKEXP:VALUE? WFMFILE,<TestName>,<AquireType>",
+            "queryArguments": ["testname", "acquiretype"]
+          },
+          "codeExamples": [
+            {
+              "description": "Set waveform file",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:VALUE WFMFILE,<TestName>,<AcquireType>,<WaveformFileName>",
+                  "library": "SCPI",
+                  "description": "Raw SCPI command"
+                }
+              },
+              "result": null,
+              "resultDescription": "Recalls the specified waveform file for the specified testname and acquire type"
+            },
+            {
+              "description": "Query waveform file",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:VALUE? WFMFILE,<TestName>,<AquireType>",
+                  "library": "SCPI",
+                  "description": "Raw SCPI query"
+                }
+              },
+              "result": "<String>",
+              "resultDescription": "Returns the waveform file name recalled for the specified testname and acquire type"
+            }
+          ]
+        },
+        {
+          "id": "tekexp_value_verbose",
+          "category": "tekexpress",
+          "scpi": "TEKEXP:VALUE VERBOSE,\"<Value>\"",
+          "header": "TEKEXP:VALUE VERBOSE",
+          "mnemonics": ["TEKEXP", "VALUE", "VERBOSE"],
+          "commandType": "both",
+          "shortDescription": "Set or query the enable/disable status of Verbose function",
+          "description": "This command sets or queries the enable/disable status of Verbose function.",
+          "instruments": {
+            "families": [],
+            "models": [],
+            "exclusions": []
+          },
+          "commandGroup": "USB4Tx",
+          "arguments": [
+            {
+              "name": "value",
+              "type": "enumeration",
+              "required": true,
+              "position": 0,
+              "description": "Enable or disable (True/1 = enabled, False/0 = disabled)",
+              "queryOnly": true,
+              "validValues": {
+                "type": "enumeration",
+                "values": ["True", "False", "1", "0"],
+                "caseSensitive": false,
+                "notes": "True or 1 = enabled, False or 0 = disabled"
+              }
+            }
+          ],
+          "queryResponse": {
+            "type": "enumeration",
+            "format": "{True | False} or {0 | 1}",
+            "description": "Returns the enable or disable status of Verbose function",
+            "example": "True"
+          },
+          "syntax": {
+            "set": "TEKEXP:VALUE VERBOSE,\"<Value>\"",
+            "query": "TEKEXP:VALUE? VERBOSE",
+            "queryArguments": []
+          },
+          "codeExamples": [
+            {
+              "description": "Set verbose status",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:VALUE VERBOSE,\"<Value>\"",
+                  "library": "SCPI",
+                  "description": "Raw SCPI command"
+                }
+              },
+              "result": null,
+              "resultDescription": "Enable or disable the Verbose function"
+            },
+            {
+              "description": "Query verbose status",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:VALUE? VERBOSE",
+                  "library": "SCPI",
+                  "description": "Raw SCPI query"
+                }
+              },
+              "result": "{True | False} or {0 | 1}",
+              "resultDescription": "Returns the enable or disable status of Verbose function"
+            }
+          ]
+        },
+        {
+          "id": "tekexp_value_continuousrun",
+          "category": "tekexpress",
+          "scpi": "TEKEXP:VALUE ContinuousRun,\"<Value>\"",
+          "header": "TEKEXP:VALUE ContinuousRun",
+          "mnemonics": ["TEKEXP", "VALUE", "ContinuousRun"],
+          "commandType": "both",
+          "shortDescription": "Set or query the enable/disable status of Continuous Run function",
+          "description": "This command sets or queries the enable/disable status of Continuous Run function.",
+          "instruments": {
+            "families": [],
+            "models": [],
+            "exclusions": []
+          },
+          "commandGroup": "USB4Tx",
+          "arguments": [
+            {
+              "name": "value",
+              "type": "enumeration",
+              "required": true,
+              "position": 0,
+              "description": "Enable or disable (True/1 = enabled, False/0 = disabled)",
+              "queryOnly": true,
+              "validValues": {
+                "type": "enumeration",
+                "values": ["True", "False", "1", "0"],
+                "caseSensitive": false,
+                "notes": "True or 1 = enabled, False or 0 = disabled"
+              }
+            }
+          ],
+          "queryResponse": {
+            "type": "enumeration",
+            "format": "{True | False} or {0 | 1}",
+            "description": "Returns the enable or disable status of Continuous run function",
+            "example": "True"
+          },
+          "syntax": {
+            "set": "TEKEXP:VALUE ContinuousRun,\"<Value>\"",
+            "query": "TEKEXP:VALUE? ContinuousRun",
+            "queryArguments": []
+          },
+          "codeExamples": [
+            {
+              "description": "Set continuous run status",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:VALUE ContinuousRun,\"<Value>\"",
+                  "library": "SCPI",
+                  "description": "Raw SCPI command"
+                }
+              },
+              "result": null,
+              "resultDescription": "Enable or disable the Continuous run function"
+            },
+            {
+              "description": "Query continuous run status",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:VALUE? ContinuousRun",
+                  "library": "SCPI",
+                  "description": "Raw SCPI query"
+                }
+              },
+              "result": "{True | False} or {0 | 1}",
+              "resultDescription": "Returns the enable or disable status of Continuous run function"
+            }
+          ]
+        },
+        {
+          "id": "tekexp_value_continuousrun_duration",
+          "category": "tekexpress",
+          "scpi": "TEKEXP:VALUE ContinuousRun_Duration,\"<Value>\"",
+          "header": "TEKEXP:VALUE ContinuousRun_Duration",
+          "mnemonics": ["TEKEXP", "VALUE", "ContinuousRun_Duration"],
+          "commandType": "both",
+          "shortDescription": "Set or query the continuous run duration time value",
+          "description": "This command sets or queries the continuous run duration time value.",
+          "instruments": {
+            "families": [],
+            "models": [],
+            "exclusions": []
+          },
+          "commandGroup": "USB4Tx",
+          "arguments": [
+            {
+              "name": "value",
+              "type": "string",
+              "required": true,
+              "position": 0,
+              "description": "Duration value: Infinite or hh:mm format (minimum 00:30)",
+              "queryOnly": true,
+              "validValues": {
+                "type": "string",
+                "format": "Infinite | hh:mm",
+                "notes": "Infinite sets the radio on button to infinite. hh:mm sets the continuous run duration to the specified time in hours and minutes. The minimum time duration you can set is 00:30."
+              }
+            }
+          ],
+          "queryResponse": {
+            "type": "string",
+            "format": "Infinite | hh:mm",
+            "description": "Returns the continuous run duration time value",
+            "example": "Infinite"
+          },
+          "syntax": {
+            "set": "TEKEXP:VALUE ContinuousRun_Duration,\"<Value>\"",
+            "query": "TEKEXP:VALUE? ContinuousRun_Duration",
+            "queryArguments": []
+          },
+          "codeExamples": [
+            {
+              "description": "Set continuous run duration",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:VALUE ContinuousRun_Duration,\"<Value>\"",
+                  "library": "SCPI",
+                  "description": "Raw SCPI command"
+                }
+              },
+              "result": null,
+              "resultDescription": "Sets the continuous run duration time value"
+            },
+            {
+              "description": "Query continuous run duration",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:VALUE? ContinuousRun_Duration",
+                  "library": "SCPI",
+                  "description": "Raw SCPI query"
+                }
+              },
+              "result": "Infinite | hh:mm",
+              "resultDescription": "Returns the continuous run duration time value"
+            }
+          ]
+        },
+        {
+          "id": "tekexp_value_continuousrun_runsessionoptions",
+          "category": "tekexpress",
+          "scpi": "TEKEXP:VALUE ContinuousRun_RunSessionOptions,\"Value\"",
+          "header": "TEKEXP:VALUE ContinuousRun_RunSessionOptions",
+          "mnemonics": ["TEKEXP", "VALUE", "ContinuousRun_RunSessionOptions"],
+          "commandType": "both",
+          "shortDescription": "Set or query the session create option in the continuous run function",
+          "description": "This command sets or queries the option for session creation in the continuous run function.",
+          "instruments": {
+            "families": [],
+            "models": [],
+            "exclusions": []
+          },
+          "commandGroup": "USB4Tx",
+          "arguments": [
+            {
+              "name": "value",
+              "type": "enumeration",
+              "required": true,
+              "position": 0,
+              "description": "Session creation option",
+              "queryOnly": true,
+              "validValues": {
+                "type": "enumeration",
+                "values": ["NewSession", "SameSession_ClearResults"],
+                "caseSensitive": false,
+                "notes": "NewSession - creates new session for each run. SameSession_ClearResults - Clears the test results of the current session and starts the test execution."
+              }
+            }
+          ],
+          "queryResponse": {
+            "type": "enumeration",
+            "format": "NewSession | SameSession_ClearResults",
+            "description": "Returns the option for session creation in the continuous run function",
+            "example": "NewSession"
+          },
+          "syntax": {
+            "set": "TEKEXP:VALUE ContinuousRun_RunSessionOptions,\"Value\"",
+            "query": "TEKEXP:VALUE? ContinuousRun_RunSessionOptions",
+            "queryArguments": []
+          },
+          "codeExamples": [
+            {
+              "description": "Set session creation option",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:VALUE ContinuousRun_RunSessionOptions,\"Value\"",
+                  "library": "SCPI",
+                  "description": "Raw SCPI command"
+                }
+              },
+              "result": null,
+              "resultDescription": "Sets the option for session creation in the continuous run function"
+            },
+            {
+              "description": "Query session creation option",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:VALUE? ContinuousRun_RunSessionOptions",
+                  "library": "SCPI",
+                  "description": "Raw SCPI query"
+                }
+              },
+              "result": "NewSession | SameSession_ClearResults",
+              "resultDescription": "Returns the option for session creation in the continuous run function"
+            }
+          ]
+        },
+        {
+          "id": "tekexp_reportasxml",
+          "category": "tekexpress",
+          "scpi": "TEKEXP:REPORTASXML?",
+          "header": "TEKEXP:REPORTASXML",
+          "mnemonics": ["TEKEXP", "REPORTASXML"],
+          "commandType": "query",
+          "shortDescription": "Returns the report as XML string",
+          "description": "This command returns the report as XML string.",
+          "instruments": {
+            "families": [],
+            "models": [],
+            "exclusions": []
+          },
+          "commandGroup": "USB4Tx",
+          "arguments": [],
+          "queryResponse": {
+            "type": "string",
+            "format": "String",
+            "description": "Returns the report XML string",
+            "example": ""
+          },
+          "syntax": {
+            "set": null,
+            "query": "TEKEXP:REPORTASXML?",
+            "queryArguments": []
+          },
+          "codeExamples": [
+            {
+              "description": "Query report as XML",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:REPORTASXML?",
+                  "library": "SCPI",
+                  "description": "Raw SCPI query"
+                }
+              },
+              "result": "<String>",
+              "resultDescription": "Returns the report XML string"
+            }
+          ]
+        },
+        {
+          "id": "tekexp_copyimages",
+          "category": "tekexpress",
+          "scpi": "TEKEXP:COPYIMAGES <DestinationPath>",
+          "header": "TEKEXP:COPYIMAGES",
+          "mnemonics": ["TEKEXP", "COPYIMAGES"],
+          "commandType": "set",
+          "shortDescription": "Copies all the images from current run session to the given destination location",
+          "description": "This command copies all the images from current run session to the given destination location.",
+          "instruments": {
+            "families": [],
+            "models": [],
+            "exclusions": []
+          },
+          "commandGroup": "USB4Tx",
+          "arguments": [
+            {
+              "name": "destinationpath",
+              "type": "string",
+              "required": true,
+              "position": 0,
+              "description": "Destination path for copied images",
+              "validValues": {
+                "type": "string"
+              }
+            }
+          ],
+          "queryResponse": null,
+          "syntax": {
+            "set": "TEKEXP:COPYIMAGES <DestinationPath>",
+            "query": null,
+            "queryArguments": []
+          },
+          "codeExamples": [
+            {
+              "description": "Copy images to destination",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:COPYIMAGES C:\\Temp",
+                  "library": "SCPI",
+                  "description": "Raw SCPI command"
+                }
+              },
+              "result": null,
+              "resultDescription": "Copies all the images from current run session to the mentioned location"
+            }
+          ]
+        },
+        {
+          "id": "tekexp_selectid",
+          "category": "tekexpress",
+          "scpi": "TEKEXP:SELECTID <\"TestID\">",
+          "header": "TEKEXP:SELECTID",
+          "mnemonics": ["TEKEXP", "SELECTID"],
+          "commandType": "set",
+          "shortDescription": "Selects the specified test(s) and deselect all other tests",
+          "description": "This command selects the specified test(s) and deselect all other tests. Multiple test IDs can be provided as comma-separated values.",
+          "instruments": {
+            "families": [],
+            "models": [],
+            "exclusions": []
+          },
+          "commandGroup": "USB4Tx",
+          "arguments": [
+            {
+              "name": "testid",
+              "type": "string",
+              "required": true,
+              "position": 0,
+              "description": "Test ID(s) - single ID or comma-separated IDs (e.g., \"11101\" or \"11101,11102\")",
+              "validValues": {
+                "type": "string"
+              }
+            }
+          ],
+          "queryResponse": null,
+          "syntax": {
+            "set": "TEKEXP:SELECTID <\"TestID\">",
+            "query": null,
+            "queryArguments": []
+          },
+          "codeExamples": [
+            {
+              "description": "Select test by ID",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:SELECTID \"11101\"",
+                  "library": "SCPI",
+                  "description": "Raw SCPI command"
+                }
+              },
+              "result": null,
+              "resultDescription": "Selects the test associated with the ID and deselects all other tests in the application"
+            },
+            {
+              "description": "Select multiple tests by ID",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:SELECTID \"11101,11102\"",
+                  "library": "SCPI",
+                  "description": "Raw SCPI command"
+                }
+              },
+              "result": null,
+              "resultDescription": "Selects the tests associated with the IDs and other tests will be deselected"
+            }
+          ]
+        },
+        {
+          "id": "tekexp_testinfo",
+          "category": "tekexpress",
+          "scpi": "TEKEXP:TESTINFO?",
+          "header": "TEKEXP:TESTINFO",
+          "mnemonics": ["TEKEXP", "TESTINFO"],
+          "commandType": "query",
+          "shortDescription": "Returns the complete information about the selected test",
+          "description": "This command returns the complete information about the selected test. The information includes application name, TestID, Device selected, Suite selected, version, Test name, Test description.",
+          "instruments": {
+            "families": [],
+            "models": [],
+            "exclusions": []
+          },
+          "commandGroup": "USB4Tx",
+          "arguments": [],
+          "queryResponse": {
+            "type": "string",
+            "format": "String",
+            "description": "Returns complete test information including TestID, Device, Suite, Version, Name, and Description",
+            "example": "<TekExpress> <Test Id=\"11101\" Device=\"TX-Device\" Suite=\"Group1\" Version=\"Spec 1.0\" Name=\"Algorithm Library Measurement\" Description=\"...\"/>"
+          },
+          "syntax": {
+            "set": null,
+            "query": "TEKEXP:TESTINFO?",
+            "queryArguments": []
+          },
+          "codeExamples": [
+            {
+              "description": "Query test information",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:TESTINFO?",
+                  "library": "SCPI",
+                  "description": "Raw SCPI query"
+                }
+              },
+              "result": "<String>",
+              "resultDescription": "Returns the following details: <TekExpress> <Test Id=\"11101\" Device=\"TX-Device\" Suite=\"Group1\" Version=\"Spec 1.0\" Name=\"Algorithm Library Measurement\" Description=\"This is Algorithm Library measurement test. Refer Section-B of TekExpress SampleApp Development Guide for more details.\"/>"
+            }
+          ]
+        },
+        {
+          "id": "tekexp_session_default",
+          "category": "tekexpress",
+          "scpi": "TEKEXP:SESSION DEFAULT",
+          "header": "TEKEXP:SESSION DEFAULT",
+          "mnemonics": ["TEKEXP", "SESSION", "DEFAULT"],
+          "commandType": "set",
+          "shortDescription": "Set the default session",
+          "description": "Sets the application configurations to default value.",
+          "instruments": {
+            "families": [],
+            "models": [],
+            "exclusions": []
+          },
+          "commandGroup": "USB4Tx",
+          "arguments": [],
+          "queryResponse": null,
+          "syntax": {
+            "set": "TEKEXP:SESSION DEFAULT",
+            "query": null,
+            "queryArguments": []
+          },
+          "codeExamples": [
+            {
+              "description": "Set default session",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:SESSION DEFAULT",
+                  "library": "SCPI",
+                  "description": "Raw SCPI command"
+                }
+              },
+              "result": null,
+              "resultDescription": "Sets the application configurations to default value"
+            }
+          ]
+        },
+        {
+          "id": "tekexp_session_save",
+          "category": "tekexpress",
+          "scpi": "TEKEXP:SESSION SAVE,\"Session Name\"",
+          "header": "TEKEXP:SESSION SAVE",
+          "mnemonics": ["TEKEXP", "SESSION", "SAVE"],
+          "commandType": "set",
+          "shortDescription": "Save the run/config sessions",
+          "description": "Enter the name to save/config the session.",
+          "instruments": {
+            "families": [],
+            "models": [],
+            "exclusions": []
+          },
+          "commandGroup": "USB4Tx",
+          "arguments": [
+            {
+              "name": "sessionname",
+              "type": "quoted_string",
+              "required": true,
+              "position": 0,
+              "description": "Session name",
+              "validValues": {
+                "type": "quoted_string"
+              }
+            },
+            {
+              "name": "override",
+              "type": "enumeration",
+              "required": false,
+              "position": 1,
+              "description": "Override option (True/1 = enabled/override, False/0 = disabled)",
+              "validValues": {
+                "type": "enumeration",
+                "values": ["True", "False", "1", "0"],
+                "caseSensitive": false,
+                "notes": "True or 1 = enabled/override, False or 0 = disabled"
+              }
+            }
+          ],
+          "queryResponse": {
+            "type": "enumeration",
+            "format": "{True | False} or {0 | 1}",
+            "description": "Returns override status",
+            "example": "True"
+          },
+          "syntax": {
+            "set": "TEKEXP:SESSION SAVE,\"SessionName\", \"True\"",
+            "query": null,
+            "queryArguments": []
+          },
+          "codeExamples": [
+            {
+              "description": "Save session",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:SESSION SAVE,\"Session Name\"",
+                  "library": "SCPI",
+                  "description": "Raw SCPI command"
+                }
+              },
+              "result": null,
+              "resultDescription": "Saves the session"
+            },
+            {
+              "description": "Save session with override",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:SESSION SAVE,\"SessionName\", \"True\"",
+                  "library": "SCPI",
+                  "description": "Raw SCPI command"
+                }
+              },
+              "result": null,
+              "resultDescription": "Overrides the selected config/run session"
+            }
+          ]
+        },
+        {
+          "id": "tekexp_session_load",
+          "category": "tekexpress",
+          "scpi": "TEKEXP:SESSION LOAD, \"Session Name\"",
+          "header": "TEKEXP:SESSION LOAD",
+          "mnemonics": ["TEKEXP", "SESSION", "LOAD"],
+          "commandType": "set",
+          "shortDescription": "Load the run/config session",
+          "description": "Load the selected config/run session.",
+          "instruments": {
+            "families": [],
+            "models": [],
+            "exclusions": []
+          },
+          "commandGroup": "USB4Tx",
+          "arguments": [
+            {
+              "name": "sessionname",
+              "type": "quoted_string",
+              "required": true,
+              "position": 0,
+              "description": "Session name",
+              "validValues": {
+                "type": "quoted_string"
+              }
+            }
+          ],
+          "queryResponse": null,
+          "syntax": {
+            "set": "TEKEXP:SESSION LOAD, \"Session Name\"",
+            "query": null,
+            "queryArguments": []
+          },
+          "codeExamples": [
+            {
+              "description": "Load session",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:SESSION LOAD, \"Session Name\"",
+                  "library": "SCPI",
+                  "description": "Raw SCPI command"
+                }
+              },
+              "result": null,
+              "resultDescription": "Loads the selected config/run session"
+            }
+          ]
+        },
+        {
+          "id": "tekexp_session_delete",
+          "category": "tekexpress",
+          "scpi": "TEKEXP:SESSION DELETE, \"Session1, Session2\"",
+          "header": "TEKEXP:SESSION DELETE",
+          "mnemonics": ["TEKEXP", "SESSION", "DELETE"],
+          "commandType": "set",
+          "shortDescription": "Delete the run/config session",
+          "description": "Deletes the selected config/run session.",
+          "instruments": {
+            "families": [],
+            "models": [],
+            "exclusions": []
+          },
+          "commandGroup": "USB4Tx",
+          "arguments": [
+            {
+              "name": "sessionname",
+              "type": "quoted_string",
+              "required": true,
+              "position": 0,
+              "description": "Session name(s) - single session or comma-separated sessions",
+              "validValues": {
+                "type": "quoted_string"
+              }
+            }
+          ],
+          "queryResponse": null,
+          "syntax": {
+            "set": "TEKEXP:SESSION DELETE, \"Session1, Session2\"",
+            "query": null,
+            "queryArguments": []
+          },
+          "codeExamples": [
+            {
+              "description": "Delete session(s)",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:SESSION DELETE, \"Session1, Session2\"",
+                  "library": "SCPI",
+                  "description": "Raw SCPI command"
+                }
+              },
+              "result": null,
+              "resultDescription": "Deletes the selected config/run session"
+            }
+          ]
+        },
+        {
+          "id": "tekexp_session_run",
+          "category": "tekexpress",
+          "scpi": "TEKEXP:SESSION RUN, \"Session Name's separated by comma\"",
+          "header": "TEKEXP:SESSION RUN",
+          "mnemonics": ["TEKEXP", "SESSION", "RUN"],
+          "commandType": "set",
+          "shortDescription": "Run the run/config saved session",
+          "description": "Run the selected config/run session.",
+          "instruments": {
+            "families": [],
+            "models": [],
+            "exclusions": []
+          },
+          "commandGroup": "USB4Tx",
+          "arguments": [
+            {
+              "name": "sessionname",
+              "type": "quoted_string",
+              "required": true,
+              "position": 0,
+              "description": "Session name(s) separated by comma (to run multiple run sessions)",
+              "validValues": {
+                "type": "quoted_string"
+              }
+            }
+          ],
+          "queryResponse": null,
+          "syntax": {
+            "set": "TEKEXP:SESSION RUN, \"Session Name's separated by comma\"",
+            "query": null,
+            "queryArguments": []
+          },
+          "codeExamples": [
+            {
+              "description": "Run session(s)",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:SESSION RUN, \"Session Name's separated by comma\"",
+                  "library": "SCPI",
+                  "description": "Raw SCPI command"
+                }
+              },
+              "result": null,
+              "resultDescription": "Runs the selected config/run session"
+            }
+          ]
+        },
+        {
+          "id": "tekexp_session_list",
+          "category": "tekexpress",
+          "scpi": "TEKEXP:SESSION? LIST",
+          "header": "TEKEXP:SESSION LIST",
+          "mnemonics": ["TEKEXP", "SESSION", "LIST"],
+          "commandType": "query",
+          "shortDescription": "Query the available list in the run/config session",
+          "description": "Returns the list of available config/run session.",
+          "instruments": {
+            "families": [],
+            "models": [],
+            "exclusions": []
+          },
+          "commandGroup": "USB4Tx",
+          "arguments": [],
+          "queryResponse": {
+            "type": "string",
+            "format": "String",
+            "description": "Returns the list of available config/run session",
+            "example": ""
+          },
+          "syntax": {
+            "set": null,
+            "query": "TEKEXP:SESSION? LIST",
+            "queryArguments": []
+          },
+          "codeExamples": [
+            {
+              "description": "Query session list",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:SESSION? LIST",
+                  "library": "SCPI",
+                  "description": "Raw SCPI query"
+                }
+              },
+              "result": "<String>",
+              "resultDescription": "Returns the list of available config/run session"
+            }
+          ]
+        },
+        {
+          "id": "tekexp_session_current",
+          "category": "tekexpress",
+          "scpi": "TEKEXP:SESSION? CURRENT",
+          "header": "TEKEXP:SESSION CURRENT",
+          "mnemonics": ["TEKEXP", "SESSION", "CURRENT"],
+          "commandType": "query",
+          "shortDescription": "Query the current run/config session",
+          "description": "Returns the selected config/run session.",
+          "instruments": {
+            "families": [],
+            "models": [],
+            "exclusions": []
+          },
+          "commandGroup": "USB4Tx",
+          "arguments": [],
+          "queryResponse": {
+            "type": "string",
+            "format": "String",
+            "description": "Returns the selected config/run session",
+            "example": ""
+          },
+          "syntax": {
+            "set": null,
+            "query": "TEKEXP:SESSION? CURRENT",
+            "queryArguments": []
+          },
+          "codeExamples": [
+            {
+              "description": "Query current session",
+              "codeExamples": {
+                "scpi": {
+                  "code": "TEKEXP:SESSION? CURRENT",
+                  "library": "SCPI",
+                  "description": "Raw SCPI query"
+                }
+              },
+              "result": "<String>",
+              "resultDescription": "Returns the selected config/run session"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

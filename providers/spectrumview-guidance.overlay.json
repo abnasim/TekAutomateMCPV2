@@ -1,0 +1,145 @@
+[
+  {
+    "id": "scope-spectrumview-guidance",
+    "name": "SpectrumView Setup Guidance",
+    "description": "Contextual guidance for setting up and using SpectrumView on Tektronix oscilloscopes. Includes command patterns, parameter relationships, and practical considerations for RF spectral analysis.",
+    "triggers": [
+      "spectrumview setup",
+      "how to use spectrumview",
+      "spectrum analysis guide",
+      "spectrum view configuration",
+      "rf measurement setup",
+      "spectral analysis help"
+    ],
+    "tags": [
+      "scope",
+      "spectrumview",
+      "rf",
+      "guidance",
+      "setup",
+      "configuration",
+      "overlay"
+    ],
+    "author": "SpectrumView analysis script",
+    "version": "MSO4/5/6 Series",
+    "tested": true,
+    "category": "instrument",
+    "kind": "overlay",
+    "handlerRef": "static_result",
+    "handlerConfig": {
+      "text": "Use this guidance for SpectrumView setup, peak analysis, and power measurements on Tektronix oscilloscopes.",
+      "data": {
+        "summary": "SpectrumView enables FFT-based frequency domain analysis on oscilloscope channels, useful for RF signal characterization and spectral measurements.",
+        "commandsOfInterest": [
+          "CH<x>:SV:STATE",
+          "CH<x>:SV:CENTERFrequency", 
+          "SV:SPAN",
+          "SV:MARKER:PEAK:STATE",
+          "SV:MARKER:PEAK:THReshold",
+          "SV:MARKER:PEAK:EXCURsion",
+          "SV:MARKER:PEAKS:AMPLITUDE?",
+          "SV:MARKER:PEAKS:FREQUENCY?"
+        ],
+        "sequenceHighlights": [
+          "Enable SpectrumView on the desired channel before configuring frequency settings",
+          "Set center frequency and span to capture the frequency range of interest",
+          "Configure peak markers with appropriate threshold and excursion settings",
+          "Query peak results and convert dBm to voltage if needed",
+          "Use *OPC? commands to ensure settings are applied before proceeding"
+        ],
+        "keyPoints": [
+          "SpectrumView uses the oscilloscope's ADC to perform FFT analysis",
+          "Center frequency and span determine the frequency window of analysis",
+          "Peak markers identify the highest amplitude signals above threshold",
+          "dBm measurements use 50-ohm reference impedance by default",
+          "Voltage conversion requires understanding of power relationships"
+        ],
+        "setupParameters": {
+          "centerFrequency": {
+            "description": "Center of frequency analysis window in Hz",
+            "typical": "1 MHz to 6 GHz depending on scope bandwidth",
+            "example": "10.0E+6 for 10 MHz"
+          },
+          "span": {
+            "description": "Width of frequency analysis window in Hz", 
+            "guideline": "Set wide enough to capture signal of interest",
+            "example": "5.0E+6 for 5 MHz span"
+          },
+          "threshold": {
+            "description": "Minimum signal level for peak detection in dBm",
+            "guideline": "Set above noise floor but below expected signal levels",
+            "typical": "-40 to -60 dBm"
+          },
+          "excursion": {
+            "description": "Minimum peak height above surrounding noise in dB",
+            "guideline": "Higher values ignore smaller fluctuations",
+            "typical": "6 to 12 dB"
+          }
+        },
+        "pitfalls": [
+          "Center frequency outside scope bandwidth produces no results",
+          "Span too narrow may miss signal, too wide reduces frequency resolution",
+          "Threshold too high misses valid peaks, too low picks up noise",
+          "Forgetting *OPC? can cause timing issues between commands",
+          "Channel termination affects amplitude measurements"
+        ],
+        "measurementConsiderations": [
+          "Ensure proper channel termination (50 ohm for RF measurements)",
+          "Verify signal levels are within scope's dynamic range",
+          "Consider averaging for noisy signals",
+          "Use appropriate record length for frequency resolution",
+          "Account for scope bandwidth limitations at high frequencies"
+        ],
+        "powerConversion": {
+          "formula": "P(W) = 0.001 * 10^(dBm/10)",
+          "voltageCalculation": "Vrms = sqrt(P * Z), Vpk-pk = 2*sqrt(2)*Vrms",
+          "impedanceNote": "SpectrumView typically uses 50-ohm reference",
+          "applications": ["RF power measurements", "Harmonic analysis", "Spurious emissions"]
+        },
+        "recommendedApproach": [
+          "Start with known signal to verify SpectrumView operation",
+          "Adjust threshold and excursion based on signal characteristics",
+          "Use wider span initially, then narrow for detailed analysis",
+          "Validate measurements with manual calculations for critical applications",
+          "Document settings for repeatable measurements"
+        ],
+        "toolHints": [
+          "search_scpi spectrumview",
+          "get_command_group spectrum",
+          "search_known_failures spectrumview"
+        ],
+        "verificationNeeded": [
+          "Confirm SpectrumView support on specific scope model",
+          "Verify frequency range capabilities for your signals",
+          "Validate impedance settings match your measurement setup",
+          "Check if firmware updates affect SpectrumView behavior"
+        ],
+        "relatedCommands": [
+          "CH1:SV:RBW? - Resolution bandwidth query",
+          "SV:MARKER:PEAKS:COUNT? - Number of peaks found",
+          "CH1:SV:WINDOW? - Window function used for FFT",
+          "ACQuire:SRATe? - Sample rate affects frequency range"
+        ]
+      }
+    },
+    "match": {
+      "keywords": [
+        "spectrumview setup",
+        "spectrum analysis configuration",
+        "rf measurement guidance",
+        "spectral analysis help"
+      ],
+      "operations": [
+        "configure spectrumview",
+        "setup spectral analysis",
+        "guide rf measurements",
+        "explain spectrum parameters"
+      ],
+      "backends": ["pyvisa"],
+      "deviceTypes": ["SCOPE"],
+      "modelFamilies": ["MSO4", "MSO5", "MSO6"],
+      "priority": 4,
+      "minScore": 0.6
+    }
+  }
+]

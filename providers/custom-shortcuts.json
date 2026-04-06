@@ -1,0 +1,36 @@
+[
+  {
+    "id": "common-pyvisa-setup",
+    "name": "Common PyVISA Setup",
+    "description": "Prepare a typical PyVISA scope session with reset, autoset, acquisition setup, and output capture steps.",
+    "triggers": ["pyvisa setup", "common pyvisa setup", "scope session setup"],
+    "tags": ["pyvisa", "setup", "macro", "scope"],
+    "category": "composite",
+    "handlerRef": "static_result",
+    "handlerConfig": {
+      "ok": true,
+      "text": "Common PyVISA setup macro ready.",
+      "data": {
+        "steps": [
+          "connect",
+          "reset",
+          "autoset",
+          "configure acquisition",
+          "save output"
+        ]
+      }
+    }
+  },
+  {
+    "id": "quick-scope-capture",
+    "name": "Quick Scope Capture",
+    "description": "Capture a screenshot and waveform quickly for a local troubleshooting workflow.",
+    "triggers": ["quick capture", "scope capture", "capture screenshot waveform"],
+    "tags": ["capture", "screenshot", "waveform"],
+    "category": "composite",
+    "handlerRef": "echo_args",
+    "handlerConfig": {
+      "text": "Quick scope capture received args."
+    }
+  }
+]

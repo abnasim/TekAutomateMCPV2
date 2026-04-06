@@ -1,0 +1,14 @@
+{
+  "category": "Screenshot",
+  "builderType": "blockly",
+  "templates": [
+    {
+      "name": "Screenshot (Legacy 5k/7k/70k)",
+      "description": "Capture screenshot using HARDCOPY for legacy DPO/MSO 5k, 7k, 70k series scopes",
+      "backend": "pyvisa",
+      "deviceType": "SCOPE",
+      "builderType": "blockly",
+      "xml": "<xml xmlns=\"https://developers.google.com/blockly/xml\">\n  <block type=\"connect_scope\" id=\"connect_scope_1\" x=\"20\" y=\"20\">\n    <mutation show_advanced=\"false\" current_backend=\"pyvisa\" current_dev_type=\"SCOPE\" current_conn_type=\"INSTR\"></mutation>\n    <field name=\"DEVICE_NAME\">scope</field>\n    <field name=\"BACKEND\">pyvisa</field>\n    <data>deviceName</data>\n    <next>\n      <block type=\"set_device_context\" id=\"ctx_scope\">\n        <mutation device=\"scope\"></mutation>\n        <field name=\"DEVICE\">scope</field>\n        <next>\n          <block type=\"scpi_query\" id=\"idn_query\">\n            <field name=\"DEVICE_CONTEXT\">(scope)</field>\n            <field name=\"COMMAND\">*IDN?</field>\n            <field name=\"VARIABLE\">idn</field>\n            <next>\n              <block type=\"save_screenshot\" id=\"save_screenshot_1\">\n                <mutation scope_type=\"LEGACY\"></mutation>\n                <field name=\"DEVICE_CONTEXT\">(scope)</field>\n                <field name=\"SCOPE_TYPE\">LEGACY</field>\n                <field name=\"FILENAME\">dpo5k_screenshot.png</field>\n                <field name=\"FORMAT\">PNG</field>\n                <field name=\"LOCAL_FOLDER\">./screenshots</field>\n                <next>\n                  <block type=\"disconnect\" id=\"disconnect_1\"></block>\n                </next>\n              </block>\n            </next>\n          </block>\n        </next>\n      </block>\n    </next>\n  </block>\n</xml>"
+    }
+  ]
+}

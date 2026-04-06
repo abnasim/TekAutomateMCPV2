@@ -1,0 +1,178 @@
+[
+  {
+    "id": "shortcut:list_demo_files",
+    "name": "List Demo Files",
+    "description": "List all available Tektronix TekScope demo session files (.tss) grouped by category. These can be loaded with RECAll:SESsion. Categories: Bus Protocols (I2C, SPI, CAN, UART, LIN, FlexRay, USB, Ethernet, MIL-1553, ARINC429, etc.), Power Analysis (switching loss, efficiency, harmonics, SOA, ripple, impedance), Measurement & Jitter (jitter, measure, histogram, NRZ, eye diagram, DPM jitter/eye), Spectrum & RF (spectrum view, ACPR, OBW, channel power), Digital (digital probes, FastAcq), Motor/IMDA (hall, resolver, QEI, mechanical, phasor, startup), Memory/DDR (DDR3 clock, read/write bursts), Automotive (SENT, PSI5, CXPI), WBG (deskew, Qoss, Rdson), Display (zoom, visual trigger, high-res, TDR, user-defined filters, FastFrame, history), and more.",
+    "triggers": ["list demos", "demo files", "what demos", "available demos", "show demos", "tss files", "demo sessions", "which demos", "load demo list", "what can I load", "demo list"],
+    "tags": ["demo", "session", "tss", "recall", "load", "list", "demofiles"],
+    "category": "shortcut",
+    "steps": [
+      {
+        "tool": "respond",
+        "description": "Return categorized demo file list",
+        "response": "## Available Demo Files\nPath: `C:\\Users\\<user>\\Tektronix\\TekScope\\demofiles\\`\nLoad with: `RECAll:SESsion \"C:\\Users\\<user>\\Tektronix\\TekScope\\demofiles\\<name>.tss\"`\n\n### Bus Protocols\n- **I2C.tss** — I2C bus decode and trigger\n- **SPI.tss** — SPI bus decode\n- **CAN2.0_Demo.tss** — CAN 2.0 bus decode\n- **CANFD_Demo.tss** — CAN FD bus decode\n- **CANXL_Demo.tss** — CAN XL bus decode\n- **LIN.tss** — LIN bus decode\n- **RS-232.tss** — RS-232/UART serial decode\n- **FlexRay.tss** — FlexRay bus decode\n- **Ethernet.tss** — Ethernet decode\n- **AutoEthernet.tss** — Automotive Ethernet\n- **10BaseT1S_Demo.tss** — 10BASE-T1S Ethernet\n- **USB.tss** — USB 2.0 decode\n- **USB3.0_Demo.tss** — USB 3.0\n- **USB3.1_G1_Demo.tss** — USB 3.1 Gen1\n- **USB3.1_G2_Demo.tss** — USB 3.1 Gen2\n- **USB3.2_G1_Demo.tss** — USB 3.2 Gen1\n- **eUSB_Demo.tss** — eUSB decode\n- **MIL-STD-1553_Demo.tss** — MIL-STD-1553\n- **ARINC429_Demo.tss** — ARINC 429 avionics\n- **SpaceWire_Demo.tss** — SpaceWire\n- **I2S.tss** — I2S audio bus\n- **SMBus.tss** — SMBus\n- **MDIO.tss** — MDIO management\n- **eSPI.tss** — eSPI bus\n- **SVID.tss** — SVID voltage regulator\n- **EtherCAT.tss** — EtherCAT industrial\n- **1wire_demo.tss** — 1-Wire bus\n- **8b10b.tss** — 8b/10b encoding\n- **Manchester_Demo.tss** — Manchester encoding\n- **SDLC_demo.tss** — SDLC protocol\n- **CPhy_Demo.tss** — MIPI C-PHY\n- **DPhy_Demo.tss** — MIPI D-PHY\n- **SPMI_Demo.tss** — SPMI power management\n- **I3C.tss** — I3C bus\n- **nfcdemo.tss** — NFC\n- **PCIeG2TS.tss** — PCIe Gen2\n- **PCIeGen3.tss** — PCIe Gen3\n\n### Power Analysis\n- **SwitchingLoss_Demo.tss** — Switching loss measurement\n- **SwitchingAnalysis.tss** — Switching analysis\n- **SwitchingRipple_Demo.tss** — Switching ripple\n- **SingleOutputEfficiency_Demo.tss** — Single output efficiency\n- **DoubleOutputEfficiency_Demo.tss** — Double output efficiency\n- **TripleOutputEfficiency_Demo.tss** — Triple output efficiency\n- **Efficiency_3Phase.tss** — 3-phase efficiency\n- **Efficiency_3Phase_1V1I.tss** — 3-phase efficiency (1V1I)\n- **SystemEfficiency.tss** — System efficiency\n- **Harmonics_3Phase.tss** — 3-phase harmonics\n- **CurrentHarmonics_Demo.tss** — Current harmonics\n- **PowerQuality_Demo.tss** — Power quality\n- **PowerQuality_3Phase.tss** — 3-phase power quality\n- **Ripple3Phase.tss** — 3-phase ripple\n- **SafeOperatingArea_Demo.tss** — SOA analysis\n- **Impedance_Demo.tss** — Impedance\n- **Control_Loop_Response_Demo.tss** — Control loop response\n- **TurnOffTime_Demo.tss** — Turn-off time\n- **TurnoffTime_AC_DC.tss** — AC/DC turn-off time\n- **ReverseRecoveryAnalysis.tss** — Reverse recovery\n- **SimpleMagneticMeasurements_Demo.tss** — Magnetic measurements\n- **Inverter_InputPower.tss** — Inverter input power\n- **Inverter_PhasorDiagram.tss** — Inverter phasor diagram\n- **Inverter_Ripple.tss** — Inverter ripple\n\n### DPM (Digital Power Management)\n- **DPMMultiRailRippleMeas.tss** — Multi-rail ripple\n- **DPMTurnOnTimeMultiRailMeas.tss** — Multi-rail turn-on time\n- **DPM_JitterEyemeas_Demo.tss** — DPM jitter & eye\n- **DPM_PSIJ_Demo.tss** — DPM PSI-J\n\n### Measurement & Jitter\n- **Measure.tss** — General measurements\n- **Jitter.tss** — Jitter analysis\n- **NRZ_Demo.tss** — NRZ eye/jitter\n- **WaveformHistogramDemo.tss** — Waveform histogram\n- **Search.tss** — Search and mark\n\n### Spectrum & RF\n- **SpectrumView.tss** — Spectrum view/analysis\n- **ACPR.tss** — Adjacent channel power ratio\n- **OBW.tss** — Occupied bandwidth\n- **ChannelPower.tss** — Channel power\n\n### Motor Drive / IMDA\n- **IMDA_Hall.tss** — IMDA Hall sensor\n- **IMDA_Mech.tss** — IMDA Mechanical\n- **IMDA_QEI.tss** — IMDA QEI encoder\n- **IMDA_Resolver.tss** — IMDA Resolver\n- **DQ0_PhasorDiagram.tss** — DQ0 phasor diagram\n- **MotorStartupProfile.tss** — Motor startup profile\n\n### WBG (Wide Band Gap)\n- **WBGDeskewDemo.tss** — WBG deskew\n- **WBGQoss.tss** — WBG Qoss\n- **WBGRdson.tss** — WBG Rdson\n\n### Memory / DDR\n- **DDR3_ClockDiff_AC175.tss** — DDR3 clock differential\n- **DDR3_ReadBursts_AC175.tss** — DDR3 read bursts\n- **DDR3_WriteBursts_AC175.tss** — DDR3 write bursts\n\n### Automotive\n- **SENT_Demo.tss** — SENT protocol\n- **PSI5_SensorToECU.tss** — PSI5 sensor\n- **CXPI_demo.tss** — CXPI protocol\n\n### Display & Acquisition\n- **Zoom.tss** — Zoom/magnify\n- **FastFrame_Demo.tss** — FastFrame acquisition\n- **FastAcq.tss** — Fast acquisition\n- **History_Demo.tss** — History mode\n- **Digital.tss** — Digital channels\n- **HighResEdge.tss** — High-res edge\n- **HighResSincPulse.tss** — High-res sinc pulse\n- **VisualTrigger_Demo.tss** — Visual trigger\n- **TDR_Demo.tss** — TDR (time domain reflectometry)\n- **UserDefinedFilters.tss** — User-defined filters"
+      }
+    ],
+    "createdAt": 1711684800000
+  },
+  {
+    "id": "shortcut:load_demo_file",
+    "name": "Load Demo File",
+    "description": "Load a Tektronix demo session file (.tss) on the scope. Provide the filename. Path: C:\\Users\\<user>\\Tektronix\\TekScope\\demofiles\\. Use RECAll:SESsion to load. First use 'list demos' to see available files.",
+    "triggers": ["load demo", "open demo", "recall demo", "load session", "load tss", "recall session file", "open session file"],
+    "tags": ["demo", "session", "tss", "recall", "load"],
+    "category": "shortcut",
+    "steps": [
+      {
+        "tool": "send_scpi",
+        "args": {"commands": ["RECAll:SESsion \"C:\\Users\\u650455\\Tektronix\\TekScope\\demofiles\\{filename}\""]},
+        "description": "Load the specified demo session file"
+      }
+    ],
+    "createdAt": 1711684800000
+  },
+  {
+    "id": "shortcut:power_demos",
+    "name": "Power Analysis Demos",
+    "description": "List power analysis demo files: switching loss, efficiency, harmonics, SOA, ripple, impedance, control loop, turn-off time, reverse recovery, magnetic measurements, inverter analysis.",
+    "triggers": ["power demos", "power demo files", "switching loss demo", "efficiency demo", "harmonics demo", "power quality demo", "SOA demo", "ripple demo", "impedance demo"],
+    "tags": ["demo", "power", "switching", "efficiency", "harmonics", "SOA", "ripple"],
+    "category": "shortcut",
+    "steps": [
+      {
+        "tool": "respond",
+        "description": "List power demos",
+        "response": "Power analysis demos:\n- SwitchingLoss_Demo.tss\n- SwitchingAnalysis.tss\n- SwitchingRipple_Demo.tss\n- SingleOutputEfficiency_Demo.tss\n- DoubleOutputEfficiency_Demo.tss\n- TripleOutputEfficiency_Demo.tss\n- SystemEfficiency.tss\n- Efficiency_3Phase.tss\n- Harmonics_3Phase.tss\n- CurrentHarmonics_Demo.tss\n- PowerQuality_Demo.tss\n- SafeOperatingArea_Demo.tss\n- Impedance_Demo.tss\n- Control_Loop_Response_Demo.tss\n- TurnOffTime_Demo.tss\n- ReverseRecoveryAnalysis.tss\n\nSay 'load demo SwitchingLoss_Demo' to load one."
+      }
+    ],
+    "createdAt": 1711684800000
+  },
+  {
+    "id": "shortcut:bus_protocol_demos",
+    "name": "Bus Protocol Demos",
+    "description": "List bus protocol demo files: I2C, SPI, CAN, CAN FD, LIN, UART/RS-232, FlexRay, USB, Ethernet, MIL-1553, ARINC429, SpaceWire, I2S, SMBus, eSPI, MIPI C-PHY/D-PHY, PCIe, NFC, I3C.",
+    "triggers": ["bus demos", "protocol demos", "serial demos", "i2c demo", "can demo", "spi demo", "uart demo", "usb demo", "ethernet demo", "lin demo", "flexray demo", "mil-std demo", "arinc demo"],
+    "tags": ["demo", "bus", "protocol", "i2c", "spi", "can", "uart", "usb", "ethernet", "serial"],
+    "category": "shortcut",
+    "steps": [
+      {
+        "tool": "respond",
+        "description": "List bus protocol demos",
+        "response": "Bus protocol demos:\n- I2C.tss — I2C\n- SPI.tss — SPI\n- CAN2.0_Demo.tss — CAN 2.0\n- CANFD_Demo.tss — CAN FD\n- CANXL_Demo.tss — CAN XL\n- LIN.tss — LIN\n- RS-232.tss — RS-232/UART\n- FlexRay.tss — FlexRay\n- USB.tss — USB 2.0\n- USB3.0_Demo.tss / USB3.1 / USB3.2\n- eUSB_Demo.tss — eUSB\n- Ethernet.tss / AutoEthernet.tss / 10BaseT1S_Demo.tss\n- MIL-STD-1553_Demo.tss\n- ARINC429_Demo.tss\n- SpaceWire_Demo.tss\n- I2S.tss — Audio\n- SMBus.tss / MDIO.tss / eSPI.tss / SVID.tss\n- CPhy_Demo.tss / DPhy_Demo.tss — MIPI\n- PCIeG2TS.tss / PCIeGen3.tss\n- I3C.tss / SPMI_Demo.tss / nfcdemo.tss\n\nSay 'load demo I2C' to load one."
+      }
+    ],
+    "createdAt": 1711684800000
+  },
+  {
+    "id": "shortcut:measurement_demos",
+    "name": "Measurement & Jitter Demos",
+    "description": "List measurement, jitter, histogram, eye diagram, and DPM demo files.",
+    "triggers": ["measurement demos", "jitter demo", "histogram demo", "eye diagram demo", "NRZ demo", "DPM demo", "search demo", "waveform histogram demo"],
+    "tags": ["demo", "measurement", "jitter", "histogram", "eye", "NRZ", "DPM"],
+    "category": "shortcut",
+    "steps": [
+      {
+        "tool": "respond",
+        "description": "List measurement demos",
+        "response": "Measurement & Jitter demos:\n- Measure.tss — General measurements\n- Jitter.tss — Jitter analysis\n- NRZ_Demo.tss — NRZ eye/jitter\n- WaveformHistogramDemo.tss — Waveform histogram\n- Search.tss — Search and mark\n- DPM_JitterEyemeas_Demo.tss — DPM jitter & eye\n- DPM_PSIJ_Demo.tss — DPM PSI-J\n- DPMMultiRailRippleMeas.tss — Multi-rail ripple\n\nSay 'load demo Jitter' to load one."
+      }
+    ],
+    "createdAt": 1711684800000
+  },
+  {
+    "id": "shortcut:spectrum_demos",
+    "name": "Spectrum & RF Demos",
+    "description": "List spectrum view, RF, and frequency domain demo files: spectrum view, ACPR, OBW, channel power.",
+    "triggers": ["spectrum demos", "rf demos", "spectrum view demo", "acpr demo", "frequency demo"],
+    "tags": ["demo", "spectrum", "rf", "frequency", "acpr", "obw"],
+    "category": "shortcut",
+    "steps": [
+      {
+        "tool": "respond",
+        "description": "List spectrum demos",
+        "response": "Spectrum & RF demos:\n- SpectrumView.tss — Spectrum view/analysis\n- ACPR.tss — Adjacent channel power ratio\n- OBW.tss — Occupied bandwidth\n- ChannelPower.tss — Channel power\n\nSay 'load demo SpectrumView' to load one."
+      }
+    ],
+    "createdAt": 1711684800000
+  },
+  {
+    "id": "shortcut:motor_imda_demos",
+    "name": "Motor Drive / IMDA Demos",
+    "description": "List motor drive and inverter motor drive analysis demo files: hall sensor, resolver, QEI, mechanical, phasor diagram, motor startup.",
+    "triggers": ["motor demos", "imda demos", "motor drive demo", "inverter demo", "hall sensor demo", "resolver demo", "phasor demo"],
+    "tags": ["demo", "motor", "imda", "inverter", "drive", "hall", "resolver"],
+    "category": "shortcut",
+    "steps": [
+      {
+        "tool": "respond",
+        "description": "List motor/IMDA demos",
+        "response": "Motor Drive / IMDA demos:\n- IMDA_Hall.tss — Hall sensor\n- IMDA_Mech.tss — Mechanical\n- IMDA_QEI.tss — QEI encoder\n- IMDA_Resolver.tss — Resolver\n- DQ0_PhasorDiagram.tss — DQ0 phasor\n- MotorStartupProfile.tss — Motor startup\n- Inverter_InputPower.tss — Input power\n- Inverter_PhasorDiagram.tss — Phasor diagram\n- Inverter_Ripple.tss — Ripple\n\nSay 'load demo IMDA_Hall' to load one."
+      }
+    ],
+    "createdAt": 1711684800000
+  },
+  {
+    "id": "shortcut:wbg_demos",
+    "name": "WBG (Wide Band Gap) Demos",
+    "description": "List wide band gap analysis demo files: deskew, Qoss, Rdson, double pulse test.",
+    "triggers": ["wbg demos", "wide band gap demo", "double pulse demo", "qoss demo", "rdson demo", "deskew demo"],
+    "tags": ["demo", "wbg", "wide band gap", "deskew", "qoss", "rdson"],
+    "category": "shortcut",
+    "steps": [
+      {
+        "tool": "respond",
+        "description": "List WBG demos",
+        "response": "WBG (Wide Band Gap) demos:\n- WBGDeskewDemo.tss — Deskew\n- WBGQoss.tss — Qoss\n- WBGRdson.tss — Rdson\n\nSay 'load demo WBGDeskewDemo' to load one."
+      }
+    ],
+    "createdAt": 1711684800000
+  },
+  {
+    "id": "shortcut:edge_trigger_setup",
+    "name": "Edge Trigger Setup",
+    "description": "Configure edge trigger on a Tektronix scope. Key commands: TRIGger:A:TYPe EDGE, TRIGger:A:EDGE:SOUrce CH<x>, TRIGger:A:EDGE:SLOpe {RISe|FALL|EITher}, TRIGger:A:LEVel:CH<x> <voltage>. Use TRIGger:A (primary) not TRIGger:B (secondary).",
+    "triggers": ["edge trigger", "trigger level", "trigger slope", "trigger source", "set trigger", "edge trigger level", "rising edge trigger", "falling edge trigger", "trigger edge", "configure trigger"],
+    "tags": ["trigger", "edge", "level", "slope", "source", "rising", "falling"],
+    "category": "shortcut",
+    "steps": [
+      {
+        "tool": "send_scpi",
+        "args": {"commands": ["TRIGger:A:TYPe EDGE", "TRIGger:A:EDGE:SOUrce CH1", "TRIGger:A:EDGE:SLOpe RISe", "TRIGger:A:LEVel:CH1 0"]},
+        "description": "Set edge trigger: type=EDGE, source=CH1, slope=RISE, level=0V. Adjust source/slope/level as needed."
+      }
+    ],
+    "createdAt": 1711684800000
+  },
+  {
+    "id": "shortcut:zone_trigger",
+    "name": "Zone Trigger (Visual Trigger)",
+    "description": "Configure visual/zone trigger on a Tektronix scope. Zone trigger defines a rectangular area on the display — the scope triggers when the waveform enters or exits the zone. Key commands: VISual:ENABLE ON, VISual:AREA<x>:SHAPE RECTangle, VISual:AREA<x>:SOUrce CH<x>, VISual:AREA<x>:YAXis:MAX/MIN, VISual:AREA<x>:XAXis:MAX/MIN, VISual:AREA<x>:LOGICSTATE {IN|OUT}.",
+    "triggers": ["zone trigger", "visual trigger", "trigger zone", "trigger area", "enter area", "exit area", "zone trigger enter", "zone trigger exit", "rectangular trigger"],
+    "tags": ["trigger", "zone", "visual", "area", "rectangle", "enter", "exit"],
+    "category": "shortcut",
+    "steps": [
+      {
+        "tool": "send_scpi",
+        "args": {"commands": ["VISual:ENABLE ON", "VISual:AREA1:SHAPE RECTangle", "VISual:AREA1:SOUrce CH1", "VISual:AREA1:LOGICSTATE IN"]},
+        "description": "Enable visual/zone trigger with rectangular area on CH1, trigger when signal enters the zone. Adjust area bounds with XAXis:MAX/MIN and YAXis:MAX/MIN."
+      }
+    ],
+    "createdAt": 1711684800000
+  },
+  {
+    "id": "shortcut:add_arrow_callout",
+    "name": "Add Arrow Callout",
+    "description": "Add an arrow-style callout annotation pointing at a specific location on the scope display. Use TYPe ARROW (not NOTE). Arrow callouts have a leader line. NOTE is just floating text. Steps: ADDNew → TYPe ARROW → TEXT → DISPLAYPOSition X/Y.",
+    "triggers": ["add callout", "add arrow callout", "callout arrow", "annotate waveform", "add annotation", "point to", "label on display", "add marker", "add arrow", "callout with arrow", "callout pointing to"],
+    "tags": ["callout", "arrow", "annotation", "display", "label", "marker"],
+    "category": "shortcut",
+    "steps": [
+      {
+        "tool": "send_scpi",
+        "args": {"commands": ["CALLOUTS:ADDNew \"CALLOUT{n}\"", "CALLOUTS:CALLOUT{n}:TYPe ARROW", "CALLOUTS:CALLOUT{n}:TEXT \"{text}\"", "CALLOUTS:CALLOUT{n}:DISPLAYPOSition:X {x}", "CALLOUTS:CALLOUT{n}:DISPLAYPOSition:Y {y}"]},
+        "description": "Add arrow callout: ARROW type has leader line pointing to target. Replace {n} with callout number, {text} with label, {x}/{y} with position (0-100)."
+      }
+    ],
+    "createdAt": 1711684800000
+  }
+]

@@ -1,0 +1,309 @@
+[
+  {
+    "id": "scope-trigger-troubleshooting",
+    "name": "Scope Trigger Troubleshooting",
+    "description": "Comprehensive troubleshooting guide for oscilloscope trigger issues including common problems, setup mistakes, and diagnostic steps.",
+    "triggers": [
+      "trigger not working",
+      "why no trigger",
+      "trigger miss",
+      "can't trigger",
+      "trigger setup problem",
+      "scope won't trigger",
+      "no waveform",
+      "trigger issues",
+      "trigger troubleshooting"
+    ],
+    "tags": [
+      "scope",
+      "trigger",
+      "troubleshooting",
+      "diagnostics",
+      "setup",
+      "common issues"
+    ],
+    "author": "TekAutomate MCP Team",
+    "version": "1.0",
+    "tested": true,
+    "category": "instrument",
+    "handlerRef": "static_result",
+    "handlerConfig": {
+      "text": "Trigger troubleshooting guide for oscilloscope setup and common issues.",
+      "data": {
+        "summary": "Systematic approach to diagnosing and fixing oscilloscope trigger problems.",
+        "commandsOfInterest": [
+          "TRIGger:A:TYPE",
+          "TRIGger:A:SOUrce",
+          "TRIGger:A:LEVel",
+          "TRIGger:A:SLOpe",
+          "ACQuire:STATE",
+          "DISplay:TYPE"
+        ],
+        "sequenceHighlights": [
+          "Verify signal is present and within vertical range",
+          "Check trigger source matches the signal channel",
+          "Adjust trigger level to intersect signal",
+          "Verify trigger type matches signal characteristics",
+          "Check horizontal timebase for appropriate frequency display"
+        ],
+        "keyPoints": [
+          "Signal must be present before trigger will work",
+          "Trigger level must be within signal amplitude range",
+          "Trigger source must match the active channel",
+          "Timebase affects trigger stability for periodic signals"
+        ],
+        "pitfalls": [
+          "Trigger level set outside signal range",
+          "Wrong trigger source selected",
+          "Signal amplitude too small or too large",
+          "Noise preventing stable triggering",
+          "Incorrect trigger type for signal shape"
+        ],
+        "diagnosticSteps": [
+          "1. Verify signal: Set trigger to AUTO, check if waveform appears",
+          "2. Check amplitude: Use vertical scale to ensure signal fills screen",
+          "3. Verify source: Ensure trigger source matches signal channel",
+          "4. Adjust level: Set trigger level to middle of signal amplitude",
+          "5. Check coupling: Use DC coupling for most signals, AC for AC-only",
+          "6. Adjust timebase: Set to show 2-3 periods of periodic signals"
+        ],
+        "commonFixes": [
+          "Set TRIGger:A:LEVel to middle of signal amplitude",
+          "Change TRIGger:A:SOUrce to correct channel (CH1, CH2, etc.)",
+          "Adjust vertical scale (VOLts:DIV) to amplify small signals",
+          "Use TRIGger:A:TYPE EDGE for most digital signals",
+          "Enable bandwidth limit for noisy signals"
+        ],
+        "toolHints": [
+          "search_scpi trigger",
+          "get_command_group trigger",
+          "search_known_failures trigger"
+        ]
+      }
+    },
+    "match": {
+      "keywords": [
+        "trigger troubleshooting",
+        "trigger miss",
+        "trigger setup",
+        "trigger level",
+        "no trigger",
+        "trigger problem"
+      ],
+      "operations": [
+        "diagnose trigger",
+        "fix trigger",
+        "configure trigger",
+        "troubleshoot scope"
+      ],
+      "backends": ["pyvisa"],
+      "deviceTypes": ["SCOPE"],
+      "priority": 5,
+      "minScore": 0.4
+    }
+  },
+  {
+    "id": "measurement-interpretation-guide",
+    "name": "Measurement Interpretation Guide",
+    "description": "Guide for interpreting oscilloscope measurements, understanding unexpected values, and troubleshooting measurement accuracy issues.",
+    "triggers": [
+      "weird measurement values",
+      "measurement wrong",
+      "why measurement strange",
+      "measurement accuracy",
+      "interpret measurements",
+      "measurement troubleshooting",
+      "unexpected values"
+    ],
+    "tags": [
+      "scope",
+      "measurement",
+      "interpretation",
+      "accuracy",
+      "troubleshooting",
+      "analysis"
+    ],
+    "author": "TekAutomate MCP Team",
+    "version": "1.0",
+    "tested": true,
+    "category": "instrument",
+    "handlerRef": "static_result",
+    "handlerConfig": {
+      "text": "Comprehensive guide for interpreting oscilloscope measurements and troubleshooting accuracy issues.",
+      "data": {
+        "summary": "Understanding measurement results, common accuracy issues, and how to validate measurement quality.",
+        "commandsOfInterest": [
+          "MEASUrement:ADDMEAS",
+          "MEASUrement:MEAS<x>:VALue?",
+          "MEASUrement:MEAS<x>:TYPe",
+          "ACQuire:SAMPling",
+          "HORizontal:RECOrdlength"
+        ],
+        "sequenceHighlights": [
+          "Verify measurement type matches what you want to measure",
+          "Check acquisition settings affect measurement accuracy",
+          "Ensure sufficient signal for reliable measurements",
+          "Validate measurement with manual calculations"
+        ],
+        "keyPoints": [
+          "Measurement accuracy depends on signal quality and acquisition settings",
+          "Different measurement types require different signal characteristics",
+          "Noise and sampling rate can affect measurement results",
+          "Some measurements need specific trigger conditions"
+        ],
+        "pitfalls": [
+          "Measuring noise without proper averaging",
+          "Insufficient record length for low-frequency measurements",
+          "Wrong measurement type for the signal characteristic",
+          "Signal aliasing affecting frequency measurements",
+          "Probe loading affecting signal amplitude"
+        ],
+        "commonIssues": [
+          "Frequency measurements wrong - check timebase and sampling rate",
+          "Amplitude measurements vary - enable averaging or high-resolution",
+          "Rise time measurements inconsistent - check bandwidth and probe",
+          "Duty cycle measurements unstable - use edge trigger and sufficient cycles"
+        ],
+        "solutions": [
+          "Use ACQuire:MODE AVERAGE for noisy signals",
+          "Increase HORizontal:RECOrdlength for better frequency resolution",
+          "Set appropriate ACQuire:SAMPling mode for your measurement",
+          "Verify probe compensation for accurate amplitude measurements",
+          "Use MEASUrement:GATing for specific measurement windows"
+        ],
+        "toolHints": [
+          "search_scpi measurement",
+          "get_command_group measurement",
+          "search_known_failures measurement"
+        ]
+      }
+    },
+    "match": {
+      "keywords": [
+        "measurement interpretation",
+        "measurement accuracy",
+        "weird measurements",
+        "measurement troubleshooting",
+        "measurement values"
+      ],
+      "operations": [
+        "interpret measurement",
+        "fix measurement",
+        "validate measurement",
+        "analyze measurement"
+      ],
+      "backends": ["pyvisa"],
+      "deviceTypes": ["SCOPE"],
+      "priority": 4,
+      "minScore": 0.4
+    }
+  },
+  {
+    "id": "connection-problems-guide",
+    "name": "Instrument Connection Problems Guide",
+    "description": "Systematic troubleshooting for VISA, USB, TCP/IP, and GPIB connection issues with Tektronix instruments.",
+    "triggers": [
+      "can't connect",
+      "connection failed",
+      "visa error",
+      "instrument not found",
+      "tcp connection problem",
+      "usb not working",
+      "gpib issues",
+      "connection troubleshooting"
+    ],
+    "tags": [
+      "connection",
+      "visa",
+      "tcpip",
+      "usb",
+      "gpib",
+      "troubleshooting",
+      "network"
+    ],
+    "author": "TekAutomate MCP Team",
+    "version": "1.0",
+    "tested": true,
+    "category": "instrument",
+    "handlerRef": "static_result",
+    "handlerConfig": {
+      "text": "Complete guide for diagnosing and fixing instrument connection problems across different interfaces.",
+      "data": {
+        "summary": "Step-by-step troubleshooting for VISA, network, USB, and GPIB connection issues.",
+        "commandsOfInterest": [
+          "*IDN?",
+          "SYSTem:ERRor?",
+          "SYSTem:COMMunication:TCPIP:CONTrol?",
+          "SYSTem:VERSion?"
+        ],
+        "sequenceHighlights": [
+          "Verify physical connection and power",
+          "Check VISA installation and drivers",
+          "Test network connectivity and firewall",
+          "Validate instrument address format",
+          "Check for error messages and status"
+        ],
+        "keyPoints": [
+          "Different connection types have different address formats",
+          "Network configuration often blocks instrument connections",
+          "VISA drivers must match your OS and connection type",
+          "Instruments must be powered and responsive for connection"
+        ],
+        "pitfalls": [
+          "Wrong VISA resource string format",
+          "Firewall blocking TCP/IP connections",
+          "USB drivers not installed or corrupted",
+          "GPIB address conflicts or termination issues",
+          "Network IP address changes"
+        ],
+        "troubleshootingSteps": [
+          "1. Verify instrument power and front panel response",
+          "2. Check physical cables and connections",
+          "3. Test with VISA Interactive Test Panel",
+          "4. Verify resource string format (TCPIP::IP::INSTR, USB::...)",
+          "5. Check Windows Device Manager for hardware issues",
+          "6. Test network connectivity with ping command",
+          "7. Disable firewall temporarily for testing"
+        ],
+        "commonFixes": [
+          "Update VISA drivers to latest version",
+          "Use correct resource string format",
+          "Configure firewall exceptions for instrument ports",
+          "Set static IP addresses for instruments",
+          "Reinstall USB drivers or try different USB port"
+        ],
+        "addressFormats": {
+          "TCPIP": "TCPIP::192.168.1.100::INSTR",
+          "USB": "USB::0x0699::0x0363::C123456::INSTR",
+          "GPIB": "GPIB0::5::INSTR",
+          "Serial": "ASRL1::INSTR"
+        },
+        "toolHints": [
+          "get_visa_resources",
+          "search_known_failures connection",
+          "get_environment"
+        ]
+      }
+    },
+    "match": {
+      "keywords": [
+        "connection troubleshooting",
+        "visa error",
+        "instrument not found",
+        "tcpip connection",
+        "usb connection",
+        "gpib connection"
+      ],
+      "operations": [
+        "fix connection",
+        "diagnose connection",
+        "test connection",
+        "configure connection"
+      ],
+      "backends": ["pyvisa"],
+      "deviceTypes": ["SCOPE", "AFG", "AWG", "SMU", "RSA"],
+      "priority": 6,
+      "minScore": 0.4
+    }
+  }
+]

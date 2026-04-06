@@ -1,0 +1,35 @@
+{
+  "category": "tekexpress",
+  "templates": [
+    {
+      "name": "PCIe Gen3 Compliance",
+      "description": "PCIe Gen3 Tx compliance test workflow",
+      "backend": "pyvisa",
+      "source": "tekexpress",
+      "steps": [
+        {
+          "type": "write",
+          "label": "Set Link Speed",
+          "params": {
+            "command": "TEKEXP:VALUE GENERAL,\"Lane Count\",\"4\""
+          }
+        },
+        {
+          "type": "write",
+          "label": "Run Compliance Tests",
+          "params": {
+            "command": "TEKEXP:STATE RUN"
+          }
+        },
+        {
+          "type": "query",
+          "label": "Check Status",
+          "params": {
+            "command": "TEKEXP:STATE?",
+            "saveAs": "status"
+          }
+        }
+      ]
+    }
+  ]
+}

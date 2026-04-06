@@ -1,0 +1,70 @@
+[
+  {
+    "id": "workflow:fast-hw-averaging-math-export",
+    "name": "Fast HW Averaging with Math Export",
+    "description": "Configure FastAcq hardware averaging into MATH1 on a 4/5/6 Series scope, wait for the averaging run to finish, and export the averaged math waveform. Use this when you want a reusable exact flow for high-speed hardware averaging backed by a math trace.",
+    "triggers": [
+      "fast hardware averaging",
+      "fast averaging with math trace",
+      "fastacq averaging export",
+      "export fast averaged waveform"
+    ],
+    "tags": [
+      "scope",
+      "fastacq",
+      "fastaverage",
+      "math",
+      "math1",
+      "average",
+      "curve",
+      "fpbinary",
+      "pyvisa"
+    ],
+    "author": "Tektronix example script",
+    "version": "Python 3.10 / firmware 1.38+",
+    "tested": false,
+    "category": "template",
+    "handlerRef": "flow_template",
+    "handlerConfig": {
+      "summary": "Configure FastAcq averaging into MATH1 and export the averaged waveform.",
+      "backend": "pyvisa",
+      "deviceType": "SCOPE"
+    },
+    "schema": {
+      "type": "object",
+      "properties": {}
+    },
+    "match": {
+      "keywords": [
+        "fast hardware averaging",
+        "fastacq averaging",
+        "math averaging export"
+      ],
+      "operations": [
+        "configure averaging",
+        "wait for acquisition complete",
+        "export waveform"
+      ],
+      "backends": ["pyvisa"],
+      "deviceTypes": ["SCOPE"],
+      "modelFamilies": ["4/5/6 Series MSO"],
+      "priority": 4,
+      "minScore": 0.75
+    },
+    "steps": [
+      { "id": "1", "type": "connect", "label": "Connect", "params": { "printIdn": true } },
+      { "id": "2", "type": "write", "label": "Stop acquisition", "params": { "command": "acquire:state 0" } },
+      { "id": "3", "type": "query", "label": "Wait for stop", "params": { "command": "*opc?", "saveAs": "opc_stop" } },
+      { "id": "4", "type": "write", "label": "Define MATH1 from CH1", "params": { "command": "math:math1:define \"CH1\"" } },
+      { "id": "5", "type": "write", "label": "Enable MATH1 averaging", "params": { "command": "math:math1:avg:mode ON" } },
+      { "id": "6", "type": "write", "label": "Set MATH1 average weight", "params": { "command": "math:math1:avg:weight 32000" } },
+      { "id": "7", "type": "write", "label": "Enable FastAverage", "params": { "command": "acquire:fastaverage:state ON" } },
+      { "id": "8", "type": "write", "label": "Set FastAverage limit", "params": { "command": "acquire:fastaverage:limit 256" } },
+      { "id": "9", "type": "write", "label": "Set FastAverage stopafter", "params": { "command": "acquire:fastaverage:stopafter 32000" } },
+      { "id": "10", "type": "write", "label": "Set waveform source", "params": { "command": "data:source MATH1" } },
+      { "id": "11", "type": "write", "label": "Set waveform encoding", "params": { "command": "data:encdg FPBinary" } },
+      { "id": "12", "type": "python", "label": "Wait for completion and export math trace", "params": { "code": "import time\nimport numpy as np\nscpi.write('wfmoutpre:byt_n 4')\nscpi.write('acquire:numavg 256')\nscpi.write('acquire:mode average')\nscpi.write('acquire:fastacq:state ON')\nscpi.write('acquire:state ON')\nscpi.query('*opc?')\nacq_record = int(scpi.query('horizontal:recordlength?'))\nscpi.write('data:start 1')\nscpi.write(f'data:stop {acq_record}')\nwhile int(scpi.query('acquire:state?')) != 0:\n    time.sleep(0.05)\nmath_wave = scpi.query_binary_values('curve?', datatype='d', container=np.array, is_big_endian=True)\nprint('Exported samples:', len(math_wave))" } },
+      { "id": "13", "type": "disconnect", "label": "Disconnect", "params": {} }
+    ]
+  }
+]

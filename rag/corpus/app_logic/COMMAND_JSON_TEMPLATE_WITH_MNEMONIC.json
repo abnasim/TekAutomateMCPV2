@@ -1,0 +1,164 @@
+{
+  "_comment": "Example with Mnemonic Argument (CH<x>, MEAS<x>, etc.)",
+  "_description": "Template showing how to define commands with variable mnemonics",
+  
+  "id": "ch_scale",
+  "category": "channels",
+  "scpi": "CH<x>:SCAle",
+  "header": "CH<x>:SCAle",
+  "mnemonics": ["CH<x>", "SCAle"],
+  "commandType": "both",
+  "shortDescription": "Set or query channel vertical scale",
+  "description": "Sets or queries the vertical scale (volts per division) for the specified channel. The scale determines how much voltage each vertical division represents on the display.",
+  
+  "instruments": {
+    "families": ["MSO4", "MSO5", "MSO6", "MSO7"],
+    "models": ["MSO4XB", "MSO5XB", "MSO6XB", "MSO58LP", "LPD64"],
+    "exclusions": []
+  },
+  
+  "arguments": [
+    {
+      "name": "channel",
+      "type": "mnemonic",
+      "required": true,
+      "position": 0,
+      "mnemonicType": "channel",
+      "description": "Channel specifier (CH1, CH2, CH3, or CH4)",
+      "validValues": {
+        "type": "mnemonic_range",
+        "pattern": "CH<x>",
+        "examples": ["CH1", "CH2", "CH3", "CH4"],
+        "range": {
+          "channels": {
+            "min": 1,
+            "max": 4,
+            "description": "Channel number from 1 to 4"
+          }
+        }
+      },
+      "defaultValue": "CH1"
+    },
+    {
+      "name": "scale",
+      "type": "numeric",
+      "required": true,
+      "position": 1,
+      "description": "Vertical scale in volts per division",
+      "validValues": {
+        "type": "numeric",
+        "format": "NR2",
+        "min": 0.001,
+        "max": 1000,
+        "unit": "volts",
+        "increment": 0.001,
+        "notes": "Scale affected by probe attenuation"
+      },
+      "defaultValue": 1.0
+    }
+  ],
+  
+  "queryResponse": {
+    "type": "numeric",
+    "format": "NR2",
+    "unit": "volts",
+    "description": "Returns scale as floating point in volts per division",
+    "example": "1.0"
+  },
+  
+  "syntax": {
+    "set": "CH<x>:SCAle <NR2>",
+    "query": "CH<x>:SCAle?",
+    "argumentType": "NR2",
+    "description": "NR2 is the vertical scale in volts per division"
+  },
+  
+  "codeExamples": [
+    {
+      "description": "Set channel 1 scale to 1V per division",
+      "codeExamples": {
+        "scpi": {
+          "code": "CH1:SCAle 1.0",
+          "library": "SCPI",
+          "description": "Raw SCPI command"
+        },
+        "python": {
+          "code": "scope.write('CH1:SCAle 1.0')",
+          "library": "PyVISA",
+          "description": "PyVISA example"
+        },
+        "tm_devices": {
+          "code": "scope.ch[1].scale.write(1.0)",
+          "library": "tm_devices",
+          "description": "TM Devices library"
+        }
+      },
+      "result": null,
+      "resultDescription": "Scale set to 1.0 V/div"
+    },
+    {
+      "description": "Query channel 1 scale",
+      "codeExamples": {
+        "scpi": {
+          "code": "CH1:SCAle?",
+          "library": "SCPI",
+          "description": "Raw SCPI query"
+        },
+        "python": {
+          "code": "scale = scope.query('CH1:SCAle?')",
+          "library": "PyVISA",
+          "description": "PyVISA query"
+        },
+        "tm_devices": {
+          "code": "scale = scope.ch[1].scale.query()",
+          "library": "tm_devices",
+          "description": "TM Devices query"
+        }
+      },
+      "result": "1.0",
+      "resultDescription": "Returns scale value in volts per division"
+    }
+  ],
+  
+  "relatedCommands": [
+    "CH<x>:OFFSet",
+    "CH<x>:POSition",
+    "CH<x>:COUPling",
+    "CH<x>:BANdwidth"
+  ],
+  
+  "manualReference": {
+    "section": "Channel Commands",
+    "page": 45,
+    "subsection": "CH<x>:SCAle"
+  },
+  
+  "notes": [
+    "Scale affected by probe attenuation",
+    "Instrument may round to nearest valid setting",
+    "Valid range depends on instrument model"
+  ],
+  
+  "backwardCompatibility": {
+    "legacyCommands": [],
+    "notes": "No backward compatibility issues"
+  },
+  
+  "dynamicActivation": {
+    "implicitlyActivates": false,
+    "createsObject": null,
+    "defaultType": null,
+    "notes": "Does not create new objects"
+  },
+  
+  "concatenation": {
+    "canConcatenate": true,
+    "requiresColon": true,
+    "example": "CH1:SCAle 1.0;:CH1:POSition 0"
+  },
+  
+  "commandGroup": "Channels",
+  "subGroup": "Vertical Scale"
+}
+
+

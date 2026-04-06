@@ -1,0 +1,716 @@
+{
+  "metadata": {
+    "name": "DPOJET Analysis",
+    "description": "DPOJET jitter, timing, and eye diagram analysis commands",
+    "instruments": ["MSO/DPO 5K/7K/70K", "MSO 4/5/6 Series"],
+    "version": "1.0"
+  },
+  "groups": {
+    "Application Control": {
+      "description": "DPOJET application control commands",
+      "color": "bg-orange-100 text-orange-700",
+      "commands": [
+        {
+          "name": "Activate DPOJET",
+          "scpi": "DPOJET:ACTIVATE",
+          "description": "Launch DPOJET application",
+          "example": "scope.write('DPOJET:ACTIVATE')"
+        },
+        {
+          "name": "Query DPOJET Version",
+          "scpi": "DPOJET:VERSION?",
+          "description": "Query DPOJET software version",
+          "example": "version = scope.query('DPOJET:VERSION?')"
+        },
+        {
+          "name": "Set Single Acquisition",
+          "scpi": "DPOJET:STATE SINGLE",
+          "description": "Run single DPOJET acquisition",
+          "example": "scope.write('DPOJET:STATE SINGLE')"
+        },
+        {
+          "name": "Set Run Mode",
+          "scpi": "DPOJET:STATE RUN",
+          "description": "Start continuous DPOJET acquisition",
+          "example": "scope.write('DPOJET:STATE RUN')"
+        },
+        {
+          "name": "Stop DPOJET",
+          "scpi": "DPOJET:STATE STOP",
+          "description": "Stop DPOJET acquisition",
+          "example": "scope.write('DPOJET:STATE STOP')"
+        },
+        {
+          "name": "Query DPOJET State",
+          "scpi": "DPOJET:STATE?",
+          "description": "Query current DPOJET state (RUN, STOP, SINGLE)",
+          "example": "state = scope.query('DPOJET:STATE?')"
+        },
+        {
+          "name": "Reset DPOJET",
+          "scpi": "DPOJET:RESET",
+          "description": "Reset DPOJET to default settings",
+          "example": "scope.write('DPOJET:RESET')"
+        }
+      ]
+    },
+    "Measurements": {
+      "description": "Add and configure DPOJET measurements",
+      "color": "bg-blue-100 text-blue-700",
+      "commands": [
+        {
+          "name": "Clear All Measurements",
+          "scpi": "DPOJET:CLEARALLMEAS",
+          "description": "Remove all DPOJET measurements",
+          "example": "scope.write('DPOJET:CLEARALLMEAS')"
+        },
+        {
+          "name": "Clear Specific Measurement",
+          "scpi": "DPOJET:CLEARMEAS {meas}",
+          "description": "Remove specific measurement",
+          "params": [
+            { "name": "meas", "type": "text", "default": "MEAS1", "required": true }
+          ],
+          "example": "scope.write('DPOJET:CLEARMEAS MEAS1')"
+        },
+        {
+          "name": "Add Period Measurement",
+          "scpi": "DPOJET:ADDMEAS Period",
+          "description": "Add period measurement",
+          "example": "scope.write('DPOJET:ADDMEAS Period')"
+        },
+        {
+          "name": "Add Frequency Measurement",
+          "scpi": "DPOJET:ADDMEAS Frequency",
+          "description": "Add frequency measurement",
+          "example": "scope.write('DPOJET:ADDMEAS Frequency')"
+        },
+        {
+          "name": "Add Rise Time Measurement",
+          "scpi": "DPOJET:ADDMEAS RiseTime",
+          "description": "Add rise time measurement",
+          "example": "scope.write('DPOJET:ADDMEAS RiseTime')"
+        },
+        {
+          "name": "Add Fall Time Measurement",
+          "scpi": "DPOJET:ADDMEAS FallTime",
+          "description": "Add fall time measurement",
+          "example": "scope.write('DPOJET:ADDMEAS FallTime')"
+        },
+        {
+          "name": "Add Positive Duty Cycle",
+          "scpi": "DPOJET:ADDMEAS Pduty",
+          "description": "Add positive duty cycle measurement",
+          "example": "scope.write('DPOJET:ADDMEAS Pduty')"
+        },
+        {
+          "name": "Add Negative Duty Cycle",
+          "scpi": "DPOJET:ADDMEAS Nduty",
+          "description": "Add negative duty cycle measurement",
+          "example": "scope.write('DPOJET:ADDMEAS Nduty')"
+        },
+        {
+          "name": "Add Amplitude Measurement",
+          "scpi": "DPOJET:ADDMEAS Amplitude",
+          "description": "Add amplitude measurement",
+          "example": "scope.write('DPOJET:ADDMEAS Amplitude')"
+        },
+        {
+          "name": "Add High Measurement",
+          "scpi": "DPOJET:ADDMEAS High",
+          "description": "Add high level measurement",
+          "example": "scope.write('DPOJET:ADDMEAS High')"
+        },
+        {
+          "name": "Add Low Measurement",
+          "scpi": "DPOJET:ADDMEAS Low",
+          "description": "Add low level measurement",
+          "example": "scope.write('DPOJET:ADDMEAS Low')"
+        },
+        {
+          "name": "Add Peak-to-Peak Measurement",
+          "scpi": "DPOJET:ADDMEAS PkPk",
+          "description": "Add peak-to-peak measurement",
+          "example": "scope.write('DPOJET:ADDMEAS PkPk')"
+        },
+        {
+          "name": "Add AC RMS Measurement",
+          "scpi": "DPOJET:ADDMEAS acrms",
+          "description": "Add AC RMS measurement",
+          "example": "scope.write('DPOJET:ADDMEAS acrms')"
+        },
+        {
+          "name": "Add DC RMS Measurement",
+          "scpi": "DPOJET:ADDMEAS dcrms",
+          "description": "Add DC RMS measurement",
+          "example": "scope.write('DPOJET:ADDMEAS dcrms')"
+        },
+        {
+          "name": "Add TIE Measurement",
+          "scpi": "DPOJET:ADDMEAS TIE",
+          "description": "Add time interval error measurement",
+          "example": "scope.write('DPOJET:ADDMEAS TIE')"
+        },
+        {
+          "name": "Add TJ@BER Measurement",
+          "scpi": "DPOJET:ADDMEAS TJatBER",
+          "description": "Add total jitter at BER measurement",
+          "example": "scope.write('DPOJET:ADDMEAS TJatBER')"
+        },
+        {
+          "name": "Add RJ Measurement",
+          "scpi": "DPOJET:ADDMEAS RJ",
+          "description": "Add random jitter measurement",
+          "example": "scope.write('DPOJET:ADDMEAS RJ')"
+        },
+        {
+          "name": "Add DJ Measurement",
+          "scpi": "DPOJET:ADDMEAS DJ",
+          "description": "Add deterministic jitter measurement",
+          "example": "scope.write('DPOJET:ADDMEAS DJ')"
+        },
+        {
+          "name": "Add DDJ Measurement",
+          "scpi": "DPOJET:ADDMEAS DDJ",
+          "description": "Add data-dependent jitter measurement",
+          "example": "scope.write('DPOJET:ADDMEAS DDJ')"
+        },
+        {
+          "name": "Add PJ Measurement",
+          "scpi": "DPOJET:ADDMEAS PJ",
+          "description": "Add periodic jitter measurement",
+          "example": "scope.write('DPOJET:ADDMEAS PJ')"
+        },
+        {
+          "name": "Add Eye Height Measurement",
+          "scpi": "DPOJET:ADDMEAS EyeHeight",
+          "description": "Add eye height measurement",
+          "example": "scope.write('DPOJET:ADDMEAS EyeHeight')"
+        },
+        {
+          "name": "Add Eye Width Measurement",
+          "scpi": "DPOJET:ADDMEAS EyeWidth",
+          "description": "Add eye width measurement",
+          "example": "scope.write('DPOJET:ADDMEAS EyeWidth')"
+        },
+        {
+          "name": "Add Phase Noise Measurement",
+          "scpi": "DPOJET:ADDMEAS PhaseNoise",
+          "description": "Add phase noise measurement",
+          "example": "scope.write('DPOJET:ADDMEAS PhaseNoise')"
+        },
+        {
+          "name": "Add Skew Measurement",
+          "scpi": "DPOJET:ADDMEAS Skew",
+          "description": "Add skew measurement between sources",
+          "example": "scope.write('DPOJET:ADDMEAS Skew')"
+        },
+        {
+          "name": "Add Positive Width Measurement",
+          "scpi": "DPOJET:ADDMEAS Pwidth",
+          "description": "Add positive pulse width measurement",
+          "example": "scope.write('DPOJET:ADDMEAS Pwidth')"
+        },
+        {
+          "name": "Add Negative Width Measurement",
+          "scpi": "DPOJET:ADDMEAS Nwidth",
+          "description": "Add negative pulse width measurement",
+          "example": "scope.write('DPOJET:ADDMEAS Nwidth')"
+        },
+        {
+          "name": "Add Setup Measurement",
+          "scpi": "DPOJET:ADDMEAS Setup",
+          "description": "Add setup time measurement",
+          "example": "scope.write('DPOJET:ADDMEAS Setup')"
+        },
+        {
+          "name": "Add Hold Measurement",
+          "scpi": "DPOJET:ADDMEAS Hold",
+          "description": "Add hold time measurement",
+          "example": "scope.write('DPOJET:ADDMEAS Hold')"
+        },
+        {
+          "name": "Set Measurement Source",
+          "scpi": "DPOJET:MEAS{n}:SOUrce1 {source}",
+          "description": "Set measurement source channel",
+          "params": [
+            { "name": "n", "type": "number", "default": 1, "required": true },
+            { "name": "source", "type": "text", "default": "CH1", "options": ["CH1", "CH2", "CH3", "CH4", "MATH1", "MATH2", "REF1", "REF2"], "required": true }
+          ],
+          "example": "scope.write('DPOJET:MEAS1:SOUrce1 CH1')"
+        },
+        {
+          "name": "Set Measurement Source 2",
+          "scpi": "DPOJET:MEAS{n}:SOUrce2 {source}",
+          "description": "Set second measurement source (for Skew, etc.)",
+          "params": [
+            { "name": "n", "type": "number", "default": 1, "required": true },
+            { "name": "source", "type": "text", "default": "CH2", "options": ["CH1", "CH2", "CH3", "CH4", "MATH1", "MATH2", "REF1", "REF2"], "required": true }
+          ],
+          "example": "scope.write('DPOJET:MEAS1:SOUrce2 CH2')"
+        },
+        {
+          "name": "Query Measurement Source",
+          "scpi": "DPOJET:MEAS{n}:SOUrce1?",
+          "description": "Query measurement source channel",
+          "params": [
+            { "name": "n", "type": "number", "default": 1, "required": true }
+          ],
+          "example": "source = scope.query('DPOJET:MEAS1:SOUrce1?')"
+        }
+      ]
+    },
+    "Plots": {
+      "description": "Add and configure DPOJET plots",
+      "color": "bg-green-100 text-green-700",
+      "commands": [
+        {
+          "name": "Add Spectrum Plot",
+          "scpi": "DPOJET:ADDPLOT spectrum,{meas}",
+          "description": "Add frequency spectrum plot",
+          "params": [
+            { "name": "meas", "type": "text", "default": "MEAS1", "required": true }
+          ],
+          "example": "scope.write('DPOJET:ADDPLOT spectrum,MEAS1')"
+        },
+        {
+          "name": "Add Histogram Plot",
+          "scpi": "DPOJET:ADDPLOT histogram,{meas}",
+          "description": "Add histogram plot",
+          "params": [
+            { "name": "meas", "type": "text", "default": "MEAS1", "required": true }
+          ],
+          "example": "scope.write('DPOJET:ADDPLOT histogram,MEAS1')"
+        },
+        {
+          "name": "Add Time Trend Plot",
+          "scpi": "DPOJET:ADDPLOT TimeTrend,{meas}",
+          "description": "Add time trend plot",
+          "params": [
+            { "name": "meas", "type": "text", "default": "MEAS1", "required": true }
+          ],
+          "example": "scope.write('DPOJET:ADDPLOT TimeTrend,MEAS1')"
+        },
+        {
+          "name": "Add Data Array Plot",
+          "scpi": "DPOJET:ADDPLOT dataarray,{meas}",
+          "description": "Add data array plot",
+          "params": [
+            { "name": "meas", "type": "text", "default": "MEAS1", "required": true }
+          ],
+          "example": "scope.write('DPOJET:ADDPLOT dataarray,MEAS1')"
+        },
+        {
+          "name": "Add Bathtub Plot",
+          "scpi": "DPOJET:ADDPLOT bathtub,{meas}",
+          "description": "Add bathtub plot for BER analysis",
+          "params": [
+            { "name": "meas", "type": "text", "default": "MEAS1", "required": true }
+          ],
+          "example": "scope.write('DPOJET:ADDPLOT bathtub,MEAS1')"
+        },
+        {
+          "name": "Add Eye Diagram Plot",
+          "scpi": "DPOJET:ADDPLOT eyediagram,{meas}",
+          "description": "Add eye diagram plot",
+          "params": [
+            { "name": "meas", "type": "text", "default": "MEAS1", "required": true }
+          ],
+          "example": "scope.write('DPOJET:ADDPLOT eyediagram,MEAS1')"
+        },
+        {
+          "name": "Add Phase Noise Plot",
+          "scpi": "DPOJET:ADDPLOT phasenoise,{meas}",
+          "description": "Add phase noise plot",
+          "params": [
+            { "name": "meas", "type": "text", "default": "MEAS1", "required": true }
+          ],
+          "example": "scope.write('DPOJET:ADDPLOT phasenoise,MEAS1')"
+        },
+        {
+          "name": "Add Transfer Function Plot",
+          "scpi": "DPOJET:ADDPLOT transfer,{meas}",
+          "description": "Add transfer function plot",
+          "params": [
+            { "name": "meas", "type": "text", "default": "MEAS1", "required": true }
+          ],
+          "example": "scope.write('DPOJET:ADDPLOT transfer,MEAS1')"
+        },
+        {
+          "name": "Clear All Plots",
+          "scpi": "DPOJET:CLEARALLPLOTS",
+          "description": "Remove all DPOJET plots",
+          "example": "scope.write('DPOJET:CLEARALLPLOTS')"
+        },
+        {
+          "name": "Save All Plots",
+          "scpi": "DPOJET:SAVEALLPLOTS",
+          "description": "Save all plots to files",
+          "example": "scope.write('DPOJET:SAVEALLPLOTS')"
+        }
+      ]
+    },
+    "Results": {
+      "description": "Query DPOJET measurement results",
+      "color": "bg-purple-100 text-purple-700",
+      "commands": [
+        {
+          "name": "Query Meas Max",
+          "scpi": "DPOJET:MEAS{n}:RESUlts:CURRentacq:MAX?",
+          "description": "Query maximum value of measurement",
+          "params": [
+            { "name": "n", "type": "number", "default": 1, "required": true }
+          ],
+          "example": "max_val = scope.query('DPOJET:MEAS1:RESUlts:CURRentacq:MAX?')"
+        },
+        {
+          "name": "Query Meas Min",
+          "scpi": "DPOJET:MEAS{n}:RESUlts:CURRentacq:MIN?",
+          "description": "Query minimum value of measurement",
+          "params": [
+            { "name": "n", "type": "number", "default": 1, "required": true }
+          ],
+          "example": "min_val = scope.query('DPOJET:MEAS1:RESUlts:CURRentacq:MIN?')"
+        },
+        {
+          "name": "Query Meas Mean",
+          "scpi": "DPOJET:MEAS{n}:RESUlts:CURRentacq:MEAN?",
+          "description": "Query mean value of measurement",
+          "params": [
+            { "name": "n", "type": "number", "default": 1, "required": true }
+          ],
+          "example": "mean = scope.query('DPOJET:MEAS1:RESUlts:CURRentacq:MEAN?')"
+        },
+        {
+          "name": "Query Meas StdDev",
+          "scpi": "DPOJET:MEAS{n}:RESUlts:CURRentacq:STDDev?",
+          "description": "Query standard deviation",
+          "params": [
+            { "name": "n", "type": "number", "default": 1, "required": true }
+          ],
+          "example": "stddev = scope.query('DPOJET:MEAS1:RESUlts:CURRentacq:STDDev?')"
+        },
+        {
+          "name": "Query Meas Population",
+          "scpi": "DPOJET:MEAS{n}:RESUlts:CURRentacq:POPUlation?",
+          "description": "Query measurement population count",
+          "params": [
+            { "name": "n", "type": "number", "default": 1, "required": true }
+          ],
+          "example": "pop = scope.query('DPOJET:MEAS1:RESUlts:CURRentacq:POPUlation?')"
+        },
+        {
+          "name": "Query Meas Pk-Pk",
+          "scpi": "DPOJET:MEAS{n}:RESUlts:CURRentacq:PKPK?",
+          "description": "Query peak-to-peak value of measurement",
+          "params": [
+            { "name": "n", "type": "number", "default": 1, "required": true }
+          ],
+          "example": "pkpk = scope.query('DPOJET:MEAS1:RESUlts:CURRentacq:PKPK?')"
+        },
+        {
+          "name": "Query All Acq Max",
+          "scpi": "DPOJET:MEAS{n}:RESUlts:ALLAcqs:MAX?",
+          "description": "Query maximum value across all acquisitions",
+          "params": [
+            { "name": "n", "type": "number", "default": 1, "required": true }
+          ],
+          "example": "max_all = scope.query('DPOJET:MEAS1:RESUlts:ALLAcqs:MAX?')"
+        },
+        {
+          "name": "Query All Acq Min",
+          "scpi": "DPOJET:MEAS{n}:RESUlts:ALLAcqs:MIN?",
+          "description": "Query minimum value across all acquisitions",
+          "params": [
+            { "name": "n", "type": "number", "default": 1, "required": true }
+          ],
+          "example": "min_all = scope.query('DPOJET:MEAS1:RESUlts:ALLAcqs:MIN?')"
+        },
+        {
+          "name": "Query All Acq Mean",
+          "scpi": "DPOJET:MEAS{n}:RESUlts:ALLAcqs:MEAN?",
+          "description": "Query mean value across all acquisitions",
+          "params": [
+            { "name": "n", "type": "number", "default": 1, "required": true }
+          ],
+          "example": "mean_all = scope.query('DPOJET:MEAS1:RESUlts:ALLAcqs:MEAN?')"
+        },
+        {
+          "name": "Query All Acq StdDev",
+          "scpi": "DPOJET:MEAS{n}:RESUlts:ALLAcqs:STDDev?",
+          "description": "Query standard deviation across all acquisitions",
+          "params": [
+            { "name": "n", "type": "number", "default": 1, "required": true }
+          ],
+          "example": "stddev_all = scope.query('DPOJET:MEAS1:RESUlts:ALLAcqs:STDDev?')"
+        },
+        {
+          "name": "Query Measurement Status",
+          "scpi": "DPOJET:MEAS{n}:RESUlts:STATUS?",
+          "description": "Query measurement pass/fail status",
+          "params": [
+            { "name": "n", "type": "number", "default": 1, "required": true }
+          ],
+          "example": "status = scope.query('DPOJET:MEAS1:RESUlts:STATUS?')"
+        }
+      ]
+    },
+    "Configuration": {
+      "description": "Configure DPOJET settings",
+      "color": "bg-yellow-100 text-yellow-700",
+      "commands": [
+        {
+          "name": "Set Clock Recovery Method",
+          "scpi": "DPOJET:CLOCKRECOVERY:METHOD {method}",
+          "description": "Set the clock recovery method",
+          "params": [
+            { "name": "method", "type": "text", "default": "EXPLICIT", "options": ["EXPLICIT", "STANDARD", "CONSTANT", "PLL"], "required": true }
+          ],
+          "example": "scope.write('DPOJET:CLOCKRECOVERY:METHOD PLL')"
+        },
+        {
+          "name": "Query Clock Recovery Method",
+          "scpi": "DPOJET:CLOCKRECOVERY:METHOD?",
+          "description": "Query the clock recovery method",
+          "example": "method = scope.query('DPOJET:CLOCKRECOVERY:METHOD?')"
+        },
+        {
+          "name": "Set Clock Rate",
+          "scpi": "DPOJET:CLOCKRECOVERY:RATE {rate}",
+          "description": "Set the explicit clock rate in Hz",
+          "params": [
+            { "name": "rate", "type": "number", "default": 1000000000, "required": true }
+          ],
+          "example": "scope.write('DPOJET:CLOCKRECOVERY:RATE 5E9')"
+        },
+        {
+          "name": "Query Clock Rate",
+          "scpi": "DPOJET:CLOCKRECOVERY:RATE?",
+          "description": "Query the clock rate",
+          "example": "rate = scope.query('DPOJET:CLOCKRECOVERY:RATE?')"
+        },
+        {
+          "name": "Set Clock Standard",
+          "scpi": "DPOJET:CLOCKRECOVERY:STANDARD {standard}",
+          "description": "Set the clock recovery standard",
+          "params": [
+            { "name": "standard", "type": "text", "default": "PCIE_Gen3", "options": ["PCIE_Gen1", "PCIE_Gen2", "PCIE_Gen3", "PCIE_Gen4", "PCIE_Gen5", "USB3_Gen1", "USB3_Gen2", "SATA_Gen1", "SATA_Gen2", "SATA_Gen3", "DP_HBR", "DP_HBR2", "DP_HBR3"], "required": true }
+          ],
+          "example": "scope.write('DPOJET:CLOCKRECOVERY:STANDARD PCIE_Gen4')"
+        },
+        {
+          "name": "Set Reference Level",
+          "scpi": "DPOJET:REFLevel:ABSolute:HIGH {level}",
+          "description": "Set absolute high reference level",
+          "params": [
+            { "name": "level", "type": "number", "default": 0.8, "required": true }
+          ],
+          "example": "scope.write('DPOJET:REFLevel:ABSolute:HIGH 0.8')"
+        },
+        {
+          "name": "Set Low Reference Level",
+          "scpi": "DPOJET:REFLevel:ABSolute:LOW {level}",
+          "description": "Set absolute low reference level",
+          "params": [
+            { "name": "level", "type": "number", "default": 0.2, "required": true }
+          ],
+          "example": "scope.write('DPOJET:REFLevel:ABSolute:LOW 0.2')"
+        },
+        {
+          "name": "Set Mid Reference Level",
+          "scpi": "DPOJET:REFLevel:ABSolute:MID {level}",
+          "description": "Set absolute mid reference level",
+          "params": [
+            { "name": "level", "type": "number", "default": 0.5, "required": true }
+          ],
+          "example": "scope.write('DPOJET:REFLevel:ABSolute:MID 0.5')"
+        },
+        {
+          "name": "Set Gating",
+          "scpi": "DPOJET:GATING:GLOBAL {state}",
+          "description": "Enable or disable global gating",
+          "params": [
+            { "name": "state", "type": "text", "default": "ON", "options": ["ON", "OFF"], "required": true }
+          ],
+          "example": "scope.write('DPOJET:GATING:GLOBAL ON')"
+        },
+        {
+          "name": "Set Gate Start",
+          "scpi": "DPOJET:GATING:START {time}",
+          "description": "Set gating start time",
+          "params": [
+            { "name": "time", "type": "number", "default": 0, "required": true }
+          ],
+          "example": "scope.write('DPOJET:GATING:START 0')"
+        },
+        {
+          "name": "Set Gate End",
+          "scpi": "DPOJET:GATING:END {time}",
+          "description": "Set gating end time",
+          "params": [
+            { "name": "time", "type": "number", "default": 1e-6, "required": true }
+          ],
+          "example": "scope.write('DPOJET:GATING:END 1E-6')"
+        },
+        {
+          "name": "Set Population Limit",
+          "scpi": "DPOJET:POPULATION:LIMIT {limit}",
+          "description": "Set the population limit for measurements",
+          "params": [
+            { "name": "limit", "type": "number", "default": 100000, "required": true }
+          ],
+          "example": "scope.write('DPOJET:POPULATION:LIMIT 1000000')"
+        },
+        {
+          "name": "Set BER Target",
+          "scpi": "DPOJET:BER:TARGet {ber}",
+          "description": "Set target BER for TJ@BER calculation",
+          "params": [
+            { "name": "ber", "type": "number", "default": 1e-12, "required": true }
+          ],
+          "example": "scope.write('DPOJET:BER:TARGet 1E-12')"
+        }
+      ]
+    },
+    "Reports": {
+      "description": "Generate and configure DPOJET reports",
+      "color": "bg-indigo-100 text-indigo-700",
+      "commands": [
+        {
+          "name": "Enable Waveforms in Report",
+          "scpi": "DPOJET:REPORT:SAVEWaveforms 1",
+          "description": "Include waveforms in report",
+          "example": "scope.write('DPOJET:REPORT:SAVEWaveforms 1')"
+        },
+        {
+          "name": "Disable Waveforms in Report",
+          "scpi": "DPOJET:REPORT:SAVEWaveforms 0",
+          "description": "Exclude waveforms from report",
+          "example": "scope.write('DPOJET:REPORT:SAVEWaveforms 0')"
+        },
+        {
+          "name": "Execute Report",
+          "scpi": "DPOJET:REPORT EXECUTE",
+          "description": "Generate and save DPOJET report",
+          "example": "scope.write('DPOJET:REPORT EXECUTE')"
+        },
+        {
+          "name": "Set Report Filename",
+          "scpi": "DPOJET:REPORT:FILEName \"{filename}\"",
+          "description": "Set report output filename",
+          "params": [
+            { "name": "filename", "type": "text", "default": "report.pdf", "required": true }
+          ],
+          "example": "scope.write('DPOJET:REPORT:FILEName \"report.pdf\"')"
+        },
+        {
+          "name": "Set Report Path",
+          "scpi": "DPOJET:REPORT:PATH \"{path}\"",
+          "description": "Set report output path",
+          "params": [
+            { "name": "path", "type": "text", "default": "C:\\\\Reports", "required": true }
+          ],
+          "example": "scope.write('DPOJET:REPORT:PATH \"C:\\\\MyReports\"')"
+        },
+        {
+          "name": "Set Report Type",
+          "scpi": "DPOJET:REPORT:TYPE {type}",
+          "description": "Set report format type",
+          "params": [
+            { "name": "type", "type": "text", "default": "PDF", "options": ["PDF", "MHT", "XML"], "required": true }
+          ],
+          "example": "scope.write('DPOJET:REPORT:TYPE PDF')"
+        },
+        {
+          "name": "Query Report Status",
+          "scpi": "DPOJET:REPORT:STATUS?",
+          "description": "Query report generation status",
+          "example": "status = scope.query('DPOJET:REPORT:STATUS?')"
+        },
+        {
+          "name": "Include Plots in Report",
+          "scpi": "DPOJET:REPORT:SAVEPlots 1",
+          "description": "Include all plots in report",
+          "example": "scope.write('DPOJET:REPORT:SAVEPlots 1')"
+        },
+        {
+          "name": "Include Results Table",
+          "scpi": "DPOJET:REPORT:SAVEResults 1",
+          "description": "Include results table in report",
+          "example": "scope.write('DPOJET:REPORT:SAVEResults 1')"
+        },
+        {
+          "name": "Set Comments",
+          "scpi": "DPOJET:REPORT:COMMENTS \"{comments}\"",
+          "description": "Add comments to the report",
+          "params": [
+            { "name": "comments", "type": "text", "default": "", "required": false }
+          ],
+          "example": "scope.write('DPOJET:REPORT:COMMENTS \"Test run 1\"')"
+        }
+      ]
+    },
+    "Limits": {
+      "description": "Configure measurement limits for pass/fail testing",
+      "color": "bg-red-100 text-red-700",
+      "commands": [
+        {
+          "name": "Enable Limits",
+          "scpi": "DPOJET:MEAS{n}:LIMITS:STATE ON",
+          "description": "Enable limits checking for measurement",
+          "params": [
+            { "name": "n", "type": "number", "default": 1, "required": true }
+          ],
+          "example": "scope.write('DPOJET:MEAS1:LIMITS:STATE ON')"
+        },
+        {
+          "name": "Disable Limits",
+          "scpi": "DPOJET:MEAS{n}:LIMITS:STATE OFF",
+          "description": "Disable limits checking for measurement",
+          "params": [
+            { "name": "n", "type": "number", "default": 1, "required": true }
+          ],
+          "example": "scope.write('DPOJET:MEAS1:LIMITS:STATE OFF')"
+        },
+        {
+          "name": "Set High Limit",
+          "scpi": "DPOJET:MEAS{n}:LIMITS:HIGH {value}",
+          "description": "Set high limit value",
+          "params": [
+            { "name": "n", "type": "number", "default": 1, "required": true },
+            { "name": "value", "type": "number", "default": 1.0, "required": true }
+          ],
+          "example": "scope.write('DPOJET:MEAS1:LIMITS:HIGH 1.0')"
+        },
+        {
+          "name": "Set Low Limit",
+          "scpi": "DPOJET:MEAS{n}:LIMITS:LOW {value}",
+          "description": "Set low limit value",
+          "params": [
+            { "name": "n", "type": "number", "default": 1, "required": true },
+            { "name": "value", "type": "number", "default": 0.0, "required": true }
+          ],
+          "example": "scope.write('DPOJET:MEAS1:LIMITS:LOW 0.0')"
+        },
+        {
+          "name": "Query High Limit",
+          "scpi": "DPOJET:MEAS{n}:LIMITS:HIGH?",
+          "description": "Query high limit value",
+          "params": [
+            { "name": "n", "type": "number", "default": 1, "required": true }
+          ],
+          "example": "high = scope.query('DPOJET:MEAS1:LIMITS:HIGH?')"
+        },
+        {
+          "name": "Query Low Limit",
+          "scpi": "DPOJET:MEAS{n}:LIMITS:LOW?",
+          "description": "Query low limit value",
+          "params": [
+            { "name": "n", "type": "number", "default": 1, "required": true }
+          ],
+          "example": "low = scope.query('DPOJET:MEAS1:LIMITS:LOW?')"
+        }
+      ]
+    }
+  }
+}

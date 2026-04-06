@@ -1,0 +1,534 @@
+[
+  {
+    "command": "CH1:SCAle",
+    "header": "CH<x>:SCAle",
+    "group": "Vertical",
+    "mnemonics": [
+      "CH<x>",
+      "SCAle"
+    ],
+    "commandType": "both",
+    "description": "Sets or queries the vertical scale for the specified analog channel.",
+    "shortDescription": "Set or query channel vertical scale (volts per division)",
+    "instruments": {
+      "families": [
+        "MSO2",
+        "MSO4",
+        "MSO5",
+        "MSO6",
+        "MSO7",
+        "MSO5000",
+        "DPO5000",
+        "DPO7000",
+        "DPO70000",
+        "MSO70000"
+      ],
+      "models": [],
+      "exclusions": []
+    },
+    "arguments": [
+      {
+        "name": "channel",
+        "type": "mnemonic",
+        "required": true,
+        "position": 0,
+        "description": "Analog channel selector.",
+        "mnemonicType": "channel",
+        "validValues": {
+          "type": "mnemonic_range",
+          "pattern": "CH<x>",
+          "examples": [
+            "CH1",
+            "CH2",
+            "CH3",
+            "CH4"
+          ]
+        }
+      },
+      {
+        "name": "scale_volts_per_div",
+        "type": "numeric",
+        "required": true,
+        "position": 1,
+        "description": "Vertical scale in volts per division."
+      }
+    ],
+    "examples": [
+      {
+        "scpi": "CH1:SCAle 1.0",
+        "description": "Set channel 1 scale to 1 V/div."
+      }
+    ],
+    "relatedCommands": [
+      "CH<x>:POSITION",
+      "CH<x>:COUPling",
+      "CH<x>:TERmination"
+    ],
+    "commandGroup": "Vertical",
+    "notes": [
+      "Added as a legacy manual override because the DPO vendor extract contains the header text but does not surface a normalized command record."
+    ],
+    "manualReference": {
+      "section": "Vertical",
+      "subsection": "CH<x>:SCAle"
+    },
+    "syntax": {
+      "set": "CH<x>:SCAle <NR3>",
+      "query": "CH<x>:SCAle?"
+    }
+  },
+  {
+    "command": "TRIGger:A:TYPe",
+    "header": "TRIGger:A:TYPe",
+    "group": "Trigger",
+    "mnemonics": [
+      "TRIGger",
+      "A",
+      "TYPe"
+    ],
+    "commandType": "both",
+    "description": "Sets or queries the trigger type for A trigger.",
+    "shortDescription": "Set or query A trigger type",
+    "instruments": {
+      "families": [
+        "MSO7",
+        "MSO6",
+        "MSO5",
+        "MSO4",
+        "MSO2",
+        "MSO5000",
+        "DPO5000",
+        "DPO7000",
+        "DPO70000",
+        "MSO70000"
+      ],
+      "models": [],
+      "exclusions": []
+    },
+    "arguments": [
+      {
+        "name": "trigger_type",
+        "type": "enum",
+        "required": true,
+        "position": 0,
+        "description": "Trigger type selection.",
+        "validValues": {
+          "type": "enum",
+          "values": [
+            "EDGE",
+            "PULse",
+            "LOGIc",
+            "BUS",
+            "SETHold",
+            "TRANsition",
+            "TIMEOut",
+            "RUNT",
+            "WIDth",
+            "WINdow"
+          ]
+        }
+      }
+    ],
+    "examples": [
+      {
+        "scpi": "TRIGger:A:TYPe EDGE",
+        "description": "Set A trigger type to edge."
+      }
+    ],
+    "relatedCommands": [
+      "TRIGger:A:EDGE:SOUrce",
+      "TRIGger:A:EDGE:SLOpe"
+    ],
+    "commandGroup": "Trigger",
+    "notes": [
+      "Legacy override sourced from the DPO programmer manual."
+    ],
+    "manualReference": {
+      "section": "Trigger",
+      "subsection": "TRIGger:A:TYPe"
+    },
+    "syntax": {
+      "set": "TRIGger:A:TYPe {EDGE|PULse|LOGIc|BUS|SETHold|TRANsition|TIMEOut|RUNT|WIDth|WINdow}",
+      "query": "TRIGger:A:TYPe?"
+    }
+  },
+  {
+    "command": "TRIGger:A:EDGE:SOUrce",
+    "header": "TRIGger:A:EDGE:SOUrce",
+    "group": "Trigger",
+    "mnemonics": [
+      "TRIGger",
+      "A",
+      "EDGE",
+      "SOUrce"
+    ],
+    "commandType": "both",
+    "description": "Sets or queries the source used for an edge trigger.",
+    "shortDescription": "Set or query edge trigger source",
+    "instruments": {
+      "families": [
+        "MSO7",
+        "MSO6",
+        "MSO5",
+        "MSO4",
+        "MSO2",
+        "MSO5000",
+        "DPO5000",
+        "DPO7000",
+        "DPO70000",
+        "MSO70000"
+      ],
+      "models": [],
+      "exclusions": []
+    },
+    "arguments": [
+      {
+        "name": "source",
+        "type": "mnemonic",
+        "required": true,
+        "position": 0,
+        "description": "Trigger source selector.",
+        "validValues": {
+          "type": "enum_like",
+          "values": [
+            "CH1",
+            "CH2",
+            "CH3",
+            "CH4",
+            "LINE",
+            "AUXiliary"
+          ]
+        }
+      }
+    ],
+    "examples": [
+      {
+        "scpi": "TRIGger:A:EDGE:SOUrce CH1",
+        "description": "Use CH1 as the edge trigger source."
+      }
+    ],
+    "relatedCommands": [
+      "TRIGger:A:EDGE:SLOpe",
+      "TRIGger:A:LEVel:CH<x>"
+    ],
+    "commandGroup": "Trigger",
+    "notes": [
+      "Legacy override sourced from the DPO programmer manual."
+    ],
+    "manualReference": {
+      "section": "Trigger",
+      "subsection": "TRIGger:A:EDGE:SOUrce"
+    },
+    "syntax": {
+      "set": "TRIGger:A:EDGE:SOUrce {CH<x>|LINE|AUXiliary}",
+      "query": "TRIGger:A:EDGE:SOUrce?"
+    }
+  },
+  {
+    "command": "TRIGger:A:EDGE:SLOpe",
+    "header": "TRIGger:A:EDGE:SLOpe",
+    "group": "Trigger",
+    "mnemonics": [
+      "TRIGger",
+      "A",
+      "EDGE",
+      "SLOpe"
+    ],
+    "commandType": "both",
+    "description": "Sets or queries the slope for an edge trigger.",
+    "shortDescription": "Set or query edge trigger slope",
+    "instruments": {
+      "families": [
+        "MSO7",
+        "MSO6",
+        "MSO5",
+        "MSO4",
+        "MSO2",
+        "MSO5000",
+        "DPO5000",
+        "DPO7000",
+        "DPO70000",
+        "MSO70000"
+      ],
+      "models": [],
+      "exclusions": []
+    },
+    "arguments": [
+      {
+        "name": "slope",
+        "type": "enum",
+        "required": true,
+        "position": 0,
+        "description": "Edge slope selection.",
+        "validValues": {
+          "type": "enum",
+          "values": [
+            "RISe",
+            "FALL",
+            "EITher"
+          ]
+        }
+      }
+    ],
+    "examples": [
+      {
+        "scpi": "TRIGger:A:EDGE:SLOpe RISe",
+        "description": "Trigger on a rising edge."
+      }
+    ],
+    "relatedCommands": [
+      "TRIGger:A:EDGE:SOUrce",
+      "TRIGger:A:LEVel:CH<x>"
+    ],
+    "commandGroup": "Trigger",
+    "notes": [
+      "Legacy override sourced from the DPO programmer manual."
+    ],
+    "manualReference": {
+      "section": "Trigger",
+      "subsection": "TRIGger:A:EDGE:SLOpe"
+    },
+    "syntax": {
+      "set": "TRIGger:A:EDGE:SLOpe {RISe|FALL|EITher}",
+      "query": "TRIGger:A:EDGE:SLOpe?"
+    }
+  },
+  {
+    "command": "TRIGger:A:LEVel:CH1",
+    "header": "TRIGger:A:LEVel:CH<x>",
+    "group": "Trigger",
+    "mnemonics": [
+      "TRIGger",
+      "A",
+      "LEVel",
+      "CH<x>"
+    ],
+    "commandType": "both",
+    "description": "Sets or queries the trigger level for the selected channel.",
+    "shortDescription": "Set or query trigger level by channel",
+    "instruments": {
+      "families": [
+        "MSO7",
+        "MSO6",
+        "MSO5",
+        "MSO4",
+        "MSO2",
+        "MSO5000",
+        "DPO5000",
+        "DPO7000",
+        "DPO70000",
+        "MSO70000"
+      ],
+      "models": [],
+      "exclusions": []
+    },
+    "arguments": [
+      {
+        "name": "channel",
+        "type": "mnemonic",
+        "required": true,
+        "position": 0,
+        "description": "Trigger source channel.",
+        "mnemonicType": "channel",
+        "validValues": {
+          "type": "mnemonic_range",
+          "pattern": "CH<x>",
+          "examples": [
+            "CH1",
+            "CH2",
+            "CH3",
+            "CH4"
+          ]
+        }
+      },
+      {
+        "name": "level_volts",
+        "type": "numeric",
+        "required": true,
+        "position": 1,
+        "description": "Trigger level in volts."
+      }
+    ],
+    "examples": [
+      {
+        "scpi": "TRIGger:A:LEVel:CH1 1.0",
+        "description": "Set the CH1 trigger level to 1.0 V."
+      }
+    ],
+    "relatedCommands": [
+      "TRIGger:A:EDGE:SOUrce",
+      "TRIGger:A:EDGE:SLOpe"
+    ],
+    "commandGroup": "Trigger",
+    "notes": [
+      "Legacy override sourced from the DPO programmer manual."
+    ],
+    "manualReference": {
+      "section": "Trigger",
+      "subsection": "TRIGger:A:LEVel:CH<x>"
+    },
+    "syntax": {
+      "set": "TRIGger:A:LEVel:CH<x> <NR3>",
+      "query": "TRIGger:A:LEVel:CH<x>?"
+    }
+  },
+  {
+    "command": "MATH1:DEFine",
+    "header": "MATH<x>:DEFine",
+    "group": "Math",
+    "mnemonics": [
+      "MATH<x>",
+      "DEFine"
+    ],
+    "commandType": "both",
+    "description": "Sets or queries the math expression for the specified math waveform.",
+    "shortDescription": "Set or query math waveform expression",
+    "instruments": {
+      "families": [
+        "MSO7",
+        "MSO6",
+        "MSO5",
+        "MSO4",
+        "MSO2",
+        "MSO5000",
+        "DPO5000",
+        "DPO7000",
+        "DPO70000",
+        "MSO70000"
+      ],
+      "models": [],
+      "exclusions": []
+    },
+    "arguments": [
+      {
+        "name": "math_waveform",
+        "type": "mnemonic",
+        "required": true,
+        "position": 0,
+        "description": "Math waveform selector.",
+        "mnemonicType": "math",
+        "validValues": {
+          "type": "mnemonic_range",
+          "pattern": "MATH<x>",
+          "examples": [
+            "MATH1",
+            "MATH2",
+            "MATH3",
+            "MATH4"
+          ]
+        }
+      },
+      {
+        "name": "expression",
+        "type": "quoted_string",
+        "required": true,
+        "position": 1,
+        "description": "Math expression in quoted-string form."
+      }
+    ],
+    "examples": [
+      {
+        "scpi": "MATH1:DEFine \"CH1-CH2\"",
+        "description": "Define MATH1 as CH1 minus CH2."
+      }
+    ],
+    "relatedCommands": [
+      "MATH<x>:STATE"
+    ],
+    "commandGroup": "Math",
+    "notes": [
+      "Added as a legacy manual override because the DPO vendor extract references MATH1:DEFINE examples but does not surface a normalized command record."
+    ],
+    "manualReference": {
+      "section": "Math",
+      "subsection": "MATH<x>:DEFine"
+    },
+    "syntax": {
+      "set": "MATH<x>:DEFine <QString>",
+      "query": "MATH<x>:DEFine?"
+    }
+  },
+  {
+    "command": "MATH1:STATE",
+    "header": "MATH<x>:STATE",
+    "group": "Math",
+    "mnemonics": [
+      "MATH<x>",
+      "STATE"
+    ],
+    "commandType": "both",
+    "description": "Sets or queries the display state of the specified math waveform.",
+    "shortDescription": "Set or query math waveform display state",
+    "instruments": {
+      "families": [
+        "MSO7",
+        "MSO6",
+        "MSO5",
+        "MSO4",
+        "MSO2",
+        "MSO5000",
+        "DPO5000",
+        "DPO7000",
+        "DPO70000",
+        "MSO70000"
+      ],
+      "models": [],
+      "exclusions": []
+    },
+    "arguments": [
+      {
+        "name": "math_waveform",
+        "type": "mnemonic",
+        "required": true,
+        "position": 0,
+        "description": "Math waveform selector.",
+        "mnemonicType": "math",
+        "validValues": {
+          "type": "mnemonic_range",
+          "pattern": "MATH<x>",
+          "examples": [
+            "MATH1",
+            "MATH2",
+            "MATH3",
+            "MATH4"
+          ]
+        }
+      },
+      {
+        "name": "state",
+        "type": "enum",
+        "required": true,
+        "position": 1,
+        "description": "Display state.",
+        "validValues": {
+          "type": "enum",
+          "values": [
+            "ON",
+            "OFF"
+          ]
+        }
+      }
+    ],
+    "examples": [
+      {
+        "scpi": "MATH1:STATE ON",
+        "description": "Display MATH1."
+      }
+    ],
+    "relatedCommands": [
+      "MATH<x>:DEFine"
+    ],
+    "commandGroup": "Math",
+    "notes": [
+      "Added as a legacy manual override for math display enable on DPO/MSO legacy families."
+    ],
+    "manualReference": {
+      "section": "Math",
+      "subsection": "MATH<x>:STATE"
+    },
+    "syntax": {
+      "set": "MATH<x>:STATE {ON|OFF}",
+      "query": "MATH<x>:STATE?"
+    }
+  }
+]

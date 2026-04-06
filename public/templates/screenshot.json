@@ -1,0 +1,52 @@
+{
+  "category": "tm_devices Examples",
+  "templates": [
+    {
+      "name": "Screenshot Capture",
+      "description": "Save screenshots using tm_devices high-level API",
+      "backend": "tm_devices",
+      "deviceType": "SCOPE",
+      "deviceDriver": "DPO70K",
+      "steps": [
+        {
+          "id": "1",
+          "type": "write",
+          "label": "Add MATH Channel",
+          "params": { "command": "scope.add_new_math(\"MATH1\", \"CH1\")" }
+        },
+        {
+          "id": "2",
+          "type": "write",
+          "label": "Turn On CH2",
+          "params": { "command": "scope.turn_channel_on(\"CH2\")" }
+        },
+        {
+          "id": "3",
+          "type": "write",
+          "label": "Set Horizontal Scale",
+          "params": { "command": "scope.set_and_check(\":HORIZONTAL:SCALE\", 100e-9)" }
+        },
+        {
+          "id": "4",
+          "type": "write",
+          "label": "Save Screenshot (timestamped)",
+          "params": { "command": "scope.save_screenshot()" }
+        },
+        {
+          "id": "5",
+          "type": "write",
+          "label": "Save Screenshot (named)",
+          "params": { "command": "scope.save_screenshot(\"example.png\")" }
+        },
+        {
+          "id": "6",
+          "type": "write",
+          "label": "Save Screenshot (advanced)",
+          "params": { 
+            "command": "scope.save_screenshot(\"example.jpg\", colors=\"INVERTED\", local_folder=\"./images\", device_folder=\"./device_folder\", keep_device_file=True)" 
+          }
+        }
+      ]
+    }
+  ]
+}
