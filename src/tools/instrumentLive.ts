@@ -7,6 +7,8 @@ import { sendScpi } from './sendScpi';
 interface InstrumentLiveInput extends Record<string, unknown> {
   action?: string;
   args?: Record<string, unknown>;
+  analyze?: boolean;
+  analysisTransport?: 'auto' | 'file_id' | 'base64';
 }
 
 function mergeArgs(input: InstrumentLiveInput): Record<string, unknown> {

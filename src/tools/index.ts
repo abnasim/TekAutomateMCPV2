@@ -132,7 +132,7 @@ export function getToolDefinitions() {
     {
       name: 'instrument_live',
       description:
-        'Live instrument gateway for TekAutomate. Use `context` for connection info, `send` for SCPI commands, `screenshot` for capture, `snapshot`/`diff`/`inspect` for *LRN?-based state discovery, and `resources` for VISA discovery when needed.',
+        'Live instrument gateway for TekAutomate. Use `context` for connection info, `send` for SCPI commands, `screenshot` for capture, `snapshot`/`diff`/`inspect` for *LRN?-based state discovery, and `resources` for VISA discovery when needed. For screenshot analysis, the default transport prefers OpenAI file_id handoff over base64 to reduce token usage.',
       parameters: {
         type: 'object',
         properties: {
@@ -153,6 +153,11 @@ export function getToolDefinitions() {
           analyze: {
             type: 'boolean',
             description: 'For action:"screenshot" — set true only when the model needs the image returned for analysis.',
+          },
+          analysisTransport: {
+            type: 'string',
+            enum: ['auto', 'file_id', 'base64'],
+            description: 'For action:"screenshot" — optional analysis transport hint. Default auto prefers file_id and falls back to base64.',
           },
           timeoutMs: {
             type: 'number',
