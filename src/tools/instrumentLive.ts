@@ -8,7 +8,7 @@ interface InstrumentLiveInput extends Record<string, unknown> {
   action?: string;
   args?: Record<string, unknown>;
   analyze?: boolean;
-  analysisTransport?: 'auto' | 'url' | 'file_id' | 'base64';
+  analysisTransport?: 'auto' | 'url' | 'file_id' | 'base64' | 'mcp_image';
 }
 
 function mergeArgs(input: InstrumentLiveInput): Record<string, unknown> {

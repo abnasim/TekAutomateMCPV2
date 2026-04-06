@@ -13,7 +13,7 @@ interface Input extends Record<string, unknown> {
   modelFamily?: string;
   deviceDriver?: string;
   analyze?: boolean;
-  analysisTransport?: 'auto' | 'url' | 'file_id' | 'base64';
+  analysisTransport?: 'auto' | 'url' | 'file_id' | 'base64' | 'mcp_image';
   __mcpBaseUrl?: string;
 }
 
@@ -139,6 +139,42 @@ function buildUrlOnlyScreenshotPayload(
   };
 }
 
+function buildMcpImageScreenshotPayload(
+  payload: Record<string, unknown>,
+): Record<string, unknown> | null {
+  const imageBase64 = typeof payload.base64 === 'string'
+    ? payload.base64
+    : typeof payload.analysisBase64 === 'string'
+      ? payload.analysisBase64
+      : '';
+  const imageMimeType = typeof payload.mimeType === 'string'
+    ? payload.mimeType
+    : typeof payload.analysisMimeType === 'string'
+      ? payload.analysisMimeType
+      : '';
+  if (!imageBase64 || !imageMimeType) return null;
+
+  return {
+    ok: payload.ok === false ? false : true,
+    captured: true,
+    capturedAt: typeof payload.capturedAt === 'string' ? payload.capturedAt : new Date().toISOString(),
+    scopeType: typeof payload.scopeType === 'string' ? payload.scopeType : undefined,
+    mimeType: imageMimeType,
+    ...(typeof payload.sizeBytes === 'number'
+      ? { sizeBytes: payload.sizeBytes }
+      : typeof payload.analysisSizeBytes === 'number'
+        ? { sizeBytes: payload.analysisSizeBytes }
+        : {}),
+    ...(typeof payload.originalMimeType === 'string' ? { originalMimeType: payload.originalMimeType } : {}),
+    ...(typeof payload.originalSizeBytes === 'number' ? { originalSizeBytes: payload.originalSizeBytes } : {}),
+    imageContent: {
+      type: 'image',
+      data: imageBase64,
+      mimeType: imageMimeType,
+    },
+  };
+}
+
 function buildVisionUrlDebug(
   payload: Record<string, unknown>,
   input: Input,
@@ -185,6 +221,26 @@ export async function captureScreenshot(input: Input): Promise<ToolResult<Record
     const maybeCompressed = bridged.ok
       ? await compressAnalyzedScreenshotPayload(data, input.analyze)
       : data;
+    if (bridged.ok && input.analyze === true && analysisTransport === 'mcp_image') {
+      const imagePayload = buildMcpImageScreenshotPayload(maybeCompressed);
+      if (!imagePayload) {
+        return {
+          ok: false,
+          data: {
+            error: 'VISION_IMAGE_UNAVAILABLE',
+            message: 'capture_screenshot requested MCP image transport, but MCP could not build an image content block.',
+          },
+          sourceMeta: [],
+          warnings: ['MCP image content block could not be created.'],
+        };
+      }
+      return {
+        ok: true,
+        data: imagePayload,
+        sourceMeta: [],
+        warnings: [],
+      };
+    }
     if (bridged.ok && input.analyze === true && (analysisTransport === 'auto' || analysisTransport === 'url')) {
       const urlPayload = buildUrlOnlyScreenshotPayload(maybeCompressed, input);
       if (!urlPayload) {
@@ -229,6 +285,26 @@ export async function captureScreenshot(input: Input): Promise<ToolResult<Record
     return result;
   }
   const maybeCompressed = await compressAnalyzedScreenshotPayload(result.data as Record<string, unknown>, input.analyze);
+  if (input.analyze === true && analysisTransport === 'mcp_image') {
+    const imagePayload = buildMcpImageScreenshotPayload(maybeCompressed);
+    if (!imagePayload) {
+      return {
+        ok: false,
+        data: {
+          error: 'VISION_IMAGE_UNAVAILABLE',
+          message: 'capture_screenshot requested MCP image transport, but MCP could not build an image content block.',
+        },
+        sourceMeta: [],
+        warnings: ['MCP image content block could not be created.'],
+      };
+    }
+    return {
+      ...result,
+      ok: true,
+      data: imagePayload,
+      warnings: [],
+    };
+  }
   if (input.analyze === true && (analysisTransport === 'auto' || analysisTransport === 'url')) {
     const urlPayload = buildUrlOnlyScreenshotPayload(maybeCompressed, input);
     if (!urlPayload) {

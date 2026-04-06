@@ -61,6 +61,55 @@ function sanitizeToolResultForExternalMcp(toolName: string, result: unknown): un
   };
 }
 
+function buildExternalMcpToolContent(toolName: string, result: unknown) {
+  if (!result || typeof result !== 'object') {
+    return [{ type: 'text' as const, text: typeof result === 'string' ? result : JSON.stringify(result, null, 2) }];
+  }
+
+  const record = result as Record<string, unknown>;
+  const data = record.data && typeof record.data === 'object'
+    ? (record.data as Record<string, unknown>)
+    : null;
+  const source = data ?? record;
+  const imageContent = source.imageContent && typeof source.imageContent === 'object'
+    ? (source.imageContent as Record<string, unknown>)
+    : null;
+
+  const isScreenshotLike = toolName === 'capture_screenshot'
+    || (toolName === 'instrument_live' && Boolean(imageContent || source.imageUrl || source.base64 || source.analysisBase64));
+
+  if (!isScreenshotLike || !imageContent || imageContent.type !== 'image') {
+    const safeResult = sanitizeToolResultForExternalMcp(toolName, result);
+    const text = typeof safeResult === 'string'
+      ? safeResult
+      : JSON.stringify(safeResult, null, 2);
+    return [{ type: 'text' as const, text }];
+  }
+
+  const metadata: Record<string, unknown> = {
+    ok: source.ok === false ? false : true,
+    captured: true,
+  };
+  if (typeof source.capturedAt === 'string') metadata.capturedAt = source.capturedAt;
+  if (typeof source.scopeType === 'string') metadata.scopeType = source.scopeType;
+  if (typeof source.sizeBytes === 'number') metadata.sizeBytes = source.sizeBytes;
+  if (typeof source.mimeType === 'string') metadata.mimeType = source.mimeType;
+  if (typeof source.originalMimeType === 'string') metadata.originalMimeType = source.originalMimeType;
+  if (typeof source.originalSizeBytes === 'number') metadata.originalSizeBytes = source.originalSizeBytes;
+
+  return [
+    {
+      type: 'image' as const,
+      data: String(imageContent.data || ''),
+      mimeType: String(imageContent.mimeType || source.mimeType || 'image/png'),
+    },
+    {
+      type: 'text' as const,
+      text: JSON.stringify(metadata),
+    },
+  ];
+}
+
 // ── env ──────────────────────────────────────────────────────────────
 const __dirname = dirname(fileURLToPath(import.meta.url));
 config({ path: resolve(__dirname, '..', '.env') });
@@ -118,14 +167,8 @@ async function main() {
 
     try {
       const result = await runTool(name, (args as Record<string, unknown>) ?? {});
-      const safeResult = sanitizeToolResultForExternalMcp(name, result);
-
-      const text = typeof safeResult === 'string'
-        ? safeResult
-        : JSON.stringify(safeResult, null, 2);
-
       return {
-        content: [{ type: 'text' as const, text }],
+        content: buildExternalMcpToolContent(name, result),
       };
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
