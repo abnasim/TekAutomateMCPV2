@@ -136,6 +136,36 @@ function buildUrlOnlyScreenshotPayload(
   };
 }
 
+function buildVisionUrlDebug(
+  payload: Record<string, unknown>,
+  input: Input,
+  source: 'bridge' | 'proxy',
+): Record<string, unknown> {
+  const baseUrl = String(input.__mcpBaseUrl || '').trim();
+  const imageBase64 = typeof payload.analysisBase64 === 'string'
+    ? payload.analysisBase64
+    : typeof payload.base64 === 'string'
+      ? payload.base64
+      : '';
+  const imageMimeType = typeof payload.analysisMimeType === 'string'
+    ? payload.analysisMimeType
+    : typeof payload.mimeType === 'string'
+      ? payload.mimeType
+      : '';
+  return {
+    analysisTransport: String(input.analysisTransport || 'auto'),
+    requestedAnalyze: input.analyze === true,
+    source,
+    hasBaseUrl: Boolean(baseUrl),
+    baseUrl,
+    hasImageBase64: Boolean(imageBase64),
+    imageBase64Length: imageBase64.length,
+    imageMimeType,
+    hasAnalysisBase64: typeof payload.analysisBase64 === 'string',
+    hasRawBase64: typeof payload.base64 === 'string',
+  };
+}
+
 export async function captureScreenshot(input: Input): Promise<ToolResult<Record<string, unknown>>> {
   const analysisTransport = String(input.analysisTransport || 'auto').toLowerCase() as Input['analysisTransport'];
   if (shouldBridgeToTekAutomate(input)) {
@@ -160,6 +190,7 @@ export async function captureScreenshot(input: Input): Promise<ToolResult<Record
           data: {
             error: 'VISION_URL_UNAVAILABLE',
             message: 'capture_screenshot requested URL analysis transport, but MCP could not create a temporary image URL.',
+            debug: buildVisionUrlDebug(maybeCompressed, input, 'bridge'),
           },
           sourceMeta: [],
           warnings: ['Temporary screenshot URL could not be created.'],
@@ -203,6 +234,7 @@ export async function captureScreenshot(input: Input): Promise<ToolResult<Record
         data: {
           error: 'VISION_URL_UNAVAILABLE',
           message: 'capture_screenshot requested URL analysis transport, but MCP could not create a temporary image URL.',
+          debug: buildVisionUrlDebug(maybeCompressed, input, 'proxy'),
         },
         sourceMeta: [],
         warnings: ['Temporary screenshot URL could not be created.'],
