@@ -152,14 +152,45 @@ export function updateRuntimeContext(input: {
 
   if (input.instrument && typeof input.instrument === 'object') {
     const instrument = input.instrument as Record<string, unknown>;
+    const previous = runtimeContextState.instrument;
+    const nextExecutorUrl =
+      typeof instrument.executorUrl === 'string' && instrument.executorUrl
+        ? instrument.executorUrl
+        : previous.executorUrl;
+    const nextVisaResource =
+      typeof instrument.visaResource === 'string' && instrument.visaResource
+        ? instrument.visaResource
+        : previous.visaResource;
+    const nextBackend =
+      typeof instrument.backend === 'string' && instrument.backend
+        ? instrument.backend
+        : previous.backend || 'pyvisa';
+    const nextModelFamily =
+      typeof instrument.modelFamily === 'string' && instrument.modelFamily
+        ? instrument.modelFamily
+        : previous.modelFamily || 'unknown';
+    const nextDeviceDriver =
+      typeof instrument.deviceDriver === 'string' && instrument.deviceDriver
+        ? instrument.deviceDriver
+        : previous.deviceDriver;
+    const explicitConnected = typeof instrument.connected === 'boolean' ? instrument.connected : null;
+    const nextLiveMode =
+      typeof instrument.liveMode === 'boolean'
+        ? instrument.liveMode
+        : previous.liveMode;
     runtimeContextState.instrument = {
-      connected: Boolean(instrument.connected),
-      executorUrl: typeof instrument.executorUrl === 'string' && instrument.executorUrl ? instrument.executorUrl : null,
-      visaResource: typeof instrument.visaResource === 'string' && instrument.visaResource ? instrument.visaResource : null,
-      backend: typeof instrument.backend === 'string' && instrument.backend ? instrument.backend : 'pyvisa',
-      modelFamily: typeof instrument.modelFamily === 'string' && instrument.modelFamily ? instrument.modelFamily : 'unknown',
-      deviceDriver: typeof instrument.deviceDriver === 'string' && instrument.deviceDriver ? instrument.deviceDriver : null,
-      liveMode: Boolean(instrument.liveMode),
+      connected:
+        explicitConnected === true
+          ? true
+          : explicitConnected === false
+            ? false
+            : Boolean(nextExecutorUrl && nextLiveMode),
+      executorUrl: nextExecutorUrl,
+      visaResource: nextVisaResource,
+      backend: nextBackend,
+      modelFamily: nextModelFamily,
+      deviceDriver: nextDeviceDriver,
+      liveMode: nextLiveMode,
     };
   }
 
