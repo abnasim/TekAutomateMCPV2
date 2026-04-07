@@ -7692,7 +7692,7 @@ async function runOpenAiToolLoop(
               const analysisTransport = analysisTransportRaw === 'claude_image'
                 ? 'mcp_image'
                 : analysisTransportRaw;
-              const wantsUrlTransport = analysisTransport === 'auto' || analysisTransport === 'url' || analysisTransport === 'openai_image';
+              const wantsUrlTransport = analysisTransport === 'auto' || analysisTransport === 'url';
               const wantsOpenAiImage = analysisTransport === 'openai_image';
               const analysisImageUrl = imageUrl || (wantsUrlTransport && analysisImageData
                 ? buildVisionImageUrlForHostedLoop(
@@ -7702,7 +7702,7 @@ async function runOpenAiToolLoop(
                     new Date().toISOString(),
                   )
                 : null);
-              const analysisFileId = analysisTransport === 'file_id' && analysisImageData
+              const analysisFileId = (analysisTransport === 'file_id' || wantsOpenAiImage) && analysisImageData
                 ? await uploadVisionImageToOpenAiFileHosted(
                     req.apiKey,
                     analysisImageData.base64,
@@ -7711,7 +7711,7 @@ async function runOpenAiToolLoop(
                   )
                 : null;
               // AI wants to see the image — inject it
-              if (analysisTransport === 'file_id' && !analysisFileId) {
+              if ((analysisTransport === 'file_id' || wantsOpenAiImage) && !analysisFileId) {
                 liveMessages.push({
                   role: 'tool',
                   tool_call_id: toolId,
@@ -7719,7 +7719,7 @@ async function runOpenAiToolLoop(
                 });
                 continue;
               }
-              if ((analysisTransport === 'url' || analysisTransport === 'openai_image') && !analysisImageUrl) {
+              if (analysisTransport === 'url' && !analysisImageUrl) {
                 liveMessages.push({
                   role: 'tool',
                   tool_call_id: toolId,
@@ -7736,14 +7736,14 @@ async function runOpenAiToolLoop(
                 continue;
               }
               const textSummary = buildImageToolResultSummary(result);
-              const resolvedTransport = analysisTransport === 'openai_image' ? 'base64' : analysisImageUrl ? 'url' : analysisFileId ? 'file_id' : 'base64';
+              const resolvedTransport = wantsOpenAiImage ? 'file_id' : analysisImageUrl ? 'url' : analysisFileId ? 'file_id' : 'base64';
               liveMessages.push({ role: 'tool', tool_call_id: toolId, content: `${textSummary} Vision transport: ${resolvedTransport}.` });
               liveMessages.push({
                 role: 'user',
                 content: [
                   { type: 'text', text: 'Here is the screenshot you just captured. Describe what you see on the scope display.' },
-                  ...(analysisTransport === 'openai_image' && analysisImageData
-                    ? [{ type: 'image_url', image_url: { url: `data:${analysisImageData.mimeType};base64,${analysisImageData.base64}`, detail: 'auto' } }]
+                  ...(wantsOpenAiImage && analysisFileId
+                    ? [{ type: 'image_url', image_url: { file_id: analysisFileId, detail: 'auto' } }]
                     : analysisImageUrl
                     ? [{ type: 'image_url', image_url: { url: analysisImageUrl, detail: 'auto' } }]
                     : analysisFileId
