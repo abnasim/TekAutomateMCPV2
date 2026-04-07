@@ -7692,7 +7692,7 @@ async function runOpenAiToolLoop(
               const analysisTransport = analysisTransportRaw === 'claude_image'
                 ? 'mcp_image'
                 : analysisTransportRaw;
-              const wantsUrlTransport = analysisTransport === 'auto' || analysisTransport === 'url';
+              const wantsUrlTransport = analysisTransport === 'auto' || analysisTransport === 'url' || analysisTransport === 'openai_image';
               const wantsOpenAiImage = analysisTransport === 'openai_image';
               const analysisImageUrl = imageUrl || (wantsUrlTransport && analysisImageData
                 ? buildVisionImageUrlForHostedLoop(
@@ -7702,7 +7702,7 @@ async function runOpenAiToolLoop(
                     new Date().toISOString(),
                   )
                 : null);
-              const analysisFileId = (analysisTransport === 'file_id' || wantsOpenAiImage) && analysisImageData
+              const analysisFileId = analysisTransport === 'file_id' && analysisImageData
                 ? await uploadVisionImageToOpenAiFileHosted(
                     req.apiKey,
                     analysisImageData.base64,
@@ -7711,7 +7711,7 @@ async function runOpenAiToolLoop(
                   )
                 : null;
               // AI wants to see the image — inject it
-              if ((analysisTransport === 'file_id' || analysisTransport === 'openai_image') && !analysisFileId) {
+              if (analysisTransport === 'file_id' && !analysisFileId) {
                 liveMessages.push({
                   role: 'tool',
                   tool_call_id: toolId,
@@ -7719,11 +7719,11 @@ async function runOpenAiToolLoop(
                 });
                 continue;
               }
-              if (analysisTransport === 'url' && !analysisImageUrl) {
+              if ((analysisTransport === 'url' || analysisTransport === 'openai_image') && !analysisImageUrl) {
                 liveMessages.push({
                   role: 'tool',
                   tool_call_id: toolId,
-                  content: 'Error: capture_screenshot requested analysisTransport=url, but MCP could not create a temporary image URL.',
+                  content: `Error: capture_screenshot requested analysisTransport=${analysisTransport}, but MCP could not create a temporary image URL.`,
                 });
                 continue;
               }
