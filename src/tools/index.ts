@@ -165,6 +165,10 @@ export function getToolDefinitions() {
             type: 'number',
             description: 'Optional timeout in milliseconds for send, screenshot, or discovery actions.',
           },
+          visaResource: {
+            type: 'string',
+            description: 'Optional VISA resource string to target a specific instrument instead of the active one (e.g. TCPIP::127.0.0.1::4000::SOCKET). Call action:"resources" first to list available targets.',
+          },
         },
         required: ['action'],
         additionalProperties: true,
