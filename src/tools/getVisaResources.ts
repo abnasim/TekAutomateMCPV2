@@ -79,7 +79,7 @@ export async function getVisaResources(input: Input): Promise<ToolResult<Record<
           instruments: scanJson.instruments,
           count: scanJson.count || scanJson.instruments.length,
           source: 'executor_scan',
-          hint: 'Use the "resource" field as the visaResource parameter in send_scpi/probe_command to target a specific instrument.',
+          hint: 'Use the "resource" field as the visaResource parameter in instrument_live action:"send" to target a specific instrument. You can send commands to multiple instruments in parallel by making concurrent tool calls with different visaResource values.',
         },
         sourceMeta: [],
         warnings: [],
