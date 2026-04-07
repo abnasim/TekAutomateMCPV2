@@ -16,6 +16,46 @@ interface SearchScpiInput {
 
 const DEFAULT_SEARCH_LIMIT = 10;
 
+const STAR_COMMANDS: Record<string, { header: string; desc: string }> = {
+  'reset': { header: '*RST', desc: 'Reset instrument to default state' },
+  'rst': { header: '*RST', desc: 'Reset instrument to default state' },
+  'clear status': { header: '*CLS', desc: 'Clear status registers and error queue' },
+  'clear': { header: '*CLS', desc: 'Clear status registers and error queue' },
+  'identify': { header: '*IDN?', desc: 'Query instrument identity string' },
+  'idn': { header: '*IDN?', desc: 'Query instrument identity string' },
+  'operation complete': { header: '*OPC?', desc: 'Query operation complete status' },
+  'opc': { header: '*OPC?', desc: 'Query operation complete status' },
+};
+
+function makeSyntheticCommandRecord(
+  header: string,
+  shortDescription: string,
+  group = 'Status and Error'
+): CommandRecord {
+  const isQuery = header.endsWith('?');
+  return {
+    commandId: header,
+    sourceFile: 'synthetic',
+    group,
+    header,
+    shortDescription,
+    description: shortDescription,
+    category: group,
+    tags: ['synthetic', 'star-command', group],
+    commandType: isQuery ? 'query' : 'set',
+    hasSet: !isQuery,
+    hasQuery: isQuery,
+    families: [],
+    models: [],
+    syntax: isQuery ? { query: header } : { set: header },
+    arguments: [],
+    codeExamples: [],
+    relatedCommands: [],
+    notes: [],
+    raw: { synthetic: true, header, shortDescription },
+  };
+}
+
 function buildSearchSourceMeta(
   entries: CommandRecord[],
   mode: 'compact' | 'full' = 'compact',
@@ -62,6 +102,9 @@ const GROUP_AFFINITY: Record<string, Set<string>> = {
   dpm: new Set(['Digital Power Management']),
   imda: new Set(['Inverter Motors and Drive Analysis']),
   wbg: new Set(['Wide Band Gap Analysis (WBG)']),
+  afg: new Set(['AFG']),
+  awg: new Set(['AWG', 'Waveform']),
+  ext_afg: new Set(['AFG Standalone']),
   misc: new Set(['Miscellaneous', 'Status and Error']),
   status: new Set(['Status and Error', 'Miscellaneous']),
 };
@@ -69,7 +112,7 @@ const GROUP_AFFINITY: Record<string, Set<string>> = {
 // Groups that should NEVER appear for non-matching intents
 const HARD_PENALIZED_GROUPS = new Set([
   'Power', 'Digital Power Management', 'Inverter Motors and Drive Analysis',
-  'Wide Band Gap Analysis (WBG)', 'AFG',
+  'Wide Band Gap Analysis (WBG)',
 ]);
 
 // Groups that are noisy — they contain "trigger" or "search" keywords
@@ -251,6 +294,44 @@ function reRankWithIntent(
         score += 20;
       }
     }
+    // trigger_source -> commands with SOUrce in header (EDGE:SOUrce, not VIDeo:SOUrce)
+    if (intent.subject === 'trigger_source') {
+      if (headerTokens.some(t => t === 'source' || t.startsWith('sou'))) {
+        score += 20;
+      }
+      if (headerLower.includes('edge:source') || headerLower.includes('edge:sou')) {
+        score += 40;
+      }
+      if (headerLower.includes('video:') || headerLower.includes('logic:') || headerLower.includes('bus:')) {
+        score -= 20;
+      }
+    }
+    // measurement_source -> MEAS<x>:SOUrce, not REFLevels or JITTermodel
+    if (intent.subject === 'measurement_source' ||
+        (intent.intent === 'measurement' && queryLower.includes('source'))) {
+      if (headerTokens.some(t => t === 'source' || t.startsWith('sou'))) {
+        score += 30;
+      }
+      if (headerLower.includes('reflevel') || headerLower.includes('jitter')) {
+        score -= 20;
+      }
+    }
+    // measurement_add -> ADDMEAS over config commands
+    if (intent.subject === 'measurement_add' || intent.subject === 'add_measurement' ||
+        (queryLower.includes('add') && intent.intent === 'measurement')) {
+      if (headerLower.includes('addmeas') || headerLower.includes('addnew')) {
+        score += 40;
+      }
+    }
+    // measurement_results -> RESUlts commands, not config/model commands
+    if (intent.intent === 'measurement' && queryLower.includes('result')) {
+      if (headerLower.includes('results') || headerLower.includes('result')) {
+        score += 30;
+      }
+      if (headerLower.includes('model') || headerLower.includes('config')) {
+        score -= 15;
+      }
+    }
 
     // spectrum_view → SV:* commands
     if (intent.subject === 'spectrum_view') {
@@ -298,6 +379,38 @@ function reRankWithIntent(
         score += 80;
       } else {
         score -= 40;
+      }
+    }
+    // ext_afg -> SOURce:*, OUTPut:*, ROSCillator:* - NOT scope AFG:*
+    if (intent.subject === 'ext_afg') {
+      if (headerLower.startsWith('afg:')) {
+        score -= 60;
+      }
+      if (headerLower.startsWith('source') || headerLower.startsWith('output') || headerLower.includes('roscillator')) {
+        score += 40;
+      }
+    }
+    if (intent.subject === 'awg_control') {
+      if (headerLower.startsWith('awg:') || headerLower.includes('waveform')) {
+        score += 50;
+      }
+    }
+    if (intent.subject === 'awg_serial') {
+      if (headerLower.startsWith('awg:') || headerLower.includes('hsserial') || headerLower.includes('prbs') || headerLower.includes('encoding')) {
+        score += 50;
+      }
+    }
+    if (intent.subject === 'awg_plugin') {
+      if (headerLower.includes('plugin')) {
+        score += 40;
+      }
+      if (headerLower.startsWith('awg:')) {
+        score += 20;
+      }
+    }
+    if (intent.subject === 'radar') {
+      if (headerLower.startsWith('awg:') || headerLower.includes('radar')) {
+        score += 40;
       }
     }
     // histogram_box → HIStogram:BOX commands
@@ -490,10 +603,16 @@ export async function searchScpi(input: SearchScpiInput): Promise<ToolResult<unk
   if (!q) {
     return { ok: true, data: [], sourceMeta: [], warnings: ['Empty query'] };
   }
+  const queryLower = q.toLowerCase();
   const index = await getCommandIndex();
   const limit = input.limit || DEFAULT_SEARCH_LIMIT;
   const offset = Math.max(0, input.offset || 0);
   const measurementPlan = buildMeasurementSearchPlan(q);
+  const normalizedStarKey = queryLower.replace(/^(the |oscilloscope |scope |instrument )*/g, '').trim();
+  const starMatch = STAR_COMMANDS[queryLower] || STAR_COMMANDS[normalizedStarKey];
+  const starEntries = starMatch
+    ? [makeSyntheticCommandRecord(starMatch.header, starMatch.desc)]
+    : [];
 
   // ── Query expansion for terms that don't match SCPI keywords ──
   // "zone trigger" → SCPI uses "VISual" not "zone"
@@ -644,6 +763,9 @@ export async function searchScpi(input: SearchScpiInput): Promise<ToolResult<unk
     trigger_level: [
       'TRIGger:{A|B}:LEVel:CH<x>', 'TRIGger:A:LEVel:CH<x>',
     ],
+    trigger_source: [
+      'TRIGger:A:EDGE:SOUrce', 'TRIGger:{A|B}:EDGE:SOUrce',
+    ],
     screenshot: [
       'SAVe:IMAGe', 'SAVe:IMAGe:FILEFormat',
     ],
@@ -689,10 +811,21 @@ export async function searchScpi(input: SearchScpiInput): Promise<ToolResult<unk
       'HORizontal:FASTframe:STATE', 'HORizontal:FASTframe:COUNt',
       'HORizontal:FASTframe:MAXFRames', 'HORizontal:FASTframe:SELECTED',
     ],
+    measurement_source: [
+      'MEASUrement:MEAS<x>:SOUrce1', 'MEASUrement:MEAS<x>:SOUrce<x>',
+      'MEASUrement:IMMed:SOUrce<x>',
+    ],
   };
 
   const intent = classifyIntent(q);
   const injectionHeaders = INTENT_HEADER_INJECTIONS[intent.subject] || [];
+  for (const entry of starEntries) {
+    const key = `${entry.sourceFile}:${entry.commandId}`;
+    if (!seen.has(key)) {
+      seen.add(key);
+      merged.push(entry);
+    }
+  }
   for (const h of injectionHeaders) {
     const entry = index.getByHeader(h, input.modelFamily);
     if (entry) {
@@ -738,6 +871,7 @@ export async function searchScpi(input: SearchScpiInput): Promise<ToolResult<unk
   const exactPinnedHeaders = new Set(
     [...measurementDirectEntries, ...directEntries].map((entry) => entry.header.toLowerCase())
   );
+  starEntries.forEach((entry) => exactPinnedHeaders.add(entry.header.toLowerCase()));
   if (exactPinnedHeaders.size > 0) {
     const top = reRanked.filter((cmd) => exactPinnedHeaders.has(cmd.header.toLowerCase()));
     const rest = reRanked.filter((cmd) => !exactPinnedHeaders.has(cmd.header.toLowerCase()));

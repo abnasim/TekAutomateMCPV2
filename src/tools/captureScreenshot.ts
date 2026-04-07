@@ -13,6 +13,8 @@ interface Input extends Record<string, unknown> {
   modelFamily?: string;
   deviceDriver?: string;
   analyze?: boolean;
+  deviceId?: string;
+  device_map?: Record<string, string>;
   analysisTransport?: 'auto' | 'url' | 'file_id' | 'base64' | 'mcp_image' | 'openai_image' | 'claude_image';
   __mcpBaseUrl?: string;
 }

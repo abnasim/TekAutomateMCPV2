@@ -105,6 +105,8 @@ export function serializeCommandResult(entry: CommandRecord): Record<string, unk
     category: entry.category,
     header: entry.header,
     commandType: entry.commandType,
+    hasSet: entry.hasSet,
+    hasQuery: entry.hasQuery,
     shortDescription: entry.shortDescription,
     description: entry.description || undefined,
     syntax: entry.syntax,

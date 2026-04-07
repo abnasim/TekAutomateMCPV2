@@ -25,6 +25,9 @@ export interface RuntimeInstrumentInfo {
   modelFamily: string;
   deviceDriver: string | null;
   liveMode: boolean;
+  deviceId?: string | null;
+  deviceMap?: Record<string, string> | null;
+  deviceIdSource?: 'explicit' | 'auto' | 'unknown' | null;
 }
 
 export interface RuntimeRunLogInfo {
@@ -69,6 +72,9 @@ const DEFAULT_INSTRUMENT: RuntimeInstrumentInfo = {
   modelFamily: 'unknown',
   deviceDriver: null,
   liveMode: false,
+  deviceId: null,
+  deviceMap: null,
+  deviceIdSource: null,
 };
 
 const DEFAULT_RUN_LOG: RuntimeRunLogInfo = {
@@ -153,6 +159,30 @@ export function updateRuntimeContext(input: {
   if (input.instrument && typeof input.instrument === 'object') {
     const instrument = input.instrument as Record<string, unknown>;
     const previous = runtimeContextState.instrument;
+    const nextDeviceMap =
+      instrument && typeof (instrument as Record<string, unknown>).deviceMap === 'object'
+        && (instrument as Record<string, unknown>).deviceMap !== null
+        ? ((instrument as Record<string, unknown>).deviceMap as Record<string, string>)
+        : previous.deviceMap || null;
+    const deviceKeys = nextDeviceMap ? Object.keys(nextDeviceMap) : [];
+    const explicitDeviceId =
+      typeof (instrument as Record<string, unknown>).deviceId === 'string'
+        && (instrument as Record<string, unknown>).deviceId
+        ? (instrument as Record<string, unknown>).deviceId
+        : null;
+    const nextDeviceId =
+      explicitDeviceId
+        || previous.deviceId
+        || (deviceKeys.length > 0 ? deviceKeys[0] : null);
+    let nextDeviceIdSource: 'explicit' | 'auto' | 'unknown' | null = previous.deviceIdSource || null;
+    if (explicitDeviceId) {
+      nextDeviceIdSource = 'explicit';
+    } else if (!previous.deviceId && deviceKeys.length > 0) {
+      nextDeviceIdSource = 'auto';
+    } else if (nextDeviceId && !nextDeviceIdSource) {
+      nextDeviceIdSource = 'unknown';
+    }
+
     const nextExecutorUrl =
       typeof instrument.executorUrl === 'string' && instrument.executorUrl
         ? instrument.executorUrl
@@ -191,6 +221,9 @@ export function updateRuntimeContext(input: {
       modelFamily: nextModelFamily,
       deviceDriver: nextDeviceDriver,
       liveMode: nextLiveMode,
+      deviceId: nextDeviceId,
+      deviceMap: nextDeviceMap,
+      deviceIdSource: nextDeviceIdSource,
     };
   }
 

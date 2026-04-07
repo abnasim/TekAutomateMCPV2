@@ -2,6 +2,7 @@ import { getCommandByHeader } from './getCommandByHeader';
 import { getCommandsByHeaderBatch } from './getCommandsByHeaderBatch';
 import { getCommandGroup } from './getCommandGroup';
 import { getEnvironment } from './getEnvironment';
+import { listInstruments } from './listInstruments';
 import { getInstrumentState } from './getInstrumentState';
 import { getPolicy } from './getPolicy';
 import { getTemplateExamples } from './getTemplateExamples';
@@ -124,6 +125,7 @@ export const TOOL_HANDLERS = {
   capture_screenshot: captureScreenshot,
   get_visa_resources: getVisaResources,
   get_environment: getEnvironment,
+  list_instruments: listInstruments,
 } as const;
 
 export type ToolName = keyof typeof TOOL_HANDLERS;
@@ -239,7 +241,8 @@ export function getToolDefinitions() {
     {
       name: 'knowledge',
       description:
-        'Knowledge gateway for TekAutomate support material. Use `retrieve` for targeted RAG chunks, `examples` for matching workflow templates, and `failures` for known runtime failures and fixes.',
+        'Knowledge gateway for TekAutomate support material. Use `retrieve` for targeted RAG chunks, `examples` for matching workflow templates, and `failures` for known runtime failures and fixes. ' +
+        'Use as a fallback when direct SCPI lookup tools do not return a good match.',
       parameters: {
         type: 'object',
         properties: {
@@ -320,6 +323,10 @@ export function getToolDefinitions() {
       description:
         'Cheap keyword/header search over the SCPI command database. ' +
         'Use for fast discovery when you want likely headers or command families from short targeted phrases such as "edge trigger", "measurement frequency", or "I2C bus".\n\n' +
+        'Recommended chain:\n' +
+        '1. search_scpi for fuzzy discovery\n' +
+        '2. if search returns no strong match, call get_command_by_header with your best guessed canonical header\n' +
+        '3. if lookup also misses, call knowledge with {action:"retrieve", corpus:"scpi", query:"<keywords>"}\n\n' +
         'Best for:\n' +
         '- cheap first-pass command discovery\n' +
         '- short noun-heavy queries\n' +
@@ -402,7 +409,10 @@ export function getToolDefinitions() {
     },
     {
       name: 'get_command_by_header',
-      description: 'Exact lookup by known SCPI header (e.g. "HORizontal:FASTframe:STATE"). Prefer over search_scpi when you already know the header — faster and more precise.',
+      description:
+        'Exact lookup by known or strongly guessed SCPI header (e.g. "HORizontal:FASTframe:STATE"). ' +
+        'Prefer over search_scpi when you already know the header or can infer a likely canonical header from the request - faster and more precise. ' +
+        'This is the second stage after search_scpi when fuzzy search returns no strong match.',
       parameters: {
         type: 'object',
         properties: {
@@ -455,6 +465,8 @@ export function getToolDefinitions() {
       description:
         'Interactive 3-level drill-down for exploring SCPI commands. ' +
         'Use when you want to browse by command group, or when search_scpi / smart_scpi_lookup did not narrow things down enough.\n\n' +
+        'Use browse when you know the feature area but not the header shape. ' +
+        'Use get_command_by_header instead when you already have a likely exact header guess.\n\n' +
         'Level 1 (no args): List all command groups (Vertical, Trigger, Measurement, Bus, etc.)\n' +
         'Level 2 (group): List commands in a group, optionally filtered by keyword\n' +
         'Level 3 (header): Full command details — syntax, arguments, valid values, examples\n\n' +
@@ -954,6 +966,8 @@ export function getToolDefinitions() {
           backend: { type: 'string' },
           liveMode: { type: 'boolean' },
           outputMode: { type: 'string', enum: ['clean', 'verbose'] },
+          deviceId: { type: 'string', description: 'Optional device identifier when multiple devices are connected.' },
+          device_map: { type: 'object', description: 'Optional device map to disambiguate multi-instrument sessions.', additionalProperties: { type: 'string' } },
         },
         required: [],
         additionalProperties: false,
@@ -971,6 +985,8 @@ export function getToolDefinitions() {
           backend: { type: 'string' },
           liveMode: { type: 'boolean' },
           outputMode: { type: 'string', enum: ['clean', 'verbose'] },
+          deviceId: { type: 'string', description: 'Optional device identifier when multiple devices are connected.' },
+          device_map: { type: 'object', description: 'Optional device map to disambiguate multi-instrument sessions.', additionalProperties: { type: 'string' } },
         },
         required: ['command'],
         additionalProperties: false,
@@ -989,6 +1005,8 @@ export function getToolDefinitions() {
           liveMode: { type: 'boolean' },
           outputMode: { type: 'string', enum: ['clean', 'verbose'] },
           timeoutMs: { type: 'number', description: 'Optional per-command timeout in milliseconds.' },
+          deviceId: { type: 'string', description: 'Optional device identifier when multiple devices are connected.' },
+          device_map: { type: 'object', description: 'Optional device map to disambiguate multi-instrument sessions.', additionalProperties: { type: 'string' } },
         },
         required: ['commands'],
         additionalProperties: false,
@@ -1010,6 +1028,8 @@ export function getToolDefinitions() {
           deviceDriver: { type: 'string' },
           analyze: { type: 'boolean', description: 'Set true to return the screenshot for AI vision analysis. Default false (capture only, updates UI).' },
           analysisTransport: { type: 'string', enum: ['auto', 'url', 'file_id', 'base64', 'mcp_image', 'openai_image', 'claude_image'], description: 'Optional analysis transport hint when analyze:true. Default auto prefers a short-lived MCP URL. Use openai_image to return the same short-lived MCP image URL for OpenAI-hosted vision flows, claude_image to return a native MCP image content block, base64 only for legacy payloads, or file_id for explicit OpenAI Files upload.' },
+          deviceId: { type: 'string', description: 'Optional device identifier when multiple devices are connected.' },
+          device_map: { type: 'object', description: 'Optional device map to disambiguate multi-instrument sessions.', additionalProperties: { type: 'string' } },
         },
         required: [],
         additionalProperties: false,
@@ -1026,6 +1046,25 @@ export function getToolDefinitions() {
           backend: { type: 'string' },
           liveMode: { type: 'boolean' },
           outputMode: { type: 'string', enum: ['clean', 'verbose'] },
+        },
+        required: [],
+        additionalProperties: false,
+      },
+    },
+    {
+      name: 'list_instruments',
+      description: 'List connected instruments and device IDs from the executor. If multiple devices are present and no default is set, the first device is auto-selected; pass deviceId to override.',
+      parameters: {
+        type: 'object',
+        properties: {
+          executorUrl: { type: 'string' },
+          visaResource: { type: 'string' },
+          backend: { type: 'string' },
+          liveMode: { type: 'boolean' },
+          queryIdn: { type: 'boolean', description: 'Optional: query *IDN? on each device when supported.' },
+          probe_idn: { type: 'boolean', description: 'Alias for queryIdn.' },
+          deviceId: { type: 'string', description: 'Optional device identifier to prefer when multiple devices are connected.' },
+          device_map: { type: 'object', description: 'Optional device map to disambiguate multi-instrument sessions.', additionalProperties: { type: 'string' } },
         },
         required: [],
         additionalProperties: false,
@@ -1118,6 +1157,7 @@ const MCP_EXPOSED_TOOLS = new Set([
   'send_scpi',
   'capture_screenshot',
   'discover_scpi',
+  'list_instruments',
 ]);
 
 // Slim tek_router schema for MCP — only the params external AI needs.
@@ -1183,6 +1223,7 @@ const PUBLIC_MCP_EXPOSED_TOOLS = new Set([
   'instrument_live',
   'workflow_ui',
   'knowledge',
+  'list_instruments',
 ]);
 
 const PUBLIC_TEK_ROUTER_PARAMS = {

@@ -270,49 +270,6 @@
     "source": "rag/corpus/tmdevices/TM_DEVICES_USAGE_PATTERNS.md"
   },
   {
-    "id": "error_code_table",
-    "type": "reference_table",
-    "severity": "medium",
-    "tags": [
-      "status",
-      "events",
-      "sesr",
-      "deser",
-      "esr",
-      "opc",
-      "busy",
-      "wai",
-      "query_event",
-      "message_codes",
-      "command_error",
-      "execution_error",
-      "device_error",
-      "warnings",
-      "reference_table"
-    ],
-    "title": "Status and Event Message Code Table — SESR, Command Errors, Execution Errors, Device Errors, and Warnings",
-    "symptom": "Need to interpret instrument event queue messages, SESR-linked codes, or warning/error responses such as 410 Query INTERRUPTED, 222 Data out of range, 2228 Positive Clipping, or 548 Measurement warning, Clipping positive.",
-    "root_cause": "Tek scopes report programming-interface messages through status/event systems. Each event is associated with SESR and DESER bits, and many messages include a secondary detail string after a semicolon. Without a lookup table, automation and AI can misclassify normal warnings, synchronization conditions, or real execution faults.",
-    "fix": "Use this reference table to map returned codes/messages to the correct class: No Event, Command Error, Execution Error, Device Error, System Event, Execution Warning, or Internal Warning. For long-running operations, use *OPC, *OPC?, *WAI, BUSY?, *ESR?, EVMsg?, or ALLEv? appropriately and set timeouts for the longest expected operation.",
-    "body": "Programming-interface messages are generated in response to commands and queries. Most messages may include a secondary explanatory message separated by a semicolon. Each event maps to a status bit in the Standard Event Status Register (SESR) and is gated by the equivalent bit in the Device Event Status Enable Register (DESER).\n\nSynchronization references:\n- *OPC sets bit 0 of SESR when all pending OPC-capable operations complete. Query with *ESR?.\n- *OPC? returns 1 only after all pending OPC operations complete, or after a device clear. Timeout must be long enough.\n- *WAI blocks further command processing until prior OPC-generating operations complete.\n- BUSY? returns 1 while extended operations are still pending, 0 when complete.\n- Some operations can take a long time or never complete if prerequisites never occur, such as single-sequence acquisition without a trigger. In those cases, set a sufficient timeout and handle timeout by querying *ESR? and the event queue with EVMsg? or ALLEv?.\n\nNo Event messages:\n- 0 No events to report; queue empty\n- 1 No events to report; new events pending *ESR?\n\nCommand Error messages (CME bit 5):\n- 100 Command error\n- 101 Invalid character\n- 102 Syntax error\n- 103 Invalid separator\n- 104 Data type error\n- 105 GET not allowed\n- 108 Parameter not allowed\n- 109 Missing parameter\n- 110 Command header error\n- 112 Program mnemonic too long\n- 113 Undefined header\n- 120 Numeric data error\n- 121 Invalid character in numeric\n- 123 Exponent too large\n- 124 Too many digits\n- 130 Suffix error\n- 131 Invalid suffix\n- 134 Suffix too long\n- 140 Character data error\n- 141 Invalid character data\n- 144 Character data too long\n- 150 String data error\n- 151 Invalid string data\n- 152 String data too long\n- 160 Block data error\n- 161 Invalid block data\n- 170 Command expression error\n- 171 Invalid expression\n\nExecution Error messages (EXE bit 4):\n- 200 Execution error\n- 221 Settings conflict\n- 222 Data out of range\n- 224 Illegal parameter value\n- 241 Hardware missing\n- 250 Mass storage error\n- 251 Missing mass storage\n- 252 Missing media\n- 253 Corrupt media\n- 254 Media full\n- 255 Directory full\n- 256 File name not found\n- 257 File name error\n- 258 Media protected\n- 259 File name too long\n- 280 Program error\n- 282 Insufficient network printer information\n- 283 Network printer not responding\n- 284 Network printer server not responding\n- 286 Program runtime error\n- 287 Future use\n- 2200 Measurement error, Measurement system error\n- 2201 Measurement error, Zero period\n- 2202 Measurement error, No period, second waveform\n- 2203 Measurement error, No period, second waveform\n- 2204 Measurement error, Low amplitude, second waveform\n- 2205 Measurement error, Low amplitude, second waveform\n- 2206 Measurement error, Invalid gate\n- 2207 Measurement error, Measurement overflow\n- 2208 Measurement error, No backwards Mid Ref crossing\n- 2209 Measurement error, No second Mid Ref crossing\n- 2210 Measurement error, No Mid Ref crossing, second waveform\n- 2",
-    "code_before": "",
-    "code_after": "",
-    "affected_files": [
-      "rag/corpus/error_patterns/error_patterns_index.json"
-    ],
-    "related_commands": [
-      "*OPC",
-      "*OPC?",
-      "*WAI",
-      "BUSY?",
-      "*ESR?",
-      "EVMsg?",
-      "ALLEv?"
-    ],
-    "corpus": "errors",
-    "source": "rag/corpus/error_patterns/error_patterns_index.json"
-  },
-  {
     "id": "err_unicode_decode_opc_after_readfile",
     "type": "bug_fix",
     "severity": "critical",
@@ -1634,7 +1591,7 @@
     "code_before": "Timeout or wait logic without checking *ESR? and the event queue; message codes treated as opaque strings.",
     "code_after": "On timeout or status anomaly: query *ESR?, then EVMsg? or ALLEv?, map returned codes through this table, and choose follow-up based on category (CME, EXE, DDE, query event, or warning).",
     "affected_files": [
-      "rag/corpus/error_patterns/error_patterns_index.json"
+      "mcp-server/rag/corpus/error_patterns/error_patterns_index.json"
     ],
     "related_commands": [
       "*ESR?",

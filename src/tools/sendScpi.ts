@@ -12,6 +12,8 @@ interface Input extends Record<string, unknown> {
   outputMode?: 'clean' | 'verbose';
   timeoutMs?: number;
   modelFamily?: string;
+  deviceId?: string;
+  device_map?: Record<string, string>;
   /** Set by discover_scpi to bypass the verify gate. */
   _bypassVerifyGate?: boolean;
 }

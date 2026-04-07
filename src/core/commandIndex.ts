@@ -42,6 +42,8 @@ export interface CommandRecord {
   category: string;
   tags: string[];
   commandType: CommandType;
+  hasSet?: boolean;
+  hasQuery?: boolean;
   families: string[];
   models: string[];
   syntax: CommandSyntax;
@@ -559,6 +561,38 @@ function extractManualReference(raw: Record<string, unknown>): ManualReference |
   };
 }
 
+function extractAvailability(raw: Record<string, unknown>): { hasSet?: boolean; hasQuery?: boolean } {
+  const manual = raw._manualEntry as Record<string, unknown> | undefined;
+  const hasSetValue = typeof raw.hasSet === 'boolean' ? raw.hasSet : manual?.hasSet;
+  const hasQueryValue = typeof raw.hasQuery === 'boolean' ? raw.hasQuery : manual?.hasQuery;
+  return {
+    hasSet: typeof hasSetValue === 'boolean' ? hasSetValue : undefined,
+    hasQuery: typeof hasQueryValue === 'boolean' ? hasQueryValue : undefined,
+  };
+}
+
+function determineCommandTypeFromAvailability(
+  availability: { hasSet?: boolean; hasQuery?: boolean },
+  fallbackHeader: string,
+  syntax?: CommandSyntax
+): CommandType {
+  if (availability.hasSet === true || availability.hasQuery === true) {
+    if (availability.hasSet && availability.hasQuery) return 'both';
+    if (availability.hasQuery) return 'query';
+    if (availability.hasSet) return 'set';
+  }
+
+  if (syntax && typeof syntax === 'object' && !Array.isArray(syntax)) {
+    const hasSet = typeof syntax.set === 'string' && syntax.set.trim().length > 0;
+    const hasQuery = typeof syntax.query === 'string' && syntax.query.trim().length > 0;
+    if (hasSet && hasQuery) return 'both';
+    if (hasQuery) return 'query';
+    if (hasSet) return 'set';
+  }
+
+  return fallbackHeader.endsWith('?') ? 'query' : 'both';
+}
+
 function extractCommandType(raw: Record<string, unknown>, header: string): CommandType {
   // Check syntax FIRST — it's the most reliable source of truth.
   // _manualEntry.commandType is often wrong (e.g. "query" when command has both set and query forms).
@@ -924,10 +958,11 @@ function toCommandRecord(
     (typeof raw.header === 'string' && raw.header) ||
     header;
   const { families, models } = extractFamilyModel(raw, sourceFile);
+  const availability = extractAvailability(raw);
   const syntax = extractSyntax(raw);
   const args = extractArguments(raw);
+  const scpi = (typeof raw.scpi === 'string' && raw.scpi.trim()) || header;
   if (!syntax.set && !syntax.query) {
-    const scpi = (typeof raw.scpi === 'string' && raw.scpi.trim()) || header;
     const hint = argumentHint(args[0]);
     if (scpi.endsWith('?')) {
       syntax.query = scpi;
@@ -935,6 +970,12 @@ function toCommandRecord(
       syntax.set = args.length ? `${scpi} ${hint}` : scpi;
       syntax.query = `${scpi}?`;
     }
+  }
+  if (availability.hasSet === true && !syntax.set) {
+    syntax.set = args.length ? `${scpi} ${argumentHint(args[0])}` : scpi;
+  }
+  if (availability.hasQuery === true && !syntax.query) {
+    syntax.query = scpi.endsWith('?') ? scpi : `${scpi}?`;
   }
   if (syntax.set && !/\s/.test(syntax.set) && args.length) {
     syntax.set = `${syntax.set} ${argumentHint(args[0])}`;
@@ -957,7 +998,9 @@ function toCommandRecord(
     description,
     category,
     tags: Array.from(new Set([...extractTags(raw, group, sourceFile), ...mnemonics])),
-    commandType: extractCommandType((manual || raw) as Record<string, unknown>, header),
+    commandType: determineCommandTypeFromAvailability(availability, header, syntax),
+    hasSet: availability.hasSet,
+    hasQuery: availability.hasQuery,
     families,
     models,
     syntax,

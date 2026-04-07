@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "generatedAt": "2026-04-04T18:34:56.582Z",
+  "generatedAt": "2026-04-07T17:23:15.655Z",
   "corpora": {
     "scpi": "scpi_index.json",
     "tmdevices": "tmdevices_index.json",
@@ -16,7 +16,7 @@
     "app_logic": 152,
     "scope_logic": 37,
     "templates": 42,
-    "errors": 76,
+    "errors": 75,
     "pyvisa_tekhsi": 38
   }
 }

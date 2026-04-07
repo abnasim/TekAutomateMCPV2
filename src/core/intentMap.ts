@@ -113,6 +113,23 @@ const SUBJECT_GROUP_MAP: Array<{
   // SOA / safe operating area — before "area" matches measurement area
   { pattern: /\b(SOA|safe\s*operating\s*area)\b/i, groups: ['Power'], intent: 'power', subject: 'power_soa' },
 
+  // External/standalone AFG — before generic AFG patterns
+  { pattern: /\bexternal\b.*\bafg\b/i, groups: ['AFG Standalone'], intent: 'ext_afg', subject: 'ext_afg' },
+  { pattern: /\bafg\b.*\bexternal\b/i, groups: ['AFG Standalone'], intent: 'ext_afg', subject: 'ext_afg' },
+  { pattern: /\bstandalone\b.*\bafg\b/i, groups: ['AFG Standalone'], intent: 'ext_afg', subject: 'ext_afg' },
+
+  // AFG — before "frequency"/"amplitude" match measurement
+  { pattern: /\bafg\b.*\b(freq|amplitude|function|output|waveform|impedance|load)\b/i, groups: ['AFG'], intent: 'afg', subject: 'afg' },
+  { pattern: /\b(freq|amplitude|function|waveform)\b.*\bafg\b/i, groups: ['AFG'], intent: 'afg', subject: 'afg' },
+
+  // AWG — before generic measurement/save/acquisition patterns
+  { pattern: /\bawg\b.*\b(play|run|stop|compile|sample|rate|output|state)\b/i, groups: ['AWG'], intent: 'awg', subject: 'awg_control' },
+  { pattern: /\b(play|run|stop)\b.*\b(awg|waveform)\b/i, groups: ['AWG'], intent: 'awg', subject: 'awg_control' },
+  { pattern: /\b(hsserial|high.speed.serial|prbs|nrz|encoding|pattern)\b.*\bawg\b/i, groups: ['AWG'], intent: 'awg', subject: 'awg_serial' },
+  { pattern: /\bawg\b.*\b(hsserial|high.speed.serial|prbs|nrz|encoding|pattern)\b/i, groups: ['AWG'], intent: 'awg', subject: 'awg_serial' },
+  { pattern: /\bradar\b/i, groups: ['AWG'], intent: 'awg', subject: 'radar' },
+  { pattern: /\bwplugin\b|\bplugin\b.*\b(load|active|awg)\b/i, groups: ['AWG'], intent: 'awg', subject: 'awg_plugin' },
+
   // AFG — before "frequency"/"amplitude" match measurement
   { pattern: /\bAFG\b/i, groups: ['AFG'], intent: 'afg', subject: 'afg' },
 

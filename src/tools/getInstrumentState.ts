@@ -8,6 +8,8 @@ interface Input extends Record<string, unknown> {
   backend: string;
   liveMode?: boolean;
   outputMode?: 'clean' | 'verbose';
+  deviceId?: string;
+  device_map?: Record<string, string>;
 }
 
 export async function getInstrumentState(input: Input): Promise<ToolResult<Record<string, unknown>>> {

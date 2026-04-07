@@ -10,6 +10,11 @@ interface Endpoint {
   scopeType?: 'modern' | 'legacy';
   modelFamily?: string;
   deviceDriver?: string;
+  deviceId?: string;
+  deviceMap?: Record<string, string>;
+  deviceCount?: number;
+  autoSelectedDeviceId?: string;
+  deviceIdSource?: 'explicit' | 'auto' | 'unknown';
 }
 
 function buildExecutorHeaders(endpoint: Endpoint): Record<string, string> {
@@ -39,6 +44,23 @@ function inferScopeType(endpoint: Endpoint): 'modern' | 'legacy' {
   if (endpoint.scopeType === 'modern' || endpoint.scopeType === 'legacy') return endpoint.scopeType;
   const hint = `${endpoint.modelFamily || ''} ${endpoint.deviceDriver || ''}`.toLowerCase();
   return /\b(dpo|5k|7k|70k)\b/.test(hint) ? 'legacy' : 'modern';
+}
+
+function collectDeviceSelectionWarnings(endpoint: Endpoint): string[] {
+  const count = typeof endpoint.deviceCount === 'number'
+    ? endpoint.deviceCount
+    : endpoint.deviceMap
+      ? Object.keys(endpoint.deviceMap).length
+      : 0;
+  const warnings: string[] = [];
+  const autoSelectedId = endpoint.autoSelectedDeviceId || (endpoint.deviceIdSource === 'auto' ? endpoint.deviceId : undefined);
+  if (autoSelectedId && count > 1) {
+    const suffix = count > 1 ? ` (found ${count} devices)` : '';
+    warnings.push(`No default deviceId was set; auto-selected ${autoSelectedId}${suffix}. Pass deviceId to override.`);
+  } else if (!endpoint.deviceId && count > 1) {
+    warnings.push(`Multiple devices detected (${count}), but deviceId was not provided. Executor may pick the first device; set deviceId to avoid ambiguity.`);
+  }
+  return warnings;
 }
 
 function buildRuntimeDetails(run: RunPythonResult, mode: InstrumentOutputMode): Record<string, unknown> {
@@ -147,8 +169,10 @@ async function runExecutorAction(
         protocol_version: 1,
         action,
         timeout_sec: timeoutSec,
-        scope_visa: endpoint.visaResource,
+        scope_visa: endpoint.visaResource || '',
         liveMode: endpoint.liveMode === true,
+        deviceId: endpoint.deviceId,
+        device_map: endpoint.deviceMap,
         ...payload,
       }),
     });
@@ -185,8 +209,9 @@ async function runExecutorAction(
 }
 
 export async function getInstrumentStateProxy(endpoint: Endpoint): Promise<ToolResult<Record<string, unknown>>> {
+  const selectionWarnings = collectDeviceSelectionWarnings(endpoint);
   if (!isLiveModeEnabled(endpoint)) {
-    return { ok: false, data: {}, sourceMeta: [], warnings: ['live instrument mode is disabled'] };
+    return { ok: false, data: {}, sourceMeta: [], warnings: ['live instrument mode is disabled', ...selectionWarnings] };
   }
   // Use send_scpi action instead of runPython to avoid opening a second VISA session
   // that conflicts with the worker's cached session (causes TekScopePC crashes)
@@ -195,7 +220,7 @@ export async function getInstrumentStateProxy(endpoint: Endpoint): Promise<ToolR
     timeout_ms: 10000,
   }, 45);
   if (!run.ok) {
-    return { ok: false, data: {}, sourceMeta: [], warnings: ['code_executor not reachable'] };
+    return { ok: false, data: {}, sourceMeta: [], warnings: ['code_executor not reachable', ...selectionWarnings] };
   }
   const payload = run.resultData && typeof run.resultData === 'object'
     ? run.resultData as Record<string, unknown>
@@ -220,7 +245,7 @@ export async function getInstrumentStateProxy(endpoint: Endpoint): Promise<ToolR
       ...buildRuntimeDetails(run, resolveOutputMode(endpoint)),
     },
     sourceMeta: [],
-    warnings: [],
+    warnings: selectionWarnings,
   };
 }
 
@@ -228,12 +253,13 @@ export async function probeCommandProxy(
   endpoint: Endpoint,
   command: string
 ): Promise<ToolResult<Record<string, unknown>>> {
+  const selectionWarnings = collectDeviceSelectionWarnings(endpoint);
   if (!isLiveModeEnabled(endpoint)) {
-    return { ok: false, data: {}, sourceMeta: [], warnings: ['live instrument mode is disabled'] };
+    return { ok: false, data: {}, sourceMeta: [], warnings: ['live instrument mode is disabled', ...selectionWarnings] };
   }
   const run = await runExecutorAction(endpoint, 'send_scpi', { commands: [command], timeout_ms: 5000 }, 45);
   if (!run.ok) {
-    return { ok: false, data: {}, sourceMeta: [], warnings: ['code_executor not reachable'] };
+    return { ok: false, data: {}, sourceMeta: [], warnings: ['code_executor not reachable', ...selectionWarnings] };
   }
   const mode = resolveOutputMode(endpoint);
   const directPayload =
@@ -251,7 +277,7 @@ export async function probeCommandProxy(
       ...buildRuntimeDetails(run, mode),
     },
     sourceMeta: [],
-    warnings: [],
+    warnings: selectionWarnings,
   };
 }
 
@@ -306,15 +332,36 @@ print("python:", sys.version)
   };
 }
 
+export async function listInstrumentsProxy(endpoint: Endpoint): Promise<ToolResult<Record<string, unknown>>> {
+  const selectionWarnings = collectDeviceSelectionWarnings(endpoint);
+  const run = await runExecutorAction(endpoint, 'list_instruments', {}, 30);
+  if (!run.ok) {
+    return { ok: false, data: {}, sourceMeta: [], warnings: ['executor not reachable for list_instruments', ...selectionWarnings] };
+  }
+  const payload = run.resultData && typeof run.resultData === 'object' ? (run.resultData as Record<string, unknown>) : {};
+  return {
+    ok: true,
+    data: payload,
+    sourceMeta: [],
+    warnings: selectionWarnings,
+  };
+}
+
 export async function sendScpiProxy(
   endpoint: Endpoint,
   commands: string[],
   timeoutMs = 5000
 ): Promise<ToolResult<Record<string, unknown>>> {
+  const selectionWarnings = collectDeviceSelectionWarnings(endpoint);
   if (!isLiveModeEnabled(endpoint)) {
-    return { ok: false, data: {}, sourceMeta: [], warnings: ['live instrument mode is disabled'] };
+    return { ok: false, data: {}, sourceMeta: [], warnings: ['live instrument mode is disabled', ...selectionWarnings] };
   }
-  const run = await runExecutorAction(endpoint, 'send_scpi', { commands, timeout_ms: timeoutMs }, Math.max(45, Math.ceil((timeoutMs * Math.max(commands.length, 1)) / 1000) + 5));
+  const run = await runExecutorAction(
+    endpoint,
+    'send_scpi',
+    { commands, timeout_ms: timeoutMs, deviceId: endpoint.deviceId, device_map: endpoint.deviceMap },
+    Math.max(45, Math.ceil((timeoutMs * Math.max(commands.length, 1)) / 1000) + 5)
+  );
   if (!run.ok) {
     // Include per-command responses so AI can see which specific commands failed
     const failPayload = run.resultData && typeof run.resultData === 'object'
@@ -331,7 +378,7 @@ export async function sendScpiProxy(
         combinedOutput: run.combinedOutput,
       },
       sourceMeta: [],
-      warnings: ['send_scpi failed — check responses array for per-command errors'],
+      warnings: ['send_scpi failed — check responses array for per-command errors', ...selectionWarnings],
     };
   }
   const directPayload =
@@ -343,7 +390,7 @@ export async function sendScpiProxy(
       : null);
   // Check for errors buried in the result even when ok=true
   const hasError = Boolean(run.error) || Boolean(run.stderr.trim());
-  const warnings: string[] = [];
+  const warnings: string[] = [...selectionWarnings];
   if (hasError) warnings.push('Executor returned warnings/errors — check stderr and error fields');
   return {
     ok: !run.error,
@@ -361,13 +408,14 @@ export async function sendScpiProxy(
 }
 
 export async function captureScreenshotProxy(endpoint: Endpoint): Promise<ToolResult<Record<string, unknown>>> {
+  const selectionWarnings = collectDeviceSelectionWarnings(endpoint);
   if (!isLiveModeEnabled(endpoint)) {
-    return { ok: false, data: {}, sourceMeta: [], warnings: ['live instrument mode is disabled'] };
+    return { ok: false, data: {}, sourceMeta: [], warnings: ['live instrument mode is disabled', ...selectionWarnings] };
   }
   const scopeType = inferScopeType(endpoint);
-  const run = await runExecutorAction(endpoint, 'capture_screenshot', { scope_type: scopeType }, 90);
+  const run = await runExecutorAction(endpoint, 'capture_screenshot', { scope_type: scopeType, deviceId: endpoint.deviceId, device_map: endpoint.deviceMap }, 90);
   if (!run.ok) {
-    return { ok: false, data: {}, sourceMeta: [], warnings: ['code_executor not reachable'] };
+    return { ok: false, data: {}, sourceMeta: [], warnings: ['code_executor not reachable', ...selectionWarnings] };
   }
   const directPayload =
     ((run as unknown as Record<string, unknown>).base64 && typeof (run as unknown as Record<string, unknown>).base64 === 'string'
@@ -390,7 +438,7 @@ export async function captureScreenshotProxy(endpoint: Endpoint): Promise<ToolRe
         ...buildRuntimeDetails(run, resolveOutputMode(endpoint)),
       },
       sourceMeta: [],
-      warnings: ['capture_screenshot returned no image payload'],
+      warnings: ['capture_screenshot returned no image payload', ...selectionWarnings],
     };
   }
   try {
@@ -413,7 +461,7 @@ export async function captureScreenshotProxy(endpoint: Endpoint): Promise<ToolRe
         ...leanRuntime,
       },
       sourceMeta: [],
-      warnings: [],
+      warnings: selectionWarnings,
     };
   } catch {
     return {
@@ -424,7 +472,7 @@ export async function captureScreenshotProxy(endpoint: Endpoint): Promise<ToolRe
         ...buildRuntimeDetails(run, resolveOutputMode(endpoint)),
       },
       sourceMeta: [],
-      warnings: ['capture_screenshot returned invalid JSON payload'],
+      warnings: ['capture_screenshot returned invalid JSON payload', ...selectionWarnings],
     };
   }
 }
