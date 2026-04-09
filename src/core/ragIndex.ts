@@ -10,7 +10,8 @@ export type RagCorpus =
   | 'scope_logic'
   | 'errors'
   | 'templates'
-  | 'pyvisa_tekhsi';
+  | 'pyvisa_tekhsi'
+  | 'tek_docs';
 
 export interface RagChunkDoc extends Record<string, unknown> {
   id: string;
