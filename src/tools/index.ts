@@ -40,6 +40,11 @@ import { workflowUi } from './workflowUi';
 import { GROUP_NAMES, COMMAND_GROUPS } from '../core/commandGroups';
 import { TEK_ROUTER_TOOL_DEFINITION } from '../core/toolRouter';
 
+// Live instrument is enabled by default (local use). Set LIVE_INSTRUMENT_ENABLED=false to disable (hosted/public mode).
+export function isLiveInstrumentEnabled(): boolean {
+  return String(process.env.LIVE_INSTRUMENT_ENABLED ?? 'true').trim().toLowerCase() !== 'false';
+}
+
 export const TOOL_HANDLERS = {
   tek_router: async (args: Record<string, unknown>) => {
     const directResult = await tekRouterPublic(args as any);
@@ -47,7 +52,7 @@ export const TOOL_HANDLERS = {
     const { tekRouter } = await import('../core/toolRouter');
     return tekRouter(args as any);
   },
-  instrument_live: instrumentLive,
+  ...(isLiveInstrumentEnabled() ? { instrument_live: instrumentLive } : {}),
   analyze_scope_screenshot: analyzeScopeScreenshot,
   workflow_ui: workflowUi,
   knowledge,
@@ -131,7 +136,7 @@ export type ToolName = keyof typeof TOOL_HANDLERS;
 export function getToolDefinitions() {
   return [
     TEK_ROUTER_TOOL_DEFINITION,
-    {
+    ...(isLiveInstrumentEnabled() ? [{
       name: 'instrument_live',
       description:
         'Live instrument gateway for TekAutomate. Use `context` for connection info, `send` for SCPI commands, `screenshot` for capture, `snapshot`/`diff`/`inspect` for *LRN?-based state discovery, and `resources` for VISA discovery when needed. For screenshot analysis, the default transport prefers a short-lived MCP-hosted image URL over base64 to reduce token usage.',
@@ -173,7 +178,7 @@ export function getToolDefinitions() {
         required: ['action'],
         additionalProperties: true,
       },
-    },
+    }] : []),
     {
       name: 'analyze_scope_screenshot',
       description:
@@ -1184,7 +1189,7 @@ export async function runTool(name: string, args: Record<string, unknown>) {
 
 const PUBLIC_MCP_EXPOSED_TOOLS = new Set([
   'tek_router',
-  'instrument_live',
+  ...(isLiveInstrumentEnabled() ? ['instrument_live'] : []),
   'workflow_ui',
   'knowledge',
 ]);

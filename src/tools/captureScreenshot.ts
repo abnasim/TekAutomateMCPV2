@@ -17,60 +17,6 @@ interface Input extends Record<string, unknown> {
   __mcpBaseUrl?: string;
 }
 
-async function compressAnalyzedScreenshotPayload(
-  payload: Record<string, unknown>,
-  analyze?: boolean,
-): Promise<Record<string, unknown>> {
-  if (analyze !== true) return payload;
-
-  const base64 = typeof payload.base64 === 'string' ? payload.base64 : '';
-  const mimeType = typeof payload.mimeType === 'string' ? payload.mimeType : '';
-  if (!base64 || !mimeType.startsWith('image/')) return payload;
-
-  try {
-    const { Jimp } = await import('jimp');
-    const rawBuffer = Buffer.from(base64, 'base64');
-    const variants = [
-      { width: 800, height: 480, quality: 75 },
-      { width: 640, height: 384, quality: 55 },
-      { width: 480, height: 288, quality: 45 },
-    ];
-
-    const image = await Jimp.read(rawBuffer);
-    let best: Buffer = rawBuffer;
-    for (const variant of variants) {
-      const scale = Math.min(variant.width / image.bitmap.width, variant.height / image.bitmap.height, 1);
-      const width = Math.max(1, Math.round(image.bitmap.width * scale));
-      const height = Math.max(1, Math.round(image.bitmap.height * scale));
-      const candidateImage = image.clone().resize({ w: width, h: height });
-      const candidate: Buffer = await candidateImage.getBuffer('image/jpeg', { quality: variant.quality });
-
-      if (candidate.length < best.length) {
-        best = candidate;
-      }
-
-      if (candidate.length <= 35 * 1024) {
-        best = candidate;
-        break;
-      }
-    }
-
-    if (best.length >= rawBuffer.length) {
-      return payload;
-    }
-
-    return {
-      ...payload,
-      analysisMimeType: 'image/jpeg',
-      analysisSizeBytes: best.length,
-      originalMimeType: mimeType,
-      originalSizeBytes: rawBuffer.length,
-      analysisBase64: best.toString('base64'),
-    };
-  } catch {
-    return payload;
-  }
-}
 
 function stripScreenshotPayloadForNonAnalysis(
   payload: Record<string, unknown>,
@@ -223,9 +169,7 @@ export async function captureScreenshot(input: Input): Promise<ToolResult<Record
           ? bridged.result
           : { result: bridged.result }) as Record<string, unknown>)
       : { error: 'LIVE_ACTION_FAILED', message: bridged.error || 'TekAutomate failed to capture screenshot.' };
-    const maybeCompressed = bridged.ok
-      ? await compressAnalyzedScreenshotPayload(data, input.analyze)
-      : data;
+    const maybeCompressed = data;
     if (bridged.ok && input.analyze === true && analysisTransport === 'mcp_image') {
       const imagePayload = buildMcpImageScreenshotPayload(maybeCompressed);
       if (!imagePayload) {
@@ -289,7 +233,7 @@ export async function captureScreenshot(input: Input): Promise<ToolResult<Record
   if (!result.ok || !result.data || typeof result.data !== 'object') {
     return result;
   }
-  const maybeCompressed = await compressAnalyzedScreenshotPayload(result.data as Record<string, unknown>, input.analyze);
+  const maybeCompressed = result.data as Record<string, unknown>;
   if (input.analyze === true && analysisTransport === 'mcp_image') {
     const imagePayload = buildMcpImageScreenshotPayload(maybeCompressed);
     if (!imagePayload) {
