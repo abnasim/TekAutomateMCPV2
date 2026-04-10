@@ -6,6 +6,7 @@
   "scripts": {
     "build": "npm run build:rag",
     "build:rag": "tsx scripts/buildRagIndex.ts",
+    "pack:mcpb": "npx -y mcpb pack --output tekautomate-mcp.mcpb",
     "prestart": "npm run build:rag",
     "start": "tsx src/index.ts",
     "predev": "npm run build:rag",

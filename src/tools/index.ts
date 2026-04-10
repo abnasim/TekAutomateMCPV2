@@ -248,7 +248,7 @@ export function getToolDefinitions() {
     {
       name: 'knowledge',
       description:
-        'Knowledge gateway for TekAutomate support material. Use `retrieve` for targeted RAG chunks, `examples` for matching workflow templates, and `failures` for known runtime failures and fixes.',
+        'Knowledge gateway for TekAutomate support material. Use action:"retrieve" with a corpus to search docs/reference (scpi for commands, tmdevices for Python driver API, app_logic for architecture, scope_logic for measurement concepts, pyvisa_tekhsi for connection examples). Use action:"examples" to find matching workflow templates. Use action:"failures" to look up known runtime errors and their fixes.',
       parameters: {
         type: 'object',
         properties: {
@@ -263,7 +263,7 @@ export function getToolDefinitions() {
           },
           corpus: {
             type: 'string',
-            description: 'For action:"retrieve" — knowledge corpus: scpi, tmdevices, templates, app_logic, errors, scope_logic, pyvisa_tekhsi, or tek_docs (Tektronix documentation).',
+            description: 'For action:"retrieve" — which knowledge corpus to search. Pick the best match:\n• "scpi" — SCPI command syntax, parameters, and programming guide docs (use for "how do I send/query X command")\n• "tmdevices" — tm_devices Python library: driver classes, methods, and API reference (use for "how do I use tm_devices to...")\n• "app_logic" — TekAutomate architecture, AiAction schemas, internal system design docs (use for "how does TekAutomate work internally")\n• "errors" — known runtime error patterns and fixes (prefer action:"failures" instead)\n• "scope_logic" — oscilloscope measurement logic, channel/trigger/acquisition concepts\n• "templates" — workflow template reference (prefer action:"examples" instead)\n• "pyvisa_tekhsi" — PyVISA and TekHSI connection/streaming examples',
           },
           query: {
             type: 'string',

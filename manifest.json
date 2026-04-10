@@ -1,0 +1,73 @@
+{
+  "$schema": "https://raw.githubusercontent.com/modelcontextprotocol/mcpb/main/dist/mcpb-manifest.schema.json",
+  "manifest_version": "0.3",
+  "name": "tekautomate-mcp",
+  "display_name": "TekAutomate MCP",
+  "version": "1.0.0",
+  "description": "AI-powered Tektronix oscilloscope control — SCPI lookup, live instrument control, screenshots, and workflow automation.",
+  "long_description": "TekAutomate MCP connects AI assistants (Claude Desktop, Codex, Cursor) to Tektronix oscilloscopes.\n\nFeatures:\n- SCPI command search across a built-in Tektronix corpus\n- Live instrument control via VISA (when LIVE_INSTRUMENT_ENABLED=true)\n- Scope screenshot capture and vision analysis\n- Workflow building and step proposal\n- RAG-backed knowledge retrieval from Tektronix documentation\n\nRequires TekAutomateExecutor.exe to be running for live instrument features. Find it in the dist/ folder of your TekAutomate installation.\n\nUses mcp-remote to bridge the HTTP MCP endpoint to Claude Desktop's stdio transport. Configure the MCP URL below to point at the hosted server or your own local/self-hosted instance.",
+  "author": {
+    "name": "Abdul Nasim",
+    "url": "https://github.com/abnasim/TekAutomate"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/abnasim/TekAutomate"
+  },
+  "homepage": "https://tekautomatemcpv2.up.railway.app",
+  "documentation": "https://tekautomatemcpv2.up.railway.app/setup",
+  "support": "https://github.com/abnasim/TekAutomate/issues",
+  "server": {
+    "type": "node",
+    "entry_point": "server/index.js",
+    "mcp_config": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "${user_config.mcp_url}"],
+      "env": {}
+    }
+  },
+  "tools": [
+    { "name": "search_scpi", "description": "Search SCPI commands by keyword" },
+    { "name": "smart_scpi_lookup", "description": "Natural language to SCPI command" },
+    { "name": "browse_scpi_commands", "description": "Browse SCPI command groups interactively" },
+    { "name": "get_command_by_header", "description": "Exact SCPI header lookup" },
+    { "name": "verify_scpi_commands", "description": "Validate SCPI syntax before sending" },
+    { "name": "send_scpi", "description": "Execute SCPI on live instrument (requires executor)" },
+    { "name": "capture_screenshot", "description": "Capture oscilloscope screenshot" },
+    { "name": "get_instrument_info", "description": "Get connected instrument info and status" },
+    { "name": "tek_router", "description": "AI gateway — workflow build, search, and execution" },
+    { "name": "retrieve_rag_chunks", "description": "RAG knowledge retrieval from Tektronix docs" },
+    { "name": "get_template_examples", "description": "Search workflow template library" },
+    { "name": "discover_scpi", "description": "Snapshot and diff instrument state via *LRN?" }
+  ],
+  "tools_generated": true,
+  "keywords": [
+    "oscilloscope",
+    "tektronix",
+    "scpi",
+    "instrument",
+    "mcp",
+    "automation",
+    "tekautomate",
+    "visa",
+    "tek"
+  ],
+  "license": "MIT",
+  "user_config": {
+    "mcp_url": {
+      "type": "string",
+      "title": "MCP Server URL",
+      "description": "URL of your TekAutomate MCP server.\n\n• Hosted (default): https://tekautomatemcpv2.up.railway.app/mcp\n• Local (TekAutomate running on your PC): http://localhost:8787/mcp\n• Self-hosted Railway: https://your-project.up.railway.app/mcp",
+      "default": "https://tekautomatemcpv2.up.railway.app/mcp",
+      "required": true
+    }
+  },
+  "compatibility": {
+    "claude_desktop": ">=0.10.0",
+    "platforms": ["darwin", "win32", "linux"],
+    "runtimes": {
+      "node": ">=18.0.0"
+    }
+  },
+  "privacy_policies": []
+}
