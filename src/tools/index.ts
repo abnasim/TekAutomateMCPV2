@@ -248,7 +248,7 @@ export function getToolDefinitions() {
     {
       name: 'knowledge',
       description:
-        'Knowledge gateway for TekAutomate support material. Use action:"retrieve" with a corpus to search docs/reference (scpi for commands, tmdevices for Python driver API, app_logic for architecture, scope_logic for measurement concepts, pyvisa_tekhsi for connection examples, tek_docs for scraped Tektronix product documentation covering MSO/DPO/MDO series specs, features, and application notes). Use action:"examples" to find matching workflow templates. Use action:"failures" to look up known runtime errors and their fixes.',
+        'Knowledge gateway for TekAutomate support material. Use action:"retrieve" with a corpus to search docs/reference (scpi for commands, tmdevices for Python driver API, app_logic for architecture, scope_logic for measurement concepts, pyvisa_tekhsi for connection examples, tek_docs for Tektronix product docs — specs, app notes, blogs, FAQs, primers with source URLs you can web-fetch for full content). Use action:"examples" to find matching workflow templates. Use action:"failures" to look up known runtime errors and their fixes. Example: {action:"retrieve", corpus:"tek_docs", query:"runt trigger MSO6"} returns chunks with tek.com source URLs — fetch the URL for the full article or linked PDF.',
       parameters: {
         type: 'object',
         properties: {
@@ -263,7 +263,7 @@ export function getToolDefinitions() {
           },
           corpus: {
             type: 'string',
-            description: 'For action:"retrieve" — which knowledge corpus to search. Pick the best match:\n• "scpi" — SCPI command syntax, parameters, and programming guide docs (use for "how do I send/query X command")\n• "tmdevices" — tm_devices Python library: driver classes, methods, and API reference (use for "how do I use tm_devices to...")\n• "app_logic" — TekAutomate architecture, AiAction schemas, internal system design docs (use for "how does TekAutomate work internally")\n• "errors" — known runtime error patterns and fixes (prefer action:"failures" instead)\n• "scope_logic" — oscilloscope measurement logic, channel/trigger/acquisition concepts\n• "templates" — workflow template reference (prefer action:"examples" instead)\n• "pyvisa_tekhsi" — PyVISA and TekHSI connection/streaming examples\n• "tek_docs" — scraped Tektronix product documentation: MSO/DPO/MDO/MDO series specs, application notes, product features, and instrument-specific details',
+            description: 'For action:"retrieve" — which knowledge corpus to search. Pick the best match:\n• "scpi" — SCPI command syntax, parameters, and programming guide docs (use for "how do I send/query X command")\n• "tmdevices" — tm_devices Python library: driver classes, methods, and API reference (use for "how do I use tm_devices to...")\n• "app_logic" — TekAutomate architecture, AiAction schemas, internal system design docs (use for "how does TekAutomate work internally")\n• "errors" — known runtime error patterns and fixes (prefer action:"failures" instead)\n• "scope_logic" — oscilloscope measurement logic, channel/trigger/acquisition concepts\n• "templates" — workflow template reference (prefer action:"examples" instead)\n• "pyvisa_tekhsi" — PyVISA and TekHSI connection/streaming examples\n• "tek_docs" — scraped Tektronix product documentation: MSO/DPO/MDO series specs, app notes, blogs, FAQs, primers, datasheets. Each result includes a source URL (tek.com) — if the chunk preview is not enough, web-fetch the URL for the full article or download the linked PDF for complete content',
           },
           query: {
             type: 'string',
@@ -697,7 +697,8 @@ export function getToolDefinitions() {
         '- pyvisa_tekhsi: transport and Python I/O guidance\n' +
         '- app_logic: TekAutomate app behavior and implementation rules\n' +
         '- errors: known failures, causes, and fixes\n' +
-        '- scope_logic: step-by-step scope procedures like clipping, probe compensation, decode bring-up, autoset-first\n\n' +
+        '- scope_logic: step-by-step scope procedures like clipping, probe compensation, decode bring-up, autoset-first\n' +
+        '- tek_docs: Tektronix product docs — specs, app notes, FAQs, blogs, primers, datasheets. Results include source URLs; web-fetch the URL for full content\n\n' +
         'Use short, exact, noun-heavy queries such as "OPC Query Return Type", "clipping 9.91E+37", "probe compensation", or "autoset first".',
       parameters: {
         type: 'object',
@@ -705,7 +706,7 @@ export function getToolDefinitions() {
           corpus: {
             type: 'string',
             enum: ['scpi', 'tmdevices', 'app_logic', 'errors', 'templates', 'pyvisa_tekhsi', 'scope_logic', 'tek_docs'],
-            description: 'Which knowledge corpus to search. Use tek_docs for Tektronix product documentation (MSO/DPO/MDO specs, features, application notes).',
+            description: 'Which knowledge corpus to search. Use tek_docs for Tektronix product docs (MSO/DPO/MDO specs, app notes, FAQs, blogs, primers, datasheets) — results include source URLs you can web-fetch for full articles/PDFs.',
           },
           query: { type: 'string', description: 'Short targeted search phrase. Prefer exact bug names, procedure names, symptoms, or keywords.' },
           topK: { type: 'number', description: 'Max chunks to return (default 5).' },
