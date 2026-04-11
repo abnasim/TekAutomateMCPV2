@@ -23,9 +23,24 @@ interface RagManifest {
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const MCP_ROOT = path.resolve(SCRIPT_DIR, '..');
-const REPO_ROOT = fs.existsSync(path.join(MCP_ROOT, 'public', 'commands'))
+
+// Mirror the hasRepoMarkers() logic from src/core/paths.ts exactly:
+// A true repo root has BOTH public/commands AND an mcp-server subdirectory.
+// When running from mcp-server/, MCP_ROOT has public/commands but NOT mcp-server/,
+// so we walk up one level to find the real root (TekAutomate/).
+// This ensures build writes to the same public/rag/ that the runtime reads from.
+function hasRepoMarkers(dir: string): boolean {
+  return (
+    fs.existsSync(path.join(dir, 'public', 'commands')) &&
+    fs.existsSync(path.join(dir, 'mcp-server'))
+  );
+}
+const REPO_ROOT = hasRepoMarkers(MCP_ROOT)
   ? MCP_ROOT
-  : path.resolve(MCP_ROOT, '..');
+  : hasRepoMarkers(path.resolve(MCP_ROOT, '..'))
+    ? path.resolve(MCP_ROOT, '..')
+    : MCP_ROOT; // fallback: standalone deploy (Railway) where mcp-server IS the root
+
 const COMMANDS_DIR = path.join(REPO_ROOT, 'public', 'commands');
 const TEMPLATES_DIR = path.join(REPO_ROOT, 'public', 'templates');
 const RAG_CORPUS_DIR = path.join(MCP_ROOT, 'rag', 'corpus');

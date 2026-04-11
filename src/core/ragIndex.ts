@@ -81,13 +81,28 @@ export class RagIndexes {
           .map((s) => s.doc)
       : bm25Raw.map((s) => s.doc);
 
+    // Merge exact + BM25, deduplicating by doc ID.
+    // Also cap per-source-URL at 2 chunks so a single datasheet can't occupy all topK slots.
     const merged = new Map<string, RagChunkDoc>();
+    const sourceCount = new Map<string, number>();
+    const MAX_PER_SOURCE = 2;
+
+    const addDoc = (doc: RagChunkDoc): boolean => {
+      if (merged.has(doc.id)) return false;
+      const src = doc.source || '';
+      const count = sourceCount.get(src) ?? 0;
+      if (src && count >= MAX_PER_SOURCE) return false;
+      merged.set(doc.id, doc);
+      if (src) sourceCount.set(src, count + 1);
+      return true;
+    };
+
     for (const doc of exactMatches) {
-      if (!merged.has(doc.id)) merged.set(doc.id, doc);
+      addDoc(doc);
       if (merged.size >= topK) break;
     }
     for (const doc of bm25Matches) {
-      if (!merged.has(doc.id)) merged.set(doc.id, doc);
+      addDoc(doc);
       if (merged.size >= topK) break;
     }
     return Array.from(merged.values()).slice(0, topK);
