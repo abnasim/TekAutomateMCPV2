@@ -163,8 +163,8 @@ export function getToolDefinitions() {
           },
           analysisTransport: {
             type: 'string',
-            enum: ['auto', 'url', 'file_id', 'base64', 'mcp_image', 'openai_image', 'claude_image'],
-            description: 'For action:"screenshot" — optional analysis transport hint. Default auto prefers a short-lived MCP URL. Use openai_image to return the same short-lived MCP image URL for OpenAI-hosted vision flows, claude_image to return a native MCP image content block, base64 only for legacy payloads, or file_id for explicit OpenAI Files upload.',
+            enum: ['claude_image', 'mcp_image', 'openai_image', 'url', 'file_id'],
+            description: 'For action:"screenshot" — image delivery transport. NEVER use base64 (token bomb). Use claude_image when running inside Claude Code / API (returns native MCP image content block, works in agentic/code mode). Use mcp_image when running inside Claude.ai chat / connector mode (returns native MCP image content block, works in chat mode). Use openai_image for OpenAI-hosted vision flows. Use url only as a fallback when neither claude_image nor mcp_image is available. Use file_id for explicit OpenAI Files upload. Default: claude_image.',
           },
           timeoutMs: {
             type: 'number',
