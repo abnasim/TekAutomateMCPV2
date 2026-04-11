@@ -55,13 +55,17 @@ export class RagIndexes {
 
     const normalizedQuery = normalizeRagText(query);
 
-    // Product-family soft boost/penalty for tek_docs (works even without explicit modelFamily)
-    const productScore = corpus === 'tek_docs'
-      ? (doc: RagChunkDoc) => scoreProductMatch(doc, normalizedQuery)
+    // Combined score adjustments for tek_docs:
+    //   productScore  — family alias boost/penalty based on model name in query
+    //   howToScore    — boost FAQ/procedure chunks when query is "how to / setup / decode"
+    const tekScore = corpus === 'tek_docs'
+      ? (doc: RagChunkDoc) =>
+          scoreProductMatch(doc, normalizedQuery) +
+          scoreHowToIntent(doc, normalizedQuery)
       : (_doc: RagChunkDoc) => 0;
 
     const exactMatches = filteredDocs
-      .map((doc) => ({ doc, score: scoreExactMatch(doc, normalizedQuery) + productScore(doc) }))
+      .map((doc) => ({ doc, score: scoreExactMatch(doc, normalizedQuery) + tekScore(doc) }))
       .filter((item) => item.score > 0)
       .sort((a, b) => b.score - a.score)
       .map((item) => item.doc);
@@ -73,10 +77,10 @@ export class RagIndexes {
 
     const bm25Raw = filteredIndex.search(query, Math.max(topK * 4, 12));
 
-    // Re-rank BM25 results with product boost/penalty so wrong-family chunks sink
+    // Re-rank BM25 results with combined tek score adjustments
     const bm25Matches = corpus === 'tek_docs'
       ? bm25Raw
-          .map((s) => ({ doc: s.doc, score: s.score + productScore(s.doc) }))
+          .map((s) => ({ doc: s.doc, score: s.score + tekScore(s.doc) }))
           .sort((a, b) => b.score - a.score)
           .map((s) => s.doc)
       : bm25Raw.map((s) => s.doc);
@@ -286,6 +290,10 @@ const SORTED_ALIAS_KEYS = Object.keys(PRODUCT_ALIASES).sort((a, b) => b.length -
  *   +5  → chunk is tagged for the exact product family mentioned in the query
  *   -3  → chunk is tagged for a *different* model family (wrong product family)
  *    0  → no product alias found in query, or chunk has no model-specific tags
+ *
+ * NOTE: FAQ and how-to chunks are NEVER penalised — they describe universal
+ * procedures that apply to all scope families regardless of which legacy models
+ * happen to be mentioned in the text.
  */
 function scoreProductMatch(doc: RagChunkDoc, normalizedQuery: string): number {
   // Find the most specific (longest) alias present in the query
@@ -298,10 +306,32 @@ function scoreProductMatch(doc: RagChunkDoc, normalizedQuery: string): number {
   // Boost: doc has one of the required tags → it's the right product family
   if (requiredTags.some((tag) => docTags.includes(tag))) return 5;
 
+  // FAQs and how-to content are universal — never penalise for model tag mismatch.
+  // These docs describe procedures that work on all scope families; they just happen
+  // to mention older models (DPO7000, MDO3000) in their examples.
+  if (docTags.includes('faq') || docTags.includes('how_to')) return 0;
+
   // Penalty: doc has model-specific tags, but none match → wrong product family
   const hasOtherModelTags = docTags.some((tag) => TEK_DOCS_MODEL_TAGS.has(normalizeTekTag(tag)));
   if (hasOtherModelTags) return -3;
 
+  return 0;
+}
+
+// ---------------------------------------------------------------------------
+// How-to query intent detection
+// When the query is asking HOW to do something (setup, decode, configure),
+// boost FAQ and scope_logic chunks because they contain step-by-step procedures
+// ---------------------------------------------------------------------------
+
+const HOW_TO_KEYWORDS = ['how', 'setup', 'set up', 'decode', 'configure', 'enable', 'what is'];
+
+function scoreHowToIntent(doc: RagChunkDoc, normalizedQuery: string): number {
+  const isHowToQuery = HOW_TO_KEYWORDS.some((kw) => normalizedQuery.includes(kw));
+  if (!isHowToQuery) return 0;
+  const tags = doc.tags || [];
+  if (tags.includes('faq')) return 4;       // FAQ = exactly what how-to queries need
+  if (tags.includes('scope_logic')) return 2; // Scope procedure docs also relevant
   return 0;
 }
 
