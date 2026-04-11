@@ -725,10 +725,22 @@ function entryFamilyKeys(entry: CommandRecord): Set<string> {
   return out;
 }
 
+// Application-specific command sets that should ONLY appear when explicitly targeted.
+// They are not general scope commands and must not pollute unfiltered searches.
+const APPLICATION_ONLY_FAMILIES = new Set(['DPOJET', 'TEKEXPRESS', 'AFG', 'AWG', 'SMU', 'RSA']);
+
 function familyMatches(entry: CommandRecord, family?: string): boolean {
   const requested = requestedFamilyBuckets(family);
-  if (!requested.size) return true;
   const entryKeys = entryFamilyKeys(entry);
+
+  // Application-specific sources must be explicitly requested — never appear in unfiltered searches
+  if (!requested.size) {
+    for (const key of APPLICATION_ONLY_FAMILIES) {
+      if (entryKeys.has(key)) return false;
+    }
+    return true;
+  }
+
   for (const key of requested) {
     if (entryKeys.has(key)) return true;
   }

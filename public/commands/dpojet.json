@@ -2,7 +2,7 @@
   "metadata": {
     "name": "DPOJET Analysis",
     "description": "DPOJET jitter, timing, and eye diagram analysis commands",
-    "instruments": ["MSO/DPO 5K/7K/70K", "MSO 4/5/6 Series"],
+    "instruments": ["DPO 5K/7K/70K"],
     "version": "1.0"
   },
   "groups": {
