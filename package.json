@@ -5,10 +5,10 @@
   "type": "module",
   "scripts": {
     "build": "npm run build:rag",
-    "build:rag": "tsx scripts/buildRagIndex.ts",
+    "build:rag": "node --import tsx/esm scripts/buildRagIndex.ts",
     "pack:mcpb": "npx -y mcpb pack --output tekautomate-mcp.mcpb",
     "prestart": "npm run build:rag",
-    "start": "tsx src/index.ts",
+    "start": "node --import tsx/esm src/index.ts",
     "predev": "npm run build:rag",
     "start:stdio": "tsx src/stdio.ts",
     "dev": "tsx src/index.ts",
