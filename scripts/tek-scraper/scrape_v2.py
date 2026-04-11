@@ -195,7 +195,9 @@ def extract_tags(title, body):
     topics = {
         'TRIGGER': 'trigger', 'PROBE': 'probe', 'BANDWIDTH': 'bandwidth',
         'DECODE': 'decode', 'PROTOCOL': 'protocol', 'SERIAL BUS': 'serial_bus',
-        'I2C': 'I2C', 'SPI': 'SPI', 'UART': 'UART', 'CAN BUS': 'CAN', 'LIN BUS': 'LIN',
+        'I2C': 'I2C', 'SPI': 'SPI', 'UART': 'UART', 'RS232': 'RS232', 'RS-232': 'RS232',
+        'CAN BUS': 'CAN', 'LIN BUS': 'LIN', 'MIL-STD-1553': 'MIL_STD_1553', '1553': 'MIL_STD_1553',
+        'PARALLEL BUS': 'parallel',
         'ETHERNET': 'ethernet', 'USB ': 'USB',
         'FFT': 'FFT', 'SPECTRUM': 'spectrum', 'POWER': 'power',
         'JITTER': 'jitter', 'EYE DIAGRAM': 'eye_diagram',

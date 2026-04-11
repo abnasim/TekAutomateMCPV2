@@ -328,15 +328,46 @@ function scoreProductMatch(doc: RagChunkDoc, normalizedQuery: string): number {
 
 const HOW_TO_KEYWORDS = ['how', 'setup', 'set up', 'decode', 'configure', 'enable', 'what is'];
 
+// Protocol names as they appear in tek_docs tags (lowercase for query matching).
+// When a query names a specific protocol, a FAQ tagged with that same protocol
+// gets +2 on top of the base +4, making it rank above other decode FAQs.
+const PROTOCOL_TAGS: Record<string, string> = {
+  'i2c':      'I2C',
+  'spi':      'SPI',
+  'uart':     'UART',
+  'rs232':    'RS232',
+  'rs-232':   'RS232',
+  'can':      'CAN',
+  'lin':      'LIN',
+  'usb':      'USB',
+  'ethernet': 'ethernet',
+  'mil-std-1553': 'MIL_STD_1553',
+  '1553':     'MIL_STD_1553',
+  'parallel': 'parallel',
+};
+
 function scoreHowToIntent(doc: RagChunkDoc, normalizedQuery: string): number {
   const isHowToQuery = HOW_TO_KEYWORDS.some((kw) => normalizedQuery.includes(kw));
   if (!isHowToQuery) return 0;
   const tags = doc.tags || [];
   // faq tag OR title-prefix — same safety net as scoreProductMatch so chunks
   // whose faq tag was truncated by the 12-tag limit still receive the boost.
-  if (tags.includes('faq') || doc.title.startsWith('FAQ:')) return 4;
-  if (tags.includes('scope_logic')) return 2; // Scope procedure docs also relevant
-  return 0;
+  const isFaq = tags.includes('faq') || doc.title.startsWith('FAQ:');
+  if (!isFaq) {
+    return tags.includes('scope_logic') ? 2 : 0;
+  }
+  // Base FAQ boost (+4) + protocol specificity bonus (+2) when the query names
+  // a protocol that is also tagged on this chunk — differentiates e.g. the
+  // RS232 FAQ from the I2C FAQ when the query contains "RS232".
+  const matchedProtocol = Object.entries(PROTOCOL_TAGS).find(([qAlias]) =>
+    normalizedQuery.includes(qAlias)
+  );
+  if (matchedProtocol) {
+    const tagValue = matchedProtocol[1];
+    if (tags.includes(tagValue)) return 6; // exact protocol match
+    return 4;                              // FAQ but different protocol
+  }
+  return 4; // generic how-to, no protocol specified
 }
 
 let _ragPromise: Promise<RagIndexes> | null = null;
