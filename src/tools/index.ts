@@ -277,6 +277,18 @@ export function getToolDefinitions() {
             type: 'number',
             description: 'For action:"examples" or "failures" — max results to return.',
           },
+          modelFamily: {
+            type: 'string',
+            description:
+              'For action:"retrieve" with corpus:"tek_docs" — optional instrument model family filter (e.g. MSO6, MSO5, MSO4, DPO7000, MDO3000). ' +
+              'Two-tier filtering applies:\n' +
+              '1. HARD FILTER: chunks tagged for a different model family are excluded entirely.\n' +
+              '2. SOFT BOOST (automatic, no modelFamily needed): if the query itself contains a product alias ' +
+              '(e.g. "mso64b", "6 series b", "dpo70000sx"), matching family chunks get +5 score boost and ' +
+              'wrong-family chunks get -3 penalty — so results naturally rank toward the right product even ' +
+              'without passing modelFamily explicitly.\n' +
+              'General content (probes, protocols, measurements — chunks with no model-specific tags) always passes through regardless.',
+          },
         },
         required: ['action'],
         additionalProperties: true,
@@ -710,7 +722,7 @@ export function getToolDefinitions() {
           },
           query: { type: 'string', description: 'Short targeted search phrase. Prefer exact bug names, procedure names, symptoms, or keywords.' },
           topK: { type: 'number', description: 'Max chunks to return (default 5).' },
-          modelFamily: { type: 'string', description: 'Optional instrument model family for tek_docs filtering (e.g. MSO6, MSO5, DPO7000). Chunks tagged for a specific model only appear when their tags match. General content (untagged) always passes through.' },
+          modelFamily: { type: 'string', description: 'Optional instrument model family for tek_docs corpus (e.g. MSO6, MSO5, MSO4, DPO7000). Hard-filters out chunks tagged for other families. Note: even without this, if the query contains a product alias (e.g. "mso64b bandwidth", "6 series b trigger"), the search automatically boosts matching-family chunks and demotes wrong-family ones. General content with no model-specific tags always passes through.' },
         },
         required: ['corpus', 'query'],
         additionalProperties: false,
