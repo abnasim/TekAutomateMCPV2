@@ -304,6 +304,17 @@ function main(): void {
   writeShard('errors_index.json', errorChunks);
   writeShard('pyvisa_tekhsi_index.json', pyvisaTekhsiChunks);
 
+  // Preserve externally-built corpora (e.g. tek_docs scraped from web/PDFs).
+  // These are committed to the repo and must survive rebuilds — do NOT overwrite them.
+  const tekDocsFile = path.join(OUT_DIR, 'tek_docs_index.json');
+  let tekDocsCount = 0;
+  if (fs.existsSync(tekDocsFile)) {
+    try {
+      const existing = JSON.parse(fs.readFileSync(tekDocsFile, 'utf8')) as unknown[];
+      tekDocsCount = Array.isArray(existing) ? existing.length : 0;
+    } catch { /* malformed — skip */ }
+  }
+
   const manifest: RagManifest = {
     version: '1.0.0',
     generatedAt: new Date().toISOString(),
@@ -315,6 +326,7 @@ function main(): void {
       templates: 'templates_index.json',
       errors: 'errors_index.json',
       pyvisa_tekhsi: 'pyvisa_tekhsi_index.json',
+      ...(tekDocsCount > 0 ? { tek_docs: 'tek_docs_index.json' } : {}),
     },
     counts: {
       scpi: scpiChunks.length,
@@ -324,12 +336,13 @@ function main(): void {
       templates: templateChunks.length,
       errors: errorChunks.length,
       pyvisa_tekhsi: pyvisaTekhsiChunks.length,
+      ...(tekDocsCount > 0 ? { tek_docs: tekDocsCount } : {}),
     },
   };
   fs.writeFileSync(path.join(OUT_DIR, 'manifest.json'), JSON.stringify(manifest, null, 2));
 
   // eslint-disable-next-line no-console
-  console.log(`RAG shards generated in public/rag (scpi=${scpiChunks.length}, tmdevices=${tmChunks.length}, app_logic=${appLogicChunks.length}, scope_logic=${scopeLogicChunks.length}, templates=${templateChunks.length}, errors=${errorChunks.length}, pyvisa_tekhsi=${pyvisaTekhsiChunks.length})`);
+  console.log(`RAG shards generated in public/rag (scpi=${scpiChunks.length}, tmdevices=${tmChunks.length}, app_logic=${appLogicChunks.length}, scope_logic=${scopeLogicChunks.length}, templates=${templateChunks.length}, errors=${errorChunks.length}, pyvisa_tekhsi=${pyvisaTekhsiChunks.length}${tekDocsCount > 0 ? `, tek_docs=${tekDocsCount}` : ''})`);
 }
 
 main();
