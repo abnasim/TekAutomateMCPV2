@@ -248,7 +248,7 @@ export function getToolDefinitions() {
     {
       name: 'knowledge',
       description:
-        'Knowledge gateway for TekAutomate support material. Use action:"retrieve" with a corpus to search docs/reference (scpi for commands, tmdevices for Python driver API, app_logic for architecture, scope_logic for measurement concepts, pyvisa_tekhsi for connection examples, tek_docs for Tektronix product docs — specs, app notes, blogs, FAQs, primers with source URLs you can web-fetch for full content). Use action:"examples" to find matching workflow templates. Use action:"failures" to look up known runtime errors and their fixes. Example: {action:"retrieve", corpus:"tek_docs", query:"runt trigger MSO6"} returns chunks with tek.com source URLs — fetch the URL for the full article or linked PDF.',
+        'Knowledge gateway for TekAutomate support material. Use action:"retrieve" with a corpus to search docs/reference (scpi for commands, tmdevices for Python driver API, app_logic for architecture, scope_logic for measurement concepts, pyvisa_tekhsi for connection examples, tek_docs for Tektronix product docs — specs, app notes, blogs, FAQs, primers with source URLs you can web-fetch for full content). Use action:"examples" to find matching workflow templates. Use action:"failures" to look up known runtime errors and their fixes. Example: {action:"retrieve", corpus:"tek_docs", query:"runt trigger MSO6"} returns chunks with tek.com source URLs — fetch the URL for the full article or linked PDF. For complete answers to user questions, search multiple corpora in sequence: tek_docs for conceptual knowledge and how-to guidance, then scpi for exact command syntax and parameters.',
       parameters: {
         type: 'object',
         properties: {
@@ -263,7 +263,7 @@ export function getToolDefinitions() {
           },
           corpus: {
             type: 'string',
-            description: 'For action:"retrieve" — which knowledge corpus to search. Pick the best match:\n• "scpi" — SCPI command syntax, parameters, and programming guide docs (use for "how do I send/query X command")\n• "tmdevices" — tm_devices Python library: driver classes, methods, and API reference (use for "how do I use tm_devices to...")\n• "app_logic" — TekAutomate architecture, AiAction schemas, internal system design docs (use for "how does TekAutomate work internally")\n• "errors" — known runtime error patterns and fixes (prefer action:"failures" instead)\n• "scope_logic" — oscilloscope measurement logic, channel/trigger/acquisition concepts\n• "templates" — workflow template reference (prefer action:"examples" instead)\n• "pyvisa_tekhsi" — PyVISA and TekHSI connection/streaming examples\n• "tek_docs" — scraped Tektronix product documentation: MSO/DPO/MDO series specs, app notes, blogs, FAQs, primers, datasheets. Each result includes a source URL (tek.com) — if the chunk preview is not enough, web-fetch the URL for the full article or download the linked PDF for complete content',
+            description: 'For action:"retrieve" — which knowledge corpus to search. Pick the best match:\n• "scpi" — SCPI command syntax, parameters, and programming guide docs (31,229 chunks across MSO 2/4/5/6/7, DPO5K/7K/70K, RSA, AWG, AFG, SMU, DPOJET, TekExpress) (use for "how do I send/query X command")\n• "tmdevices" — tm_devices Python library: driver classes, methods, and API reference (use for "how do I use tm_devices to...")\n• "app_logic" — TekAutomate architecture, AiAction schemas, internal system design docs (use for "how does TekAutomate work internally")\n• "errors" — known runtime error patterns and fixes (prefer action:"failures" instead)\n• "scope_logic" — oscilloscope measurement logic, channel/trigger/acquisition concepts\n• "templates" — workflow template reference (prefer action:"examples" instead)\n• "pyvisa_tekhsi" — PyVISA and TekHSI connection/streaming examples\n• "tek_docs" — scraped Tektronix product documentation (1,187 chunks): MSO/DPO/MDO series specs, app notes, primers, technical briefs, blogs, FAQs (including protocol decode how-tos for I2C, CAN, USB, LIN, RS232, Ethernet, MIL-1553), and datasheets. Queries with how-to intent (how, setup, decode, configure) automatically boost FAQ results. Each result includes a source URL (tek.com) — if the chunk preview is not enough, web-fetch the URL for the full article or download the linked PDF for complete content',
           },
           query: {
             type: 'string',
@@ -710,7 +710,7 @@ export function getToolDefinitions() {
         '- app_logic: TekAutomate app behavior and implementation rules\n' +
         '- errors: known failures, causes, and fixes\n' +
         '- scope_logic: step-by-step scope procedures like clipping, probe compensation, decode bring-up, autoset-first\n' +
-        '- tek_docs: Tektronix product docs — specs, app notes, FAQs, blogs, primers, datasheets. Results include source URLs; web-fetch the URL for full content\n\n' +
+        '- tek_docs: Tektronix product docs (1,187 chunks) — specs, app notes, primers, technical briefs, FAQs (protocol decode how-tos: I2C, CAN, USB, LIN, RS232, Ethernet, MIL-1553), blogs, datasheets. Results include source URLs; web-fetch the URL for full content. How-to queries automatically boost FAQ chunks.\n\n' +
         'Use short, exact, noun-heavy queries such as "OPC Query Return Type", "clipping 9.91E+37", "probe compensation", or "autoset first".',
       parameters: {
         type: 'object',
@@ -718,9 +718,9 @@ export function getToolDefinitions() {
           corpus: {
             type: 'string',
             enum: ['scpi', 'tmdevices', 'app_logic', 'errors', 'templates', 'pyvisa_tekhsi', 'scope_logic', 'tek_docs'],
-            description: 'Which knowledge corpus to search. Use tek_docs for Tektronix product docs (MSO/DPO/MDO specs, app notes, FAQs, blogs, primers, datasheets) — results include source URLs you can web-fetch for full articles/PDFs.',
+            description: 'Which knowledge corpus to search. Use tek_docs for Tektronix product docs (MSO/DPO/MDO specs, app notes, FAQs, blogs, primers, datasheets) — results include source URLs you can web-fetch for full articles/PDFs. Product-alias detection is automatic — queries mentioning model names (e.g. "mso64b", "6 series b", "4 series mso") boost matching-family chunks without needing modelFamily.',
           },
-          query: { type: 'string', description: 'Short targeted search phrase. Prefer exact bug names, procedure names, symptoms, or keywords.' },
+          query: { type: 'string', description: 'Short targeted search phrase. Prefer exact bug names, procedure names, symptoms, or keywords. For user how-to questions, search tek_docs first for conceptual guidance, then scpi for exact command syntax.' },
           topK: { type: 'number', description: 'Max chunks to return (default 5).' },
           modelFamily: { type: 'string', description: 'Optional instrument model family for tek_docs corpus (e.g. MSO6, MSO5, MSO4, DPO7000). Hard-filters out chunks tagged for other families. Note: even without this, if the query contains a product alias (e.g. "mso64b bandwidth", "6 series b trigger"), the search automatically boosts matching-family chunks and demotes wrong-family ones. General content with no model-specific tags always passes through.' },
         },
