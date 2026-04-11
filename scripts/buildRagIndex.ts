@@ -321,12 +321,43 @@ function main(): void {
 
   // Preserve externally-built corpora (e.g. tek_docs scraped from web/PDFs).
   // These are committed to the repo and must survive rebuilds — do NOT overwrite them.
+  // We DO apply a lightweight data-hygiene pass every build so that stale build
+  // caches (e.g. NIXPACKS on Railway) can never serve corrupted tag data:
+  //   • Remove false 'faq' tags from non-FAQ chunks (body-text false-positives).
+  //   • Add 'faq' tag to any FAQ chunk whose tag was truncated by the old 12-tag limit.
+  // This is idempotent — clean data is unchanged; broken data is repaired.
   const tekDocsFile = path.join(OUT_DIR, 'tek_docs_index.json');
   let tekDocsCount = 0;
   if (fs.existsSync(tekDocsFile)) {
     try {
-      const existing = JSON.parse(fs.readFileSync(tekDocsFile, 'utf8')) as unknown[];
-      tekDocsCount = Array.isArray(existing) ? existing.length : 0;
+      const existing = JSON.parse(fs.readFileSync(tekDocsFile, 'utf8')) as Array<Record<string, unknown>>;
+      if (Array.isArray(existing)) {
+        let patched = 0;
+        existing.forEach((chunk) => {
+          const title = typeof chunk.title === 'string' ? chunk.title : '';
+          const tags = Array.isArray(chunk.tags) ? (chunk.tags as string[]) : [];
+          const isFaqTitle = title.startsWith('FAQ:');
+          const hasFaqTag = tags.includes('faq');
+
+          if (isFaqTitle && !hasFaqTag) {
+            // faq tag was truncated — add it back
+            tags.push('faq');
+            tags.sort();
+            chunk.tags = tags;
+            patched++;
+          } else if (!isFaqTitle && hasFaqTag) {
+            // false positive — body text contained "FAQ" (e.g. sidebar nav links)
+            chunk.tags = tags.filter((t) => t !== 'faq');
+            patched++;
+          }
+        });
+        if (patched > 0) {
+          fs.writeFileSync(tekDocsFile, JSON.stringify(existing, null, 2));
+          // eslint-disable-next-line no-console
+          console.log(`tek_docs hygiene: repaired ${patched} chunk(s) with incorrect faq tag`);
+        }
+        tekDocsCount = existing.length;
+      }
     } catch { /* malformed — skip */ }
   }
 
