@@ -5,6 +5,7 @@ interface RetrieveRagChunksInput {
   corpus: RagCorpus;
   query: string;
   topK?: number;
+  modelFamily?: string;
 }
 
 export async function retrieveRagChunks(
@@ -15,7 +16,7 @@ export async function retrieveRagChunks(
     return { ok: true, data: [], sourceMeta: [], warnings: ['Empty query'] };
   }
   const rag = await getRagIndexes();
-  const chunks = rag.search(input.corpus, q, input.topK || 5);
+  const chunks = rag.search(input.corpus, q, input.topK || 5, input.modelFamily);
   return {
     ok: true,
     data: chunks.map((c) => {

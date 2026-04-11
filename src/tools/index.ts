@@ -710,6 +710,7 @@ export function getToolDefinitions() {
           },
           query: { type: 'string', description: 'Short targeted search phrase. Prefer exact bug names, procedure names, symptoms, or keywords.' },
           topK: { type: 'number', description: 'Max chunks to return (default 5).' },
+          modelFamily: { type: 'string', description: 'Optional instrument model family for tek_docs filtering (e.g. MSO6, MSO5, DPO7000). Chunks tagged for a specific model only appear when their tags match. General content (untagged) always passes through.' },
         },
         required: ['corpus', 'query'],
         additionalProperties: false,
