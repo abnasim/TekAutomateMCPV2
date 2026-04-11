@@ -22,10 +22,12 @@ Four git repos, all should have identical `src/` code:
 3. `Tek_Automator/` root → `git add mcp-server/src/... && git push`
 4. `Tek_Automator/mcp-server/` is local only — files stay in sync via reset/copy
 
-**Differences between repos are runtime config only (`.env`), NOT source code:**
+**All repos always have identical source code. Differences are `.env` / runtime config ONLY — never src/:**
 - `mcp-server`: `LIVE_INSTRUMENT_ENABLED=true`, executor on localhost, port 8787
 - `TekAutomateMCPV2`: `LIVE_INSTRUMENT_ENABLED=true`, Railway URLs
 - `TekAutomateMCPPublic`: `LIVE_INSTRUMENT_ENABLED=false`, public Railway URL
+
+When editing source: make the change in `TekAutomateMCPV2/`, copy to the other repos, then push all 4.
 
 ---
 
