@@ -299,6 +299,13 @@ export function updateRuntimeContext(input: {
   }
 
   runtimeContextState.updatedAt = new Date().toISOString();
+
+  // Also store workflow per-session so each browser's workflow is isolated.
+  const pushedSessionKey = runtimeContextState.liveSession.sessionKey;
+  if (pushedSessionKey && input.workflow) {
+    setWorkflowForSession(pushedSessionKey, runtimeContextState.workflow);
+  }
+
   return getRuntimeContextState();
 }
 
@@ -316,16 +323,37 @@ export function getRuntimeContextState(): RuntimeContextState {
   };
 }
 
-// Workflow state expires after 90 seconds with no push.
-// Prevents stale data from a previous browser session being served to a new one.
+// ── Per-session workflow store ───────────────────────────────────────────────
+// Each browser has a unique sessionKey (from sessionStorage). When it pushes
+// /runtime-context, the workflow is stored under that key. getCurrentWorkflow
+// uses __connectionSessionKey to look up the right browser's workflow — no
+// cross-session contamination even when multiple browsers are open.
 const WORKFLOW_TTL_MS = 90_000;
+const workflowBySession = new Map<string, { workflow: RuntimeWorkflowContext; updatedAt: number }>();
+
+export function setWorkflowForSession(sessionKey: string, workflow: RuntimeWorkflowContext): void {
+  workflowBySession.set(sessionKey, { workflow, updatedAt: Date.now() });
+  // Evict expired entries
+  const cutoff = Date.now() - WORKFLOW_TTL_MS;
+  for (const [key, entry] of workflowBySession) {
+    if (entry.updatedAt < cutoff) workflowBySession.delete(key);
+  }
+}
+
+export function getWorkflowForSession(sessionKey: string): RuntimeWorkflowContext | null {
+  const entry = workflowBySession.get(sessionKey);
+  if (!entry) return null;
+  if (Date.now() - entry.updatedAt > WORKFLOW_TTL_MS) {
+    workflowBySession.delete(sessionKey);
+    return null;
+  }
+  return { ...entry.workflow, steps: entry.workflow.steps.map((s) => ({ ...s })) };
+}
 
 export function getCurrentWorkflowState(): RuntimeWorkflowContext {
   const state = getRuntimeContextState();
   const age = Date.now() - new Date(state.updatedAt).getTime();
-  if (age > WORKFLOW_TTL_MS) {
-    return { ...DEFAULT_WORKFLOW };
-  }
+  if (age > WORKFLOW_TTL_MS) return { ...DEFAULT_WORKFLOW };
   return state.workflow;
 }
 
