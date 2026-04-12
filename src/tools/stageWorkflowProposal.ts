@@ -1,5 +1,6 @@
 import type { ToolResult } from '../core/schemas';
 import { getLiveSessionState } from './runtimeContextStore';
+import { pushLiveProposal } from './liveActionBridge';
 
 export interface StagedWorkflowProposal {
   id: string;
@@ -19,7 +20,7 @@ interface StageWorkflowProposalInput {
   sessionKey?: unknown;
 }
 
-// Keyed by sessionKey — supports multiple concurrent users.
+// Keyed by sessionKey — supports multiple concurrent users on the same public MCP.
 // Falls back to 'default' when no sessionKey is provided (legacy / single-user).
 const proposalsBySession = new Map<string, StagedWorkflowProposal>();
 const MAX_SESSIONS = 500; // guard against unbounded growth
@@ -60,9 +61,7 @@ export async function stageWorkflowProposal(
         actionCount: 0,
       },
       sourceMeta: [],
-      warnings: [
-        'Proposal was not staged because no actions were provided.',
-      ],
+      warnings: ['Proposal was not staged because no actions were provided.'],
     };
   }
 
@@ -95,6 +94,14 @@ export async function stageWorkflowProposal(
   }
 
   proposalsBySession.set(sessionKey, proposal);
+
+  // Push via live bridge — only to the explicit sessionKey.
+  // The agent receives sessionKey via additional_instructions injected at session
+  // creation, so it always passes the right key. Broadcasting to all sessions
+  // breaks isolation (every browser sees every proposal).
+  if (sessionKey !== 'default') {
+    pushLiveProposal(proposal, sessionKey);
+  }
 
   return {
     ok: true,

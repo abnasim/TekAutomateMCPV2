@@ -99,12 +99,15 @@ let runtimeContextState: RuntimeContextState = {
 // ── Active session registry ──────────────────────────────────────────────────
 // Tracks every sessionKey that has pushed to /runtime-context recently.
 // Keyed by sessionKey → last push timestamp (ms).
+// Used by auto-staging to push proposals to ALL active browsers, not just the
+// last one to push (which would cause cross-browser session collision).
 const ACTIVE_SESSION_TTL_MS = 5 * 60 * 1000; // 5 minutes
 const MAX_ACTIVE_SESSIONS = 50;
 const activeSessionRegistry = new Map<string, number>();
 
 function registerActiveSession(sessionKey: string) {
   activeSessionRegistry.set(sessionKey, Date.now());
+  // Evict expired entries if we hit the cap
   if (activeSessionRegistry.size > MAX_ACTIVE_SESSIONS) {
     const cutoff = Date.now() - ACTIVE_SESSION_TTL_MS;
     for (const [key, ts] of activeSessionRegistry) {
