@@ -316,8 +316,17 @@ export function getRuntimeContextState(): RuntimeContextState {
   };
 }
 
+// Workflow state expires after 90 seconds with no push.
+// Prevents stale data from a previous browser session being served to a new one.
+const WORKFLOW_TTL_MS = 90_000;
+
 export function getCurrentWorkflowState(): RuntimeWorkflowContext {
-  return getRuntimeContextState().workflow;
+  const state = getRuntimeContextState();
+  const age = Date.now() - new Date(state.updatedAt).getTime();
+  if (age > WORKFLOW_TTL_MS) {
+    return { ...DEFAULT_WORKFLOW };
+  }
+  return state.workflow;
 }
 
 export function getInstrumentInfoState(): RuntimeInstrumentInfo {
