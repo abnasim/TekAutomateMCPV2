@@ -85,41 +85,31 @@ function buildExternalMcpToolContent(toolName: string, result: unknown) {
   const isScreenshotLike = toolName === 'capture_screenshot'
     || (toolName === 'instrument_live' && Boolean(imageContent || source.imageUrl || source.base64 || source.analysisBase64));
 
-  // ── Claude path: base64 image content block (mcp_image / claude_image transport) ──
-  // This path is unchanged — Claude receives a native MCP image content block.
-  if (isScreenshotLike && imageContent && imageContent.type === 'image') {
-    const metadata: Record<string, unknown> = {
-      ok: source.ok === false ? false : true,
-      captured: true,
-    };
-    if (typeof source.capturedAt === 'string') metadata.capturedAt = source.capturedAt;
-    if (typeof source.scopeType === 'string') metadata.scopeType = source.scopeType;
-    if (typeof source.mimeType === 'string') metadata.mimeType = source.mimeType;
-    if (typeof source.sizeBytes === 'number') metadata.sizeBytes = source.sizeBytes;
-    if (typeof source.originalMimeType === 'string') metadata.originalMimeType = source.originalMimeType;
-    if (typeof source.originalSizeBytes === 'number') metadata.originalSizeBytes = source.originalSizeBytes;
-    return [
-      {
-        type: 'image' as const,
-        data: String(imageContent.data || ''),
-        mimeType: String(imageContent.mimeType || source.mimeType || 'image/png'),
-      },
-      {
-        type: 'text' as const,
-        text: JSON.stringify(metadata),
-      },
-    ];
-  }
+  // ── Image path: resolve base64 from whichever transport delivered the image ──
+  // All transports now produce base64 at the MCP bridge layer — no image_url needed.
+  // MCP only accepts: text, image, audio, resource, resource_link — never image_url.
+  if (isScreenshotLike) {
+    let base64: string | null = null;
+    let mimeType = 'image/png';
 
-  // ── URL path: imageUrl + mimeType present (url / auto / openai_image transport) ──
-  // MCP protocol only accepts: text, image, audio, resource, resource_link.
-  // image_url is NOT a valid MCP content type — the SDK throws -32602 if we emit it.
-  // Fix: extract the image ID from the URL, retrieve the bytes from tempImageStore,
-  // and return a standard {type:'image', data:base64} block that ALL clients accept.
-  if (isScreenshotLike && typeof source.imageUrl === 'string'
-      && typeof source.mimeType === 'string' && source.mimeType.startsWith('image/')) {
-    const imageUrl = source.imageUrl as string;
-    const mimeType = source.mimeType as string;
+    // Path A: claude/mcp_image transport — imageContent block already carries base64
+    if (imageContent && imageContent.type === 'image' && imageContent.data) {
+      base64 = String(imageContent.data);
+      mimeType = String(imageContent.mimeType || source.mimeType || 'image/png');
+    }
+
+    // Path B: url/auto/openai transport — retrieve bytes from tempImageStore via URL ID
+    if (!base64 && typeof source.imageUrl === 'string'
+        && typeof source.mimeType === 'string' && source.mimeType.startsWith('image/')) {
+      const idMatch = (source.imageUrl as string).match(/\/temp\/vision\/([^./?]+)/);
+      if (idMatch) {
+        const stored = getTempVisionImage(idMatch[1]);
+        if (stored) {
+          base64 = stored.buffer.toString('base64');
+          mimeType = stored.mimeType;
+        }
+      }
+    }
 
     const contextText = [
       'Oscilloscope screenshot captured.',
@@ -128,30 +118,21 @@ function buildExternalMcpToolContent(toolName: string, result: unknown) {
       'Analyze the waveform display, trigger settings, measurements, and any decode tables visible.',
     ].filter(Boolean).join(' ');
 
-    // Extract the temp store ID from the path: /temp/vision/{id}.ext
-    const idMatch = imageUrl.match(/\/temp\/vision\/([^./?]+)/);
-    if (idMatch) {
-      const record = getTempVisionImage(idMatch[1]);
-      if (record) {
-        return [
-          { type: 'text' as const, text: contextText },
-          {
-            type: 'image' as const,
-            data: record.buffer.toString('base64'),
-            mimeType: record.mimeType,
-          },
-        ];
-      }
+    if (base64) {
+      return [
+        { type: 'text' as const, text: contextText },
+        { type: 'image' as const, data: base64, mimeType },
+      ];
     }
 
-    // Temp store expired or ID not parseable — fall back to URL in text so the
-    // AI can at least see the URL and optionally web-fetch it.
-    return [
-      {
-        type: 'text' as const,
-        text: `${contextText}\n\nScreenshot URL (web-fetch for full image): ${imageUrl}`,
-      },
-    ];
+    // No image data available — URL in text as last resort so AI can web-fetch it
+    const imageUrl = typeof source.imageUrl === 'string' ? source.imageUrl : '';
+    return [{
+      type: 'text' as const,
+      text: imageUrl
+        ? `${contextText}\n\nScreenshot URL (web-fetch for full image): ${imageUrl}`
+        : contextText,
+    }];
   }
 
   // ── Fallback: all other tool results ──
