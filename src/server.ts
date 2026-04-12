@@ -915,12 +915,11 @@ function filterTools(q) {
             console.log(`[MCP:json] call_tool name=${toolName} args=${JSON.stringify(toolArgs).slice(0, 200)}`);
             try {
               const result = await runTool(toolName, toolArgs);
-              const safeResult = sanitizeToolResultForExternalMcp(toolName, result);
-              const text = typeof safeResult === 'string' ? safeResult : JSON.stringify(safeResult, null, 2);
+              const content = buildExternalMcpToolContent(toolName, result);
               sendJson(res, 200, {
                 jsonrpc: '2.0',
                 id: rpcId,
-                result: { content: [{ type: 'text', text }] },
+                result: { content },
               });
             } catch (err) {
               const msg = err instanceof Error ? err.message : String(err);
