@@ -45,24 +45,23 @@ export class RagIndexes {
     const index = this.byCorpus[corpus];
     if (!index) return [];
 
-    // For tek_docs, apply model-family filtering the same way SCPI does:
-    // - Chunks with no model-specific tags → always included (general content)
-    // - Chunks with model-specific tags → only included if tags match the requested family
-    // - No modelFamily requested → all chunks pass
-    const filteredDocs = (corpus === 'tek_docs' && modelFamily)
-      ? docs.filter((doc) => tekDocsFamilyMatches(doc, modelFamily))
+    const filteredDocs = (modelFamily && (corpus === 'tek_docs' || corpus === 'tmdevices'))
+      ? docs.filter((doc) =>
+          corpus === 'tek_docs'
+            ? tekDocsFamilyMatches(doc, modelFamily)
+            : tmDevicesFamilyMatches(doc, modelFamily)
+        )
       : docs;
 
     const normalizedQuery = normalizeRagText(query);
 
-    // Combined score adjustments for tek_docs:
-    //   productScore  — family alias boost/penalty based on model name in query
-    //   howToScore    — boost FAQ/procedure chunks when query is "how to / setup / decode"
     const tekScore = corpus === 'tek_docs'
       ? (doc: RagChunkDoc) =>
           scoreProductMatch(doc, normalizedQuery) +
           scoreHowToIntent(doc, normalizedQuery)
-      : (_doc: RagChunkDoc) => 0;
+      : corpus === 'tmdevices'
+        ? (doc: RagChunkDoc) => scoreTmDevicesFamily(doc, normalizedQuery, modelFamily)
+        : (_doc: RagChunkDoc) => 0;
 
     const exactMatches = filteredDocs
       .map((doc) => ({ doc, score: scoreExactMatch(doc, normalizedQuery) + tekScore(doc) }))
@@ -71,14 +70,14 @@ export class RagIndexes {
       .map((item) => item.doc);
 
     // BM25 search over filtered set
-    const filteredIndex = corpus === 'tek_docs' && modelFamily && filteredDocs.length !== docs.length
+    const filteredIndex = modelFamily && (corpus === 'tek_docs' || corpus === 'tmdevices') && filteredDocs.length !== docs.length
       ? new Bm25Index<RagChunkDoc>(filteredDocs)
       : index;
 
     const bm25Raw = filteredIndex.search(query, Math.max(topK * 4, 12));
 
-    // Re-rank BM25 results with combined tek score adjustments
-    const bm25Matches = corpus === 'tek_docs'
+    // Re-rank BM25 results with combined score adjustments
+    const bm25Matches = (corpus === 'tek_docs' || corpus === 'tmdevices')
       ? bm25Raw
           .map((s) => ({ doc: s.doc, score: s.score + tekScore(s.doc) }))
           .sort((a, b) => b.score - a.score)
@@ -220,6 +219,66 @@ function tekDocsFamilyMatches(doc: RagChunkDoc, modelFamily: string): boolean {
   // Model-specific content → check if any tag matches the requested family
   const requested = tekDocsRequestedBuckets(modelFamily);
   return modelTags.some((tag) => requested.has(tag));
+}
+
+// ---------------------------------------------------------------------------
+// tm_devices model-family filtering + soft scoring
+// ---------------------------------------------------------------------------
+const TM_DEVICES_FAMILY_TAGS = new Set([
+  'MSO2', 'MSO4', 'MSO5', 'MSO6', 'LPD6',
+  'MDO3K', 'MDO4K', 'DPO4K', 'DPO5K', 'DPO7K', 'DPO70K',
+  'AFG3K', 'AWG5200', 'AWG5K', 'AWG7K', 'SMU', 'RSA',
+]);
+
+function tmDevicesRequestedFamilies(modelFamily: string): Set<string> {
+  const n = normalizeTekTag(modelFamily);
+  const out = new Set<string>();
+  if (/MSO2|2SERIES/.test(n))  out.add('MSO2');
+  if (/MSO4|4SERIES/.test(n))  out.add('MSO4');
+  if (/MSO5|5SERIES/.test(n))  out.add('MSO5');
+  if (/MSO6|6SERIES/.test(n))  out.add('MSO6');
+  if (/LPD6/.test(n))          out.add('LPD6');
+  if (/MDO3/.test(n))          out.add('MDO3K');
+  if (/MDO4/.test(n))          out.add('MDO4K');
+  if (/DPO4/.test(n))          out.add('DPO4K');
+  if (/DPO5/.test(n))          out.add('DPO5K');
+  if (/DPO7000(?!0)|DPO7K/.test(n)) out.add('DPO7K');
+  if (/DPO70000|DPO70K/.test(n))    out.add('DPO70K');
+  if (/AFG3/.test(n))          out.add('AFG3K');
+  if (/AWG5200/.test(n))       out.add('AWG5200');
+  if (/AWG5/.test(n))          out.add('AWG5K');
+  if (/AWG7/.test(n))          out.add('AWG7K');
+  if (out.size === 0) out.add(n);
+  return out;
+}
+
+function tmDevicesFamilyMatches(doc: RagChunkDoc, modelFamily: string): boolean {
+  const familyTags = (doc.tags || []).filter((t) => TM_DEVICES_FAMILY_TAGS.has(t));
+  if (familyTags.length === 0) return true;
+  const requested = tmDevicesRequestedFamilies(modelFamily);
+  return familyTags.some((t) => requested.has(t));
+}
+
+const TM_QUERY_ALIASES: Record<string, string> = {
+  'mso2': 'MSO2', 'mso22': 'MSO2', 'mso24': 'MSO2', 'mso26': 'MSO2', '2 series': 'MSO2',
+  'mso4': 'MSO4', 'mso44': 'MSO4', 'mso46': 'MSO4', '4 series': 'MSO4',
+  'mso5': 'MSO5', 'mso54': 'MSO5', 'mso56': 'MSO5', 'mso58': 'MSO5', '5 series': 'MSO5',
+  'mso6': 'MSO6', 'mso64': 'MSO6', 'mso66': 'MSO6', 'mso68': 'MSO6', '6 series': 'MSO6',
+  'dpo4000': 'DPO4K', 'dpo5000': 'DPO5K', 'dpo7000': 'DPO7K', 'dpo70000': 'DPO70K',
+  'afg3': 'AFG3K', 'awg5': 'AWG5K', 'awg7': 'AWG7K',
+};
+
+function scoreTmDevicesFamily(doc: RagChunkDoc, normalizedQuery: string, modelFamily?: string): number {
+  const familyTags = (doc.tags || []).filter((t) => TM_DEVICES_FAMILY_TAGS.has(t));
+  if (familyTags.length === 0) return 0;
+  const requested = new Set<string>();
+  if (modelFamily) { for (const f of tmDevicesRequestedFamilies(modelFamily)) requested.add(f); }
+  for (const [alias, family] of Object.entries(TM_QUERY_ALIASES)) {
+    if (normalizedQuery.includes(alias)) requested.add(family);
+  }
+  if (requested.size === 0) return 0;
+  if (familyTags.some((t) => requested.has(t))) return 4;
+  return -2;
 }
 
 // ---------------------------------------------------------------------------

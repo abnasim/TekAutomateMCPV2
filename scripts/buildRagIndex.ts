@@ -311,6 +311,44 @@ function main(): void {
     });
   });
 
+  // ── tm_devices model-family tag injection ─────────────────────────────────
+  const TM_MODEL_FAMILY_MAP: Record<string, string> = {
+    MSO2: 'MSO2', MSO22: 'MSO2', MSO24: 'MSO2', MSO26: 'MSO2',
+    MSO4: 'MSO4', MSO44: 'MSO4', MSO46: 'MSO4', MSO4B: 'MSO4', MSO4K: 'MSO4', MSO4KB: 'MSO4',
+    MSO5: 'MSO5', MSO54: 'MSO5', MSO56: 'MSO5', MSO58: 'MSO5', MSO5B: 'MSO5', MSO5LP: 'MSO5', MSO5K: 'MSO5', MSO5KB: 'MSO5',
+    MSO6: 'MSO6', MSO64: 'MSO6', MSO66: 'MSO6', MSO68: 'MSO6', MSO6B: 'MSO6',
+    LPD6: 'LPD6',
+    MDO3: 'MDO3K', MDO3K: 'MDO3K',
+    MDO4K: 'MDO4K', MDO4KB: 'MDO4K', MDO4KC: 'MDO4K',
+    DPO4K: 'DPO4K', DPO4KB: 'DPO4K',
+    DPO5K: 'DPO5K', DPO5KB: 'DPO5K',
+    DPO7K: 'DPO7K', DPO7KC: 'DPO7K',
+    DPO70KC: 'DPO70K', DPO70KD: 'DPO70K', DPO70KDX: 'DPO70K', DPO70KSX: 'DPO70K',
+    DSA70KC: 'DPO70K', DSA70KD: 'DPO70K', MSO70KC: 'DPO70K', MSO70KDX: 'DPO70K',
+    AFG3K: 'AFG3K', AFG3KB: 'AFG3K', AFG3KC: 'AFG3K',
+    AWG5200: 'AWG5200', AWG5K: 'AWG5K', AWG5KC: 'AWG5K',
+    AWG7K: 'AWG7K', AWG7KC: 'AWG7K',
+    SMU2450: 'SMU', SMU2460: 'SMU', SMU2461: 'SMU', SMU2470: 'SMU',
+    RSA5K: 'RSA', RSA6K: 'RSA',
+  };
+  let tmFamilyTagsAdded = 0;
+  tmChunks.forEach((chunk) => {
+    const body = typeof chunk.body === 'string' ? chunk.body : '';
+    const modelsMatch = body.match(/^Models:\s*(.+)$/m);
+    if (!modelsMatch) return;
+    const modelNames = modelsMatch[1].split(/[\s,]+/).map((m) => m.trim().toUpperCase()).filter(Boolean);
+    const families = new Set<string>();
+    for (const m of modelNames) { const f = TM_MODEL_FAMILY_MAP[m]; if (f) families.add(f); }
+    if (families.size === 0) return;
+    const existingTags: string[] = Array.isArray(chunk.tags) ? chunk.tags as string[] : [];
+    const newTags = [...existingTags];
+    let added = false;
+    for (const f of families) { if (!newTags.includes(f)) { newTags.push(f); added = true; } }
+    if (added) { chunk.tags = newTags; tmFamilyTagsAdded++; }
+  });
+  if (tmFamilyTagsAdded > 0) console.log(`tmdevices hygiene: injected model-family tags into ${tmFamilyTagsAdded} chunk(s)`);
+  // ──────────────────────────────────────────────────────────────────────────
+
   writeShard('scpi_index.json', scpiChunks);
   writeShard('tmdevices_index.json', tmChunks);
   writeShard('templates_index.json', templateChunks);
