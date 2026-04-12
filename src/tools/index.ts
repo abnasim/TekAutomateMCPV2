@@ -248,7 +248,10 @@ export function getToolDefinitions() {
     {
       name: 'knowledge',
       description:
-        'Knowledge gateway for TekAutomate support material. Use action:"retrieve" with a corpus to search docs/reference (scpi for commands, tmdevices for Python driver API, app_logic for architecture, scope_logic for measurement concepts, pyvisa_tekhsi for connection examples, tek_docs for Tektronix product docs — specs, app notes, blogs, FAQs, primers with source URLs you can web-fetch for full content). Use action:"examples" to find matching workflow templates. Use action:"failures" to look up known runtime errors and their fixes. Example: {action:"retrieve", corpus:"tek_docs", query:"runt trigger MSO6"} returns chunks with tek.com source URLs — fetch the URL for the full article or linked PDF. For complete answers to user questions, search multiple corpora in sequence: tek_docs for conceptual knowledge and how-to guidance, then scpi for exact command syntax and parameters.',
+        'Use for HOW-to questions, protocol setup, and supporting material — not for SCPI syntax (use tek_router for commands). ' +
+        'retrieve: RAG search by corpus — use tek_docs for protocol decode setup (I2C, CAN, SPI, USB, Ethernet, LIN, RS232, MIL-1553), trigger concepts, and product how-tos; results include tek.com source URLs — web-fetch the URL when the chunk preview is incomplete, then extract SCPI via tek_router before staging. ' +
+        'examples: find matching workflow templates. ' +
+        'failures: diagnose runtime errors and unexpected behavior.',
       parameters: {
         type: 'object',
         properties: {
@@ -259,35 +262,34 @@ export function getToolDefinitions() {
           },
           args: {
             type: 'object',
-            description: 'Optional nested arguments for the selected action. You may also pass action arguments at the top level.',
+            description: 'Optional nested arguments. You may also pass action arguments at the top level.',
           },
           corpus: {
             type: 'string',
-            description: 'For action:"retrieve" — which knowledge corpus to search. Pick the best match:\n• "scpi" — SCPI command syntax, parameters, and programming guide docs (31,229 chunks across MSO 2/4/5/6/7, DPO5K/7K/70K, RSA, AWG, AFG, SMU, DPOJET, TekExpress) (use for "how do I send/query X command")\n• "tmdevices" — tm_devices Python library: driver classes, methods, and API reference (use for "how do I use tm_devices to...")\n• "app_logic" — TekAutomate architecture, AiAction schemas, internal system design docs (use for "how does TekAutomate work internally")\n• "errors" — known runtime error patterns and fixes (prefer action:"failures" instead)\n• "scope_logic" — oscilloscope measurement logic, channel/trigger/acquisition concepts\n• "templates" — workflow template reference (prefer action:"examples" instead)\n• "pyvisa_tekhsi" — PyVISA and TekHSI connection/streaming examples\n• "tek_docs" — scraped Tektronix product documentation (1,187 chunks): MSO/DPO/MDO series specs, app notes, primers, technical briefs, blogs, FAQs (including protocol decode how-tos for I2C, CAN, USB, LIN, RS232, Ethernet, MIL-1553), and datasheets. Queries with how-to intent (how, setup, decode, configure) automatically boost FAQ results. Each result includes a source URL (tek.com) — if the chunk preview is not enough, web-fetch the URL for the full article or download the linked PDF for complete content',
+            description:
+              'Corpus for action:"retrieve". ' +
+              'tek_docs — Tektronix product docs, app notes, FAQs, protocol decode how-tos (I2C/CAN/SPI/USB/Ethernet/LIN/RS232/MIL-1553); results include tek.com source URLs. ' +
+              'scope_logic — oscilloscope measurement and acquisition concepts. ' +
+              'tmdevices — tm_devices Python driver API. ' +
+              'app_logic — TekAutomate architecture and AiAction schemas. ' +
+              'pyvisa_tekhsi — PyVISA and TekHSI connection examples. ' +
+              'scpi — SCPI programming guide (prefer tek_router instead).',
           },
           query: {
             type: 'string',
-            description: 'Targeted search phrase for retrieve, examples, or failures.',
+            description: 'Search phrase for retrieve, examples, or failures.',
           },
           topK: {
             type: 'number',
-            description: 'For action:"retrieve" — max chunks to return.',
+            description: 'Max chunks to return (action:"retrieve").',
           },
           limit: {
             type: 'number',
-            description: 'For action:"examples" or "failures" — max results to return.',
+            description: 'Max results (action:"examples" or "failures").',
           },
           modelFamily: {
             type: 'string',
-            description:
-              'For action:"retrieve" with corpus:"tek_docs" — optional instrument model family filter (e.g. MSO6, MSO5, MSO4, DPO7000, MDO3000). ' +
-              'Two-tier filtering applies:\n' +
-              '1. HARD FILTER: chunks tagged for a different model family are excluded entirely.\n' +
-              '2. SOFT BOOST (automatic, no modelFamily needed): if the query itself contains a product alias ' +
-              '(e.g. "mso64b", "6 series b", "dpo70000sx"), matching family chunks get +5 score boost and ' +
-              'wrong-family chunks get -3 penalty — so results naturally rank toward the right product even ' +
-              'without passing modelFamily explicitly.\n' +
-              'General content (probes, protocols, measurements — chunks with no model-specific tags) always passes through regardless.',
+            description: 'Filter tek_docs to a specific instrument family (e.g. MSO6, MSO5, DPO7000). General protocol/measurement content always passes through.',
           },
         },
         required: ['action'],
