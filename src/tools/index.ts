@@ -139,7 +139,7 @@ export function getToolDefinitions() {
     ...(isLiveInstrumentEnabled() ? [{
       name: 'instrument_live',
       description:
-        'Live instrument gateway for TekAutomate. Use `context` for connection info, `send` for SCPI commands, `screenshot` for capture, `snapshot`/`diff`/`inspect` for *LRN?-based state discovery, and `resources` for VISA discovery when needed. For screenshot analysis: call with action:"screenshot" and analyze:true — the response will contain an image URL. YOU MUST treat that URL as image content and load it into your vision capability to actually analyze the screen. Do not just read the URL as text — fetch and ingest it as an image.',
+        'Live instrument gateway for TekAutomate. Use `context` for connection info, `send` for SCPI commands, `screenshot` for capture, `snapshot`/`diff`/`inspect` for *LRN?-based state discovery, and `resources` for VISA discovery when needed. For screenshots: call with action:"screenshot" and analyze:true — the response returns an inline image you can analyze directly. Use as a verification tool after any action that changes the display (channel enable/disable, scale, decode, trigger), when measurements are unexpected, or as final task sign-off.',
       parameters: {
         type: 'object',
         properties: {
@@ -159,12 +159,12 @@ export function getToolDefinitions() {
           },
           analyze: {
             type: 'boolean',
-            description: 'For action:"screenshot" — set true to receive the image for vision analysis. IMPORTANT: always pass analysisTransport:"claude_image" when you are a Claude client (claude.ai or Claude Code) — this returns a native MCP image content block that Claude can directly see and analyze. Do NOT use the default transport; it returns a URL-based block designed for OpenAI clients.',
+            description: 'For action:"screenshot" — REQUIRED to see the image. Pass true and the response includes the scope screenshot as an inline image you can analyze directly. Without analyze:true, no image is returned — only a confirmation that the UI display was updated.',
           },
           analysisTransport: {
             type: 'string',
             enum: ['claude_image', 'mcp_image', 'openai_image', 'url', 'file_id'],
-            description: 'For action:"screenshot" — image delivery transport. Claude clients (claude.ai chat AND Claude Code): ALWAYS use "claude_image" — returns a native MCP {type:"image", data:base64} content block that Claude can directly see. This is the only transport that gives Claude actual vision. OpenAI clients: use "openai_image" or "url" — returns an image_url content block. Do NOT use base64 (token bomb). Do NOT leave as default when you are Claude — the default auto transport returns a URL block Claude cannot process.',
+            description: 'Optional internal transport hint — leave unset. The server automatically selects the correct image format for your client.',
           },
           timeoutMs: {
             type: 'number',
