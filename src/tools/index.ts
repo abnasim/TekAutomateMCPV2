@@ -159,12 +159,12 @@ export function getToolDefinitions() {
           },
           analyze: {
             type: 'boolean',
-            description: 'For action:"screenshot" — set true to receive the image for vision analysis. The response will contain an image URL — you must ingest that URL as image content (not plain text) to visually analyze the scope display.',
+            description: 'For action:"screenshot" — set true to receive the image for vision analysis. IMPORTANT: always pass analysisTransport:"claude_image" when you are a Claude client (claude.ai or Claude Code) — this returns a native MCP image content block that Claude can directly see and analyze. Do NOT use the default transport; it returns a URL-based block designed for OpenAI clients.',
           },
           analysisTransport: {
             type: 'string',
             enum: ['claude_image', 'mcp_image', 'openai_image', 'url', 'file_id'],
-            description: 'For action:"screenshot" — image delivery transport. NEVER use base64 (token bomb). Use claude_image when running inside Claude Code / API (returns native MCP image content block, works in agentic/code mode). Use mcp_image when running inside Claude.ai chat / connector mode (returns native MCP image content block, works in chat mode). Use openai_image for OpenAI-hosted vision flows. Use url only as a fallback when neither claude_image nor mcp_image is available. Use file_id for explicit OpenAI Files upload. Default: claude_image.',
+            description: 'For action:"screenshot" — image delivery transport. Claude clients (claude.ai chat AND Claude Code): ALWAYS use "claude_image" — returns a native MCP {type:"image", data:base64} content block that Claude can directly see. This is the only transport that gives Claude actual vision. OpenAI clients: use "openai_image" or "url" — returns an image_url content block. Do NOT use base64 (token bomb). Do NOT leave as default when you are Claude — the default auto transport returns a URL block Claude cannot process.',
           },
           timeoutMs: {
             type: 'number',
@@ -1019,7 +1019,7 @@ export function getToolDefinitions() {
     },
     {
       name: 'capture_screenshot',
-      description: 'Capture a fresh scope screenshot from the live instrument. Pass analyze:true when you need to visually inspect the scope display. IMPORTANT: when analyze:true, the tool response contains an image URL — you MUST load that URL as image content into your vision capability and describe what you see. Do not just echo the URL back as text. Treat it exactly like an image attached to a message.',
+      description: 'Capture a fresh scope screenshot from the live instrument. Pass analyze:true when you need to visually inspect the scope display. Claude clients (claude.ai / Claude Code): use analyze:true + analysisTransport:"claude_image" — the response returns a native MCP image block you can see directly. OpenAI clients: use analyze:true + analysisTransport:"openai_image" — the response returns an image_url content block; load that URL as image input for vision.',
       parameters: {
         type: 'object',
         properties: {
@@ -1031,8 +1031,8 @@ export function getToolDefinitions() {
           scopeType: { type: 'string', enum: ['modern', 'legacy'] },
           modelFamily: { type: 'string' },
           deviceDriver: { type: 'string' },
-          analyze: { type: 'boolean', description: 'Set true to receive the image for vision analysis. When true, the response contains an image URL — ingest it as image content for vision, do not echo it as plain text.' },
-          analysisTransport: { type: 'string', enum: ['auto', 'url', 'file_id', 'base64', 'mcp_image', 'openai_image', 'claude_image'], description: 'Transport hint when analyze:true. Default "auto" returns a short-lived MCP-hosted image URL — load that URL as an image (not text) for vision analysis. Use claude_image for a native MCP image content block (best for Claude), openai_image for OpenAI-hosted vision, base64 for legacy payloads, file_id for explicit OpenAI Files upload.' },
+          analyze: { type: 'boolean', description: 'Set true to receive the image for vision analysis. Claude clients (claude.ai or Claude Code): always pair with analysisTransport:"claude_image" — that is the ONLY transport returning a native image block Claude can see. OpenAI clients: use analysisTransport:"openai_image" or omit for auto.' },
+          analysisTransport: { type: 'string', enum: ['auto', 'url', 'file_id', 'base64', 'mcp_image', 'openai_image', 'claude_image'], description: 'Claude clients: use "claude_image" — returns {type:"image", data:base64} native MCP image block, the only format Claude can actually analyze as vision. OpenAI clients: use "openai_image" or "url" — returns image_url content block. Default "auto" is for OpenAI; Claude must override to "claude_image" or it receives a URL block it cannot process.' },
         },
         required: [],
         additionalProperties: false,
