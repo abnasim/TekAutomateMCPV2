@@ -1032,7 +1032,7 @@ export function getToolDefinitions() {
           modelFamily: { type: 'string' },
           deviceDriver: { type: 'string' },
           analyze: { type: 'boolean', description: 'REQUIRED to see the image. Pass true and the response includes the scope screenshot as an inline image you can analyze directly. Without analyze:true, no image is returned — only a confirmation that the UI display was updated.' },
-          analysisTransport: { type: 'string', enum: ['auto', 'url', 'file_id', 'base64', 'mcp_image', 'openai_image', 'claude_image'], description: 'Optional internal transport hint — leave unset. The server automatically selects the correct image format for your client.' },
+          analysisTransport: { type: 'string', enum: ['auto', 'url', 'mcp_image', 'openai_image', 'claude_image'], description: 'Optional internal transport hint — leave unset. The server automatically selects the correct image format for your client.' },
         },
         required: [],
         additionalProperties: false,
