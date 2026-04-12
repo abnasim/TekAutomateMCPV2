@@ -46,10 +46,36 @@ export function getLastWorkflowProposal(sessionKey?: string): StagedWorkflowProp
   return proposalsBySession.get(key) ?? null;
 }
 
+// Workflow step types the agent sends — NOT the same as AI action types.
+// When the agent passes steps instead of AI actions, we wrap them as replace_flow
+// so the browser's normalizeAiActions can handle them correctly.
+const STEP_TYPES = new Set([
+  'connect', 'disconnect', 'query', 'write', 'set_and_query', 'sleep',
+  'comment', 'python', 'save_waveform', 'save_screenshot', 'error_check',
+  'group', 'tm_device_command', 'recall',
+]);
+
+function normalizeActions(raw: unknown[]): unknown[] {
+  if (raw.length === 0) return raw;
+  const firstType = raw[0] && typeof raw[0] === 'object'
+    ? String((raw[0] as Record<string, unknown>).type || '')
+    : '';
+  // If actions look like workflow steps, wrap as replace_flow so the browser
+  // can apply them — normalizeAiActions doesn't know step types like 'write'.
+  if (STEP_TYPES.has(firstType)) {
+    return [{
+      action_type: 'replace_flow',
+      confidence: 'high',
+      payload: { steps: raw },
+    }];
+  }
+  return raw;
+}
+
 export async function stageWorkflowProposal(
   input: StageWorkflowProposalInput
 ): Promise<ToolResult<Record<string, unknown>>> {
-  const actions = Array.isArray(input.actions) ? input.actions : [];
+  const actions = normalizeActions(Array.isArray(input.actions) ? input.actions : []);
   if (actions.length === 0) {
     return {
       ok: false,
