@@ -139,7 +139,7 @@ export function getToolDefinitions() {
     ...(isLiveInstrumentEnabled() ? [{
       name: 'instrument_live',
       description:
-        'Live instrument gateway for TekAutomate. Use `context` for connection info, `send` for SCPI commands, `screenshot` for capture, `snapshot`/`diff`/`inspect` for *LRN?-based state discovery, and `resources` for VISA discovery when needed. For screenshots: call with action:"screenshot" and analyze:true — the response returns an inline image you can analyze directly. Use as a verification tool after any action that changes the display (channel enable/disable, scale, decode, trigger), when measurements are unexpected, or as final task sign-off.',
+        'Live instrument gateway for TekAutomate. Use `context` for connection info, `send` for SCPI commands, `screenshot` for capture, `snapshot`/`diff`/`inspect` for *LRN?-based state discovery, and `resources` for VISA discovery when needed. For screenshots: call with action:"screenshot" and analyze:true — the response returns an MCP {type:"image"} content block containing the screenshot, rendered as vision by your client. Use as a verification tool after any action that changes the display (channel enable/disable, scale, decode, trigger), when measurements are unexpected, or as final task sign-off.',
       parameters: {
         type: 'object',
         properties: {
@@ -159,7 +159,7 @@ export function getToolDefinitions() {
           },
           analyze: {
             type: 'boolean',
-            description: 'For action:"screenshot" — REQUIRED to see the image. Pass true and the response includes the scope screenshot as an inline image you can analyze directly. Without analyze:true, no image is returned — only a confirmation that the UI display was updated.',
+            description: 'For action:"screenshot" — REQUIRED to receive the image. Pass true and the response includes an MCP {type:"image"} content block containing the scope screenshot. Without analyze:true, no image data is returned — only a confirmation that the UI display was updated.',
           },
           analysisTransport: {
             type: 'string',
@@ -1019,7 +1019,7 @@ export function getToolDefinitions() {
     },
     {
       name: 'capture_screenshot',
-      description: 'Capture a screenshot from the live instrument. This is a verification tool — use it after actions that change what is visible on screen (channel enable/disable, scale/offset, decode setup, trigger config), when a measurement returns an unexpected value or 9.9E37, or when the user explicitly asks to see or check something visual. Also use as the final sign-off on any configuration task. IMPORTANT: pass analyze:true to receive the scope image in this tool response — without it, the screenshot only refreshes the TekAutomate UI display and NO image data is returned to you. Always use analyze:true when you need to see, analyze, or verify the scope screen. ANALYSIS RULE: treat screenshots as authoritative for visible instrument state. If a screenshot shows clipping, off-screen traces, disabled channels, or missing decode/table visibility, fix that first — do not trust or report measurements from a visibly clipping channel. After enabling a channel, verify it is visible, framed, and not clipping before analyzing it.',
+      description: 'Capture a screenshot from the live instrument. This is a verification tool — use it after actions that change what is visible on screen (channel enable/disable, scale/offset, decode setup, trigger config), when a measurement returns an unexpected value or 9.9E37, or when the user explicitly asks to see or check something visual. Also use as the final sign-off on any configuration task. IMPORTANT: pass analyze:true to receive the scope image — the response returns an MCP {type:"image"} content block containing the screenshot, rendered as vision by your client. Without analyze:true, the screenshot only refreshes the TekAutomate UI display and NO image data is returned. ANALYSIS RULE: treat screenshots as authoritative for visible instrument state. If a screenshot shows clipping, off-screen traces, disabled channels, or missing decode/table visibility, fix that first — do not trust or report measurements from a visibly clipping channel. After enabling a channel, verify it is visible, framed, and not clipping before analyzing it.',
       parameters: {
         type: 'object',
         properties: {
@@ -1031,7 +1031,7 @@ export function getToolDefinitions() {
           scopeType: { type: 'string', enum: ['modern', 'legacy'] },
           modelFamily: { type: 'string' },
           deviceDriver: { type: 'string' },
-          analyze: { type: 'boolean', description: 'REQUIRED to see the image. Pass true and the response includes the scope screenshot as an inline image you can analyze directly. Without analyze:true, no image is returned — only a confirmation that the UI display was updated.' },
+          analyze: { type: 'boolean', description: 'REQUIRED to receive the image. Pass true and the response includes an MCP {type:"image"} content block containing the scope screenshot. Without analyze:true, no image data is returned — only a confirmation that the UI display was updated.' },
           analysisTransport: { type: 'string', enum: ['auto', 'url', 'mcp_image', 'openai_image', 'claude_image'], description: 'Optional internal transport hint — leave unset. The server automatically selects the correct image format for your client.' },
         },
         required: [],
