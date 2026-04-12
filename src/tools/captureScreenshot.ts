@@ -57,6 +57,7 @@ function stripScreenshotPayloadForNonAnalysis(
     ...(typeof sizeBytes === 'number' ? { sizeBytes } : {}),
     ...(scopeType ? { scopeType } : {}),
     ...(originalMimeType ? { originalMimeType } : {}),
+    note: 'Screenshot sent to TekAutomate UI display. No image data returned to you. Call capture_screenshot again with analyze:true to receive the image.',
   };
 }
 

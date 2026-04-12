@@ -1019,7 +1019,7 @@ export function getToolDefinitions() {
     },
     {
       name: 'capture_screenshot',
-      description: 'Capture a fresh scope screenshot from the live instrument. Pass analyze:true when you need to visually inspect the scope display. Claude clients (claude.ai / Claude Code): use analyze:true + analysisTransport:"claude_image" — the response returns a native MCP image block you can see directly. OpenAI clients: use analyze:true + analysisTransport:"openai_image" — the response returns an image_url content block; load that URL as image input for vision.',
+      description: 'Capture a screenshot from the live instrument. IMPORTANT: pass analyze:true to receive the scope image in this tool response — without it, the screenshot only refreshes the TekAutomate UI display and NO image data is returned to you. Always use analyze:true when you need to see, analyze, or describe the scope screen.',
       parameters: {
         type: 'object',
         properties: {
@@ -1031,8 +1031,8 @@ export function getToolDefinitions() {
           scopeType: { type: 'string', enum: ['modern', 'legacy'] },
           modelFamily: { type: 'string' },
           deviceDriver: { type: 'string' },
-          analyze: { type: 'boolean', description: 'Set true to receive the image for vision analysis. Claude clients (claude.ai or Claude Code): always pair with analysisTransport:"claude_image" — that is the ONLY transport returning a native image block Claude can see. OpenAI clients: use analysisTransport:"openai_image" or omit for auto.' },
-          analysisTransport: { type: 'string', enum: ['auto', 'url', 'file_id', 'base64', 'mcp_image', 'openai_image', 'claude_image'], description: 'Claude clients: use "claude_image" — returns {type:"image", data:base64} native MCP image block, the only format Claude can actually analyze as vision. OpenAI clients: use "openai_image" or "url" — returns image_url content block. Default "auto" is for OpenAI; Claude must override to "claude_image" or it receives a URL block it cannot process.' },
+          analyze: { type: 'boolean', description: 'REQUIRED to see the image. Pass true and the response includes the scope screenshot as an inline image you can analyze directly. Without analyze:true, no image is returned — only a confirmation that the UI display was updated.' },
+          analysisTransport: { type: 'string', enum: ['auto', 'url', 'file_id', 'base64', 'mcp_image', 'openai_image', 'claude_image'], description: 'Optional internal transport hint — leave unset. The server automatically selects the correct image format for your client.' },
         },
         required: [],
         additionalProperties: false,
