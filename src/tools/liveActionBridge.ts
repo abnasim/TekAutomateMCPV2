@@ -30,7 +30,11 @@ export interface LiveActionResultEnvelope {
 }
 
 const LIVE_ACTION_TIMEOUT_MS = 45_000;
-const SCREENSHOT_DEBOUNCE_MS = 1_500;
+// Debounce deduplicates rapid screenshot bursts (e.g. double-clicks).
+// 150ms is enough to collapse duplicates without adding visible latency.
+// Previously 1500ms — that added a guaranteed 1.5s floor AND caused the
+// long-poll waiter to miss the wake-up, adding up to 25s more.
+const SCREENSHOT_DEBOUNCE_MS = 150;
 const liveActionQueue: PendingActionRecord[] = [];
 const liveActionWaiters = new Map<string, Array<(action: LiveActionRequest | null) => void>>();
 
@@ -159,6 +163,15 @@ export async function enqueueLiveAction(params: {
 
     liveActionQueue.push(record);
     notifySession(sessionKey);
+
+    // For screenshot actions: notifySession above returns immediately because the
+    // debounce hasn't elapsed yet, so any open long-poll waiter is NOT notified.
+    // Schedule a second notifySession after the debounce so the waiter wakes up
+    // as soon as the action is eligible — instead of waiting up to 25s for the
+    // app's next poll cycle.
+    if (params.toolName === 'capture_screenshot') {
+      setTimeout(() => notifySession(sessionKey), SCREENSHOT_DEBOUNCE_MS + 10);
+    }
   });
 }
 
