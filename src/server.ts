@@ -1400,9 +1400,6 @@ function filterTools(q) {
           body: JSON.stringify({
             workflow: { id: workflowId },
             user: userId,
-            ...(sessionKey ? {
-              additional_instructions: `The user's browser sessionKey is: ${sessionKey}. When calling workflow_ui with action:"stage", always pass sessionKey:"${sessionKey}" so the proposal is routed to the correct browser.`,
-            } : {}),
             chatkit_configuration: {
               file_upload: {
                 enabled: true,
