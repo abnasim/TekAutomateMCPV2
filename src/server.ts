@@ -15,7 +15,6 @@ import { getCommandIndex } from './core/commandIndex';
 import { getRagIndexes } from './core/ragIndex';
 import { getTempVisionImage } from './core/tempImageStore';
 import { getTemplateIndex } from './core/templateIndex';
-import { getTempVisionImage } from './core/tempImageStore';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
