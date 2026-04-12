@@ -473,6 +473,8 @@ export async function createServer(port = 8787): Promise<http.Server> {
     StreamableHTTPServerTransport: any;
     CallToolRequestSchema: any;
     ListToolsRequestSchema: any;
+    ListResourcesRequestSchema: any;
+    ListResourceTemplatesRequestSchema: any;
   } | null = null;
 
   async function getMcpSdk() {
@@ -488,6 +490,8 @@ export async function createServer(port = 8787): Promise<http.Server> {
         StreamableHTTPServerTransport: transportMod.StreamableHTTPServerTransport,
         CallToolRequestSchema: typesMod.CallToolRequestSchema,
         ListToolsRequestSchema: typesMod.ListToolsRequestSchema,
+        ListResourcesRequestSchema: typesMod.ListResourcesRequestSchema,
+        ListResourceTemplatesRequestSchema: typesMod.ListResourceTemplatesRequestSchema,
       };
       return _mcpSdk;
     } catch {
@@ -504,8 +508,39 @@ export async function createServer(port = 8787): Promise<http.Server> {
     if (!sdk) throw new Error('MCP SDK not installed. Run: npm install @modelcontextprotocol/sdk');
     const mcp = new sdk.Server(
       { name: 'tekautomate', version: '3.2.0' },
-      { capabilities: { tools: {} } },
+      { capabilities: { tools: {}, resources: {} } },
     );
+
+    // ── resources/list handler ────────────────────────────────────────
+    mcp.setRequestHandler(sdk.ListResourcesRequestSchema, async () => ({
+      resources: [
+        {
+          uri: 'tekautomate://rag/manifest',
+          name: 'RAG Index Manifest',
+          description: 'Corpus names, shard file paths, and chunk counts for all RAG indexes.',
+          mimeType: 'application/json',
+        },
+        {
+          uri: 'tekautomate://runtime/context',
+          name: 'Runtime Context',
+          description: 'Live snapshot of current workflow steps, instrument connection state, and run log tail.',
+          mimeType: 'application/json',
+        },
+      ],
+    }));
+
+    // ── resources/templates/list handler ─────────────────────────────
+    mcp.setRequestHandler(sdk.ListResourceTemplatesRequestSchema, async () => ({
+      resourceTemplates: [
+        {
+          uriTemplate: 'tekautomate://rag/corpus/{corpus}',
+          name: 'RAG Corpus Info',
+          description: 'Metadata for a specific RAG corpus. {corpus}: scpi, tmdevices, app_logic, scope_logic, templates, errors, pyvisa_tekhsi, tek_docs.',
+          mimeType: 'application/json',
+        },
+      ],
+    }));
+
     mcp.setRequestHandler(sdk.ListToolsRequestSchema, async () => {
       if (startupInitPromise) {
         try { await startupInitPromise; } catch { /* degrade gracefully */ }

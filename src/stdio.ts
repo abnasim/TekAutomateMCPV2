@@ -21,6 +21,8 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
+  ListResourcesRequestSchema,
+  ListResourceTemplatesRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
 
 import { initCommandIndex } from './core/commandIndex.js';
@@ -138,7 +140,7 @@ async function main() {
   // ── Create low-level MCP server ──────────────────────────────────
   const server = new Server(
     { name: 'tekautomate', version: '3.2.0' },
-    { capabilities: { tools: {} } },
+    { capabilities: { tools: {}, resources: {} } },
   );
 
   // Only expose the slim MCP surface (gateway + live tools)
@@ -154,6 +156,36 @@ async function main() {
         ? { required: (def.parameters as any).required }
         : {}),
     },
+  }));
+
+  // ── resources/list handler ──────────────────────────────────────
+  server.setRequestHandler(ListResourcesRequestSchema, async () => ({
+    resources: [
+      {
+        uri: 'tekautomate://rag/manifest',
+        name: 'RAG Index Manifest',
+        description: 'Corpus names, shard file paths, and chunk counts for all RAG indexes.',
+        mimeType: 'application/json',
+      },
+      {
+        uri: 'tekautomate://runtime/context',
+        name: 'Runtime Context',
+        description: 'Live snapshot of current workflow steps, instrument connection state, and run log tail.',
+        mimeType: 'application/json',
+      },
+    ],
+  }));
+
+  // ── resources/templates/list handler ────────────────────────────
+  server.setRequestHandler(ListResourceTemplatesRequestSchema, async () => ({
+    resourceTemplates: [
+      {
+        uriTemplate: 'tekautomate://rag/corpus/{corpus}',
+        name: 'RAG Corpus Info',
+        description: 'Metadata for a specific RAG corpus. {corpus}: scpi, tmdevices, app_logic, scope_logic, templates, errors, pyvisa_tekhsi, tek_docs.',
+        mimeType: 'application/json',
+      },
+    ],
   }));
 
   // ── tools/list handler ───────────────────────────────────────────
