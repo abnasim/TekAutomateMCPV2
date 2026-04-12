@@ -96,6 +96,66 @@ let runtimeContextState: RuntimeContextState = {
   liveSession: DEFAULT_LIVE_SESSION,
 };
 
+// ── Active session registry ──────────────────────────────────────────────────
+// Tracks every sessionKey that has pushed to /runtime-context recently.
+// Keyed by sessionKey → last push timestamp (ms).
+const ACTIVE_SESSION_TTL_MS = 5 * 60 * 1000; // 5 minutes
+const MAX_ACTIVE_SESSIONS = 50;
+const activeSessionRegistry = new Map<string, number>();
+
+function registerActiveSession(sessionKey: string) {
+  activeSessionRegistry.set(sessionKey, Date.now());
+  if (activeSessionRegistry.size > MAX_ACTIVE_SESSIONS) {
+    const cutoff = Date.now() - ACTIVE_SESSION_TTL_MS;
+    for (const [key, ts] of activeSessionRegistry) {
+      if (ts < cutoff) activeSessionRegistry.delete(key);
+      if (activeSessionRegistry.size <= MAX_ACTIVE_SESSIONS) break;
+    }
+  }
+}
+
+export function getActiveSessionKeys(): string[] {
+  const cutoff = Date.now() - ACTIVE_SESSION_TTL_MS;
+  const keys: string[] = [];
+  for (const [key, ts] of activeSessionRegistry) {
+    if (ts >= cutoff) keys.push(key);
+  }
+  return keys;
+}
+
+// ── Pending MCP session key queue ────────────────────────────────────────────
+// When /chatkit/session is called with a sessionKey, it's enqueued here.
+// When a new /mcp connection is established, it dequeues the oldest entry.
+// FIFO order ensures ChatKit sessions and MCP connections are matched correctly
+// without relying on shared liveSession state that can be overwritten by other browsers.
+const pendingMcpSessionKeys: Array<{ key: string; enqueuedAt: number }> = [];
+const PENDING_KEY_TTL_MS = 30_000; // 30 seconds — discard stale entries
+
+export function enqueueMcpSessionKey(sessionKey: string): void {
+  if (!sessionKey) return;
+  const now = Date.now();
+  // Evict stale entries first
+  while (pendingMcpSessionKeys.length > 0 && now - pendingMcpSessionKeys[0].enqueuedAt > PENDING_KEY_TTL_MS) {
+    pendingMcpSessionKeys.shift();
+  }
+  pendingMcpSessionKeys.push({ key: sessionKey, enqueuedAt: now });
+  console.log(`[runtimeContextStore] Enqueued MCP sessionKey=${sessionKey} (queue size=${pendingMcpSessionKeys.length})`);
+}
+
+export function dequeueMcpSessionKey(): string | null {
+  const now = Date.now();
+  // Evict stale entries
+  while (pendingMcpSessionKeys.length > 0 && now - pendingMcpSessionKeys[0].enqueuedAt > PENDING_KEY_TTL_MS) {
+    pendingMcpSessionKeys.shift();
+  }
+  const entry = pendingMcpSessionKeys.shift();
+  if (entry) {
+    console.log(`[runtimeContextStore] Dequeued MCP sessionKey=${entry.key} (queue size=${pendingMcpSessionKeys.length})`);
+    return entry.key;
+  }
+  return null;
+}
+
 function toStringList(value: unknown): string[] {
   if (!Array.isArray(value)) return [];
   return value.map((item) => String(item || '').trim()).filter(Boolean);
@@ -225,8 +285,10 @@ export function updateRuntimeContext(input: {
 
   if (input.liveSession && typeof input.liveSession === 'object') {
     const liveSession = input.liveSession as Record<string, unknown>;
+    const newKey = typeof liveSession.sessionKey === 'string' && liveSession.sessionKey ? liveSession.sessionKey : null;
+    if (newKey) registerActiveSession(newKey);
     runtimeContextState.liveSession = {
-      sessionKey: typeof liveSession.sessionKey === 'string' && liveSession.sessionKey ? liveSession.sessionKey : null,
+      sessionKey: newKey,
       threadId: typeof liveSession.threadId === 'string' && liveSession.threadId ? liveSession.threadId : null,
       workflowId: typeof liveSession.workflowId === 'string' && liveSession.workflowId ? liveSession.workflowId : null,
       userId: typeof liveSession.userId === 'string' && liveSession.userId ? liveSession.userId : null,

@@ -7,8 +7,8 @@ import { initTemplateIndex } from './core/templateIndex';
 import { runToolLoop } from './core/toolLoop';
 import { getSlimToolDefinitions, getToolDefinitions, runTool } from './tools/index';
 import type { McpChatRequest } from './core/schemas';
-import { getLastWorkflowProposal } from './tools/stageWorkflowProposal';
-import { getRuntimeContextState, updateRuntimeContext } from './tools/runtimeContextStore';
+import { getLastWorkflowProposal, stageWorkflowProposal } from './tools/stageWorkflowProposal';
+import { getRuntimeContextState, updateRuntimeContext, getLiveSessionState, getActiveSessionKeys, enqueueMcpSessionKey, dequeueMcpSessionKey } from './tools/runtimeContextStore';
 import { completeLiveAction, getPendingLiveActionCount, waitForNextLiveAction } from './tools/liveActionBridge';
 import { bootRouter, createReloadProvidersHandler, createRouterHandler, getRouterHealth } from './core/routerIntegration';
 import { getCommandIndex } from './core/commandIndex';
@@ -496,7 +496,11 @@ export async function createServer(port = 8787): Promise<http.Server> {
     }
   }
 
-  async function createMcpProtocolServer() {
+  // connectionSessionKey: captured at MCP session creation time from the browser
+  // that just established this ChatKit session. Each MCP connection is one ChatKit
+  // conversation — binding the key here gives us per-conversation isolation with
+  // zero race conditions from other browsers pushing to shared state.
+  async function createMcpProtocolServer(connectionSessionKey?: string) {
     const sdk = await getMcpSdk();
     if (!sdk) throw new Error('MCP SDK not installed. Run: npm install @modelcontextprotocol/sdk');
     const mcp = new sdk.Server(
@@ -532,8 +536,42 @@ export async function createServer(port = 8787): Promise<http.Server> {
         const toolArgs = {
           ...((args as Record<string, unknown>) ?? {}),
           __mcpBaseUrl: getConfiguredPublicBaseUrl(),
+          // Inject the connection-bound sessionKey so workflow_ui{current} and
+          // stage_workflow_proposal can use it without touching shared global state.
+          __connectionSessionKey: connectionSessionKey,
         };
         const result = await runTool(name, toolArgs);
+
+        // ── Auto-stage: if any MCP tool returns data.actions, push proposal immediately ──
+        // Uses connectionSessionKey (captured at MCP session creation, bound to THIS
+        // ChatKit conversation's connection) — not the shared global liveSession slot.
+        // This gives per-conversation isolation: each browser's proposals stay isolated.
+        // Skip workflow_ui itself (it already calls stageWorkflowProposal internally).
+        if (name !== 'workflow_ui' && name !== 'stage_workflow_proposal') {
+          const rd = result && typeof result === 'object' ? (result as Record<string, unknown>).data : null;
+          const autoActions = rd && typeof rd === 'object' && Array.isArray((rd as Record<string, unknown>).actions)
+            ? (rd as Record<string, unknown>).actions as unknown[]
+            : null;
+          if (autoActions && autoActions.length > 0) {
+            // Prefer the connection-bound key; fall back to global state if not set.
+            const sk = connectionSessionKey || getLiveSessionState().sessionKey;
+            if (sk) {
+              console.log(`[MCP auto-stage] ${name} → sessionKey=${sk} actions=${autoActions.length}`);
+              void stageWorkflowProposal({
+                summary: typeof (rd as Record<string, unknown>).summary === 'string'
+                  ? String((rd as Record<string, unknown>).summary)
+                  : `Workflow proposal from ${name}`,
+                findings: Array.isArray((rd as Record<string, unknown>).findings) ? (rd as Record<string, unknown>).findings as string[] : [],
+                suggestedFixes: Array.isArray((rd as Record<string, unknown>).suggestedFixes) ? (rd as Record<string, unknown>).suggestedFixes as string[] : [],
+                actions: autoActions,
+                sessionKey: sk,
+              });
+            } else {
+              console.warn(`[MCP auto-stage] ${name} returned actions but no sessionKey resolved — skipping auto-stage`);
+            }
+          }
+        }
+
         return { content: buildExternalMcpToolContent(name, result) };
       } catch (err) {
         const msg = err instanceof Error ? err.message : String(err);
@@ -824,7 +862,9 @@ function filterTools(q) {
             const transport = new sdk.StreamableHTTPServerTransport({
               sessionIdGenerator: () => newSessionId,
             });
-            const mcpServer = await createMcpProtocolServer();
+            const capturedSessionKey = dequeueMcpSessionKey() ?? getLiveSessionState().sessionKey ?? undefined;
+            console.log(`[MCP] new connection ${newSessionId} — capturedSessionKey=${capturedSessionKey ?? 'none'}`);
+            const mcpServer = await createMcpProtocolServer(capturedSessionKey);
             await mcpServer.connect(transport);
             transport.onclose = () => {
               if (transport.sessionId) {
@@ -1334,10 +1374,12 @@ function filterTools(q) {
           apiKey?: string;
           workflowId?: string;
           userId?: string;
+          sessionKey?: string;
         };
         const apiKey = String(body?.apiKey || process.env.OPENAI_API_KEY || '').trim();
         const workflowId = String(body?.workflowId || process.env.CHATKIT_WORKFLOW_ID || '').trim();
         const userId = String(body?.userId || 'tekautomate-user').trim();
+        const sessionKey = String(body?.sessionKey || '').trim();
         if (!apiKey) {
           sendJson(res, 400, { ok: false, error: 'Missing apiKey (or set OPENAI_API_KEY env var).' });
           return;
@@ -1346,6 +1388,8 @@ function filterTools(q) {
           sendJson(res, 400, { ok: false, error: 'Missing workflowId (or set CHATKIT_WORKFLOW_ID env var).' });
           return;
         }
+        // Enqueue sessionKey so the next /mcp connection can dequeue it (FIFO isolation)
+        if (sessionKey) enqueueMcpSessionKey(sessionKey);
         // Call OpenAI ChatKit Sessions API
         const sessionRes = await fetch('https://api.openai.com/v1/chatkit/sessions', {
           method: 'POST',
@@ -1357,6 +1401,9 @@ function filterTools(q) {
           body: JSON.stringify({
             workflow: { id: workflowId },
             user: userId,
+            ...(sessionKey ? {
+              additional_instructions: `The user's browser sessionKey is: ${sessionKey}. When calling workflow_ui with action:"stage", always pass sessionKey:"${sessionKey}" so the proposal is routed to the correct browser.`,
+            } : {}),
             chatkit_configuration: {
               file_upload: {
                 enabled: true,
