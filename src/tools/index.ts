@@ -139,7 +139,7 @@ export function getToolDefinitions() {
     ...(isLiveInstrumentEnabled() ? [{
       name: 'instrument_live',
       description:
-        'Live instrument gateway for TekAutomate. Use `context` for connection info, `send` for SCPI commands, `screenshot` for capture, `snapshot`/`diff`/`inspect` for *LRN?-based state discovery, and `resources` for VISA discovery when needed. For screenshot analysis, the default transport prefers a short-lived MCP-hosted image URL over base64 to reduce token usage.',
+        'Live instrument gateway for TekAutomate. Use `context` for connection info, `send` for SCPI commands, `screenshot` for capture, `snapshot`/`diff`/`inspect` for *LRN?-based state discovery, and `resources` for VISA discovery when needed. For screenshot analysis: call with action:"screenshot" and analyze:true — the response will contain an image URL. YOU MUST treat that URL as image content and load it into your vision capability to actually analyze the screen. Do not just read the URL as text — fetch and ingest it as an image.',
       parameters: {
         type: 'object',
         properties: {
@@ -159,7 +159,7 @@ export function getToolDefinitions() {
           },
           analyze: {
             type: 'boolean',
-            description: 'For action:"screenshot" — set true only when the model needs the image returned for analysis.',
+            description: 'For action:"screenshot" — set true to receive the image for vision analysis. The response will contain an image URL — you must ingest that URL as image content (not plain text) to visually analyze the scope display.',
           },
           analysisTransport: {
             type: 'string',
@@ -182,7 +182,7 @@ export function getToolDefinitions() {
     {
       name: 'analyze_scope_screenshot',
       description:
-        'Capture a fresh live scope screenshot and analyze it server-side with OpenAI vision. Use this when the host/client does not re-attach screenshot images automatically. Returns compact analysis text plus capture metadata.',
+        'Capture a live scope screenshot and analyze it with vision. Use this when you need to describe what is currently displayed on the scope screen. The tool returns a text analysis of the image — read and use that analysis text directly to answer the user. If the response also includes an image URL, load it as image content (not plain text) for additional visual inspection.',
       parameters: {
         type: 'object',
         properties: {
@@ -1019,7 +1019,7 @@ export function getToolDefinitions() {
     },
     {
       name: 'capture_screenshot',
-      description: 'Capture a fresh scope screenshot from the selected live instrument. The image always updates the user interface. Pass analyze:true only when the model must see the image. When analysis is requested, the default transport prefers a short-lived MCP-hosted URL over base64 to reduce token usage.',
+      description: 'Capture a fresh scope screenshot from the live instrument. Pass analyze:true when you need to visually inspect the scope display. IMPORTANT: when analyze:true, the tool response contains an image URL — you MUST load that URL as image content into your vision capability and describe what you see. Do not just echo the URL back as text. Treat it exactly like an image attached to a message.',
       parameters: {
         type: 'object',
         properties: {
@@ -1031,8 +1031,8 @@ export function getToolDefinitions() {
           scopeType: { type: 'string', enum: ['modern', 'legacy'] },
           modelFamily: { type: 'string' },
           deviceDriver: { type: 'string' },
-          analyze: { type: 'boolean', description: 'Set true to return the screenshot for AI vision analysis. Default false (capture only, updates UI).' },
-          analysisTransport: { type: 'string', enum: ['auto', 'url', 'file_id', 'base64', 'mcp_image', 'openai_image', 'claude_image'], description: 'Optional analysis transport hint when analyze:true. Default auto prefers a short-lived MCP URL. Use openai_image to return the same short-lived MCP image URL for OpenAI-hosted vision flows, claude_image to return a native MCP image content block, base64 only for legacy payloads, or file_id for explicit OpenAI Files upload.' },
+          analyze: { type: 'boolean', description: 'Set true to receive the image for vision analysis. When true, the response contains an image URL — ingest it as image content for vision, do not echo it as plain text.' },
+          analysisTransport: { type: 'string', enum: ['auto', 'url', 'file_id', 'base64', 'mcp_image', 'openai_image', 'claude_image'], description: 'Transport hint when analyze:true. Default "auto" returns a short-lived MCP-hosted image URL — load that URL as an image (not text) for vision analysis. Use claude_image for a native MCP image content block (best for Claude), openai_image for OpenAI-hosted vision, base64 for legacy payloads, file_id for explicit OpenAI Files upload.' },
         },
         required: [],
         additionalProperties: false,
