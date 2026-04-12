@@ -1019,7 +1019,7 @@ export function getToolDefinitions() {
     },
     {
       name: 'capture_screenshot',
-      description: 'Capture a screenshot from the live instrument. IMPORTANT: pass analyze:true to receive the scope image in this tool response — without it, the screenshot only refreshes the TekAutomate UI display and NO image data is returned to you. Always use analyze:true when you need to see, analyze, or describe the scope screen.',
+      description: 'Capture a screenshot from the live instrument. IMPORTANT: pass analyze:true to receive the scope image in this tool response — without it, the screenshot only refreshes the TekAutomate UI display and NO image data is returned to you. Always use analyze:true when you need to see, analyze, or describe the scope screen. ANALYSIS RULE: treat screenshots as authoritative for visible instrument state. If a screenshot shows clipping, off-screen traces, disabled channels, or missing decode/table visibility, fix that first — do not trust or report measurements from a visibly clipping channel. After enabling a channel, verify it is visible, framed, and not clipping before analyzing it.',
       parameters: {
         type: 'object',
         properties: {
