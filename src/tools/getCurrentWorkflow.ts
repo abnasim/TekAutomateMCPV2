@@ -1,5 +1,5 @@
 import type { ToolResult } from '../core/schemas';
-import { getCurrentWorkflowState, getLiveSessionState, getWorkflowForSession } from './runtimeContextStore';
+import { getCurrentWorkflowState, getLiveSessionState, getWorkflowForSession, getMostRecentWorkflow } from './runtimeContextStore';
 
 export async function getCurrentWorkflow(input?: Record<string, unknown>): Promise<ToolResult<Record<string, unknown>>> {
   const liveSession = getLiveSessionState();
@@ -12,9 +12,15 @@ export async function getCurrentWorkflow(input?: Record<string, unknown>): Promi
     : null;
   const sessionKey = connectionKey ?? liveSession.sessionKey ?? null;
 
-  // Look up THIS browser's workflow by its sessionKey first.
-  // Falls back to the global slot (legacy / no-sessionKey path).
-  const workflow = (sessionKey ? getWorkflowForSession(sessionKey) : null) ?? getCurrentWorkflowState();
+  // 1. Exact session match (chatkit key == push key) — ideal case
+  // 2. Most-recently-pushed session — handles key mismatch (live:... vs chatkit:...)
+  //    Browser pushes under live:... key; MCP reads with chatkit:... key. Both valid
+  //    but different — fall through to the freshest available session data.
+  // 3. Global slot — legacy / first-push-before-any-session path
+  const workflow =
+    (sessionKey ? getWorkflowForSession(sessionKey) : null)
+    ?? getMostRecentWorkflow()
+    ?? getCurrentWorkflowState();
 
   return {
     ok: true,

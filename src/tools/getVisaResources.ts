@@ -27,7 +27,9 @@ interface ScannedInstrument {
  * pyvisa list_resources() if /scan is unavailable.
  */
 export async function getVisaResources(input: Input): Promise<ToolResult<Record<string, unknown>>> {
-  const instrumentState = getInstrumentInfoState();
+  const connectionKey = typeof (input as any).__connectionSessionKey === 'string' && (input as any).__connectionSessionKey
+    ? (input as any).__connectionSessionKey as string : null;
+  const instrumentState = getInstrumentInfoState(connectionKey);
   const cachedDevices = Array.isArray(instrumentState.devices) ? instrumentState.devices : [];
   const cachedInstruments = cachedDevices
     .map((device) => {

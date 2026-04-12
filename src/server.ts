@@ -1015,8 +1015,10 @@ function filterTools(q) {
       return;
     }
 
-    if (req.method === 'GET' && req.url === '/workflow-proposals/latest') {
-      sendJson(res, 200, { ok: true, proposal: getLastWorkflowProposal() });
+    if (req.method === 'GET' && req.url?.startsWith('/workflow-proposals/latest')) {
+      const proposalUrl = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
+      const sessionKey = proposalUrl.searchParams.get('sessionKey') || undefined;
+      sendJson(res, 200, { ok: true, proposal: getLastWorkflowProposal(sessionKey) });
       return;
     }
 

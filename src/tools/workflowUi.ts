@@ -21,11 +21,11 @@ export async function workflowUi(input: WorkflowUiInput) {
 
   switch (action) {
     case 'current':
-      return getCurrentWorkflow();
+      return getCurrentWorkflow(input);
     case 'stage':
       return stageWorkflowProposal(args as any);
     case 'logs':
-      return getRunLog();
+      return getRunLog(input);
     default:
       return {
         ok: false,

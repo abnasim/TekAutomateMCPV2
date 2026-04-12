@@ -208,7 +208,7 @@ export function getToolDefinitions() {
     {
       name: 'workflow_ui',
       description:
-        'Workflow/UI state gateway for TekAutomate. Use `current` to inspect the current workflow, `stage` to hand a proposal back to the UI, and `logs` to read the latest execution log tail.',
+        'TekAutomate workflow gateway. Actions: current — read the live workflow steps (call first before any edit); stage — push a proposal to the UI (call immediately after building steps, no confirmation needed); logs — read the latest run log.',
       parameters: {
         type: 'object',
         properties: {

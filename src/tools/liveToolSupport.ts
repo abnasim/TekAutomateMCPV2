@@ -1,4 +1,4 @@
-import { getRuntimeContextState } from './runtimeContextStore';
+import { getRuntimeContextState, getInstrumentInfoState } from './runtimeContextStore';
 import { enqueueLiveAction, type LiveActionResultEnvelope, type LiveActionToolName } from './liveActionBridge';
 
 export interface RuntimeBackedEndpoint {
@@ -9,8 +9,9 @@ export interface RuntimeBackedEndpoint {
 }
 
 export function withRuntimeInstrumentDefaults<T extends Record<string, unknown>>(input: T): T & RuntimeBackedEndpoint {
-  const runtime = getRuntimeContextState();
-  const instrument = runtime.instrument;
+  const connectionKey = typeof (input as any).__connectionSessionKey === 'string' && (input as any).__connectionSessionKey
+    ? (input as any).__connectionSessionKey as string : null;
+  const instrument = getInstrumentInfoState(connectionKey);
   return {
     executorUrl:
       typeof input.executorUrl === 'string' && input.executorUrl
@@ -35,15 +36,19 @@ export function withRuntimeInstrumentDefaults<T extends Record<string, unknown>>
 export function shouldBridgeToTekAutomate(input: {
   executorUrl?: unknown;
   liveMode?: unknown;
+  [key: string]: unknown;
 }): boolean {
   const runtime = getRuntimeContextState();
+  const connectionKey = typeof (input as any).__connectionSessionKey === 'string' && (input as any).__connectionSessionKey
+    ? (input as any).__connectionSessionKey as string : null;
+  const instrument = getInstrumentInfoState(connectionKey);
   const requestedLiveMode =
     typeof input.liveMode === 'boolean'
       ? input.liveMode
-      : runtime.instrument.liveMode;
+      : instrument.liveMode;
   return Boolean(
     requestedLiveMode
-      && runtime.instrument.connected
+      && instrument.connected
       && runtime.liveSession.sessionKey
   );
 }

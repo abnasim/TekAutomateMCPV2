@@ -4,6 +4,7 @@ export interface RuntimeWorkflowStep {
   type?: string;
   label?: string;
   command?: string;
+  children?: RuntimeWorkflowStep[];
 }
 
 export interface RuntimeWorkflowContext {
@@ -170,15 +171,21 @@ function normalizeSteps(value: unknown): RuntimeWorkflowStep[] {
     .map((item, index) => {
       if (!item || typeof item !== 'object') return null;
       const step = item as Record<string, unknown>;
-      return {
-        id: typeof step.id === 'string' ? step.id : undefined,
+      const normalized: RuntimeWorkflowStep = {
         index: typeof step.index === 'number' ? step.index : index + 1,
-        type: typeof step.type === 'string' ? step.type : undefined,
-        label: typeof step.label === 'string' ? step.label : undefined,
-        command: typeof step.command === 'string' ? step.command : undefined,
-      } satisfies RuntimeWorkflowStep;
+      };
+      if (typeof step.id === 'string') normalized.id = step.id;
+      if (typeof step.type === 'string') normalized.type = step.type;
+      if (typeof step.label === 'string') normalized.label = step.label;
+      if (typeof step.command === 'string') normalized.command = step.command;
+      // Recursively preserve nested children (group steps) — compact but complete
+      const rawChildren = (step as any).children ?? (step as any).steps;
+      if (Array.isArray(rawChildren) && rawChildren.length > 0) {
+        normalized.children = normalizeSteps(rawChildren);
+      }
+      return normalized;
     })
-    .filter((item) => item !== null) as RuntimeWorkflowStep[];
+    .filter((item): item is RuntimeWorkflowStep => item !== null);
 }
 
 function normalizeRunLog(value: unknown): RuntimeRunLogInfo {
@@ -300,10 +307,12 @@ export function updateRuntimeContext(input: {
 
   runtimeContextState.updatedAt = new Date().toISOString();
 
-  // Also store workflow per-session so each browser's workflow is isolated.
+  // Store all three slices per-session so each browser is fully isolated.
   const pushedSessionKey = runtimeContextState.liveSession.sessionKey;
-  if (pushedSessionKey && input.workflow) {
-    setWorkflowForSession(pushedSessionKey, runtimeContextState.workflow);
+  if (pushedSessionKey) {
+    if (input.workflow) setWorkflowForSession(pushedSessionKey, runtimeContextState.workflow);
+    if (input.instrument) setInstrumentForSession(pushedSessionKey, runtimeContextState.instrument);
+    if (Object.prototype.hasOwnProperty.call(input, 'runLog')) setRunLogForSession(pushedSessionKey, runtimeContextState.runLog);
   }
 
   return getRuntimeContextState();
@@ -323,13 +332,15 @@ export function getRuntimeContextState(): RuntimeContextState {
   };
 }
 
-// ── Per-session workflow store ───────────────────────────────────────────────
-// Each browser has a unique sessionKey (from sessionStorage). When it pushes
-// /runtime-context, the workflow is stored under that key. getCurrentWorkflow
-// uses __connectionSessionKey to look up the right browser's workflow — no
-// cross-session contamination even when multiple browsers are open.
+// ── Per-session context stores ───────────────────────────────────────────────
+// Each browser has a unique sessionKey. When it pushes /runtime-context, all
+// three slices (workflow, instrument, runLog) are stored under that key.
+// Tools use __connectionSessionKey to look up the right browser's data —
+// no cross-session contamination even when multiple browsers are open.
 const WORKFLOW_TTL_MS = 90_000;
 const workflowBySession = new Map<string, { workflow: RuntimeWorkflowContext; updatedAt: number }>();
+const instrumentBySession = new Map<string, { instrument: RuntimeInstrumentInfo; updatedAt: number }>();
+const runLogBySession = new Map<string, { runLog: RuntimeRunLogInfo; updatedAt: number }>();
 
 export function setWorkflowForSession(sessionKey: string, workflow: RuntimeWorkflowContext): void {
   workflowBySession.set(sessionKey, { workflow, updatedAt: Date.now() });
@@ -350,6 +361,53 @@ export function getWorkflowForSession(sessionKey: string): RuntimeWorkflowContex
   return { ...entry.workflow, steps: entry.workflow.steps.map((s) => ({ ...s })) };
 }
 
+export function getMostRecentWorkflow(): RuntimeWorkflowContext | null {
+  let best: { workflow: RuntimeWorkflowContext; updatedAt: number } | null = null;
+  const cutoff = Date.now() - WORKFLOW_TTL_MS;
+  for (const entry of workflowBySession.values()) {
+    if (entry.updatedAt < cutoff) continue;
+    if (!best || entry.updatedAt > best.updatedAt) best = entry;
+  }
+  if (!best) return null;
+  return { ...best.workflow, steps: best.workflow.steps.map((s) => ({ ...s })) };
+}
+
+export function setInstrumentForSession(sessionKey: string, instrument: RuntimeInstrumentInfo): void {
+  instrumentBySession.set(sessionKey, { instrument, updatedAt: Date.now() });
+  const cutoff = Date.now() - WORKFLOW_TTL_MS;
+  for (const [key, entry] of instrumentBySession) {
+    if (entry.updatedAt < cutoff) instrumentBySession.delete(key);
+  }
+}
+
+export function getInstrumentForSession(sessionKey: string): RuntimeInstrumentInfo | null {
+  const entry = instrumentBySession.get(sessionKey);
+  if (!entry) return null;
+  if (Date.now() - entry.updatedAt > WORKFLOW_TTL_MS) {
+    instrumentBySession.delete(sessionKey);
+    return null;
+  }
+  return { ...entry.instrument };
+}
+
+export function setRunLogForSession(sessionKey: string, runLog: RuntimeRunLogInfo): void {
+  runLogBySession.set(sessionKey, { runLog, updatedAt: Date.now() });
+  const cutoff = Date.now() - WORKFLOW_TTL_MS;
+  for (const [key, entry] of runLogBySession) {
+    if (entry.updatedAt < cutoff) runLogBySession.delete(key);
+  }
+}
+
+export function getRunLogForSession(sessionKey: string): RuntimeRunLogInfo | null {
+  const entry = runLogBySession.get(sessionKey);
+  if (!entry) return null;
+  if (Date.now() - entry.updatedAt > WORKFLOW_TTL_MS) {
+    runLogBySession.delete(sessionKey);
+    return null;
+  }
+  return { ...entry.runLog };
+}
+
 export function getCurrentWorkflowState(): RuntimeWorkflowContext {
   const state = getRuntimeContextState();
   const age = Date.now() - new Date(state.updatedAt).getTime();
@@ -357,11 +415,19 @@ export function getCurrentWorkflowState(): RuntimeWorkflowContext {
   return state.workflow;
 }
 
-export function getInstrumentInfoState(): RuntimeInstrumentInfo {
+export function getInstrumentInfoState(sessionKey?: string | null): RuntimeInstrumentInfo {
+  if (sessionKey) {
+    const perSession = getInstrumentForSession(sessionKey);
+    if (perSession) return perSession;
+  }
   return getRuntimeContextState().instrument;
 }
 
-export function getRunLogState(): RuntimeRunLogInfo {
+export function getRunLogState(sessionKey?: string | null): RuntimeRunLogInfo {
+  if (sessionKey) {
+    const perSession = getRunLogForSession(sessionKey);
+    if (perSession) return perSession;
+  }
   return getRuntimeContextState().runLog;
 }
 

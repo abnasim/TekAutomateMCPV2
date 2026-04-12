@@ -2,9 +2,12 @@ import type { ToolResult } from '../core/schemas';
 import { getInstrumentInfoState, getLiveSessionState } from './runtimeContextStore';
 import { getInstrumentState } from './getInstrumentState';
 
-export async function getInstrumentInfo(): Promise<ToolResult<Record<string, unknown>>> {
-  const instrument = getInstrumentInfoState();
+export async function getInstrumentInfo(input?: Record<string, unknown>): Promise<ToolResult<Record<string, unknown>>> {
+  const connectionKey = typeof input?.__connectionSessionKey === 'string' && input.__connectionSessionKey
+    ? input.__connectionSessionKey as string : null;
   const liveSession = getLiveSessionState();
+  const sessionKey = connectionKey ?? liveSession.sessionKey ?? null;
+  const instrument = getInstrumentInfoState(sessionKey);
 
   const canProbeLive =
     Boolean(instrument.liveMode)
