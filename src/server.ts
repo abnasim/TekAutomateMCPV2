@@ -13,6 +13,7 @@ import { completeLiveAction, getPendingLiveActionCount, waitForNextLiveAction } 
 import { bootRouter, createReloadProvidersHandler, createRouterHandler, getRouterHealth } from './core/routerIntegration';
 import { getCommandIndex } from './core/commandIndex';
 import { getRagIndexes } from './core/ragIndex';
+import { getTempVisionImage } from './core/tempImageStore';
 import { getTemplateIndex } from './core/templateIndex';
 import { getTempVisionImage } from './core/tempImageStore';
 import fs from 'fs';
@@ -110,38 +111,46 @@ function buildExternalMcpToolContent(toolName: string, result: unknown) {
     ];
   }
 
-  // ── OpenAI / URL path: imageUrl + mimeType present (url / auto / openai_image transport) ──
-  // Emit the URL as an image_url content block so OpenAI-compatible clients treat it as
-  // actual image input for vision rather than plain text. Metadata goes in a separate text
-  // block so the AI has context (scope type, capture time) alongside the image.
-  // Bridge rule: data.imageUrl + data.mimeType.startsWith('image/') → image_url content block.
+  // ── URL path: imageUrl + mimeType present (url / auto / openai_image transport) ──
+  // MCP protocol only accepts: text, image, audio, resource, resource_link.
+  // image_url is NOT a valid MCP content type — the SDK throws -32602 if we emit it.
+  // Fix: extract the image ID from the URL, retrieve the bytes from tempImageStore,
+  // and return a standard {type:'image', data:base64} block that ALL clients accept.
   if (isScreenshotLike && typeof source.imageUrl === 'string'
       && typeof source.mimeType === 'string' && source.mimeType.startsWith('image/')) {
-    const metadata: Record<string, unknown> = {
-      ok: source.ok === false ? false : true,
-      captured: true,
-      mimeType: source.mimeType,
-    };
-    if (typeof source.capturedAt === 'string') metadata.capturedAt = source.capturedAt;
-    if (typeof source.scopeType === 'string') metadata.scopeType = source.scopeType;
-    if (typeof source.sizeBytes === 'number') metadata.sizeBytes = source.sizeBytes;
-    if (typeof source.expiresAt === 'string') metadata.expiresAt = source.expiresAt;
+    const imageUrl = source.imageUrl as string;
+    const mimeType = source.mimeType as string;
 
     const contextText = [
       'Oscilloscope screenshot captured.',
-      source.scopeType ? `Scope: ${source.scopeType}.` : '',
-      source.capturedAt ? `At: ${source.capturedAt}.` : '',
+      source.scopeType ? `Scope: ${String(source.scopeType)}.` : '',
+      source.capturedAt ? `At: ${String(source.capturedAt)}.` : '',
       'Analyze the waveform display, trigger settings, measurements, and any decode tables visible.',
     ].filter(Boolean).join(' ');
 
+    // Extract the temp store ID from the path: /temp/vision/{id}.ext
+    const idMatch = imageUrl.match(/\/temp\/vision\/([^./?]+)/);
+    if (idMatch) {
+      const record = getTempVisionImage(idMatch[1]);
+      if (record) {
+        return [
+          { type: 'text' as const, text: contextText },
+          {
+            type: 'image' as const,
+            data: record.buffer.toString('base64'),
+            mimeType: record.mimeType,
+          },
+        ];
+      }
+    }
+
+    // Temp store expired or ID not parseable — fall back to URL in text so the
+    // AI can at least see the URL and optionally web-fetch it.
     return [
-      { type: 'text' as const, text: contextText },
-      // image_url content block — OpenAI-compatible clients ingest this as vision input.
-      // The URL points to a short-lived temp image served by this MCP server.
       {
-        type: 'image_url' as unknown as 'text',
-        image_url: { url: source.imageUrl },
-      } as unknown as { type: 'text'; text: string },
+        type: 'text' as const,
+        text: `${contextText}\n\nScreenshot URL (web-fetch for full image): ${imageUrl}`,
+      },
     ];
   }
 
