@@ -84,34 +84,71 @@ function buildExternalMcpToolContent(toolName: string, result: unknown) {
   const isScreenshotLike = toolName === 'capture_screenshot'
     || (toolName === 'instrument_live' && Boolean(imageContent || source.imageUrl || source.base64 || source.analysisBase64));
 
-  if (!isScreenshotLike || !imageContent || imageContent.type !== 'image') {
-    const safeResult = sanitizeToolResultForExternalMcp(toolName, result);
-    const text = typeof safeResult === 'string' ? safeResult : JSON.stringify(safeResult, null, 2);
-    return [{ type: 'text' as const, text }];
+  // ── Claude path: base64 image content block (mcp_image / claude_image transport) ──
+  // This path is unchanged — Claude receives a native MCP image content block.
+  if (isScreenshotLike && imageContent && imageContent.type === 'image') {
+    const metadata: Record<string, unknown> = {
+      ok: source.ok === false ? false : true,
+      captured: true,
+    };
+    if (typeof source.capturedAt === 'string') metadata.capturedAt = source.capturedAt;
+    if (typeof source.scopeType === 'string') metadata.scopeType = source.scopeType;
+    if (typeof source.mimeType === 'string') metadata.mimeType = source.mimeType;
+    if (typeof source.sizeBytes === 'number') metadata.sizeBytes = source.sizeBytes;
+    if (typeof source.originalMimeType === 'string') metadata.originalMimeType = source.originalMimeType;
+    if (typeof source.originalSizeBytes === 'number') metadata.originalSizeBytes = source.originalSizeBytes;
+    return [
+      {
+        type: 'image' as const,
+        data: String(imageContent.data || ''),
+        mimeType: String(imageContent.mimeType || source.mimeType || 'image/png'),
+      },
+      {
+        type: 'text' as const,
+        text: JSON.stringify(metadata),
+      },
+    ];
   }
 
-  const metadata: Record<string, unknown> = {
-    ok: source.ok === false ? false : true,
-    captured: true,
-  };
-  if (typeof source.capturedAt === 'string') metadata.capturedAt = source.capturedAt;
-  if (typeof source.scopeType === 'string') metadata.scopeType = source.scopeType;
-  if (typeof source.mimeType === 'string') metadata.mimeType = source.mimeType;
-  if (typeof source.sizeBytes === 'number') metadata.sizeBytes = source.sizeBytes;
-  if (typeof source.originalMimeType === 'string') metadata.originalMimeType = source.originalMimeType;
-  if (typeof source.originalSizeBytes === 'number') metadata.originalSizeBytes = source.originalSizeBytes;
+  // ── OpenAI / URL path: imageUrl + mimeType present (url / auto / openai_image transport) ──
+  // Emit the URL as an image_url content block so OpenAI-compatible clients treat it as
+  // actual image input for vision rather than plain text. Metadata goes in a separate text
+  // block so the AI has context (scope type, capture time) alongside the image.
+  // Bridge rule: data.imageUrl + data.mimeType.startsWith('image/') → image_url content block.
+  if (isScreenshotLike && typeof source.imageUrl === 'string'
+      && typeof source.mimeType === 'string' && source.mimeType.startsWith('image/')) {
+    const metadata: Record<string, unknown> = {
+      ok: source.ok === false ? false : true,
+      captured: true,
+      mimeType: source.mimeType,
+    };
+    if (typeof source.capturedAt === 'string') metadata.capturedAt = source.capturedAt;
+    if (typeof source.scopeType === 'string') metadata.scopeType = source.scopeType;
+    if (typeof source.sizeBytes === 'number') metadata.sizeBytes = source.sizeBytes;
+    if (typeof source.expiresAt === 'string') metadata.expiresAt = source.expiresAt;
 
-  return [
-    {
-      type: 'image' as const,
-      data: String(imageContent.data || ''),
-      mimeType: String(imageContent.mimeType || source.mimeType || 'image/png'),
-    },
-    {
-      type: 'text' as const,
-      text: JSON.stringify(metadata),
-    },
-  ];
+    const contextText = [
+      'Oscilloscope screenshot captured.',
+      source.scopeType ? `Scope: ${source.scopeType}.` : '',
+      source.capturedAt ? `At: ${source.capturedAt}.` : '',
+      'Analyze the waveform display, trigger settings, measurements, and any decode tables visible.',
+    ].filter(Boolean).join(' ');
+
+    return [
+      { type: 'text' as const, text: contextText },
+      // image_url content block — OpenAI-compatible clients ingest this as vision input.
+      // The URL points to a short-lived temp image served by this MCP server.
+      {
+        type: 'image_url' as unknown as 'text',
+        image_url: { url: source.imageUrl },
+      } as unknown as { type: 'text'; text: string },
+    ];
+  }
+
+  // ── Fallback: all other tool results ──
+  const safeResult = sanitizeToolResultForExternalMcp(toolName, result);
+  const text = typeof safeResult === 'string' ? safeResult : JSON.stringify(safeResult, null, 2);
+  return [{ type: 'text' as const, text }];
 }
 const REQUEST_LOG_DIR = path.join(__dirname, 'logs', 'requests');
 const MAX_LOG_FILES = 500;
