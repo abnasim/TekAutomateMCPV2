@@ -1,7 +1,7 @@
 import { getVisaResourcesProxy } from '../core/instrumentProxy';
 import type { ToolResult } from '../core/schemas';
 import { getInstrumentInfoState } from './runtimeContextStore';
-import { withRuntimeInstrumentDefaults } from './liveToolSupport';
+import { withRuntimeInstrumentDefaults, shouldBridgeToTekAutomate, dispatchLiveActionThroughTekAutomate } from './liveToolSupport';
 
 interface Input {
   executorUrl: string;
@@ -31,6 +31,19 @@ export async function getVisaResources(input: Input): Promise<ToolResult<Record<
   // Fill in executorUrl from runtime context or env vars
   const filled = withRuntimeInstrumentDefaults(input as any) as Input & { executorUrl: string };
   input = { ...input, ...filled };
+
+  // If no direct executor URL is reachable, bridge through the TekAutomate browser session
+  if (shouldBridgeToTekAutomate(input)) {
+    const bridged = await dispatchLiveActionThroughTekAutomate('get_visa_resources', input as Record<string, unknown>, 35_000);
+    return {
+      ok: bridged.ok,
+      data: (bridged.ok && bridged.result && typeof bridged.result === 'object'
+        ? bridged.result as Record<string, unknown>
+        : { message: bridged.error || 'Live action failed via bridge' }),
+      sourceMeta: [],
+      warnings: [],
+    };
+  }
 
   const connectionKey = typeof (input as any).__connectionSessionKey === 'string' && (input as any).__connectionSessionKey
     ? (input as any).__connectionSessionKey as string : null;

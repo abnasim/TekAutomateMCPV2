@@ -78,8 +78,28 @@ function buildExternalMcpToolContent(toolName: string, result: unknown) {
     : null;
 
   const isScreenshotLike = toolName === 'capture_screenshot'
-    || (toolName === 'instrument_live' && Boolean(imageContent || source.imageUrl || source.base64 || source.analysisBase64));
+    || (toolName === 'instrument_live' && Boolean(imageContent || source.imageUrl || source.localPath || source.base64 || source.analysisBase64));
 
+  // ── Local-file path (stdio/direct mode) ────────────────────────────────────
+  // When the capture saved the image locally, return a compact text block that
+  // tells Claude Code to use its Read tool.  Embedding the full base64 PNG in a
+  // single JSON-RPC line (potentially 2-10 MB) causes "error decoding response
+  // body" in both Claude Desktop and Claude Code's MCP readline parser.
+  if (isScreenshotLike && source.localPath && typeof source.localPath === 'string') {
+    const meta: Record<string, unknown> = {
+      ok: source.ok === false ? false : true,
+      captured: true,
+      localPath: source.localPath,
+      _hint: 'Screenshot saved locally. Use the Read tool to open this file and view the oscilloscope image.',
+    };
+    if (typeof source.capturedAt === 'string') meta.capturedAt = source.capturedAt;
+    if (typeof source.scopeType === 'string') meta.scopeType = source.scopeType;
+    if (typeof source.sizeBytes === 'number') meta.sizeBytes = source.sizeBytes;
+    if (typeof source.mimeType === 'string') meta.mimeType = source.mimeType;
+    return [{ type: 'text' as const, text: JSON.stringify(meta, null, 2) }];
+  }
+
+  // ── No local path: fall back to embedded image content block ───────────────
   if (!isScreenshotLike || !imageContent || imageContent.type !== 'image') {
     const safeResult = sanitizeToolResultForExternalMcp(toolName, result);
     const text = typeof safeResult === 'string'

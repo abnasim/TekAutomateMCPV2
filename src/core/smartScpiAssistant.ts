@@ -14,6 +14,9 @@ interface SmartScpiRequest {
 interface SmartScpiToolResult extends ToolResult<string[]> {
   conversationalPrompt?: string;
   summary: string;
+  /** Raw CommandSuggestion objects — used by toolLoop.ts to build SCPI_COMMANDS cards.
+   *  (data[] is text strings for Claude; commandSuggestions[] are the objects.) */
+  commandSuggestions?: CommandSuggestion[];
 }
 
 /** Convert a CommandSuggestion to compact text (~150 tokens vs ~500 for JSON) */
@@ -1250,6 +1253,7 @@ export async function smartScpiLookup(input: SmartScpiRequest): Promise<SmartScp
     return {
       ok: true,
       data: topCommands.map(commandSuggestionToText),
+      commandSuggestions: topCommands,  // raw objects for toolLoop.ts SCPI_COMMANDS cards
       sourceMeta: [],
       warnings: [],
       summary: formatted.summary,

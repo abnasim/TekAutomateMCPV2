@@ -214,48 +214,47 @@ export async function captureScreenshot(input: Input): Promise<ToolResult<Record
     }
     if (bridged.ok && input.analyze === true && (analysisTransport === 'auto' || analysisTransport === 'url')) {
       const urlPayload = buildUrlOnlyScreenshotPayload(maybeCompressed, input);
-      if (!urlPayload) {
-        // No base URL (e.g. STDIO/local) — try mcp_image for Claude, then base64 data URI for Codex/others
-        if (analysisTransport === 'auto') {
-          const imagePayload = buildMcpImageScreenshotPayload(maybeCompressed);
-          const localPath = saveScreenshotLocally(maybeCompressed);
-          const base64 = typeof maybeCompressed.base64 === 'string' ? maybeCompressed.base64
-            : typeof maybeCompressed.analysisBase64 === 'string' ? maybeCompressed.analysisBase64 : '';
-          const mimeType = typeof maybeCompressed.mimeType === 'string' ? maybeCompressed.mimeType : 'image/png';
-          const dataUri = base64 ? `data:${mimeType};base64,${base64}` : null;
-          if (imagePayload) {
-            return {
-              ok: true,
-              data: { ...imagePayload, ...(localPath ? { localPath } : {}), ...(dataUri ? { dataUri } : {}) },
-              sourceMeta: [],
-              warnings: [],
-            };
-          }
-          if (localPath || dataUri) {
-            return {
-              ok: true,
-              data: { ok: true, captured: true, ...(localPath ? { localPath } : {}), ...(dataUri ? { dataUri } : {}) },
-              sourceMeta: [],
-              warnings: [],
-            };
-          }
-        }
+      if (urlPayload) {
+        const localPath = saveScreenshotLocally(maybeCompressed);
         return {
-          ok: false,
-          data: {
-            error: 'VISION_URL_UNAVAILABLE',
-            message: 'capture_screenshot requested URL analysis transport, but MCP could not create a temporary image URL.',
-            debug: buildVisionUrlDebug(maybeCompressed, input, 'bridge'),
-          },
+          ok: true,
+          data: { ...urlPayload, ...(localPath ? { localPath } : {}) },
           sourceMeta: [],
-          warnings: ['Temporary screenshot URL could not be created.'],
+          warnings: [],
         };
       }
+      // No HTTP base URL (stdio/local mode) — save locally and let Claude Code read it.
+      // Both 'auto' and 'url'/'openai_image' (remapped to 'url') use the same fallback.
+      const localPath = saveScreenshotLocally(maybeCompressed);
+      if (localPath) {
+        return {
+          ok: true,
+          data: {
+            ok: true, captured: true, localPath,
+            capturedAt: typeof maybeCompressed.capturedAt === 'string' ? maybeCompressed.capturedAt : new Date().toISOString(),
+            mimeType: typeof maybeCompressed.mimeType === 'string' ? maybeCompressed.mimeType : 'image/png',
+            sizeBytes: typeof maybeCompressed.sizeBytes === 'number' ? maybeCompressed.sizeBytes : undefined,
+            scopeType: typeof maybeCompressed.scopeType === 'string' ? maybeCompressed.scopeType : undefined,
+            _hint: 'Screenshot saved locally. Use the Read tool to view this image file.',
+          },
+          sourceMeta: [],
+          warnings: [],
+        };
+      }
+      // Last resort: mcp_image embed (may fail for large images)
+      const imagePayload = buildMcpImageScreenshotPayload(maybeCompressed);
+      if (imagePayload) {
+        return { ok: true, data: imagePayload, sourceMeta: [], warnings: [] };
+      }
       return {
-        ok: true,
-        data: urlPayload,
+        ok: false,
+        data: {
+          error: 'VISION_URL_UNAVAILABLE',
+          message: 'capture_screenshot could not save the screenshot locally or create a temporary image URL.',
+          debug: buildVisionUrlDebug(maybeCompressed, input, 'bridge'),
+        },
         sourceMeta: [],
-        warnings: [],
+        warnings: ['Screenshot could not be stored.'],
       };
     }
     const finalData = bridged.ok
@@ -281,9 +280,28 @@ export async function captureScreenshot(input: Input): Promise<ToolResult<Record
     return result;
   }
   const maybeCompressed = result.data as Record<string, unknown>;
+
+  // In direct/stdio local mode always save to a temp file.  Embedding a full-size
+  // PNG as base64 in the JSON-RPC response produces a giant single-line JSON that
+  // some clients (Claude Desktop, Claude Code) fail to parse ("error decoding
+  // response body").  The localPath lets Claude Code use its Read tool to view the
+  // image directly — no large payload in the transport layer at all.
+  const localPath = saveScreenshotLocally(maybeCompressed);
+
   if (input.analyze === true && analysisTransport === 'mcp_image') {
     const imagePayload = buildMcpImageScreenshotPayload(maybeCompressed);
     if (!imagePayload) {
+      if (localPath) {
+        return {
+          ...result,
+          ok: true,
+          data: {
+            ok: true, captured: true, localPath,
+            _hint: 'Screenshot saved locally. Use the Read tool to view this image file.',
+          },
+          warnings: ['MCP image content block could not be created; screenshot saved to localPath.'],
+        };
+      }
       return {
         ok: false,
         data: {
@@ -297,54 +315,60 @@ export async function captureScreenshot(input: Input): Promise<ToolResult<Record
     return {
       ...result,
       ok: true,
-      data: imagePayload,
+      data: { ...imagePayload, ...(localPath ? { localPath } : {}) },
       warnings: [],
     };
   }
+
+  // For 'auto', 'url' (and remapped 'openai_image') transports:
+  // 1. If we have a base URL (HTTP server mode), return a short-lived URL.
+  // 2. Otherwise (stdio/local mode) — prefer the local file path.
   if (input.analyze === true && (analysisTransport === 'auto' || analysisTransport === 'url')) {
     const urlPayload = buildUrlOnlyScreenshotPayload(maybeCompressed, input);
-    if (!urlPayload) {
-      // No base URL (e.g. STDIO/local) — try mcp_image for Claude, then base64 data URI for Codex/others
-      if (analysisTransport === 'auto') {
-        const imagePayload = buildMcpImageScreenshotPayload(maybeCompressed);
-        const localPath = saveScreenshotLocally(maybeCompressed);
-        const base64 = typeof maybeCompressed.base64 === 'string' ? maybeCompressed.base64
-          : typeof maybeCompressed.analysisBase64 === 'string' ? maybeCompressed.analysisBase64 : '';
-        const mimeType = typeof maybeCompressed.mimeType === 'string' ? maybeCompressed.mimeType : 'image/png';
-        const dataUri = base64 ? `data:${mimeType};base64,${base64}` : null;
-        if (imagePayload) {
-          return {
-            ...result, ok: true,
-            data: { ...imagePayload, ...(localPath ? { localPath } : {}), ...(dataUri ? { dataUri } : {}) },
-            warnings: [],
-          };
-        }
-        if (localPath || dataUri) {
-          return {
-            ...result, ok: true,
-            data: { ok: true, captured: true, ...(localPath ? { localPath } : {}), ...(dataUri ? { dataUri } : {}) },
-            warnings: [],
-          };
-        }
-      }
+    if (urlPayload) {
       return {
-        ok: false,
-        data: {
-          error: 'VISION_URL_UNAVAILABLE',
-          message: 'capture_screenshot requested URL analysis transport, but MCP could not create a temporary image URL.',
-          debug: buildVisionUrlDebug(maybeCompressed, input, 'proxy'),
-        },
-        sourceMeta: [],
-        warnings: ['Temporary screenshot URL could not be created.'],
+        ...result,
+        ok: true,
+        data: { ...urlPayload, ...(localPath ? { localPath } : {}) },
+        warnings: [],
       };
     }
+
+    if (localPath) {
+      return {
+        ...result,
+        ok: true,
+        data: {
+          ok: true,
+          captured: true,
+          localPath,
+          capturedAt: typeof maybeCompressed.capturedAt === 'string' ? maybeCompressed.capturedAt : new Date().toISOString(),
+          mimeType: typeof maybeCompressed.mimeType === 'string' ? maybeCompressed.mimeType : 'image/png',
+          sizeBytes: typeof maybeCompressed.sizeBytes === 'number' ? maybeCompressed.sizeBytes : undefined,
+          scopeType: typeof maybeCompressed.scopeType === 'string' ? maybeCompressed.scopeType : undefined,
+          _hint: 'Screenshot saved locally. Use the Read tool to view this image file.',
+        },
+        warnings: [],
+      };
+    }
+
+    const imagePayload = buildMcpImageScreenshotPayload(maybeCompressed);
+    if (imagePayload) {
+      return { ...result, ok: true, data: imagePayload, warnings: [] };
+    }
+
     return {
-      ...result,
-      ok: true,
-      data: urlPayload,
-      warnings: [],
+      ok: false,
+      data: {
+        error: 'VISION_URL_UNAVAILABLE',
+        message: 'capture_screenshot could not save the screenshot locally or create a temporary image URL. Check that the temp directory is writable.',
+        debug: buildVisionUrlDebug(maybeCompressed, input, 'proxy'),
+      },
+      sourceMeta: [],
+      warnings: ['Screenshot could not be stored.'],
     };
   }
+
   return {
     ...result,
     data: stripScreenshotPayloadForNonAnalysis(maybeCompressed, input.analyze),

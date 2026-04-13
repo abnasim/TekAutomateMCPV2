@@ -101,8 +101,17 @@ const SUBJECT_GROUP_MAP: Array<{
   // These prevent generic keywords (area, frequency, position, etc.) from stealing specific intents.
 
   // Spectrum view — before "frequency" matches measurement
-  { pattern: /\b(spectrum\s*view|spectral\s*view)\b/i, groups: ['Spectrum view'], intent: 'math', subject: 'spectrum_view' },
+  // Also matches "spectrumview" (one word), "sv:" prefix, peak/marker queries
+  { pattern: /\b(spectrum\s*view|spectral\s*view|spectrumview)\b/i, groups: ['Spectrum view'], intent: 'math', subject: 'spectrum_view' },
   { pattern: /\bSV:/i, groups: ['Spectrum view'], intent: 'math', subject: 'spectrum_view' },
+  { pattern: /\b(peak\s*marker|marker.*peak|rf\s*peak|spectrum.*peak|peak.*spectrum)\b/i, groups: ['Spectrum view'], intent: 'math', subject: 'spectrum_peak_marker' },
+  { pattern: /\b(rf\s*view|rfview|spectrum\s*analyzer|sa\s*mode)\b/i, groups: ['Spectrum view'], intent: 'math', subject: 'spectrum_view' },
+
+  // Front panel — FPPanel commands
+  { pattern: /\b(fpanel|fp\s*panel|front\s*panel|front\s*panel\s*button)\b/i, groups: ['Miscellaneous'], intent: 'misc', subject: 'front_panel' },
+
+  // FastFrame abbreviations — "ff" alone
+  { pattern: /\bff\b/i, groups: ['Horizontal'], intent: 'acquisition', subject: 'fastframe' },
 
   // Eye diagram / BER — before "BER" matches RSA audio
   { pattern: /\b(eye\s*diagram|eye\s*pattern|eye\s*measurement|eye.*BER|BER.*eye)\b/i, groups: ['Measurement'], intent: 'measurement', subject: 'eye_diagram' },
@@ -278,7 +287,7 @@ const SUBJECT_GROUP_MAP: Array<{
   { pattern: /\b(record\s*length|record|rlength)\b/i, groups: ['Horizontal'], intent: 'acquisition', subject: 'record_length' },
   { pattern: /\b(single\s*seq|single\s*shot|single)\b/i, groups: ['Acquisition'], intent: 'acquisition', subject: 'single' },
   { pattern: /\b(run|stop|acquire|acquisition)\b/i, groups: ['Acquisition'], intent: 'acquisition', subject: 'acquisition' },
-  { pattern: /\b(fastframe|fast\s*frame|fast.frame|enable\s*fastframe|fastframe\s*mode)\b/i, groups: ['Horizontal'], intent: 'acquisition', subject: 'fastframe' },
+  { pattern: /\b(fastframe|fast\s*frame|fast.frame|enable\s*fastframe|fastframe\s*mode|fast\s*acq)\b/i, groups: ['Horizontal'], intent: 'acquisition', subject: 'fastframe' },
   { pattern: /\b(numavg|num\s*avg|averaging)\b/i, groups: ['Acquisition'], intent: 'acquisition', subject: 'averaging' },
 
   // ── Horizontal / Timebase ──

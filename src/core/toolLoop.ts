@@ -309,7 +309,12 @@ async function runSmartScpiAssistant(req: McpChatRequest) {
       addmeasValue = resolveAddmeasValue(req.userMessage);
     } catch { /* ignore */ }
 
-    const actions = toolResult.data.map((cmd: any, idx: number) => {
+    // IMPORTANT: toolResult.data is string[] (text for Claude).
+    // Use commandSuggestions (raw CommandSuggestion objects) for building cards.
+    // Using data[] here caused "Cannot read properties of undefined (reading 'replace')"
+    // because cmd.header was undefined on a string element.
+    const commandObjects: any[] = toolResult.commandSuggestions || [];
+    const actions = commandObjects.map((cmd: any, idx: number) => {
       const isSetCapable = cmd.commandType === 'set' || cmd.commandType === 'both';
       const isQueryCapable = cmd.commandType === 'query' || cmd.commandType === 'both';
       // If user explicitly asked for a query, prefer query form
@@ -346,15 +351,14 @@ async function runSmartScpiAssistant(req: McpChatRequest) {
             resolved = resolved.replace(/\s*\{[^}]+\}/, '').trim();
           }
         }
-        // Replace <NR3>/<NRf>/<NR1> with the user's value if available
+        // Replace any <NRx>/<NRf>/<NR1>/<NR2>/<NR3> with the user's value if available
         const userValue = resolveValue();
-        if (userValue && /<NR[f13]>/i.test(resolved)) {
-          resolved = resolved.replace(/\s*<NR[f13]>/i, ` ${userValue}`).trim();
+        const nrPattern = /<NR[f1-9x]>/i;
+        if (userValue && nrPattern.test(resolved)) {
+          resolved = resolved.replace(nrPattern, userValue).trim();
         }
-        // Keep remaining angle-bracket placeholders as hints (e.g. <QString>, <NR3>)
-        // so users know what argument to fill in, instead of stripping them silently
-        // If user provided a value but no placeholder was in the syntax, append it
-        if (userValue && !resolved.includes(userValue) && !/\d/.test(resolved.split(/\s+/).slice(-1)[0] || '')) {
+        // Fallback: if user provided a value but no NR placeholder matched, append it
+        if (userValue && !resolved.includes(userValue) && !/^\d/.test((resolved.split(/\s+/).pop() || ''))) {
           resolved = `${resolved} ${userValue}`;
         }
         scpiCommand = resolved;
@@ -381,12 +385,33 @@ async function runSmartScpiAssistant(req: McpChatRequest) {
       };
     });
 
+    // Build SCPI command cards for the rich widget renderer in TekAutomate UI.
+    // The SCPI_COMMANDS: format renders each command as a card with + Query / + Write
+    // buttons, plus an "Apply All to Flow" bulk button at the bottom.
+    // resolvedCommand carries the value-substituted command so the card shows
+    // "CH1:SCALERATio 2" not "CH<x>:SCALERATio <NR2>".
+    const scpiCards = commandObjects.map((cmd: any, idx: number) => {
+      const resolvedAction = actions[idx];
+      const resolvedCommand: string | null =
+        (resolvedAction?.newStep?.params?.command as string | undefined) || null;
+      return {
+        header: cmd.header,
+        description: cmd.shortDescription || cmd.description || '',
+        set: cmd.syntax?.set || null,
+        query: cmd.syntax?.query || null,
+        resolvedCommand,
+        type: cmd.commandType || 'both',
+        group: cmd.group || '',
+        families: cmd.families || [],
+        example: resolvedCommand || cmd.codeExamples?.[0]?.scpi?.code || cmd.syntax?.set || cmd.syntax?.query || '',
+      };
+    });
+
     return {
-      text: `ACTIONS_JSON: ${JSON.stringify({
+      text: `SCPI_COMMANDS: ${JSON.stringify({
         summary: toolResult.summary,
-        findings: toolResult.data.map((c: any) => `${c.header} — ${c.shortDescription || c.description}`),
-        suggestedFixes: [],
-        actions
+        commands: scpiCards,
+        actions,
       })}`,
       assistantThreadId: undefined,
       errors: [],
