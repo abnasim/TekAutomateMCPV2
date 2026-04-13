@@ -1,6 +1,7 @@
 import { getVisaResourcesProxy } from '../core/instrumentProxy';
 import type { ToolResult } from '../core/schemas';
 import { getInstrumentInfoState } from './runtimeContextStore';
+import { withRuntimeInstrumentDefaults } from './liveToolSupport';
 
 interface Input {
   executorUrl: string;
@@ -27,41 +28,49 @@ interface ScannedInstrument {
  * pyvisa list_resources() if /scan is unavailable.
  */
 export async function getVisaResources(input: Input): Promise<ToolResult<Record<string, unknown>>> {
+  // Fill in executorUrl from runtime context or env vars
+  const filled = withRuntimeInstrumentDefaults(input as any) as Input & { executorUrl: string };
+  input = { ...input, ...filled };
+
   const connectionKey = typeof (input as any).__connectionSessionKey === 'string' && (input as any).__connectionSessionKey
     ? (input as any).__connectionSessionKey as string : null;
   const instrumentState = getInstrumentInfoState(connectionKey);
   const cachedDevices = Array.isArray(instrumentState.devices) ? instrumentState.devices : [];
-  const cachedInstruments = cachedDevices
-    .map((device) => {
-      const visaResource = typeof device.visaResource === 'string' ? device.visaResource : '';
-      if (!visaResource) return null;
-      const model = typeof device.modelFamily === 'string' ? device.modelFamily : '';
-      const manufacturer = typeof device.alias === 'string' ? device.alias : '';
-      return {
-        resource: visaResource,
-        identity: [manufacturer, model].filter(Boolean).join(' ').trim() || visaResource,
-        manufacturer: manufacturer || 'Tektronix',
-        model,
-        serial: '',
-        firmware: '',
-        reachable: true,
-        connType: typeof device.connectionType === 'string' ? device.connectionType : '',
-      } satisfies ScannedInstrument;
-    })
-    .filter((item): item is ScannedInstrument => item !== null);
 
-  if (cachedInstruments.length > 0) {
-    return {
-      ok: true,
-      data: {
-        instruments: cachedInstruments,
-        count: cachedInstruments.length,
-        source: 'runtime_context',
-        hint: 'These VISA resources were mirrored from TekAutomate runtime state.',
-      },
-      sourceMeta: [],
-      warnings: [],
-    };
+  // Only use runtime cache if no direct executor URL is available — when executor is reachable, always do a live scan
+  const hasDirectExecutor = Boolean(input.executorUrl);
+  if (!hasDirectExecutor && cachedDevices.length > 0) {
+    const cachedInstruments = cachedDevices
+      .map((device) => {
+        const visaResource = typeof device.visaResource === 'string' ? device.visaResource : '';
+        if (!visaResource) return null;
+        const model = typeof device.modelFamily === 'string' ? device.modelFamily : '';
+        const manufacturer = typeof device.alias === 'string' ? device.alias : '';
+        return {
+          resource: visaResource,
+          identity: [manufacturer, model].filter(Boolean).join(' ').trim() || visaResource,
+          manufacturer: manufacturer || 'Tektronix',
+          model,
+          serial: '',
+          firmware: '',
+          reachable: true,
+          connType: typeof device.connectionType === 'string' ? device.connectionType : '',
+        } satisfies ScannedInstrument;
+      })
+      .filter((item): item is ScannedInstrument => item !== null);
+    if (cachedInstruments.length > 0) {
+      return {
+        ok: true,
+        data: {
+          instruments: cachedInstruments,
+          count: cachedInstruments.length,
+          source: 'runtime_context',
+          hint: 'These VISA resources were mirrored from TekAutomate runtime state.',
+        },
+        sourceMeta: [],
+        warnings: [],
+      };
+    }
   }
 
   // Try the richer /scan endpoint first
