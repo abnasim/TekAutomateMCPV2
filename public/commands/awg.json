@@ -2520,10 +2520,45 @@
       "color": "bg-blue-100 text-blue-700",
       "commands": [
         {
-          "name": "Activate High Speed Serial Plugin",
-          "scpi": "WPLugin:ACTive \"HSSerial\"",
-          "description": "Activate the High Speed Serial plugin",
-          "example": "awg.write('WPLugin:ACTive \"HSSerial\"')"
+          "name": "Activate Waveform Plugin",
+          "scpi": "WPLugin:ACTive",
+          "description": "Sets or returns the active waveform creation plug-in. Available plug-in names: HSSerial, RADar, OFDM, RFGeneric, OPTical, MTONe, GPREcomp, Basic Waveform.",
+          "shortDescription": "Sets or returns the active waveform creation plug-in.",
+          "syntax": {
+            "set": "WPLugin:ACTive <plugin_name>",
+            "query": "WPLugin:ACTive?"
+          },
+          "params": [
+            {
+              "name": "plugin_name",
+              "type": "text",
+              "options": [
+                "HSSerial",
+                "RADar",
+                "OFDM",
+                "RFGeneric",
+                "OPTical",
+                "MTONe",
+                "GPREcomp",
+                "Basic Waveform"
+              ],
+              "required": true
+            }
+          ],
+          "example": "awg.write('WPLugin:ACTive \"HSSerial\"')",
+          "relatedCommands": [
+            "WPLugin:PLUGins?"
+          ]
+        },
+        {
+          "name": "Query Available Waveform Plugins",
+          "scpi": "WPLugin:PLUGins?",
+          "description": "Returns all the available waveform creation plug-ins installed as a comma-separated string.",
+          "shortDescription": "Returns all available waveform creation plug-ins.",
+          "syntax": {
+            "query": "WPLugin:PLUGins?"
+          },
+          "example": "awg.query('WPLugin:PLUGins?')"
         },
         {
           "name": "Reset High Speed Serial Plugin",
@@ -2657,6 +2692,132 @@
             }
           ],
           "example": "awg.write('HSSerial:PREemphasis:ENABle ON')"
+        },
+        {
+          "name": "Set HSS Encoding Scheme",
+          "scpi": "HSSerial:ENCode:SCHeme",
+          "description": "Sets or returns the Signaling Scheme on the base data pattern. Supported schemes include NRZ, PAM4, PAM8, and others.",
+          "shortDescription": "Sets or returns the Signaling Scheme (e.g. NRZ, PAM4) on the base data pattern.",
+          "syntax": {
+            "set": "HSSerial:ENCode:SCHeme <scheme>",
+            "query": "HSSerial:ENCode:SCHeme?"
+          },
+          "params": [
+            {
+              "name": "scheme",
+              "type": "text",
+              "options": [
+                "NRZ",
+                "PAM4",
+                "PAM8",
+                "PWM"
+              ],
+              "required": true
+            }
+          ],
+          "example": "awg.write('HSSerial:ENCode:SCHeme NRZ')"
+        },
+        {
+          "name": "Compile HSS Waveform with Overwrite",
+          "scpi": "HSSerial:COMPile:OVERwrite",
+          "description": "Sets or returns the overwrite mode for HSSerial compile. When enabled, the compiled waveform will overwrite an existing waveform with the same name.",
+          "shortDescription": "Sets or returns whether compiled waveform overwrites existing waveform.",
+          "syntax": {
+            "set": "HSSerial:COMPile:OVERwrite <state>",
+            "query": "HSSerial:COMPile:OVERwrite?"
+          },
+          "params": [
+            {
+              "name": "state",
+              "type": "text",
+              "options": [
+                "ON",
+                "OFF",
+                "1",
+                "0"
+              ],
+              "required": true
+            }
+          ],
+          "example": "awg.write('HSSerial:COMPile:OVERwrite ON')"
+        },
+        {
+          "name": "Compile and Play HSS Waveform",
+          "scpi": "HSSerial:COMPile:PLAY",
+          "description": "Compiles the HSSerial waveform and immediately plays it on the AWG output.",
+          "shortDescription": "Compiles and plays the high-speed serial waveform.",
+          "syntax": {
+            "set": "HSSerial:COMPile:PLAY"
+          },
+          "example": "awg.write('HSSerial:COMPile:PLAY')"
+        },
+        {
+          "name": "Cancel HSS Compile",
+          "scpi": "HSSerial:COMPile:CANCel",
+          "description": "Cancels an ongoing HSSerial compile operation.",
+          "shortDescription": "Cancels the current HSSerial compile operation.",
+          "syntax": {
+            "set": "HSSerial:COMPile:CANCel"
+          },
+          "example": "awg.write('HSSerial:COMPile:CANCel')"
+        },
+        {
+          "name": "Set HSS PRBS User-Defined Polynomial",
+          "scpi": "HSSerial:BDATa:PRBS:UDEFined:POLYnomial",
+          "description": "Sets or returns the PRBS Polynomial Expression when the Base Pattern Data is set to User Defined PRBS.",
+          "shortDescription": "Sets or returns the PRBS polynomial for user-defined PRBS patterns.",
+          "syntax": {
+            "set": "HSSerial:BDATa:PRBS:UDEFined:POLYnomial <polynomial>",
+            "query": "HSSerial:BDATa:PRBS:UDEFined:POLYnomial?"
+          },
+          "params": [
+            {
+              "name": "polynomial",
+              "type": "text",
+              "required": true
+            }
+          ],
+          "example": "awg.write('HSSerial:BDATa:PRBS:UDEFined:POLYnomial \"1+x7+x23\"')"
+        },
+        {
+          "name": "Set HSS 8B10B Encoding Enable",
+          "scpi": "HSSerial:ENCode:ENCo8b10b:ENABle",
+          "description": "Sets or returns the 8B/10B encoding state (enabled or disabled).",
+          "shortDescription": "Enables or disables 8B/10B encoding.",
+          "syntax": {
+            "set": "HSSerial:ENCode:ENCo8b10b:ENABle <state>",
+            "query": "HSSerial:ENCode:ENCo8b10b:ENABle?"
+          },
+          "params": [
+            {
+              "name": "state",
+              "type": "text",
+              "options": [
+                "ON",
+                "OFF"
+              ],
+              "required": true
+            }
+          ],
+          "example": "awg.write('HSSerial:ENCode:ENCo8b10b:ENABle ON')"
+        },
+        {
+          "name": "Set HSS Compile Name",
+          "scpi": "HSSerial:COMPile:NAME",
+          "description": "Sets or returns the name of the compiled waveform.",
+          "shortDescription": "Sets or returns the name for the compiled HSSerial waveform.",
+          "syntax": {
+            "set": "HSSerial:COMPile:NAME <name>",
+            "query": "HSSerial:COMPile:NAME?"
+          },
+          "params": [
+            {
+              "name": "name",
+              "type": "text",
+              "required": true
+            }
+          ],
+          "example": "awg.write('HSSerial:COMPile:NAME \"MyHSSWaveform\"')"
         }
       ]
     },
@@ -3154,6 +3315,49 @@
           "scpi": "GPREcomp:COMPile",
           "description": "Compile waveform with precompensation applied",
           "example": "awg.write('GPREcomp:COMPile')"
+        }
+      ]
+    },
+    "Waveform_Plugin": {
+      "description": "Waveform creation plug-in control commands",
+      "commands": [
+        {
+          "name": "Activate Waveform Plugin (Generic)",
+          "scpi": "WPLugin:ACTive",
+          "description": "Sets or returns the active waveform creation plug-in. To load HSSerial plugin use WPLugin:ACTive \"HSSerial\", for Radar use WPLugin:ACTive \"RADar\", for OFDM use WPLugin:ACTive \"OFDM\".",
+          "shortDescription": "Sets or returns the active waveform creation plug-in (WPLUGIN:ACTIVE).",
+          "syntax": {
+            "set": "WPLugin:ACTive <plugin_name>",
+            "query": "WPLugin:ACTive?"
+          },
+          "params": [
+            {
+              "name": "plugin_name",
+              "type": "text",
+              "options": [
+                "HSSerial",
+                "RADar",
+                "OFDM",
+                "RFGeneric",
+                "OPTical",
+                "MTONe",
+                "GPREcomp",
+                "Basic Waveform"
+              ],
+              "required": true
+            }
+          ],
+          "example": "awg.write('WPLugin:ACTive \"HSSerial\"')"
+        },
+        {
+          "name": "Query Available Waveform Plugins",
+          "scpi": "WPLugin:PLUGins?",
+          "description": "Returns all the available waveform creation plug-ins installed as a comma-separated string.",
+          "shortDescription": "Returns all available waveform creation plug-ins.",
+          "syntax": {
+            "query": "WPLugin:PLUGins?"
+          },
+          "example": "awg.query('WPLugin:PLUGins?')"
         }
       ]
     }
