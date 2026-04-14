@@ -69,7 +69,15 @@ export async function fetchWaveform(input: FetchWaveformInput): Promise<ToolResu
 
   const downsample = Math.min(Math.max(Number(input.downsample ?? 1000), 10), 50000);
   const start      = Math.max(1, Math.floor(Number(input.start ?? 1)));
-  const stop       = Math.max(0, Math.floor(Number(input.stop  ?? 0)));
+
+  // Smart default stop:
+  //   stats only  → 10 000 pts (fast, plenty for accurate stats + clipping detection)
+  //   csv / both  → 0 = full record (need shape fidelity before LTTB downsampling)
+  // User can always override by passing stop explicitly.
+  const stopDefault = (input.stop !== undefined && input.stop !== null)
+    ? Math.max(0, Math.floor(Number(input.stop)))
+    : (format === 'stats' ? 10000 : 0);
+  const stop      = stopDefault;
   const timeoutMs  = Math.min(Math.max(Number(input.timeoutMs ?? 30000), 5000), 120000);
 
   const params: WaveformParams = { channel, format, downsample, width, start, stop, timeoutMs };

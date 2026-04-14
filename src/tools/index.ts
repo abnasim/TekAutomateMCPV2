@@ -141,7 +141,7 @@ export function getToolDefinitions() {
     ...(isLiveInstrumentEnabled() ? [{
       name: 'instrument_live',
       description:
-        'Live instrument gateway for TekAutomate. Use `context` for connection info, `send` for SCPI commands, `screenshot` for capture, `snapshot`/`diff`/`inspect` for *LRN?-based state discovery, and `resources` for VISA discovery when needed. For screenshots: call with action:"screenshot" and analyze:true — the response returns an MCP {type:"image"} content block containing the screenshot, rendered as vision by your client. Use as a verification tool after any action that changes the display (channel enable/disable, scale, decode, trigger), when measurements are unexpected, or as final task sign-off.',
+        'Live instrument gateway for TekAutomate. Use `context` for connection info, `send` for SCPI commands, `screenshot` for capture, `snapshot`/`diff`/`inspect` for *LRN?-based state discovery, `resources` for VISA discovery, and `waveform` for signal health check + data fetch. For screenshots: call with action:"screenshot" and analyze:true — the response returns an MCP {type:"image"} content block containing the screenshot, rendered as vision by your client. Use as a verification tool after any action that changes the display (channel enable/disable, scale, decode, trigger), when measurements are unexpected, or as final task sign-off. For waveform: action:"waveform" fetches raw ADC samples, computes stats (min/max/mean/std/Vpp), and automatically detects clipping — look for top-level "CLIPPING" key in the response.',
       parameters: {
         type: 'object',
         properties: {
@@ -1054,35 +1054,39 @@ export function getToolDefinitions() {
     {
       name: 'fetch_waveform',
       description:
-        'Fetch and process waveform data from the live scope. Use this when the user asks to:\n' +
-        '  - Plot or graph a waveform (CH1, CH2, CH3, CH4, MATH, REF)\n' +
-        '  - Measure signal statistics: min/max voltage, mean, std deviation, Vpp, peak-to-peak\n' +
-        '  - Check if a signal is clipping, noisy, DC-biased, or has a particular shape\n' +
-        '  - Export or analyze waveform CSV data\n' +
-        '  - Compare multiple channels (call once per channel)\n\n' +
-        'HOW IT WORKS: Sends DATa:SOUrce, DATa:ENCdg SRIBinary, DATa:WIDth, WFMOutpre, and CURVe? to the scope. ' +
-        'The raw binary is processed entirely on the executor using numpy (LTTB downsampling). ' +
-        'Binary NEVER reaches Claude — only a lean JSON result is returned. ' +
-        'This saves ~384× tokens vs raw ASCII CURVe? (1M pts: 2.5M tokens raw → ~200 stats / ~6K CSV).\n\n' +
-        'FORMAT GUIDANCE:\n' +
-        '  - format:"stats" (default) — returns min/max/mean/std/Vpp/time range. Use for: "what is the voltage?", "is it clipping?", "measure noise", frequency/period estimation.\n' +
-        '  - format:"csv" — returns LTTB-downsampled time,voltage CSV only. Use for: "plot the waveform", "export data".\n' +
-        '  - format:"both" — stats + CSV together. Use for: full analysis + plot.\n\n' +
-        'WIDTH GUIDANCE:\n' +
-        '  - width:2 (default) — int16, full 12-bit ADC precision. Best for noise, signal integrity, accurate voltage.\n' +
-        '  - width:1 — int8, 8-bit only. Faster for very large records when exact precision is not critical.\n\n' +
+        '━━ WAVEFORM HEALTH CHECK + DATA FETCH ━━\n' +
+        'THE tool to use any time you need to inspect, measure, or verify a live signal.\n' +
+        'Does NOT require you to send SCPI measurement commands — it reads raw ADC samples directly.\n\n' +
+        'CALL THIS TOOL WHEN:\n' +
+        '  • User asks anything about voltage, amplitude, noise, DC level, or signal shape on any channel\n' +
+        '  • Before reporting any measurement — confirm the signal is not clipping\n' +
+        '  • "Is CH1 clipping?" / "What is the Vpp on CH2?" / "Is there noise on the signal?"\n' +
+        '  • "Plot the waveform" / "Show me CH1 and CH2" / "Export the waveform data"\n' +
+        '  • After changing vertical scale/offset — re-fetch to verify the adjustment worked\n' +
+        '  • Any time a measurement returns 9.9E37 or looks wrong — check for clipping first\n\n' +
+        '⚡ CLIPPING DETECTION (built-in, automatic, free):\n' +
+        '  Raw ADC samples are checked against the hardware saturation rail (±32767 for int16).\n' +
+        '  If ANY sample is clipping, the response contains a top-level "CLIPPING" key with a\n' +
+        '  loud warning string. STOP immediately — reduce CH<x>:SCAle or adjust CH<x>:OFFSet,\n' +
+        '  then call fetch_waveform again. NEVER report stats from a clipping waveform — invalid.\n\n' +
+        'DEFAULTS ARE FAST AND SAFE:\n' +
+        '  format:"stats" fetches only 10 000 points by default — enough for accurate statistics\n' +
+        '  and full clipping detection, returns in ~1 second, costs ~200 tokens.\n' +
+        '  No need to set stop manually unless you want a specific record window.\n\n' +
+        'FORMAT — pick the right one:\n' +
+        '  "stats" (DEFAULT) → min/max/mean/std/Vpp + clipping check. Use for every health/measurement question.\n' +
+        '  "csv"             → LTTB-downsampled time,voltage table. Use when user asks to plot or export.\n' +
+        '  "both"            → stats + csv together. Use for full analysis with a plot.\n\n' +
         'RESPONSE FIELDS:\n' +
-        '  stats.min_v, max_v, mean_v, std_v, pk_pk_v — voltage statistics (full resolution)\n' +
-        '  stats.t_start, t_end, x_incr, x_unit, y_unit — time axis info\n' +
-        '  stats.n_points_captured — total raw points fetched\n' +
-        '  stats.clipping — true/false: ADC rail saturation detected in raw samples\n' +
-        '  stats.clip_high_count, clip_low_count — number of samples at top/bottom ADC rail\n' +
-        '  n_points_returned — LTTB downsampled count (only with csv/both)\n' +
-        '  csv — "s,V\\n<time>,<voltage>\\n..." — ready for plotting\n\n' +
-        'CLIPPING RESPONSE: If stats.clipping is true, a top-level "CLIPPING" key is present with a\n' +
-        'human-readable warning string. IMMEDIATELY reduce the channel vertical scale (CH<x>:SCAle)\n' +
-        'or adjust offset (CH<x>:OFFSet) and re-fetch before reporting any measurements.\n' +
-        'Do NOT report min/max/mean/std from a clipping waveform — they are invalid.',
+        '  CLIPPING         — present only when clipping detected. READ THIS FIRST.\n' +
+        '  stats.clipping   — true/false\n' +
+        '  stats.clip_high_count, clip_low_count — samples at ADC saturation rail\n' +
+        '  stats.min_v, max_v, mean_v, std_v, pk_pk_v — voltage (full resolution, only valid if not clipping)\n' +
+        '  stats.t_start, t_end, x_incr, x_unit, y_unit — time axis\n' +
+        '  stats.n_points_captured — actual points fetched from scope\n' +
+        '  csv              — "s,V\\n-0.0005,1.23\\n..." LTTB-downsampled, ready to plot\n\n' +
+        'MULTI-CHANNEL: call once per channel in parallel when comparing signals.\n' +
+        'SPEED: stats=~200 tokens, csv(1000pt)=~6K tokens. Never fetches raw binary — safe for any record length.',
       parameters: {
         type: 'object',
         properties: {
