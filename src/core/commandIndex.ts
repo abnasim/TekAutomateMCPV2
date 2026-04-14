@@ -1,3 +1,4 @@
+// commandIndex.ts - SCPI command search and ranking (build: 2026-04-14)
 import { promises as fs } from 'fs';
 import * as path from 'path';
 import { resolveCommandsDir } from './paths';
