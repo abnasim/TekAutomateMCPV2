@@ -448,32 +448,33 @@ export function buildWaveformCode(visa: string, p: WaveformParams): string {
 
   return `
 import json, sys
-import pyvisa
-import numpy as np
-
-def lttb(t, v, n_out):
-    n = len(t)
-    if n_out >= n or n_out < 3:
-        return t, v
-    idx = [0]
-    bkt = (n - 2) / (n_out - 2)
-    a = 0
-    for i in range(1, n_out - 1):
-        avg_s = int((i + 1) * bkt) + 1
-        avg_e = min(int((i + 2) * bkt) + 1, n)
-        at = float(np.mean(t[avg_s:avg_e]))
-        av = float(np.mean(v[avg_s:avg_e]))
-        rs = int(i * bkt) + 1
-        re = int((i + 1) * bkt) + 1
-        ta, va = float(t[a]), float(v[a])
-        areas = np.abs((ta - at) * (v[rs:re] - va) - (ta - t[rs:re]) * (av - va)) * 0.5
-        m = rs + int(np.argmax(areas))
-        idx.append(m)
-        a = m
-    idx.append(n - 1)
-    return t[np.array(idx)], v[np.array(idx)]
 
 try:
+    import pyvisa
+    import numpy as np
+
+    def lttb(t, v, n_out):
+        n = len(t)
+        if n_out >= n or n_out < 3:
+            return t, v
+        idx = [0]
+        bkt = (n - 2) / (n_out - 2)
+        a = 0
+        for i in range(1, n_out - 1):
+            avg_s = int((i + 1) * bkt) + 1
+            avg_e = min(int((i + 2) * bkt) + 1, n)
+            at = float(np.mean(t[avg_s:avg_e]))
+            av = float(np.mean(v[avg_s:avg_e]))
+            rs = int(i * bkt) + 1
+            re = int((i + 1) * bkt) + 1
+            ta, va = float(t[a]), float(v[a])
+            areas = np.abs((ta - at) * (v[rs:re] - va) - (ta - t[rs:re]) * (av - va)) * 0.5
+            m = rs + int(np.argmax(areas))
+            idx.append(m)
+            a = m
+        idx.append(n - 1)
+        return t[np.array(idx)], v[np.array(idx)]
+
     rm = pyvisa.ResourceManager()
     scope = rm.open_resource(${visaLit})
     scope.timeout = ${p.timeoutMs}

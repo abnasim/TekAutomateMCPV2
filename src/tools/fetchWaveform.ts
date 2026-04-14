@@ -110,12 +110,23 @@ export async function fetchWaveform(input: FetchWaveformInput): Promise<ToolResu
     const payload = bridged.result && typeof bridged.result === 'object'
       ? bridged.result as Record<string, unknown>
       : {};
-    const stdout = typeof payload.stdout === 'string' ? payload.stdout : '';
+    // Executor returns stdout at top level; combined_output is fallback
+    const stdout = typeof payload.stdout === 'string' ? payload.stdout
+      : typeof payload.combined_output === 'string' ? payload.combined_output
+      : '';
+    const stderr = typeof payload.stderr === 'string' ? payload.stderr : '';
     const jsonLine = stdout.split(/\r?\n/).map(l => l.trim()).find(l => l.startsWith('{') && l.endsWith('}'));
     if (!jsonLine) {
       return {
         ok: false,
-        data: { error: 'NO_WAVEFORM_OUTPUT', message: payload.error || payload.stderr || 'No waveform JSON in executor output', stdout: stdout.slice(0, 500) },
+        data: {
+          error: 'NO_WAVEFORM_OUTPUT',
+          message: String(payload.error || payload.stderr || 'No waveform JSON in executor output'),
+          stdout: stdout.slice(0, 800),
+          stderr: stderr.slice(0, 800),
+          // Include raw bridge result shape for debugging
+          bridgeResultKeys: Object.keys(payload),
+        },
         sourceMeta: [],
         warnings: ['Waveform fetch produced no output via bridge'],
       };

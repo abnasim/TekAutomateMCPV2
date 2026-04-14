@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "generatedAt": "2026-04-11T22:15:08.042Z",
+  "generatedAt": "2026-04-14T22:29:54.990Z",
   "corpora": {
     "scpi": "scpi_index.json",
     "tmdevices": "tmdevices_index.json",
@@ -12,7 +12,7 @@
     "tek_docs": "tek_docs_index.json"
   },
   "counts": {
-    "scpi": 31229,
+    "scpi": 31284,
     "tmdevices": 4408,
     "app_logic": 152,
     "scope_logic": 37,
