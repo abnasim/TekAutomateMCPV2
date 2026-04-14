@@ -441,6 +441,178 @@ export interface WaveformParams {
   timeoutMs: number;
 }
 
+/** Build the ordered SCPI command list for a waveform fetch (ASCII encoding). */
+export function buildWaveformCommands(p: WaveformParams): string[] {
+  const stopCmd = p.stop === 0 ? 'DATa:STOP 10000' : `DATa:STOP ${p.stop}`;
+  return [
+    `DATa:SOUrce ${p.channel}`,
+    'DATa:ENCdg ASCIi',
+    `DATa:WIDth ${p.width}`,
+    `DATa:STARt ${p.start}`,
+    stopCmd,
+    'WFMOutpre:NR_Pt?',
+    'WFMOutpre:YMUlt?',
+    'WFMOutpre:YOFf?',
+    'WFMOutpre:YZEro?',
+    'WFMOutpre:XINcr?',
+    'WFMOutpre:PT_Off?',
+    'WFMOutpre:XUNit?',
+    'WFMOutpre:YUNit?',
+    'CURVe?',
+  ];
+}
+
+/** LTTB downsampling — pure TypeScript, no numpy needed. */
+function lttb(t: Float64Array, v: Float64Array, nOut: number): [Float64Array, Float64Array] {
+  const n = t.length;
+  if (nOut >= n || nOut < 3) return [t, v];
+  const idxs: number[] = [0];
+  const bkt = (n - 2) / (nOut - 2);
+  let a = 0;
+  for (let i = 1; i < nOut - 1; i++) {
+    const avgS = Math.floor((i + 1) * bkt) + 1;
+    const avgE = Math.min(Math.floor((i + 2) * bkt) + 1, n);
+    let sumT = 0, sumV = 0;
+    for (let j = avgS; j < avgE; j++) { sumT += t[j]; sumV += v[j]; }
+    const cnt  = avgE - avgS || 1;
+    const at   = sumT / cnt;
+    const av   = sumV / cnt;
+    const rs   = Math.floor(i * bkt) + 1;
+    const re   = Math.min(Math.floor((i + 1) * bkt) + 1, n);
+    let maxArea = -1, best = rs;
+    const ta = t[a], va = v[a];
+    for (let j = rs; j < re; j++) {
+      const area = Math.abs((ta - at) * (v[j] - va) - (ta - t[j]) * (av - va)) * 0.5;
+      if (area > maxArea) { maxArea = area; best = j; }
+    }
+    idxs.push(best);
+    a = best;
+  }
+  idxs.push(n - 1);
+  const tOut = new Float64Array(idxs.length);
+  const vOut = new Float64Array(idxs.length);
+  for (let i = 0; i < idxs.length; i++) { tOut[i] = t[idxs[i]]; vOut[i] = v[idxs[i]]; }
+  return [tOut, vOut];
+}
+
+/**
+ * Process CURVe? ASCII response + preamble queries into a waveform result.
+ * Called by fetchWaveformProxy (direct) and fetchWaveform bridge path.
+ */
+export function processWaveformScpiResponses(
+  responses: Array<{ command: string; response: string }>,
+  p: WaveformParams,
+): ToolResult<unknown> {
+  const get = (key: string): string => {
+    const r = responses.find(r => r.command.toUpperCase().includes(key.toUpperCase()));
+    return r?.response?.trim() ?? '';
+  };
+
+  const yMult = parseFloat(get('YMUlt')) || 0;
+  const yOff  = parseFloat(get('YOFf'))  || 0;
+  const yZero = parseFloat(get('YZEro')) || 0;
+  const xIncr = parseFloat(get('XINcr')) || 0;
+  const ptOff = parseFloat(get('PT_Off')) || 0;
+  const xUnit = get('XUNit').replace(/"/g, '') || 's';
+  const yUnit = get('YUNit').replace(/"/g, '') || 'V';
+
+  if (!yMult || !xIncr) {
+    return {
+      ok: false,
+      data: { error: 'BAD_PREAMBLE', message: 'WFMOutpre queries returned unusable values', responses: responses.slice(0, 10) },
+      sourceMeta: [],
+      warnings: ['Preamble parse failed — check channel source and scope state'],
+    };
+  }
+
+  // Parse CURVe? ASCII: "12,34,-56,78,..." (comma or space separated)
+  const curveR = responses.find(r => /CURVe/i.test(r.command));
+  const rawStr = curveR?.response?.trim() ?? '';
+  if (!rawStr) {
+    return {
+      ok: false,
+      data: { error: 'NO_CURVE_DATA', message: 'CURVe? returned empty response' },
+      sourceMeta: [],
+      warnings: ['CURVe? response was empty — scope may not be acquiring'],
+    };
+  }
+
+  const rawNums = rawStr.split(/[,\s]+/).filter(Boolean);
+  const n = rawNums.length;
+  const maxRail = p.width === 2 ? 32767 : 127;
+  const minRail = p.width === 2 ? -32768 : -128;
+
+  const voltage = new Float64Array(n);
+  const tAxis   = new Float64Array(n);
+  let minV = Infinity, maxV = -Infinity, sumV = 0, sumV2 = 0;
+  let clipHigh = 0, clipLow = 0;
+
+  for (let i = 0; i < n; i++) {
+    const raw = parseInt(rawNums[i], 10);
+    const v   = (raw - yOff) * yMult + yZero;
+    voltage[i] = v;
+    tAxis[i]   = (i - ptOff) * xIncr;
+    if (v < minV) minV = v;
+    if (v > maxV) maxV = v;
+    sumV  += v;
+    sumV2 += v * v;
+    if (raw >= maxRail) clipHigh++;
+    if (raw <= minRail) clipLow++;
+  }
+
+  const r9 = (x: number) => Math.round(x * 1e9) / 1e9;
+  const meanV = sumV / n;
+  const stdV  = Math.sqrt(Math.max(0, sumV2 / n - meanV * meanV));
+  const clipping = clipHigh > 0 || clipLow > 0;
+
+  const stats = {
+    n_points_captured: n,
+    min_v:   r9(minV),
+    max_v:   r9(maxV),
+    mean_v:  r9(meanV),
+    std_v:   r9(stdV),
+    pk_pk_v: r9(maxV - minV),
+    t_start: tAxis[0],
+    t_end:   tAxis[n - 1],
+    x_incr:  xIncr,
+    x_unit:  xUnit,
+    y_unit:  yUnit,
+    clipping,
+    clip_high_count: clipHigh,
+    clip_low_count:  clipLow,
+  };
+
+  const clipWarning = clipping
+    ? `⚠️ CLIPPING DETECTED on ${p.channel}! ${clipHigh + clipLow} of ${n} samples hit the ADC rail. Reduce vertical scale or channel offset immediately — measurements are invalid while clipping.`
+    : undefined;
+
+  const result: Record<string, unknown> = {
+    ok:               true,
+    channel:          p.channel,
+    stats,
+    n_points_returned: 0,
+    ...(clipWarning ? { CLIPPING: clipWarning } : {}),
+  };
+
+  if (p.format === 'csv' || p.format === 'both') {
+    const [tDs, vDs] = lttb(tAxis, voltage, p.downsample);
+    result.n_points_returned = tDs.length;
+    const lines = [`${xUnit},${yUnit}`];
+    for (let i = 0; i < tDs.length; i++) {
+      lines.push(`${tDs[i].toExponential(9)},${vDs[i].toPrecision(6)}`);
+    }
+    result.csv = lines.join('\n');
+  }
+
+  return {
+    ok:         true,
+    data:       result,
+    sourceMeta: [],
+    warnings:   clipping ? [clipWarning!] : [],
+  };
+}
+
+/** @deprecated — kept so TypeScript doesn't error on old callers; remove after next sync */
 export function buildWaveformCode(visa: string, p: WaveformParams): string {
   // JSON.stringify produces a properly-escaped Python string literal for the VISA address.
   const visaLit = JSON.stringify(visa);
@@ -551,44 +723,41 @@ export async function fetchWaveformProxy(
   if (!isLiveModeEnabled(endpoint)) {
     return { ok: false, data: {}, sourceMeta: [], warnings: ['live instrument mode is disabled'] };
   }
-  const timeoutSec = Math.ceil(params.timeoutMs / 1000) + 15;
-  const code = buildWaveformCode(endpoint.visaResource, params);
-  const run = await runPython(endpoint, code, timeoutSec);
 
-  // Find the JSON line in stdout (executor may prefix with other output)
-  const jsonLine = run.stdout
-    .split(/\r?\n/)
-    .map(l => l.trim())
-    .find(l => l.startsWith('{') && l.endsWith('}'));
+  const commands = buildWaveformCommands(params);
+  // Give generous timeout — CURVe? on large records can be slow
+  const timeoutMs = params.timeoutMs;
+  const run = await runExecutorAction(
+    endpoint,
+    'send_scpi',
+    { commands, timeout_ms: timeoutMs },
+    Math.max(60, Math.ceil(timeoutMs / 1000) + 15),
+  );
 
-  if (!jsonLine) {
+  if (!run.ok) {
     return {
       ok: false,
-      data: {
-        error:   'NO_WAVEFORM_OUTPUT',
-        message: run.error || run.stderr.trim() || 'Executor produced no waveform JSON',
-        stdout:  run.stdout.slice(0, 500),
-        stderr:  run.stderr.slice(0, 500),
-      },
+      data: { error: 'SCPI_FAILED', message: run.error || 'Executor send_scpi failed', stderr: run.stderr.slice(0, 400) },
       sourceMeta: [],
-      warnings: [run.error || 'Waveform fetch produced no output'],
+      warnings: [run.error || 'Waveform SCPI fetch failed'],
     };
   }
 
-  try {
-    const parsed = JSON.parse(jsonLine) as Record<string, unknown>;
-    return {
-      ok:         parsed.ok === true,
-      data:       { ...parsed, durationSec: run.durationSec },
-      sourceMeta: [],
-      warnings:   parsed.ok ? [] : [String(parsed.error || 'Waveform fetch error')],
-    };
-  } catch {
+  const resultData = run.resultData && typeof run.resultData === 'object'
+    ? run.resultData as Record<string, unknown>
+    : {};
+  const responses = Array.isArray(resultData.responses)
+    ? (resultData.responses as Array<{ command: string; response: string }>)
+    : [];
+
+  if (!responses.length) {
     return {
       ok: false,
-      data: { error: 'PARSE_ERROR', message: 'Executor output was not valid JSON', raw: jsonLine.slice(0, 500) },
+      data: { error: 'NO_RESPONSES', message: 'Executor returned no SCPI responses', stdout: run.stdout.slice(0, 400) },
       sourceMeta: [],
-      warnings: ['Could not parse waveform result JSON'],
+      warnings: ['Waveform SCPI returned no responses'],
     };
   }
+
+  return processWaveformScpiResponses(responses, params);
 }

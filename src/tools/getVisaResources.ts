@@ -3,7 +3,7 @@ import type { ToolResult } from '../core/schemas';
 import { getInstrumentInfoState } from './runtimeContextStore';
 import { withRuntimeInstrumentDefaults, shouldBridgeToTekAutomate, dispatchLiveActionThroughTekAutomate } from './liveToolSupport';
 
-interface Input {
+interface Input extends Record<string, unknown> {
   executorUrl: string;
   visaResource: string;
   backend: string;
@@ -66,7 +66,7 @@ export async function getVisaResources(input: Input): Promise<ToolResult<Record<
           model,
           serial: '',
           firmware: '',
-          reachable: true,
+          reachable: true as boolean,
           connType: typeof device.connectionType === 'string' ? device.connectionType : '',
         } satisfies ScannedInstrument;
       })

@@ -1,16 +1,16 @@
 /**
  * fetch_waveform — Waveform data offload tool.
  *
- * Fetches CURVe? binary from the live scope, scales it with numpy on the
- * executor, and returns a lean JSON payload to Claude.  Binary data NEVER
- * enters Claude's context — only processed stats and/or a downsampled CSV.
+ * Uses send_scpi (ASCII encoding) to fetch CURVe? data, then processes it
+ * entirely on the MCP server — no Python, no numpy, no binary decoding.
  *
- * Token savings vs raw ASCII CURVe?:
- *   1M-point record  →  ~2,500,000 tokens raw  vs  ~200 (stats) / ~6,250 (CSV)
- *   384× reduction, 99.7% token savings
+ * Token savings: CURVe? data (up to 10K pts) is processed server-side;
+ * only the lean JSON result (stats / downsampled CSV) is returned to Claude.
+ *   stats only  → ~200 tokens   (min/max/mean/std/Vpp + clipping flag)
+ *   csv 1K pts  → ~6,250 tokens (LTTB downsampled, shape-preserving)
  */
 
-import { buildWaveformCode, fetchWaveformProxy, type WaveformParams } from '../core/instrumentProxy';
+import { buildWaveformCommands, fetchWaveformProxy, processWaveformScpiResponses, type WaveformParams } from '../core/instrumentProxy';
 import type { ToolResult } from '../core/schemas';
 import { dispatchLiveActionThroughTekAutomate, shouldBridgeToTekAutomate, withRuntimeInstrumentDefaults } from './liveToolSupport';
 
@@ -77,84 +77,55 @@ export async function fetchWaveform(input: FetchWaveformInput): Promise<ToolResu
   const stopDefault = (input.stop !== undefined && input.stop !== null)
     ? Math.max(0, Math.floor(Number(input.stop)))
     : (format === 'stats' ? 10000 : 0);
-  const stop      = stopDefault;
-  const timeoutMs  = Math.min(Math.max(Number(input.timeoutMs ?? 30000), 5000), 120000);
+  const stop     = stopDefault;
+  const timeoutMs = Math.min(Math.max(Number(input.timeoutMs ?? 30000), 5000), 120000);
 
   const params: WaveformParams = { channel, format, downsample, width, start, stop, timeoutMs };
 
-  // ── Hosted mode: route through TekAutomate browser bridge ──
-  // In hosted/Railway mode the executor (192.168.x.x) is unreachable from the
-  // server. The bridge dispatcher passes toolName straight to the executor
-  // action — 'run_python' is already handled natively, so no frontend changes
-  // are needed.
+  // ── Hosted mode: route through TekAutomate browser bridge via send_scpi ──
+  // send_scpi IS supported by the bridge (in fC set). We build the full command
+  // list, bridge it, then process the responses server-side.
   if (shouldBridgeToTekAutomate(input)) {
-    const code = buildWaveformCode(merged.visaResource || '', params);
+    const commands = buildWaveformCommands(params);
     const timeoutBridge = timeoutMs + 20_000;
+
     const bridged = await dispatchLiveActionThroughTekAutomate(
-      'run_python',
-      { code, scope_visa: merged.visaResource || '', timeout_sec: Math.ceil(timeoutMs / 1000) + 15 },
+      'send_scpi',
+      { commands, timeout_ms: timeoutMs },
       timeoutBridge,
     );
 
     if (!bridged.ok) {
       return {
         ok: false,
-        data: { error: 'BRIDGE_FAILED', message: bridged.error || 'TekAutomate bridge failed to run waveform fetch.' },
+        data: { error: 'BRIDGE_FAILED', message: bridged.error || 'TekAutomate bridge failed to execute waveform SCPI.' },
         sourceMeta: [],
         warnings: [bridged.error || 'Bridge error'],
       };
     }
 
-    // Executor returns { ok, stdout, stderr, result_data, ... }
-    // Our Python code prints JSON to stdout — find and parse it.
-    // The TekAutomate frontend wraps the executor response in a ToolResult envelope:
-    //   { ok, data: <executor JSON>, sourceMeta, warnings }
-    // Unwrap one level to reach the actual executor response with stdout/stderr.
+    // Bridge returns ToolResult envelope: { ok, data: { responses:[...], ... }, sourceMeta, warnings }
     const envelope = bridged.result && typeof bridged.result === 'object'
       ? bridged.result as Record<string, unknown>
       : {};
-    const payload: Record<string, unknown> =
-      (envelope.data && typeof envelope.data === 'object')
-        ? envelope.data as Record<string, unknown>
-        : envelope;
+    const payload = (envelope.data && typeof envelope.data === 'object')
+      ? envelope.data as Record<string, unknown>
+      : envelope;
 
-    // Executor returns stdout at top level; combined_output is fallback
-    const stdout = typeof payload.stdout === 'string' ? payload.stdout
-      : typeof payload.combined_output === 'string' ? payload.combined_output
-      : '';
-    const stderr = typeof payload.stderr === 'string' ? payload.stderr : '';
-    const jsonLine = stdout.split(/\r?\n/).map(l => l.trim()).find(l => l.startsWith('{') && l.endsWith('}'));
-    if (!jsonLine) {
+    const responses = Array.isArray(payload.responses)
+      ? (payload.responses as Array<{ command: string; response: string }>)
+      : [];
+
+    if (!responses.length) {
       return {
         ok: false,
-        data: {
-          error: 'NO_WAVEFORM_OUTPUT',
-          message: String(payload.error || stderr || 'No waveform JSON in executor output'),
-          stdout: stdout.slice(0, 800),
-          stderr: stderr.slice(0, 800),
-          bridgeResultKeys: Object.keys(envelope),
-          payloadKeys: Object.keys(payload),
-        },
+        data: { error: 'NO_RESPONSES', message: 'Bridge returned no SCPI responses', payloadKeys: Object.keys(payload) },
         sourceMeta: [],
-        warnings: ['Waveform fetch produced no output via bridge'],
+        warnings: ['Waveform SCPI bridge returned no responses'],
       };
     }
-    try {
-      const parsed = JSON.parse(jsonLine) as Record<string, unknown>;
-      return {
-        ok:         parsed.ok === true,
-        data:       parsed,
-        sourceMeta: [],
-        warnings:   parsed.ok ? [] : [String(parsed.error || 'Waveform fetch error')],
-      };
-    } catch {
-      return {
-        ok: false,
-        data: { error: 'PARSE_ERROR', raw: jsonLine.slice(0, 500) },
-        sourceMeta: [],
-        warnings: ['Could not parse waveform JSON from bridge'],
-      };
-    }
+
+    return processWaveformScpiResponses(responses, params);
   }
 
   // ── Direct mode: executor is reachable (local mcp-server) ──
