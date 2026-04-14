@@ -528,6 +528,17 @@ function reRankWithIntent(
       if (headerLower === 'autoset' || headerLower === 'autoset:execute') {
         score += 50;
       }
+      // Subject-specific boosts for star commands (so the right * command wins)
+      if (headerLower.startsWith('*')) {
+        if (intent.subject === 'rst' && headerLower === '*rst') score += 40;
+        if (intent.subject === 'cls' && headerLower === '*cls') score += 40;
+        if (intent.subject === 'idn' && headerLower === '*idn?') score += 40;
+        if (intent.subject === 'ese' && headerLower === '*ese') score += 40;
+        if (intent.subject === 'esr' && headerLower === '*esr?') score += 40;
+        if (intent.subject === 'opc' && headerLower === '*opc') score += 40;
+        if (intent.subject === 'sre' && headerLower === '*sre') score += 40;
+        if (intent.subject === 'stb' && headerLower === '*stb?') score += 40;
+      }
       // Penalize everything else heavily
       if (!headerLower.startsWith('*') && !['header', 'allev', 'autoset', 'autoset:execute'].includes(headerLower)) {
         if (intent.subject === 'rst') {
