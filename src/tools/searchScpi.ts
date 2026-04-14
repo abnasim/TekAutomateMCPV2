@@ -821,6 +821,33 @@ export async function searchScpi(input: SearchScpiInput): Promise<ToolResult<unk
     { pattern: /\bi2c.*clock.*threshold|clock.*threshold.*i2c/i, expand: 'BUS I2C CLOCk THReshold clock threshold' },
     // I2C data threshold
     { pattern: /\bi2c.*data.*threshold|data.*threshold.*i2c/i, expand: 'BUS I2C DATa THReshold data threshold' },
+    // ── Critical SCPI vocabulary aliases (from TekControl SCPI_ALIASES analysis) ──
+    // "impedance" → "termination" (CH<x>:TERmination, not "impedance")
+    { pattern: /\bimpedance\b(?!.*\bafg\b)/i, expand: 'TERMinator TERmination termination 50 ohm impedance' },
+    { pattern: /\b50\s*ohm\b(?!.*\bafg\b)/i, expand: 'TERMinator TERmination termination 50' },
+    // "sine" / "sine wave" → "sinusoid" (SINusoid is the SCPI enum value)
+    { pattern: /\bsine\s*wave\b|\bsine\b(?!.*\b(square|triangle|pulse|ramp))/i, expand: 'SINusoid sinusoid FUNCtion shape waveform' },
+    // "rise time" / "fall time" → measurement SCPI names
+    { pattern: /\brise\s*time\b/i, expand: 'RISe rise risingslew measurement addmeas' },
+    { pattern: /\bfall\s*time\b/i, expand: 'FALL fall fallingslew measurement addmeas' },
+    // "persistence" → display persistence commands
+    { pattern: /\bpersistence\b/i, expand: 'PERSistence display clear reset' },
+    // "factory reset" → *RST / FACTory
+    { pattern: /\bfactory\s*reset\b/i, expand: '*RST FACtory preset reset instrument' },
+    // "deskew" → channel deskew timing adjustment
+    { pattern: /\bdeskew\b/i, expand: 'DESKew skew jitter channel timing' },
+    // "cursor" → cursor measurement commands
+    { pattern: /\bcursor\b/i, expand: 'CURsor cursor measurement position' },
+    // "oscillator" / "reference clock" → ROSCillator
+    { pattern: /\b(oscillator|reference\s*clock|ref\s*clock)\b(?!.*\bafg\b)/i, expand: 'ROSCillator ROSc reference clock external internal' },
+    // "bandwidth" → BW abbreviation variants
+    { pattern: /\bbandwidth\b/i, expand: 'BANDwidth BANDw BW bandwidth' },
+    // "eye diagram" → specific measurement types
+    { pattern: /\beye\s*(diagram|pattern|measurement)\b/i, expand: 'MEASUrement MEAS TYPe EYEDiagram eye diagram addmeas' },
+    // "time interval error" / "TIE" → measurement type
+    { pattern: /\b(tie|time\s*interval\s*error)\b/i, expand: 'MEASUrement MEAS TYPe TIE measurement' },
+    // "results table" additions
+    { pattern: /\bcustom\s*table\b/i, expand: 'CUSTOMTABle ADDNew table custom results' },
   ];
   let expandedQuery = q;
   for (const { pattern, expand } of QUERY_EXPANSIONS) {

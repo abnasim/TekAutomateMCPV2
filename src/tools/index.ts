@@ -341,17 +341,26 @@ export function getToolDefinitions() {
     {
       name: 'search_scpi',
       description:
-        'Cheap keyword/header search over the SCPI command database. ' +
-        'Use for fast discovery when you want likely headers or command families from short targeted phrases such as "edge trigger", "measurement frequency", or "I2C bus".\n\n' +
-        'Best for:\n' +
-        '- cheap first-pass command discovery\n' +
-        '- short noun-heavy queries\n' +
-        '- finding likely headers before get_command_by_header\n\n' +
-        'Avoid for:\n' +
-        '- long conversational prompts\n' +
-        '- exact known headers (use get_command_by_header)\n' +
-        '- procedure or bug retrieval (use retrieve_rag_chunks)\n\n' +
-        'Returns compact discovery results by default: header, type, description, and group. Use verbosity:"full" only when you explicitly need richer command blobs.',
+        'Keyword search over 16,500+ verified SCPI commands for Tektronix oscilloscopes (MSO2/4/5/6/7, DPO), AFG31000, AWG70000/5200, SignalVu/RSA, and Keithley SMU.\n\n' +
+        'WHEN TO USE: When you need a command from a short noun phrase. Best for: "edge trigger", "vertical scale", "I2C bus decode", "record length", "spectrum view", "save setup".\n\n' +
+        'WHEN NOT TO USE: If you already know the header (use get_command_by_header). For procedures and lessons (use knowledge). For exact code examples (use knowledge).\n\n' +
+        'SCPI VOCABULARY TIPS — use these exact terms for best results:\n' +
+        '- Impedance / 50 ohm → search "termination" (CH<x>:TERmination)\n' +
+        '- Sine wave → search "sinusoid" (SINusoid is the SCPI enum value)\n' +
+        '- Time base → search "horizontal scale"\n' +
+        '- Screenshot → search "save image" or "hardcopy"\n' +
+        '- Single shot → search "stopafter sequence"\n' +
+        '- Continuous run → search "stopafter runstop"\n' +
+        '- Add measurement → search "addmeas" (MEASUrement:ADDMEAS)\n' +
+        '- Eye diagram → search "eye diagram measurement"\n' +
+        '- Trigger holdoff → search "holdoff time"\n\n' +
+        'INSTRUMENT FILTERING: Use modelFamily to narrow results:\n' +
+        '- Oscilloscope: "mso_5_series", "mso_6_series"\n' +
+        '- AFG: "afg_31000" | AWG: "awg_70000" | SignalVu: "signalvu"\n\n' +
+        'Returns: header, type, description, group. Use verbosity:"full" for full argument enumeration.\n\n' +
+        'Examples: search_scpi("trigger level channel 1") → TRIGger:A:LEVel:CH<x>\n' +
+        '          search_scpi("acquire stopafter") → ACQuire:STOPAfter\n' +
+        '          search_scpi("termination 50") → CH<x>:TERmination',
       parameters: {
         type: 'object',
         properties: {
