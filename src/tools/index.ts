@@ -1056,37 +1056,53 @@ export function getToolDefinitions() {
       description:
         '━━ WAVEFORM HEALTH CHECK + DATA FETCH ━━\n' +
         'THE tool to use any time you need to inspect, measure, or verify a live signal.\n' +
-        'Does NOT require you to send SCPI measurement commands — it reads raw ADC samples directly.\n\n' +
+        'Reads raw ADC samples directly — no SCPI measurement commands needed.\n\n' +
         'CALL THIS TOOL WHEN:\n' +
-        '  • User asks anything about voltage, amplitude, noise, DC level, or signal shape on any channel\n' +
-        '  • Before reporting any measurement — confirm the signal is not clipping\n' +
-        '  • "Is CH1 clipping?" / "What is the Vpp on CH2?" / "Is there noise on the signal?"\n' +
-        '  • "Plot the waveform" / "Show me CH1 and CH2" / "Export the waveform data"\n' +
-        '  • After changing vertical scale/offset — re-fetch to verify the adjustment worked\n' +
-        '  • Any time a measurement returns 9.9E37 or looks wrong — check for clipping first\n\n' +
-        '⚡ CLIPPING DETECTION (built-in, automatic, free):\n' +
-        '  Raw ADC samples are checked against the hardware saturation rail (±32767 for int16).\n' +
-        '  If ANY sample is clipping, the response contains a top-level "CLIPPING" key with a\n' +
-        '  loud warning string. STOP immediately — reduce CH<x>:SCAle or adjust CH<x>:OFFSet,\n' +
-        '  then call fetch_waveform again. NEVER report stats from a clipping waveform — invalid.\n\n' +
-        'DEFAULTS ARE FAST AND SAFE:\n' +
-        '  format:"stats" fetches only 10 000 points by default — enough for accurate statistics\n' +
-        '  and full clipping detection, returns in ~1 second, costs ~200 tokens.\n' +
-        '  No need to set stop manually unless you want a specific record window.\n\n' +
-        'FORMAT — pick the right one:\n' +
-        '  "stats" (DEFAULT) → min/max/mean/std/Vpp + clipping check. Use for every health/measurement question.\n' +
-        '  "csv"             → LTTB-downsampled time,voltage table. Use when user asks to plot or export.\n' +
-        '  "both"            → stats + csv together. Use for full analysis with a plot.\n\n' +
+        '  • User asks anything about voltage, amplitude, noise, DC level, or signal shape\n' +
+        '  • Before reporting any measurement — always confirm not clipping first\n' +
+        '  • "Is CH1 clipping?" / "Vpp on CH2?" / "noise on signal?" / "plot the waveform"\n' +
+        '  • "Show me CH1 and CH2" / "export waveform data" / "capture the trace"\n' +
+        '  • After changing vertical scale/offset — re-fetch to verify adjustment worked\n' +
+        '  • Any time a measurement returns 9.9E37 or looks wrong — clipping check first\n\n' +
+        '⚡ CLIPPING DETECTION (automatic, always on):\n' +
+        '  ADC samples checked against hardware saturation rail (±32767 int16 / ±127 int8).\n' +
+        '  Clipping → top-level "CLIPPING" key with loud warning. STOP. Fix scale/offset first.\n' +
+        '  NEVER report stats from a clipping waveform — all values are invalid.\n\n' +
+        'QUICK CALL GUIDE — copy these exactly:\n' +
+        '  Health check / Vpp / noise:  {channel:"CH1", format:"stats"}\n' +
+        '  Plot waveform (full record):  {channel:"CH1", format:"csv", downsample:1000}\n' +
+        '  Full analysis + plot:         {channel:"CH1", format:"both", downsample:1000}\n' +
+        '  Multi-channel plot (parallel):{channel:"CH1",...} + {channel:"CH2",...} in parallel\n' +
+        '  Large record (>1M pts):       {channel:"CH1", format:"csv", downsample:2000, width:1, timeoutMs:90000}\n' +
+        '  Zoom into record window:      {channel:"CH1", format:"csv", start:50000, stop:150000}\n\n' +
+        'FORMAT:\n' +
+        '  "stats" (DEFAULT) — min/max/mean/std/Vpp + clipping. Fast, ~200 tokens. For all measurement questions.\n' +
+        '  "csv"             — LTTB-downsampled "s,V\\n..." table. For plotting/export. ~6K tokens at 1000 pts.\n' +
+        '  "both"            — stats + csv together. Full analysis in one call.\n\n' +
+        'LTTB DOWNSAMPLING (Largest Triangle Three Buckets):\n' +
+        '  Compresses millions of raw points to downsample target while preserving ALL peaks/troughs/edges.\n' +
+        '  Shape-faithful — not averaging. Use downsample:1000 for most plots.\n' +
+        '  More detail? Use downsample:5000. Simple signal? downsample:500 is enough.\n' +
+        '  Token cost = roughly downsample × 6 tokens. 1000 pts ≈ 6K tokens.\n\n' +
+        'STOP / RECORD WINDOW:\n' +
+        '  stats default: stop=10000 (fast, enough for stats + clipping, ~1s)\n' +
+        '  csv/both default: stop=0 = FULL record (captures everything for shape fidelity)\n' +
+        '  Large records (500K–2.5M): always set timeoutMs:60000–120000 or bridge may time out.\n' +
+        '  Use start+stop to zoom into a sub-window: start:100000, stop:200000\n\n' +
+        'WIDTH (ADC precision):\n' +
+        '  width:2 (DEFAULT) — int16, full 12-bit precision. Use for all normal measurements.\n' +
+        '  width:1           — int8, 8-bit only. 2× faster transfer on huge records (>1M pts).\n' +
+        '                      Trade-off: coarser voltage resolution. Use only when speed matters.\n\n' +
         'RESPONSE FIELDS:\n' +
-        '  CLIPPING         — present only when clipping detected. READ THIS FIRST.\n' +
-        '  stats.clipping   — true/false\n' +
-        '  stats.clip_high_count, clip_low_count — samples at ADC saturation rail\n' +
-        '  stats.min_v, max_v, mean_v, std_v, pk_pk_v — voltage (full resolution, only valid if not clipping)\n' +
-        '  stats.t_start, t_end, x_incr, x_unit, y_unit — time axis\n' +
+        '  CLIPPING              — READ FIRST. Present only when clipping detected.\n' +
+        '  stats.clipping        — true/false\n' +
+        '  stats.clip_high_count, clip_low_count — count of samples at ADC rail\n' +
+        '  stats.min_v, max_v, mean_v, std_v, pk_pk_v — voltage stats (invalid if clipping)\n' +
+        '  stats.t_start, t_end, x_incr, x_unit, y_unit — time axis info\n' +
         '  stats.n_points_captured — actual points fetched from scope\n' +
-        '  csv              — "s,V\\n-0.0005,1.23\\n..." LTTB-downsampled, ready to plot\n\n' +
-        'MULTI-CHANNEL: call once per channel in parallel when comparing signals.\n' +
-        'SPEED: stats=~200 tokens, csv(1000pt)=~6K tokens. Never fetches raw binary — safe for any record length.',
+        '  n_points_returned     — LTTB output count (only when format is csv or both)\n' +
+        '  csv                   — "s,V\\n-0.001,1.23\\n..." ready to plot or export\n\n' +
+        'TOKEN COST: stats=~200, csv(1000pt)=~6K, csv(5000pt)=~30K. Raw would be millions — this tool saves that.',
       parameters: {
         type: 'object',
         properties: {
