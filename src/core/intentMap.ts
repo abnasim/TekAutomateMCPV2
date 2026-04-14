@@ -221,7 +221,10 @@ const SUBJECT_GROUP_MAP: Array<{
   { pattern: /\b(spacewire|spw)\b/i, groups: ['Bus', 'Trigger'], intent: 'bus', subject: 'spacewire' },
   { pattern: /\b(i3c)\b/i, groups: ['Bus', 'Trigger'], intent: 'bus', subject: 'i3c' },
   // ── Bus action patterns — MUST come before generic "bus" catchall ──
-  { pattern: /\b(add\s*bus|new\s*bus|create\s*bus)\b/i, groups: ['Bus'], intent: 'bus', subject: 'add_bus' },
+  // "add bus search" should route to add_search, not add_bus — exclude when "search" follows
+  { pattern: /\b(add\s*bus|new\s*bus|create\s*bus)\b(?!.*\bsearch\b)/i, groups: ['Bus'], intent: 'bus', subject: 'add_bus' },
+  // "add bus search" pattern — must come AFTER add_bus exclusion
+  { pattern: /\badd\b.*\bbus\b.*\bsearch\b|\badd\b.*\bsearch\b.*\bbus\b/i, groups: ['Search and Mark'], intent: 'search', subject: 'add_search' },
   { pattern: /\b(delete\s*bus|remove\s*bus)\b/i, groups: ['Bus'], intent: 'bus', subject: 'delete_bus' },
   { pattern: /\b(bus|decode|protocol)\b/i, groups: ['Bus'], intent: 'bus', subject: 'bus' },
 
