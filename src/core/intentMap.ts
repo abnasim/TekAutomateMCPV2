@@ -303,6 +303,10 @@ const SUBJECT_GROUP_MAP: Array<{
   { pattern: /\b(period)\b/i, groups: ['Measurement'], intent: 'measurement', subject: 'period' },
   { pattern: /\b(amplitude|amp)\b/i, groups: ['Measurement'], intent: 'measurement', subject: 'amplitude' },
   { pattern: /\b(rms|vrms)\b/i, groups: ['Measurement'], intent: 'measurement', subject: 'rms' },
+  // fastframe + fastacq early guards — MUST come before acq_mode
+  // prevents "fast frame acquisition mode" and "fast acquisition mode" → acq_mode
+  { pattern: /\b(fastframe|fast\s*frame)\b/i, groups: ['Horizontal'], intent: 'acquisition', subject: 'fastframe' },
+  { pattern: /\b(fast\s*acq(uisition)?(\s*mode)?|fastacq|FASTAcq)\b(?!.*\bframe\b)/i, groups: ['Acquisition'], intent: 'acquisition', subject: 'fastacq' },
   // acq_mode + numavg — BEFORE generic "average" → measurement:mean
   { pattern: /\b(acquisition\s*mode|acq\s*mode|mode.*acq(uisition)?)\b/i, groups: ['Acquisition'], intent: 'acquisition', subject: 'acq_mode' },
   { pattern: /\b(num\s*avg|numavg|number\s*of\s*(averages?|waveforms?\s*to\s*average)|waveforms?\s*to\s*average|how\s*many\s*waveforms.*average|waveforms?\s*averaged|averaging.*noise|noise.*reduction.*average)\b/i, groups: ['Acquisition'], intent: 'acquisition', subject: 'numavg' },
