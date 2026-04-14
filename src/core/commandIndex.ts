@@ -276,9 +276,10 @@ function sourceFilePriority(sourceFile: string): number {
 
 function searchSourceFilePriority(sourceFile: string): number {
   const name = String(sourceFile || '');
+  // manual_overrides get -1 so they receive a +2 bonus in search scoring
+  if (/manual_overrides\.json$/i.test(name)) return -1;
   if (/mso_2_4_5_6_7\.json$/i.test(name)) return 0;
   if (/MSO_DPO_5k_7k_70K\.json$/i.test(name)) return 0;
-  if (/manual_overrides\.json$/i.test(name)) return 1;
   return 2;
 }
 
