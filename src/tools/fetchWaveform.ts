@@ -51,6 +51,10 @@ export async function fetchWaveform(input: FetchWaveformInput): Promise<ToolResu
     };
   }
 
+  // DEBUG — remove after diagnosis
+  const _dbgInputFormat = input.format;
+  const _dbgInputKeys = Object.keys(input);
+
   const channel = String(input.channel ?? 'CH1').toUpperCase();
   if (!VALID_CHANNELS.test(channel)) {
     return {
@@ -125,7 +129,14 @@ export async function fetchWaveform(input: FetchWaveformInput): Promise<ToolResu
       };
     }
 
-    return processWaveformScpiResponses(responses, params);
+    const result = processWaveformScpiResponses(responses, params);
+    // DEBUG — inject input-level trace
+    if (result.ok && result.data && typeof result.data === 'object') {
+      (result.data as Record<string, unknown>)._dbg_input_format = _dbgInputFormat;
+      (result.data as Record<string, unknown>)._dbg_input_keys   = _dbgInputKeys;
+      (result.data as Record<string, unknown>)._dbg_params_format = params.format;
+    }
+    return result;
   }
 
   // ── Direct mode: executor is reachable (local mcp-server) ──
