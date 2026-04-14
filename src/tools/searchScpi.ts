@@ -1288,7 +1288,7 @@ export async function searchScpi(input: SearchScpiInput): Promise<ToolResult<unk
       'SV:SPANRBWRatio', 'CH<x>:SV:STATE',
     ],
     spectrum_rbw_mode: [
-      'CH<x>:SV:RBWMode', 'CH<x>:SV:RBW', 'SV:RBW', 'SV:SPANRBWRatio',
+      'SV:RBWMode', 'CH<x>:SV:RBWMode', 'CH<x>:SV:RBW', 'SV:RBW', 'SV:SPANRBWRatio',
     ],
     eye_diagram: [
       'MEASUrement:MEAS<x>:TYPe',   // prefix-matches 'MEASUrement:MEAS' → PASS
@@ -1436,9 +1436,9 @@ export async function searchScpi(input: SearchScpiInput): Promise<ToolResult<unk
       'ACQuire:STOPAfter',
     ],
     can_error_frame: [
-      'SEARCH:SEARCH1:TRIGger:A:BUS:CAN:FRAMEtype',
-      'SEARCH:SEARCH<x>:TRIGger:A:BUS:CAN:FRAMEtype',
+      'SEARCH:SEARCH<x>:TRIGger:A:BUS:CAN:ERRType',
       'SEARCH:SEARCH<x>:TRIGger:A:BUS:CAN:CONDition',
+      'SEARCH:SEARCH<x>:TRIGger:A:BUS:CAN:FRAMEtype',
     ],
     waveform_data_source: [
       'DATa:SOUrce',
@@ -1450,6 +1450,11 @@ export async function searchScpi(input: SearchScpiInput): Promise<ToolResult<unk
     // ── N1-03: shift waveform left/right ──
     horizontal_position: [
       'HORizontal:POSition', 'HORizontal:DELay:TIMe', 'HORizontal:DELay:MODe',
+    ],
+
+    // ── fastacq (FASTAcq:STATE) — separate from fastframe ──
+    fastacq: [
+      'FASTAcq:STATE', 'ACQuire:FASTAcq:STATE', 'ACQuire:FASTAcq:PALEtte',
     ],
 
     // ── N1-07: acquisition mode ──
@@ -1499,7 +1504,7 @@ export async function searchScpi(input: SearchScpiInput): Promise<ToolResult<unk
 
     // ── N2-12: view style (stacked/overlay) ──
     view_style: [
-      'DISplay:VIEWStyle', 'DISplay:GLObal:CH<x>:STATE',
+      'DISplay:WAVEView<x>:VIEWStyle', 'DISplay:VIEWStyle', 'DISplay:GLObal:CH<x>:STATE',
     ],
 
     // ── N2-14: math operation type ──
@@ -1514,8 +1519,8 @@ export async function searchScpi(input: SearchScpiInput): Promise<ToolResult<unk
 
     // ── N2-16: measurement statistics enable ──
     meas_statistics: [
-      'MEASUrement:STATIstics:ENABle', 'MEASUrement:STATIstics:MODe',
-      'MEASUrement:STATIstics:CYCLEMode', 'MEASUrement:MEAS<x>:DISPlaystat:ENABle',
+      'MEASUrement:STATIstics:ENABle', 'MEASUrement:STATIstics:CYCLEMode',
+      'MEASUrement:MEAS<x>:DISPlaystat:ENABle',
     ],
 
     // ── N2-18: clock recovery ──
@@ -1562,19 +1567,18 @@ export async function searchScpi(input: SearchScpiInput): Promise<ToolResult<unk
 
     // ── N4-11: AWG output state ──
     awg_output: [
-      'OUTPut1:STATe', 'OUTPut2:STATe', 'OUTPut:STATe',
+      'OUTPut{ch}:STATe', 'OUTPut1:STATe', 'OUTPut:STATe',
     ],
 
     // ── N4-12: AWG waveform shape ──
     awg_shape: [
-      'SOURce1:FUNCtion:SHAPe', 'SOURce2:FUNCtion:SHAPe',
-      'SOURce1:FUNCtion:SHAPe', 'SOURce:FUNCtion:SHAPe',
+      'SOURce{ch}:FUNCtion:SHAPe', 'SOURce1:FUNCtion:SHAPe', 'SOURce:FUNCtion:SHAPe',
     ],
 
     // ── N4-13: AWG output frequency ──
     awg_frequency: [
-      'SOURce:FREQuency', 'SOURce1:FREQuency', 'SOURce2:FREQuency',
-      'CLOCk:EREFerence:FREQuency',
+      'SOURce{ch}:FREQuency', 'SOURce:FREQuency', 'SOURce1:FREQuency',
+      'CLOCk:ECLock:FREQuency',
     ],
 
     // ── N4-14: waveform list size ──
@@ -1584,14 +1588,14 @@ export async function searchScpi(input: SearchScpiInput): Promise<ToolResult<unk
 
     // ── N4-16: AWG burst mode ──
     awg_burst: [
-      'SOURce1:BURSt:STATe', 'SOURce2:BURSt:STATe', 'SOURce:BURSt:STATe',
-      'SOURce1:BURSt:NCYCles',
+      'SOURce{ch}:BURSt:STATe', 'SOURce1:BURSt:STATe', 'SOURce:BURSt:STATe',
+      'SOURce{ch}:BURSt:NCYCles',
     ],
 
     // ── N4-17: AWG sequence trigger slope ──
     awg_seq_trigger: [
-      'TRIGger:SEQuence:SLOPe', 'TRIGger:SEQuence:SOURce',
-      'TRIGger:SEQuence:IMPedance',
+      'TRIGger:SEQuence:SLOPe', 'TRIGger:SEQuence:SOURce', 'TRIGger:SEQuence:IMPedance',
+      'TRIGger:SLOPe',
     ],
 
     // ── N5-01: AFG/oscillator clock reference ──

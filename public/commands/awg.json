@@ -523,6 +523,124 @@
         }
       ]
     },
+    "Source_Output": {
+      "description": "Source channel output configuration (waveform shape, frequency, burst mode)",
+      "color": "bg-indigo-100 text-indigo-700",
+      "commands": [
+        {
+          "name": "Set Waveform Shape",
+          "scpi": "SOURce{ch}:FUNCtion:SHAPe {shape}",
+          "header": "SOURce{ch}:FUNCtion:SHAPe",
+          "description": "Sets or queries the output waveform shape for the specified AWG source channel. Common shapes include SINusoid, SQUare, TRIangle, RAMP, PULSe, and user-defined waveforms.",
+          "shortDescription": "Set the output waveform function shape for an AWG source channel (sine, square, triangle, etc.).",
+          "commandType": "both",
+          "params": [
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            },
+            {
+              "name": "shape",
+              "type": "text",
+              "default": "SINusoid",
+              "options": ["SINusoid", "SQUare", "TRIangle", "RAMP", "PULSe", "NOISe", "ARBitrary"],
+              "required": true
+            }
+          ],
+          "syntax": {
+            "set": "SOURce{ch}:FUNCtion:SHAPe {shape}",
+            "query": "SOURce{ch}:FUNCtion:SHAPe?"
+          },
+          "example": "awg.write('SOURce1:FUNCtion:SHAPe SINusoid')"
+        },
+        {
+          "name": "Set Output Frequency",
+          "scpi": "SOURce{ch}:FREQuency {freq}",
+          "header": "SOURce{ch}:FREQuency",
+          "description": "Sets or queries the output frequency for the specified AWG source channel. This sets the waveform repetition frequency in Hz.",
+          "shortDescription": "Set the output frequency for an AWG source channel in Hz.",
+          "commandType": "both",
+          "params": [
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            },
+            {
+              "name": "freq",
+              "type": "number",
+              "default": 1000,
+              "required": true,
+              "unit": "Hz"
+            }
+          ],
+          "syntax": {
+            "set": "SOURce{ch}:FREQuency {freq}",
+            "query": "SOURce{ch}:FREQuency?"
+          },
+          "relatedCommands": ["SOURce{ch}:FREQuency:CW", "CLOCk:ECLock:FREQuency"],
+          "example": "awg.write('SOURce1:FREQuency 1000')"
+        },
+        {
+          "name": "Set Burst Mode State",
+          "scpi": "SOURce{ch}:BURSt:STATe {state}",
+          "header": "SOURce{ch}:BURSt:STATe",
+          "description": "Sets or queries the burst mode state for the specified AWG source channel. When ON, the channel outputs a finite burst of waveform cycles on each trigger.",
+          "shortDescription": "Enable or disable burst mode for an AWG source channel.",
+          "commandType": "both",
+          "params": [
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            },
+            {
+              "name": "state",
+              "type": "text",
+              "default": "ON",
+              "options": ["ON", "OFF", "0", "1"],
+              "required": true
+            }
+          ],
+          "syntax": {
+            "set": "SOURce{ch}:BURSt:STATe {ON|OFF}",
+            "query": "SOURce{ch}:BURSt:STATe?"
+          },
+          "example": "awg.write('SOURce1:BURSt:STATe ON')"
+        },
+        {
+          "name": "Set Burst Cycle Count",
+          "scpi": "SOURce{ch}:BURSt:NCYCles {count}",
+          "header": "SOURce{ch}:BURSt:NCYCles",
+          "description": "Sets or queries the number of cycles in a burst for the specified AWG source channel.",
+          "shortDescription": "Set the number of waveform cycles in a burst for an AWG source channel.",
+          "commandType": "both",
+          "params": [
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            },
+            {
+              "name": "count",
+              "type": "number",
+              "default": 1,
+              "required": true
+            }
+          ],
+          "syntax": {
+            "set": "SOURce{ch}:BURSt:NCYCles {count}",
+            "query": "SOURce{ch}:BURSt:NCYCles?"
+          },
+          "example": "awg.write('SOURce1:BURSt:NCYCles 5')"
+        }
+      ]
+    },
     "Waveform": {
       "description": "Waveform management and data transfer",
       "color": "bg-blue-100 text-blue-700",
@@ -1349,6 +1467,75 @@
             }
           ],
           "example": "awg.write('TRIGger:MODE TRIGgered')"
+        },
+        {
+          "name": "Set Sequence Trigger Slope",
+          "scpi": "TRIGger:SEQuence:SLOPe {slope}",
+          "header": "TRIGger:SEQuence:SLOPe",
+          "description": "Sets or queries the trigger slope for AWG sequence triggering. POSitive triggers on rising edge, NEGative triggers on falling edge.",
+          "shortDescription": "Set the trigger slope for AWG sequence triggering (positive or negative edge).",
+          "commandType": "both",
+          "params": [
+            {
+              "name": "slope",
+              "type": "text",
+              "default": "POSitive",
+              "options": [
+                "POSitive",
+                "NEGative"
+              ],
+              "required": true
+            }
+          ],
+          "syntax": {
+            "set": "TRIGger:SEQuence:SLOPe {POSitive|NEGative}",
+            "query": "TRIGger:SEQuence:SLOPe?"
+          },
+          "example": "awg.write('TRIGger:SEQuence:SLOPe POSitive')"
+        },
+        {
+          "name": "Set Sequence Trigger Source",
+          "scpi": "TRIGger:SEQuence:SOURce {source}",
+          "header": "TRIGger:SEQuence:SOURce",
+          "description": "Sets or queries the trigger source for AWG sequence triggering.",
+          "shortDescription": "Set the trigger source for AWG sequence triggering.",
+          "commandType": "both",
+          "params": [
+            {
+              "name": "source",
+              "type": "text",
+              "default": "EXTernal",
+              "options": ["EXTernal", "INTernal", "BUS"],
+              "required": true
+            }
+          ],
+          "syntax": {
+            "set": "TRIGger:SEQuence:SOURce {source}",
+            "query": "TRIGger:SEQuence:SOURce?"
+          },
+          "example": "awg.write('TRIGger:SEQuence:SOURce EXTernal')"
+        },
+        {
+          "name": "Set Sequence Trigger Impedance",
+          "scpi": "TRIGger:SEQuence:IMPedance {impedance}",
+          "header": "TRIGger:SEQuence:IMPedance",
+          "description": "Sets or queries the trigger impedance for AWG sequence triggering.",
+          "shortDescription": "Set the trigger impedance for AWG sequence triggering.",
+          "commandType": "both",
+          "params": [
+            {
+              "name": "impedance",
+              "type": "text",
+              "default": "50",
+              "options": ["50", "1000"],
+              "required": true
+            }
+          ],
+          "syntax": {
+            "set": "TRIGger:SEQuence:IMPedance {50|1000}",
+            "query": "TRIGger:SEQuence:IMPedance?"
+          },
+          "example": "awg.write('TRIGger:SEQuence:IMPedance 50')"
         }
       ]
     },

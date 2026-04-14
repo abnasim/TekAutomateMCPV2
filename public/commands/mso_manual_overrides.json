@@ -3162,5 +3162,77 @@
     "group": "Horizontal",
     "shortDescription": "Queries timestamps for all FastFrame acquisitions.",
     "description": "Returns the absolute timestamp for all FastFrame acquisitions. Use HORizontal:FASTframe:TIMEStamp:ALL? to query the timestamps of all FastFrame frames. Related commands: HORizontal:FASTframe:TIMEStamp:DELTa? (delta between frames), HORizontal:FASTframe:TIMEStamp:SELECTED? (selected frame timestamp), HORizontal:FASTframe:TIMEStamp:REFerence? (reference frame timestamp)."
+  },
+  {
+    "command": "FASTAcq:STATE",
+    "header": "FASTAcq:STATE",
+    "mnemonics": [
+      "FASTAcq",
+      "STATE",
+      "FASTACQ",
+      "FAST",
+      "ACQUISITION",
+      "HIGH",
+      "SPEED",
+      "DIGITIZING",
+      "ENABLE",
+      "ON",
+      "OFF"
+    ],
+    "commandType": "both",
+    "group": "Acquisition",
+    "shortDescription": "Enable or disable fast acquisition (high-speed digitizing) mode.",
+    "description": "Sets or queries the state of fast acquisition high-speed digitizing mode on the oscilloscope. Use FASTAcq:STATE ON to enable fast acquisition mode for high-speed waveform capture. Related commands: ACQuire:FASTAcq:STATE, ACQuire:FASTAcq:PALEtte."
+  },
+  {
+    "command": "ZOOm:STATE",
+    "header": "ZOOm:STATE",
+    "mnemonics": [
+      "ZOOm",
+      "STATE",
+      "ZOOM",
+      "ENABLE",
+      "ON",
+      "OFF"
+    ],
+    "commandType": "both",
+    "group": "Display",
+    "shortDescription": "Enable or disable the zoom display mode on the oscilloscope.",
+    "description": "Sets or queries the state of the zoom function on the oscilloscope display. Use ZOOm:STATE ON to enable zoom mode, ZOOm:STATE OFF to disable zoom mode. Zoom mode allows you to magnify a portion of the waveform for detailed examination. Related commands: DISplay:WAVEView<x>:ZOOM:ZOOM<x>:STATe, ZOOm:ZOOM<x>:STATe."
+  },
+  {
+    "command": "DISplay:VIEWStyle",
+    "header": "DISplay:VIEWStyle",
+    "mnemonics": [
+      "DISplay",
+      "VIEWStyle",
+      "VIEW",
+      "STYLE",
+      "STACKED",
+      "OVERLAY",
+      "LAYOUT"
+    ],
+    "commandType": "both",
+    "group": "Display",
+    "shortDescription": "Set the waveform layout style to stacked or overlay view.",
+    "description": "Sets or queries the waveform view layout style. OVErlay displays all waveforms overlaid in a single waveform view. STAcked displays each waveform in its own separate row (stacked). Use DISplay:VIEWStyle OVErlay to overlay all traces or DISplay:VIEWStyle STAcked for separate rows. Related commands: DISplay:WAVEView<x>:VIEWStyle."
+  },
+  {
+    "command": "MEASUrement:STATIstics:ENABle",
+    "header": "MEASUrement:STATIstics:ENABle",
+    "mnemonics": [
+      "MEASUrement",
+      "STATIstics",
+      "ENABle",
+      "STATISTICS",
+      "ENABLE",
+      "ON",
+      "OFF",
+      "COLLECTION"
+    ],
+    "commandType": "both",
+    "group": "Measurement",
+    "shortDescription": "Enable or disable measurement statistics collection on the oscilloscope.",
+    "description": "Sets or queries whether measurement statistics are enabled. When enabled, the oscilloscope collects and displays statistical data (min, max, mean, standard deviation) for measurements. Use MEASUrement:STATIstics:ENABle ON to enable statistics collection. Related commands: MEASUrement:STATIstics:MODe, MEASUrement:STATIstics:CYCLEMode, MEASUrement:MEAS<x>:DISPlaystat:ENABle."
   }
 ]

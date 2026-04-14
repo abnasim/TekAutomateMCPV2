@@ -48,6 +48,9 @@ const SUBJECT_GROUP_MAP: Array<{
   { pattern: /(?:^|\s|\()\*cls\b/i, groups: ['Status and Error', 'Miscellaneous'], intent: 'ieee488', subject: 'cls' },
   { pattern: /(?:^|\s|\()\*idn\b/i, groups: ['PI Only', 'Miscellaneous', 'Status and Error'], intent: 'ieee488', subject: 'idn' },
   // Natural language → *RST / *CLS / *IDN?
+  // RSA/spectrum analyzer factory reset → SYSTem:PRESet (BEFORE generic RST patterns)
+  { pattern: /\b(rsa|spectrum\s*analyzer)\b.*\b(reset.*factory|factory.*reset|factory.*default|preset|default\s*state)\b/i, groups: ['SignalVu', 'RSA'], intent: 'rsa', subject: 'rsa_preset' },
+  { pattern: /\b(reset.*factory|factory.*reset|factory.*default)\b.*\b(rsa|spectrum\s*analyzer)\b/i, groups: ['SignalVu', 'RSA'], intent: 'rsa', subject: 'rsa_preset' },
   { pattern: /\b(reset|rst)\b.*(oscilloscope|scope|instrument|device|awg|afg|smu|rsa)/i, groups: ['PI Only', 'Miscellaneous', 'Status and Error'], intent: 'ieee488', subject: 'rst' },
   { pattern: /(oscilloscope|scope|instrument|awg|afg|smu|rsa).*(reset|rst)\b/i, groups: ['PI Only', 'Miscellaneous', 'Status and Error'], intent: 'ieee488', subject: 'rst' },
   { pattern: /\b(reset)\b(?!.*\b(trigger|measurement|meas|search|bus|mask|counter))/i, groups: ['PI Only', 'Miscellaneous', 'Status and Error'], intent: 'ieee488', subject: 'rst' },
@@ -79,7 +82,10 @@ const SUBJECT_GROUP_MAP: Array<{
   { pattern: /\b(sample\s*rate|srate)\b.*\bawg\b/i, groups: ['AWG'], intent: 'awg', subject: 'awg_clock' },
   // AWG output channel
   { pattern: /\bawg\b.*\b(output|channel|ch\s*\d)\b.*\b(state|on|off|enable|disable)\b/i, groups: ['AWG'], intent: 'awg', subject: 'awg_output' },
-  { pattern: /\b(output|channel)\b.*\b(state|on|off)\b.*\bawg\b/i, groups: ['AWG'], intent: 'awg', subject: 'awg_output' },
+  { pattern: /\b(output|channel)\b.*\b(state|off)\b.*\bawg\b/i, groups: ['AWG'], intent: 'awg', subject: 'awg_output' },
+  // "enable/disable AWG output channel N" — different word order
+  { pattern: /\b(enable|disable|turn\s*on|turn\s*off)\b.*\bawg\b.*\b(output|channel)\b/i, groups: ['AWG'], intent: 'awg', subject: 'awg_output' },
+  { pattern: /\bawg\b.*\b(output|channel)\b.*\b(enable|disable|turn\s*on|turn\s*off)\b/i, groups: ['AWG'], intent: 'awg', subject: 'awg_output' },
   // AWG compile
   { pattern: /\bawg\b.*\b(compile|overwrite)\b/i, groups: ['AWG', 'AWG Plugin'], intent: 'awg', subject: 'awg_compile' },
   { pattern: /\b(compile)\b.*\b(awg|waveform|hsserial|overwrite)\b/i, groups: ['AWG', 'AWG Plugin'], intent: 'awg', subject: 'awg_compile' },
@@ -108,6 +114,10 @@ const SUBJECT_GROUP_MAP: Array<{
   // AWG waveform list size
   { pattern: /\b(waveform\s*list|wlist)\b.*\b(size|count|how\s*many|number)\b/i, groups: ['AWG'], intent: 'awg', subject: 'wlist_size' },
   { pattern: /\bhow\s*many\s*waveforms?\b.*\b(waveform\s*list|wlist)\b/i, groups: ['AWG'], intent: 'awg', subject: 'wlist_size' },
+  // AWG sequence trigger slope — MUST be before generic AWG catchall
+  { pattern: /\b(trigger\s*slope|slope\s*trigger)\b.*\b(awg|sequence)\b/i, groups: ['AWG'], intent: 'awg', subject: 'awg_seq_trigger' },
+  { pattern: /\b(awg|sequence)\b.*\b(trigger\s*slope|slope\s*trigger)\b/i, groups: ['AWG'], intent: 'awg', subject: 'awg_seq_trigger' },
+  { pattern: /\bawg\b.*\bsequence.*trigger\b/i, groups: ['AWG'], intent: 'awg', subject: 'awg_seq_trigger' },
   // Generic AWG catchall (after all specific AWG patterns)
   { pattern: /\bawg\b/i, groups: ['AWG'], intent: 'awg', subject: 'awg' },
   { pattern: /\b(arbitrary\s*waveform\s*generator|awgcontrol)\b/i, groups: ['AWG'], intent: 'awg', subject: 'awg' },
@@ -219,6 +229,8 @@ const SUBJECT_GROUP_MAP: Array<{
   { pattern: /\bpower\s*measurement\b/i, groups: ['Power'], intent: 'power', subject: 'power' },
 
   // ── Measurement statistics ──
+  // meas_statistics — BEFORE generic "statistics" catchall
+  { pattern: /\b(measurement\s*statistics|statistics\s*(collection|enable)|enable\s*statistics)\b/i, groups: ['Measurement'], intent: 'measurement', subject: 'meas_statistics' },
   { pattern: /\b(statistics|stats)\b/i, groups: ['Measurement'], intent: 'measurement', subject: 'statistics' },
 
   // ── Probe attenuation (before generic channel and probe) ──
@@ -248,6 +260,8 @@ const SUBJECT_GROUP_MAP: Array<{
   { pattern: /\b(can\s*fd|canfd)\b/i, groups: ['Bus', 'Trigger'], intent: 'bus', subject: 'can_fd' },
   { pattern: /\b(can\s*bus|can\s*decode|can\s*trigger|can\s*2\.0|can\s*protocol)\b/i, groups: ['Bus', 'Trigger'], intent: 'bus', subject: 'can' },
   { pattern: /\blin\b/i, groups: ['Bus', 'Trigger'], intent: 'bus', subject: 'lin' },
+  // *IDN? via "serial" in natural language (e.g. "instrument model and serial") — BEFORE serial bus catchall
+  { pattern: /\b(identify.*instrument.*model|instrument.*model.*and.*serial|model.*and.*serial.*instrument|instrument.*serial.*number.*identify)\b/i, groups: ['PI Only', 'Miscellaneous'], intent: 'ieee488', subject: 'idn' },
   // RS232 stop bits — BEFORE generic serial/RS232 catchall
   { pattern: /\b(stop\s*bits?|rs.?232.*stop|serial.*stop\s*bits?)\b/i, groups: ['Bus'], intent: 'bus', subject: 'rs232_stop' },
   { pattern: /\b(uart|rs232|rs422|rs485|serial)\b/i, groups: ['Bus', 'Trigger'], intent: 'bus', subject: 'serial' },
@@ -280,10 +294,16 @@ const SUBJECT_GROUP_MAP: Array<{
   { pattern: /\b(between|edges?|two\s*waveforms?)\b.*\bdelay\b/i, groups: ['Measurement'], intent: 'measurement', subject: 'delay_measurement' },
   { pattern: /\b(skew|delay)\b/i, groups: ['Measurement'], intent: 'measurement', subject: 'skew' },
   { pattern: /\b(pk2pk|peak.to.peak|pkpk|vpp|peak\s*to\s*peak)\b/i, groups: ['Measurement'], intent: 'measurement', subject: 'pk2pk' },
+  // trigger + frequency compound — BEFORE generic "frequency" → measurement
+  { pattern: /\btrigger\b.*\bfreq(uency)?\b/i, groups: ['Trigger'], intent: 'trigger', subject: 'trigger_frequency' },
+  { pattern: /\bfreq(uency)?\b.*\btrigger\b/i, groups: ['Trigger'], intent: 'trigger', subject: 'trigger_frequency' },
   { pattern: /\b(frequency|freq)\b/i, groups: ['Measurement'], intent: 'measurement', subject: 'frequency' },
   { pattern: /\b(period)\b/i, groups: ['Measurement'], intent: 'measurement', subject: 'period' },
   { pattern: /\b(amplitude|amp)\b/i, groups: ['Measurement'], intent: 'measurement', subject: 'amplitude' },
   { pattern: /\b(rms|vrms)\b/i, groups: ['Measurement'], intent: 'measurement', subject: 'rms' },
+  // acq_mode + numavg — BEFORE generic "average" → measurement:mean
+  { pattern: /\b(acquisition\s*mode|acq\s*mode|mode.*acq(uisition)?)\b/i, groups: ['Acquisition'], intent: 'acquisition', subject: 'acq_mode' },
+  { pattern: /\b(num\s*avg|numavg|number\s*of\s*(averages?|waveforms?\s*to\s*average)|waveforms?\s*to\s*average|how\s*many\s*waveforms.*average|waveforms?\s*averaged|averaging.*noise|noise.*reduction.*average)\b/i, groups: ['Acquisition'], intent: 'acquisition', subject: 'numavg' },
   { pattern: /\b(mean|average|avg)\b/i, groups: ['Measurement', 'Acquisition'], intent: 'measurement', subject: 'mean' },
   // "burst mode output" without "awg" explicit — still an AWG pattern if "output" or "source" present
   { pattern: /\bburst\s*mode\b.*\b(output|source|ch\s*\d)\b/i, groups: ['AWG'], intent: 'awg', subject: 'awg_burst' },
@@ -291,6 +311,8 @@ const SUBJECT_GROUP_MAP: Array<{
   { pattern: /\b(burst)\b/i, groups: ['Measurement'], intent: 'measurement', subject: 'burst' },
   { pattern: /\b(area|cycle\s*area)\b/i, groups: ['Measurement'], intent: 'measurement', subject: 'area' },
   { pattern: /\b(phase)\b/i, groups: ['Measurement'], intent: 'measurement', subject: 'phase' },
+  // meastable_add — BEFORE generic results/statistics
+  { pattern: /\b(measurement\s*results\s*table|add.*measurement.*table|results?\s*table.*display|display.*results?\s*table)\b/i, groups: ['Measurement'], intent: 'measurement', subject: 'meastable_add' },
   { pattern: /\b(result|results\s*table|detailed\s*results|statistics)\b/i, groups: ['Measurement'], intent: 'measurement', subject: 'results' },
 
   // ── Specific measurement actions — MUST come before generic "measurement" catchall ──
@@ -321,6 +343,8 @@ const SUBJECT_GROUP_MAP: Array<{
 
   // ── Math / FFT ── (specific actions FIRST, then generic catchall)
   { pattern: /\b(fft|spectrum)\b/i, groups: ['Math'], intent: 'math', subject: 'fft' },
+  // math_type (operation type) — BEFORE math_channel which matches "math waveform"
+  { pattern: /\b(math\s*(waveform\s*)?operation\s*type|set\s*the\s*math.*operation|math.*waveform.*type)\b/i, groups: ['Math'], intent: 'math', subject: 'math_type' },
   { pattern: /\b(math\s*channel|math\s*trace|math\s*waveform)\b/i, groups: ['Math'], intent: 'math', subject: 'math_channel' },
   { pattern: /\b(add\s*math\s*channel|new\s*math)\b/i, groups: ['Math'], intent: 'math', subject: 'math_channel' },
   { pattern: /\b(delete\s*math\s*channel|remove\s*math\s*channel|clear\s*math\s*channel)\b/i, groups: ['Math'], intent: 'math', subject: 'delete_math_channel' },
@@ -342,12 +366,15 @@ const SUBJECT_GROUP_MAP: Array<{
   { pattern: /\b(select\s*math|math\s*select)\b/i, groups: ['Math'], intent: 'math', subject: 'math_select' },
 
   // ── Voltage / Channel (Vertical) ──
-  { pattern: /\b(vertical\s*scale|channel\s*scale|v\s*\/\s*div|volts?\s*per\s*div)\b/i, groups: ['Vertical'], intent: 'vertical', subject: 'channel_scale' },
+  { pattern: /\b(vertical\s*scale|channel\s*scale|v\s*\/\s*div|volts?\s*per\s*div(ision)?)\b/i, groups: ['Vertical'], intent: 'vertical', subject: 'channel_scale' },
   { pattern: /\b(channel\s*offset|vertical\s*offset)\b/i, groups: ['Vertical'], intent: 'vertical', subject: 'channel_offset' },
   { pattern: /\b(channel\s*bandwidth|bandwidth\s*limit|bw\s*limit)\b/i, groups: ['Vertical'], intent: 'vertical', subject: 'channel_bandwidth' },
   { pattern: /\b(channel\s*position|vertical\s*position)\b/i, groups: ['Vertical'], intent: 'vertical', subject: 'channel_position' },
   { pattern: /\b(coupling|ac\s*coupling|dc\s*coupling)\b/i, groups: ['Vertical'], intent: 'vertical', subject: 'coupling' },
   { pattern: /\b(termination|50\s*ohm|1\s*meg)\b/i, groups: ['Vertical'], intent: 'vertical', subject: 'termination' },
+  // trigger level — BEFORE generic "voltage" (e.g. "trigger level voltage")
+  { pattern: /\btrigger\b.*\b(level|threshold)\b/i, groups: ['Trigger'], intent: 'trigger', subject: 'trigger_level' },
+  { pattern: /\b(level|threshold)\b.*\btrigger\b/i, groups: ['Trigger'], intent: 'trigger', subject: 'trigger_level' },
   { pattern: /\b(voltage|volt)\b/i, groups: ['Vertical', 'Measurement', 'Cursor'], intent: 'vertical', subject: 'voltage' },
   { pattern: /\b(ch\s*\d|channel\s*\d)\s*(bandwidth|bw)\b/i, groups: ['Vertical'], intent: 'vertical', subject: 'channel_bandwidth' },
   { pattern: /\b(ch\s*\d|channel\s*\d)\s*scale\b/i, groups: ['Vertical'], intent: 'vertical', subject: 'channel_scale' },
@@ -375,6 +402,9 @@ const SUBJECT_GROUP_MAP: Array<{
   { pattern: /\bwaveform\b.*(data\s*source|source\s*channel)\b/i, groups: ['Waveform Transfer'], intent: 'waveform', subject: 'waveform_data_source' },
   { pattern: /\b(channel\s*on|turn\s*on\s*channel|enable\s*channel|show\s*channel)\b/i, groups: ['Vertical', 'Display'], intent: 'vertical', subject: 'channel_on' },
   { pattern: /\b(channel\s*off|turn\s*off\s*channel|disable\s*channel|hide\s*channel)\b/i, groups: ['Vertical', 'Display'], intent: 'vertical', subject: 'channel_off' },
+  // show or hide a channel (non-adjacent "show"/"hide" and "channel") → channel_on
+  { pattern: /\b(show|hide)\b.*\bchannel\b/i, groups: ['Vertical', 'Display'], intent: 'vertical', subject: 'channel_on' },
+  { pattern: /\bchannel\b.*\b(show|hide)\b/i, groups: ['Vertical', 'Display'], intent: 'vertical', subject: 'channel_on' },
   { pattern: /\b(select\s*channel|channel\s*select)\b/i, groups: ['Vertical'], intent: 'vertical', subject: 'select_channel' },
   { pattern: /\b(invert\s*channel|channel\s*invert)\b/i, groups: ['Vertical'], intent: 'vertical', subject: 'invert_channel' },
   { pattern: /\b(probe\s*compensation|probe\s*comp)\b/i, groups: ['Vertical'], intent: 'vertical', subject: 'probe_comp' },
@@ -399,8 +429,9 @@ const SUBJECT_GROUP_MAP: Array<{
   // trigger + frequency compound (before generic frequency → measurement)
   { pattern: /\btrigger\b.*\bfreq(uency)?\b/i, groups: ['Trigger'], intent: 'trigger', subject: 'trigger_frequency' },
   { pattern: /\bfreq(uency)?\b.*\btrigger\b/i, groups: ['Trigger'], intent: 'trigger', subject: 'trigger_frequency' },
-  // force trigger (before generic trigger catchall)
+  // force trigger (before generic trigger catchall) — broad form for "force ... trigger ... immediately"
   { pattern: /\b(force\s*trigger|trigger\s*force|force\s*trig)\b/i, groups: ['Trigger'], intent: 'trigger', subject: 'trigger_force' },
+  { pattern: /\bforce\b.*\btrigger\b/i, groups: ['Trigger'], intent: 'trigger', subject: 'trigger_force' },
   // Standard trigger types
   { pattern: /\b(edge\s*trigger|trigger\s*edge|set\s*trigger\s*to\s*edge)\b/i, groups: ['Trigger'], intent: 'trigger', subject: 'edge' },
   { pattern: /\btrigger\b.*\b(rising|falling)\b/i, groups: ['Trigger'], intent: 'trigger', subject: 'edge' },
@@ -420,11 +451,13 @@ const SUBJECT_GROUP_MAP: Array<{
   { pattern: /\b(record\s*length|record|rlength)\b/i, groups: ['Horizontal'], intent: 'acquisition', subject: 'record_length' },
   { pattern: /\b(single\s*seq|single\s*shot|single)\b/i, groups: ['Acquisition'], intent: 'acquisition', subject: 'single' },
   { pattern: /\b(continuous\s*run|run\s*continuous|back\s*to\s*continuous|run\s*mode\s*continuous)\b/i, groups: ['Acquisition'], intent: 'acquisition', subject: 'continuous_run' },
+  // fastacq — BEFORE fastframe (to avoid "fast acquisition" being misclassified as fastframe)
+  { pattern: /\b(fast\s*acq(uisition)?(\s*mode)?|fastacq|FASTAcq)\b(?!.*\bframe\b)/i, groups: ['Acquisition'], intent: 'acquisition', subject: 'fastacq' },
   // fastframe MUST come before generic acquisition "run|stop|acquire|acquisition"
   // fastframe+timestamp must match fastframe_timestamps before generic fastframe
   { pattern: /\b(fastframe|fast\s*frame)\b.*\btimestamps?\b/i, groups: ['Horizontal'], intent: 'acquisition', subject: 'fastframe_timestamps' },
   { pattern: /\btimestamps?\b.*\b(fastframe|fast\s*frame)\b/i, groups: ['Horizontal'], intent: 'acquisition', subject: 'fastframe_timestamps' },
-  { pattern: /\b(fastframe|fast\s*frame|fast.frame|enable\s*fastframe|fastframe\s*mode|fast\s*acq)\b/i, groups: ['Horizontal'], intent: 'acquisition', subject: 'fastframe' },
+  { pattern: /\b(fastframe|fast\s*frame|fast.frame|enable\s*fastframe|fastframe\s*mode)\b/i, groups: ['Horizontal'], intent: 'acquisition', subject: 'fastframe' },
   // acquisition mode compound — BEFORE generic "acquisition" catchall
   { pattern: /\b(acquisition\s*mode|acq\s*mode|acq.*mode|mode.*acq(uisition)?)\b/i, groups: ['Acquisition'], intent: 'acquisition', subject: 'acq_mode' },
   // numavg / waveform averaging count — BEFORE generic "acquisition" catchall
@@ -517,6 +550,9 @@ const SUBJECT_GROUP_MAP: Array<{
   { pattern: /\bsave\b.*\bsetup\b/i, groups: ['Save and Recall'], intent: 'save', subject: 'save_setup' },
   { pattern: /\bsetup\b.*\bsave\b/i, groups: ['Save and Recall'], intent: 'save', subject: 'save_setup' },
   { pattern: /\b(screenshot|screen\s*capture|save\s*image|print)\b/i, groups: ['Save and Recall'], intent: 'save', subject: 'screenshot' },
+  // save_session — BEFORE generic "save" or "session" catchall
+  { pattern: /\b(save\s*session|session\s*save|save.*all.*settings.*waveforms?|save.*session.*waveforms?)\b/i, groups: ['Save and Recall'], intent: 'save', subject: 'save_session' },
+  { pattern: /\bsave\b.*\bsession\b/i, groups: ['Save and Recall'], intent: 'save', subject: 'save_session' },
   { pattern: /\b(save|recall|session|store|export|load)\b/i, groups: ['Save and Recall', 'File System'], intent: 'save', subject: 'save' },
 
   // ── Simple Save Patterns (fallback) ──
