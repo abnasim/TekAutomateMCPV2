@@ -1283,12 +1283,11 @@ export async function searchScpi(input: SearchScpiInput): Promise<ToolResult<unk
       'VISual:AREA<x>:RESET', 'VISual:AREA<x>:ROTAtion',
     ],
     spectrum_view: [
-      'CH<x>:SV:SPAN', 'SV:CENTERFrequency', 'CH<x>:SV:CENTERFrequency',
-      'SV:SPAN', 'SV:RBW', 'SV:WINDOW',
-      'SV:SPANRBWRatio', 'CH<x>:SV:STATE',
+      'CH<x>:SV:SPAN', 'SV:SPAN', 'CH<x>:SV:CENTERFrequency', 'SV:CENTERFrequency',
+      'CH<x>:SV:STATE', 'SV:RBW', 'SV:WINDOW', 'SV:SPANRBWRatio',
     ],
     spectrum_rbw_mode: [
-      'SV:RBWMode', 'CH<x>:SV:RBWMode', 'CH<x>:SV:RBW', 'SV:RBW', 'SV:SPANRBWRatio',
+      'CH<x>:SV:RBWMode', 'SV:RBWMode', 'CH<x>:SV:RBW', 'SV:RBW', 'SV:SPANRBWRatio',
     ],
     eye_diagram: [
       'MEASUrement:MEAS<x>:TYPe',   // prefix-matches 'MEASUrement:MEAS' → PASS
@@ -1387,10 +1386,10 @@ export async function searchScpi(input: SearchScpiInput): Promise<ToolResult<unk
       'TRIGger:B:EDGE:SOUrce', 'TRIGger:B:EDGE:SLOpe',
     ],
     channel_on: [
-      'DISplay:GLObal:CH<x>:STATE', 'CH<x>:STATE',
+      'DISplay:GLObal:CH<x>:STATE', 'DISplay:WAVEView<x>:CH<x>:STATE', 'CH<x>:STATE',
     ],
     channel_off: [
-      'DISplay:GLObal:CH<x>:STATE', 'CH<x>:STATE',
+      'DISplay:GLObal:CH<x>:STATE', 'DISplay:WAVEView<x>:CH<x>:STATE', 'CH<x>:STATE',
     ],
     digital_threshold: [
       'CH<x>:DIGItal:THReshold', 'CH<x>:DIGItal:MAGnivu:POSition',

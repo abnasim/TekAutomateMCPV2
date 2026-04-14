@@ -405,6 +405,9 @@ const SUBJECT_GROUP_MAP: Array<{
   // show or hide a channel (non-adjacent "show"/"hide" and "channel") → channel_on
   { pattern: /\b(show|hide)\b.*\bchannel\b/i, groups: ['Vertical', 'Display'], intent: 'vertical', subject: 'channel_on' },
   { pattern: /\bchannel\b.*\b(show|hide)\b/i, groups: ['Vertical', 'Display'], intent: 'vertical', subject: 'channel_on' },
+  // enable/disable a channel (non-adjacent) → channel_on
+  { pattern: /\benable\b.*\bchannel\b/i, groups: ['Vertical', 'Display'], intent: 'vertical', subject: 'channel_on' },
+  { pattern: /\bdisable\b.*\bchannel\b/i, groups: ['Vertical', 'Display'], intent: 'vertical', subject: 'channel_off' },
   { pattern: /\b(select\s*channel|channel\s*select)\b/i, groups: ['Vertical'], intent: 'vertical', subject: 'select_channel' },
   { pattern: /\b(invert\s*channel|channel\s*invert)\b/i, groups: ['Vertical'], intent: 'vertical', subject: 'invert_channel' },
   { pattern: /\b(probe\s*compensation|probe\s*comp)\b/i, groups: ['Vertical'], intent: 'vertical', subject: 'probe_comp' },

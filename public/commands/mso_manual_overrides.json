@@ -3164,27 +3164,6 @@
     "description": "Returns the absolute timestamp for all FastFrame acquisitions. Use HORizontal:FASTframe:TIMEStamp:ALL? to query the timestamps of all FastFrame frames. Related commands: HORizontal:FASTframe:TIMEStamp:DELTa? (delta between frames), HORizontal:FASTframe:TIMEStamp:SELECTED? (selected frame timestamp), HORizontal:FASTframe:TIMEStamp:REFerence? (reference frame timestamp)."
   },
   {
-    "command": "FASTAcq:STATE",
-    "header": "FASTAcq:STATE",
-    "mnemonics": [
-      "FASTAcq",
-      "STATE",
-      "FASTACQ",
-      "FAST",
-      "ACQUISITION",
-      "HIGH",
-      "SPEED",
-      "DIGITIZING",
-      "ENABLE",
-      "ON",
-      "OFF"
-    ],
-    "commandType": "both",
-    "group": "Acquisition",
-    "shortDescription": "Enable or disable fast acquisition (high-speed digitizing) mode.",
-    "description": "Sets or queries the state of fast acquisition high-speed digitizing mode on the oscilloscope. Use FASTAcq:STATE ON to enable fast acquisition mode for high-speed waveform capture. Related commands: ACQuire:FASTAcq:STATE, ACQuire:FASTAcq:PALEtte."
-  },
-  {
     "command": "ZOOm:STATE",
     "header": "ZOOm:STATE",
     "mnemonics": [
@@ -3234,5 +3213,59 @@
     "group": "Measurement",
     "shortDescription": "Enable or disable measurement statistics collection on the oscilloscope.",
     "description": "Sets or queries whether measurement statistics are enabled. When enabled, the oscilloscope collects and displays statistical data (min, max, mean, standard deviation) for measurements. Use MEASUrement:STATIstics:ENABle ON to enable statistics collection. Related commands: MEASUrement:STATIstics:MODe, MEASUrement:STATIstics:CYCLEMode, MEASUrement:MEAS<x>:DISPlaystat:ENABle."
+  },
+  {
+    "command": "CH<x>:SV:SPAN",
+    "header": "CH<x>:SV:SPAN",
+    "mnemonics": [
+      "CH<x>",
+      "SV",
+      "SPAN",
+      "SPECTRUM",
+      "FREQUENCY",
+      "RANGE",
+      "WIDTH",
+      "ADJUST"
+    ],
+    "commandType": "both",
+    "group": "Spectrum view",
+    "shortDescription": "Set the frequency span for the spectrum view on a specific channel.",
+    "description": "Sets or queries the frequency span of the spectrum view for the specified channel. Use CH<x>:SV:SPAN to set the frequency range displayed in the spectrum view window. Related commands: SV:SPAN, CH<x>:SV:CENTERFrequency, SV:CENTERFrequency."
+  },
+  {
+    "command": "CH<x>:SV:RBWMode",
+    "header": "CH<x>:SV:RBWMode",
+    "mnemonics": [
+      "CH<x>",
+      "SV",
+      "RBWMode",
+      "RBW",
+      "RESOLUTION",
+      "BANDWIDTH",
+      "MODE",
+      "AUTO",
+      "MANUAL",
+      "AUTOMATIC"
+    ],
+    "commandType": "both",
+    "group": "Spectrum view",
+    "shortDescription": "Configure automatic or manual resolution bandwidth (RBW) mode for spectrum view.",
+    "description": "Sets or queries the resolution bandwidth (RBW) mode for the spectrum view on the specified channel. AUTOmatic sets RBW automatically based on the span. MANual allows setting RBW independently from the span. Related commands: SV:RBWMode, SV:RBW, CH<x>:SV:RBW."
+  },
+  {
+    "command": "CH<x>:SV:RBW",
+    "header": "CH<x>:SV:RBW",
+    "mnemonics": [
+      "CH<x>",
+      "SV",
+      "RBW",
+      "RESOLUTION",
+      "BANDWIDTH",
+      "SPECTRUM"
+    ],
+    "commandType": "both",
+    "group": "Spectrum view",
+    "shortDescription": "Set the resolution bandwidth for the spectrum view on a specific channel.",
+    "description": "Sets or queries the resolution bandwidth (RBW) for the spectrum view on the specified channel. Related commands: SV:RBW, CH<x>:SV:RBWMode, SV:RBWMode."
   }
 ]
