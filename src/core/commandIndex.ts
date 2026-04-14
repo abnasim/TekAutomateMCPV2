@@ -784,9 +784,22 @@ export class CommandIndex {
         })
         .join(' ');
 
+      // Extract enum option values from arguments (e.g. SINusoid, SQUare, SEQuence, RUNSTop).
+      // TekControl scores +200 for exact enum match — indexing these lets BM25 find the right
+      // command when the user says "sinusoid" or "sequence" (which are SCPI enum tokens).
+      const enumTokens = (entry.arguments || [])
+        .flatMap(arg => {
+          const vals = Array.isArray((arg.validValues as Record<string, unknown>)?.values)
+            ? ((arg.validValues as Record<string, unknown>).values as unknown[])
+            : [];
+          return vals.filter((v): v is string => typeof v === 'string' && v.length > 1);
+        })
+        .join(' ');
+
       return [
         entry.header,
         scpiAbbrevTokens,       // SCPI abbreviations for mnemonic queries (meas, trig, freq, etc.)
+        enumTokens,             // Enum option values (SINusoid, SEQuence, RUNSTop, EYEDiagram, etc.)
         entry.shortDescription,
         entry.shortDescription, // weight semantic intent heavier in BM25 ranking
         GROUP_DESCRIPTIONS[entry.group] || '',
