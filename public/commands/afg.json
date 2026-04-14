@@ -2,7 +2,12 @@
   "metadata": {
     "name": "AFG Series",
     "description": "Arbitrary Function Generator SCPI commands for AFG31K, AFG3K series",
-    "instruments": ["AFG31K", "AFG3KB", "AFG3KC", "AFG3K"],
+    "instruments": [
+      "AFG31K",
+      "AFG3KB",
+      "AFG3KC",
+      "AFG3K"
+    ],
     "version": "1.0",
     "manualReference": {
       "title": "AFG31000 Series Programmer Manual",
@@ -20,13 +25,28 @@
           "name": "Set Output State",
           "scpi": "OUTPut{ch}:STATe {state}",
           "header": "OUTPut:STATe",
-          "mnemonics": ["OUTPut", "STATe"],
+          "mnemonics": [
+            "OUTPut",
+            "STATe"
+          ],
           "commandType": "both",
           "shortDescription": "Enable or disable the output channel",
           "description": "This command sets or queries the output state of the specified channel. When enabled (ON), the signal is present at the output connector. When disabled (OFF), the output is disconnected and the connector is at ground potential.",
           "instruments": {
-            "families": ["AFG31K", "AFG3K"],
-            "models": ["AFG31021", "AFG31022", "AFG31051", "AFG31052", "AFG31101", "AFG31102", "AFG31251", "AFG31252"],
+            "families": [
+              "AFG31K",
+              "AFG3K"
+            ],
+            "models": [
+              "AFG31021",
+              "AFG31022",
+              "AFG31051",
+              "AFG31052",
+              "AFG31101",
+              "AFG31102",
+              "AFG31251",
+              "AFG31252"
+            ],
             "exclusions": []
           },
           "arguments": [
@@ -53,7 +73,12 @@
               "description": "Output enable state",
               "validValues": {
                 "type": "enumeration",
-                "values": ["ON", "OFF", "0", "1"],
+                "values": [
+                  "ON",
+                  "OFF",
+                  "0",
+                  "1"
+                ],
                 "notes": "ON/1 enables output, OFF/0 disables output"
               },
               "defaultValue": "ON"
@@ -135,8 +160,28 @@
             "Disabling output does not change waveform settings"
           ],
           "params": [
-            { "name": "ch", "type": "number", "default": 1, "options": ["1", "2"], "required": true, "description": "Channel number (1 or 2)" },
-            { "name": "state", "type": "enumeration", "default": "ON", "options": ["ON", "OFF"], "required": true, "description": "Output state" }
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "options": [
+                "1",
+                "2"
+              ],
+              "required": true,
+              "description": "Channel number (1 or 2)"
+            },
+            {
+              "name": "state",
+              "type": "enumeration",
+              "default": "ON",
+              "options": [
+                "ON",
+                "OFF"
+              ],
+              "required": true,
+              "description": "Output state"
+            }
           ],
           "example": "afg.write('OUTPut1:STATe ON')"
         },
@@ -145,7 +190,16 @@
           "scpi": "OUTPut{ch}:STATe?",
           "description": "Query output channel state",
           "params": [
-            { "name": "ch", "type": "number", "default": 1, "options": ["1", "2"], "required": true }
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "options": [
+                "1",
+                "2"
+              ],
+              "required": true
+            }
           ],
           "example": "state = afg.query('OUTPut1:STATe?')"
         },
@@ -154,8 +208,22 @@
           "scpi": "OUTPut{ch}:IMPedance {impedance}",
           "description": "Set output impedance (50 ohm or high-Z)",
           "params": [
-            { "name": "ch", "type": "number", "default": 1, "required": true },
-            { "name": "impedance", "type": "text", "default": "50", "options": ["50", "INFinity"], "required": true }
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            },
+            {
+              "name": "impedance",
+              "type": "text",
+              "default": "50",
+              "options": [
+                "50",
+                "INFinity"
+              ],
+              "required": true
+            }
           ],
           "example": "afg.write('OUTPut1:IMPedance 50')"
         },
@@ -164,7 +232,12 @@
           "scpi": "OUTPut{ch}:IMPedance?",
           "description": "Query output impedance",
           "params": [
-            { "name": "ch", "type": "number", "default": 1, "required": true }
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            }
           ],
           "example": "imp = afg.query('OUTPut1:IMPedance?')"
         },
@@ -173,8 +246,22 @@
           "scpi": "OUTPut{ch}:POLarity {polarity}",
           "description": "Set output polarity",
           "params": [
-            { "name": "ch", "type": "number", "default": 1, "required": true },
-            { "name": "polarity", "type": "text", "default": "NORMal", "options": ["NORMal", "INVerted"], "required": true }
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            },
+            {
+              "name": "polarity",
+              "type": "text",
+              "default": "NORMal",
+              "options": [
+                "NORMal",
+                "INVerted"
+              ],
+              "required": true
+            }
           ],
           "example": "afg.write('OUTPut1:POLarity NORMal')"
         }
@@ -189,8 +276,38 @@
           "scpi": "SOURce{ch}:FUNCtion:SHAPe {shape}",
           "description": "Set the waveform shape/function",
           "params": [
-            { "name": "ch", "type": "number", "default": 1, "required": true },
-            { "name": "shape", "type": "text", "default": "SINusoid", "options": ["SINusoid", "SQUare", "PULSe", "RAMP", "PRNoise", "DC", "SINC", "GAUSsian", "LORentz", "ERISe", "EDECay", "HAVersine", "USER1", "USER2", "USER3", "USER4", "EMEMory", "EFILe"], "required": true }
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            },
+            {
+              "name": "shape",
+              "type": "text",
+              "default": "SINusoid",
+              "options": [
+                "SINusoid",
+                "SQUare",
+                "PULSe",
+                "RAMP",
+                "PRNoise",
+                "DC",
+                "SINC",
+                "GAUSsian",
+                "LORentz",
+                "ERISe",
+                "EDECay",
+                "HAVersine",
+                "USER1",
+                "USER2",
+                "USER3",
+                "USER4",
+                "EMEMory",
+                "EFILe"
+              ],
+              "required": true
+            }
           ],
           "example": "afg.write('SOURce1:FUNCtion:SHAPe SINusoid')"
         },
@@ -199,7 +316,12 @@
           "scpi": "SOURce{ch}:FUNCtion:SHAPe?",
           "description": "Query the current waveform shape",
           "params": [
-            { "name": "ch", "type": "number", "default": 1, "required": true }
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            }
           ],
           "example": "shape = afg.query('SOURce1:FUNCtion:SHAPe?')"
         },
@@ -208,7 +330,12 @@
           "scpi": "SOURce{ch}:FUNCtion:SHAPe SINusoid",
           "description": "Set output to sine wave",
           "params": [
-            { "name": "ch", "type": "number", "default": 1, "required": true }
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            }
           ],
           "example": "afg.write('SOURce1:FUNCtion:SHAPe SINusoid')"
         },
@@ -217,7 +344,12 @@
           "scpi": "SOURce{ch}:FUNCtion:SHAPe SQUare",
           "description": "Set output to square wave",
           "params": [
-            { "name": "ch", "type": "number", "default": 1, "required": true }
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            }
           ],
           "example": "afg.write('SOURce1:FUNCtion:SHAPe SQUare')"
         },
@@ -226,7 +358,12 @@
           "scpi": "SOURce{ch}:FUNCtion:SHAPe PULSe",
           "description": "Set output to pulse wave",
           "params": [
-            { "name": "ch", "type": "number", "default": 1, "required": true }
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            }
           ],
           "example": "afg.write('SOURce1:FUNCtion:SHAPe PULSe')"
         },
@@ -235,7 +372,12 @@
           "scpi": "SOURce{ch}:FUNCtion:SHAPe RAMP",
           "description": "Set output to ramp wave",
           "params": [
-            { "name": "ch", "type": "number", "default": 1, "required": true }
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            }
           ],
           "example": "afg.write('SOURce1:FUNCtion:SHAPe RAMP')"
         },
@@ -244,7 +386,12 @@
           "scpi": "SOURce{ch}:FUNCtion:SHAPe PRNoise",
           "description": "Set output to pseudo-random noise",
           "params": [
-            { "name": "ch", "type": "number", "default": 1, "required": true }
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            }
           ],
           "example": "afg.write('SOURce1:FUNCtion:SHAPe PRNoise')"
         },
@@ -253,7 +400,12 @@
           "scpi": "SOURce{ch}:FUNCtion:SHAPe DC",
           "description": "Set output to DC level",
           "params": [
-            { "name": "ch", "type": "number", "default": 1, "required": true }
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            }
           ],
           "example": "afg.write('SOURce1:FUNCtion:SHAPe DC')"
         },
@@ -262,8 +414,24 @@
           "scpi": "SOURce{ch}:FUNCtion:SHAPe USER{n}",
           "description": "Set output to user-defined arbitrary waveform",
           "params": [
-            { "name": "ch", "type": "number", "default": 1, "required": true },
-            { "name": "n", "type": "number", "default": 1, "options": ["1", "2", "3", "4"], "required": true }
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            },
+            {
+              "name": "n",
+              "type": "number",
+              "default": 1,
+              "options": [
+                "1",
+                "2",
+                "3",
+                "4"
+              ],
+              "required": true
+            }
           ],
           "example": "afg.write('SOURce1:FUNCtion:SHAPe USER1')"
         },
@@ -272,8 +440,20 @@
           "scpi": "SOURce{ch}:FUNCtion:RAMP:SYMMetry {percent}",
           "description": "Set ramp symmetry percentage (0-100%)",
           "params": [
-            { "name": "ch", "type": "number", "default": 1, "required": true },
-            { "name": "percent", "type": "number", "default": 50, "min": 0, "max": 100, "required": true }
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            },
+            {
+              "name": "percent",
+              "type": "number",
+              "default": 50,
+              "min": 0,
+              "max": 100,
+              "required": true
+            }
           ],
           "example": "afg.write('SOURce1:FUNCtion:RAMP:SYMMetry 50')"
         },
@@ -282,8 +462,20 @@
           "scpi": "SOURce{ch}:PULSe:DCYCle {percent}",
           "description": "Set square/pulse duty cycle (0.001-99.999%)",
           "params": [
-            { "name": "ch", "type": "number", "default": 1, "required": true },
-            { "name": "percent", "type": "number", "default": 50, "min": 0.001, "max": 99.999, "required": true }
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            },
+            {
+              "name": "percent",
+              "type": "number",
+              "default": 50,
+              "min": 0.001,
+              "max": 99.999,
+              "required": true
+            }
           ],
           "example": "afg.write('SOURce1:PULSe:DCYCle 50')"
         }
@@ -298,13 +490,29 @@
           "name": "Set Frequency",
           "scpi": "SOURce{ch}:FREQuency:FIXed {freq}",
           "header": "SOURce:FREQuency:FIXed",
-          "mnemonics": ["SOURce", "FREQuency", "FIXed"],
+          "mnemonics": [
+            "SOURce",
+            "FREQuency",
+            "FIXed"
+          ],
           "commandType": "both",
           "shortDescription": "Set or query the output frequency",
           "description": "This command sets or queries the output frequency for the specified channel. The frequency is specified in Hertz (Hz). The available frequency range depends on the instrument model and selected waveform type.",
           "instruments": {
-            "families": ["AFG31K", "AFG3K"],
-            "models": ["AFG31021", "AFG31022", "AFG31051", "AFG31052", "AFG31101", "AFG31102", "AFG31251", "AFG31252"]
+            "families": [
+              "AFG31K",
+              "AFG3K"
+            ],
+            "models": [
+              "AFG31021",
+              "AFG31022",
+              "AFG31051",
+              "AFG31052",
+              "AFG31101",
+              "AFG31102",
+              "AFG31251",
+              "AFG31252"
+            ]
           },
           "arguments": [
             {
@@ -330,8 +538,8 @@
               "validValues": {
                 "type": "numeric",
                 "format": "NR3",
-                "min": 1e-6,
-                "max": 250e6,
+                "min": 1e-06,
+                "max": 250000000.0,
                 "unit": "Hz",
                 "notes": "Maximum frequency depends on model: AFG31021=25MHz, AFG31051=50MHz, AFG31101=100MHz, AFG31251=250MHz"
               },
@@ -414,8 +622,21 @@
             "Use exponential notation for large values (1E6 = 1 MHz)"
           ],
           "params": [
-            { "name": "ch", "type": "number", "default": 1, "required": true, "description": "Channel number" },
-            { "name": "freq", "type": "number", "default": 1000, "required": true, "unit": "Hz", "description": "Frequency in Hz" }
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true,
+              "description": "Channel number"
+            },
+            {
+              "name": "freq",
+              "type": "number",
+              "default": 1000,
+              "required": true,
+              "unit": "Hz",
+              "description": "Frequency in Hz"
+            }
           ],
           "example": "afg.write('SOURce1:FREQuency:FIXed 1E6')"
         },
@@ -424,7 +645,12 @@
           "scpi": "SOURce{ch}:FREQuency:FIXed?",
           "description": "Query output frequency",
           "params": [
-            { "name": "ch", "type": "number", "default": 1, "required": true }
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            }
           ],
           "example": "freq = afg.query('SOURce1:FREQuency:FIXed?')"
         },
@@ -433,8 +659,22 @@
           "scpi": "SOURce{ch}:FREQuency:MODE {mode}",
           "description": "Set frequency mode",
           "params": [
-            { "name": "ch", "type": "number", "default": 1, "required": true },
-            { "name": "mode", "type": "text", "default": "CW", "options": ["CW", "SWEep"], "required": true }
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            },
+            {
+              "name": "mode",
+              "type": "text",
+              "default": "CW",
+              "options": [
+                "CW",
+                "SWEep"
+              ],
+              "required": true
+            }
           ],
           "example": "afg.write('SOURce1:FREQuency:MODE CW')"
         },
@@ -443,8 +683,19 @@
           "scpi": "SOURce{ch}:PULSe:PERiod {period}",
           "description": "Set pulse period in seconds",
           "params": [
-            { "name": "ch", "type": "number", "default": 1, "required": true },
-            { "name": "period", "type": "number", "default": 0.001, "required": true, "unit": "s" }
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            },
+            {
+              "name": "period",
+              "type": "number",
+              "default": 0.001,
+              "required": true,
+              "unit": "s"
+            }
           ],
           "example": "afg.write('SOURce1:PULSe:PERiod 1E-3')"
         }
@@ -459,8 +710,19 @@
           "scpi": "SOURce{ch}:VOLTage:LEVel:IMMediate:AMPLitude {amplitude}",
           "description": "Set peak-to-peak amplitude",
           "params": [
-            { "name": "ch", "type": "number", "default": 1, "required": true },
-            { "name": "amplitude", "type": "number", "default": 1.0, "required": true, "unit": "Vpp" }
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            },
+            {
+              "name": "amplitude",
+              "type": "number",
+              "default": 1.0,
+              "required": true,
+              "unit": "Vpp"
+            }
           ],
           "example": "afg.write('SOURce1:VOLTage:LEVel:IMMediate:AMPLitude 2.0')"
         },
@@ -469,7 +731,12 @@
           "scpi": "SOURce{ch}:VOLTage:LEVel:IMMediate:AMPLitude?",
           "description": "Query peak-to-peak amplitude",
           "params": [
-            { "name": "ch", "type": "number", "default": 1, "required": true }
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            }
           ],
           "example": "amp = afg.query('SOURce1:VOLTage:LEVel:IMMediate:AMPLitude?')"
         },
@@ -478,8 +745,19 @@
           "scpi": "SOURce{ch}:VOLTage:LEVel:IMMediate:OFFSet {offset}",
           "description": "Set DC offset voltage",
           "params": [
-            { "name": "ch", "type": "number", "default": 1, "required": true },
-            { "name": "offset", "type": "number", "default": 0, "required": true, "unit": "V" }
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            },
+            {
+              "name": "offset",
+              "type": "number",
+              "default": 0,
+              "required": true,
+              "unit": "V"
+            }
           ],
           "example": "afg.write('SOURce1:VOLTage:LEVel:IMMediate:OFFSet 0.5')"
         },
@@ -488,7 +766,12 @@
           "scpi": "SOURce{ch}:VOLTage:LEVel:IMMediate:OFFSet?",
           "description": "Query DC offset voltage",
           "params": [
-            { "name": "ch", "type": "number", "default": 1, "required": true }
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            }
           ],
           "example": "offset = afg.query('SOURce1:VOLTage:LEVel:IMMediate:OFFSet?')"
         },
@@ -497,8 +780,19 @@
           "scpi": "SOURce{ch}:VOLTage:LEVel:IMMediate:HIGH {level}",
           "description": "Set high voltage level",
           "params": [
-            { "name": "ch", "type": "number", "default": 1, "required": true },
-            { "name": "level", "type": "number", "default": 1.0, "required": true, "unit": "V" }
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            },
+            {
+              "name": "level",
+              "type": "number",
+              "default": 1.0,
+              "required": true,
+              "unit": "V"
+            }
           ],
           "example": "afg.write('SOURce1:VOLTage:LEVel:IMMediate:HIGH 3.3')"
         },
@@ -507,8 +801,19 @@
           "scpi": "SOURce{ch}:VOLTage:LEVel:IMMediate:LOW {level}",
           "description": "Set low voltage level",
           "params": [
-            { "name": "ch", "type": "number", "default": 1, "required": true },
-            { "name": "level", "type": "number", "default": 0, "required": true, "unit": "V" }
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            },
+            {
+              "name": "level",
+              "type": "number",
+              "default": 0,
+              "required": true,
+              "unit": "V"
+            }
           ],
           "example": "afg.write('SOURce1:VOLTage:LEVel:IMMediate:LOW 0')"
         },
@@ -517,8 +822,23 @@
           "scpi": "SOURce{ch}:VOLTage:UNIT {unit}",
           "description": "Set voltage units",
           "params": [
-            { "name": "ch", "type": "number", "default": 1, "required": true },
-            { "name": "unit", "type": "text", "default": "VPP", "options": ["VPP", "VRMS", "DBM"], "required": true }
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            },
+            {
+              "name": "unit",
+              "type": "text",
+              "default": "VPP",
+              "options": [
+                "VPP",
+                "VRMS",
+                "DBM"
+              ],
+              "required": true
+            }
           ],
           "example": "afg.write('SOURce1:VOLTage:UNIT VPP')"
         }
@@ -533,8 +853,21 @@
           "scpi": "SOURce{ch}:PHASe:ADJust {phase}",
           "description": "Set phase in degrees (-180 to +180)",
           "params": [
-            { "name": "ch", "type": "number", "default": 1, "required": true },
-            { "name": "phase", "type": "number", "default": 0, "min": -180, "max": 180, "required": true, "unit": "deg" }
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            },
+            {
+              "name": "phase",
+              "type": "number",
+              "default": 0,
+              "min": -180,
+              "max": 180,
+              "required": true,
+              "unit": "deg"
+            }
           ],
           "example": "afg.write('SOURce1:PHASe:ADJust 90')"
         },
@@ -543,7 +876,12 @@
           "scpi": "SOURce{ch}:PHASe:ADJust?",
           "description": "Query phase setting",
           "params": [
-            { "name": "ch", "type": "number", "default": 1, "required": true }
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            }
           ],
           "example": "phase = afg.query('SOURce1:PHASe:ADJust?')"
         },
@@ -552,7 +890,12 @@
           "scpi": "SOURce{ch}:PHASe:INITiate",
           "description": "Initialize phase to zero",
           "params": [
-            { "name": "ch", "type": "number", "default": 1, "required": true }
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            }
           ],
           "example": "afg.write('SOURce1:PHASe:INITiate')"
         }
@@ -567,7 +910,12 @@
           "scpi": "SOURce{ch}:AM:STATe ON",
           "description": "Enable amplitude modulation",
           "params": [
-            { "name": "ch", "type": "number", "default": 1, "required": true }
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            }
           ],
           "example": "afg.write('SOURce1:AM:STATe ON')"
         },
@@ -576,7 +924,12 @@
           "scpi": "SOURce{ch}:AM:STATe OFF",
           "description": "Disable amplitude modulation",
           "params": [
-            { "name": "ch", "type": "number", "default": 1, "required": true }
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            }
           ],
           "example": "afg.write('SOURce1:AM:STATe OFF')"
         },
@@ -585,8 +938,20 @@
           "scpi": "SOURce{ch}:AM:DEPTh {depth}",
           "description": "Set AM modulation depth (0-100%)",
           "params": [
-            { "name": "ch", "type": "number", "default": 1, "required": true },
-            { "name": "depth", "type": "number", "default": 50, "min": 0, "max": 100, "required": true }
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            },
+            {
+              "name": "depth",
+              "type": "number",
+              "default": 50,
+              "min": 0,
+              "max": 100,
+              "required": true
+            }
           ],
           "example": "afg.write('SOURce1:AM:DEPTh 50')"
         },
@@ -595,8 +960,19 @@
           "scpi": "SOURce{ch}:AM:INTernal:FREQuency {freq}",
           "description": "Set AM internal modulation frequency",
           "params": [
-            { "name": "ch", "type": "number", "default": 1, "required": true },
-            { "name": "freq", "type": "number", "default": 1000, "required": true, "unit": "Hz" }
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            },
+            {
+              "name": "freq",
+              "type": "number",
+              "default": 1000,
+              "required": true,
+              "unit": "Hz"
+            }
           ],
           "example": "afg.write('SOURce1:AM:INTernal:FREQuency 10E3')"
         },
@@ -605,7 +981,12 @@
           "scpi": "SOURce{ch}:FM:STATe ON",
           "description": "Enable frequency modulation",
           "params": [
-            { "name": "ch", "type": "number", "default": 1, "required": true }
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            }
           ],
           "example": "afg.write('SOURce1:FM:STATe ON')"
         },
@@ -614,8 +995,19 @@
           "scpi": "SOURce{ch}:FM:DEViation {deviation}",
           "description": "Set FM frequency deviation",
           "params": [
-            { "name": "ch", "type": "number", "default": 1, "required": true },
-            { "name": "deviation", "type": "number", "default": 1000, "required": true, "unit": "Hz" }
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            },
+            {
+              "name": "deviation",
+              "type": "number",
+              "default": 1000,
+              "required": true,
+              "unit": "Hz"
+            }
           ],
           "example": "afg.write('SOURce1:FM:DEViation 10E3')"
         },
@@ -624,7 +1016,12 @@
           "scpi": "SOURce{ch}:PM:STATe ON",
           "description": "Enable phase modulation",
           "params": [
-            { "name": "ch", "type": "number", "default": 1, "required": true }
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            }
           ],
           "example": "afg.write('SOURce1:PM:STATe ON')"
         },
@@ -633,8 +1030,19 @@
           "scpi": "SOURce{ch}:PM:DEViation {deviation}",
           "description": "Set PM phase deviation in degrees",
           "params": [
-            { "name": "ch", "type": "number", "default": 1, "required": true },
-            { "name": "deviation", "type": "number", "default": 90, "required": true, "unit": "deg" }
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            },
+            {
+              "name": "deviation",
+              "type": "number",
+              "default": 90,
+              "required": true,
+              "unit": "deg"
+            }
           ],
           "example": "afg.write('SOURce1:PM:DEViation 90')"
         },
@@ -643,7 +1051,12 @@
           "scpi": "SOURce{ch}:FSKey:STATe ON",
           "description": "Enable frequency shift keying",
           "params": [
-            { "name": "ch", "type": "number", "default": 1, "required": true }
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            }
           ],
           "example": "afg.write('SOURce1:FSKey:STATe ON')"
         },
@@ -652,8 +1065,19 @@
           "scpi": "SOURce{ch}:FSKey:FREQuency {freq}",
           "description": "Set FSK hop frequency",
           "params": [
-            { "name": "ch", "type": "number", "default": 1, "required": true },
-            { "name": "freq", "type": "number", "default": 100000, "required": true, "unit": "Hz" }
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            },
+            {
+              "name": "freq",
+              "type": "number",
+              "default": 100000,
+              "required": true,
+              "unit": "Hz"
+            }
           ],
           "example": "afg.write('SOURce1:FSKey:FREQuency 1E5')"
         }
@@ -668,7 +1092,12 @@
           "scpi": "SOURce{ch}:BURSt:STATe ON",
           "description": "Enable burst mode",
           "params": [
-            { "name": "ch", "type": "number", "default": 1, "required": true }
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            }
           ],
           "example": "afg.write('SOURce1:BURSt:STATe ON')"
         },
@@ -677,7 +1106,12 @@
           "scpi": "SOURce{ch}:BURSt:STATe OFF",
           "description": "Disable burst mode",
           "params": [
-            { "name": "ch", "type": "number", "default": 1, "required": true }
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            }
           ],
           "example": "afg.write('SOURce1:BURSt:STATe OFF')"
         },
@@ -686,8 +1120,22 @@
           "scpi": "SOURce{ch}:BURSt:MODE {mode}",
           "description": "Set burst mode type",
           "params": [
-            { "name": "ch", "type": "number", "default": 1, "required": true },
-            { "name": "mode", "type": "text", "default": "TRIGgered", "options": ["TRIGgered", "GATed"], "required": true }
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            },
+            {
+              "name": "mode",
+              "type": "text",
+              "default": "TRIGgered",
+              "options": [
+                "TRIGgered",
+                "GATed"
+              ],
+              "required": true
+            }
           ],
           "example": "afg.write('SOURce1:BURSt:MODE TRIGgered')"
         },
@@ -696,8 +1144,18 @@
           "scpi": "SOURce{ch}:BURSt:NCYCles {count}",
           "description": "Set number of burst cycles (1-1000000 or INFinity)",
           "params": [
-            { "name": "ch", "type": "number", "default": 1, "required": true },
-            { "name": "count", "type": "number", "default": 1, "required": true }
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            },
+            {
+              "name": "count",
+              "type": "number",
+              "default": 1,
+              "required": true
+            }
           ],
           "example": "afg.write('SOURce1:BURSt:NCYCles 10')"
         },
@@ -706,8 +1164,19 @@
           "scpi": "SOURce{ch}:BURSt:TDELay {delay}",
           "description": "Set burst delay time",
           "params": [
-            { "name": "ch", "type": "number", "default": 1, "required": true },
-            { "name": "delay", "type": "number", "default": 0, "required": true, "unit": "s" }
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            },
+            {
+              "name": "delay",
+              "type": "number",
+              "default": 0,
+              "required": true,
+              "unit": "s"
+            }
           ],
           "example": "afg.write('SOURce1:BURSt:TDELay 1E-3')"
         }
@@ -722,7 +1191,12 @@
           "scpi": "SOURce{ch}:FREQuency:MODE SWEep",
           "description": "Enable frequency sweep mode",
           "params": [
-            { "name": "ch", "type": "number", "default": 1, "required": true }
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            }
           ],
           "example": "afg.write('SOURce1:FREQuency:MODE SWEep')"
         },
@@ -731,8 +1205,19 @@
           "scpi": "SOURce{ch}:FREQuency:STARt {freq}",
           "description": "Set sweep start frequency",
           "params": [
-            { "name": "ch", "type": "number", "default": 1, "required": true },
-            { "name": "freq", "type": "number", "default": 100, "required": true, "unit": "Hz" }
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            },
+            {
+              "name": "freq",
+              "type": "number",
+              "default": 100,
+              "required": true,
+              "unit": "Hz"
+            }
           ],
           "example": "afg.write('SOURce1:FREQuency:STARt 100')"
         },
@@ -741,8 +1226,19 @@
           "scpi": "SOURce{ch}:FREQuency:STOP {freq}",
           "description": "Set sweep stop frequency",
           "params": [
-            { "name": "ch", "type": "number", "default": 1, "required": true },
-            { "name": "freq", "type": "number", "default": 1000000, "required": true, "unit": "Hz" }
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            },
+            {
+              "name": "freq",
+              "type": "number",
+              "default": 1000000,
+              "required": true,
+              "unit": "Hz"
+            }
           ],
           "example": "afg.write('SOURce1:FREQuency:STOP 1E6')"
         },
@@ -751,8 +1247,19 @@
           "scpi": "SOURce{ch}:SWEep:TIME {time}",
           "description": "Set sweep time",
           "params": [
-            { "name": "ch", "type": "number", "default": 1, "required": true },
-            { "name": "time", "type": "number", "default": 1, "required": true, "unit": "s" }
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            },
+            {
+              "name": "time",
+              "type": "number",
+              "default": 1,
+              "required": true,
+              "unit": "s"
+            }
           ],
           "example": "afg.write('SOURce1:SWEep:TIME 1')"
         },
@@ -761,8 +1268,22 @@
           "scpi": "SOURce{ch}:SWEep:MODE {mode}",
           "description": "Set sweep mode (auto or manual)",
           "params": [
-            { "name": "ch", "type": "number", "default": 1, "required": true },
-            { "name": "mode", "type": "text", "default": "AUTO", "options": ["AUTO", "MANual"], "required": true }
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            },
+            {
+              "name": "mode",
+              "type": "text",
+              "default": "AUTO",
+              "options": [
+                "AUTO",
+                "MANual"
+              ],
+              "required": true
+            }
           ],
           "example": "afg.write('SOURce1:SWEep:MODE AUTO')"
         },
@@ -771,8 +1292,22 @@
           "scpi": "SOURce{ch}:SWEep:SPACing {spacing}",
           "description": "Set sweep spacing (linear or logarithmic)",
           "params": [
-            { "name": "ch", "type": "number", "default": 1, "required": true },
-            { "name": "spacing", "type": "text", "default": "LINear", "options": ["LINear", "LOGarithmic"], "required": true }
+            {
+              "name": "ch",
+              "type": "number",
+              "default": 1,
+              "required": true
+            },
+            {
+              "name": "spacing",
+              "type": "text",
+              "default": "LINear",
+              "options": [
+                "LINear",
+                "LOGarithmic"
+              ],
+              "required": true
+            }
           ],
           "example": "afg.write('SOURce1:SWEep:SPACing LOGarithmic')"
         }
@@ -787,7 +1322,16 @@
           "scpi": "TRIGger:SEQuence:SOURce {source}",
           "description": "Set trigger source",
           "params": [
-            { "name": "source", "type": "text", "default": "TIMer", "options": ["TIMer", "EXTernal"], "required": true }
+            {
+              "name": "source",
+              "type": "text",
+              "default": "TIMer",
+              "options": [
+                "TIMer",
+                "EXTernal"
+              ],
+              "required": true
+            }
           ],
           "example": "afg.write('TRIGger:SEQuence:SOURce TIMer')"
         },
@@ -802,7 +1346,13 @@
           "scpi": "TRIGger:SEQuence:TIMer {period}",
           "description": "Set internal trigger timer period",
           "params": [
-            { "name": "period", "type": "number", "default": 0.001, "required": true, "unit": "s" }
+            {
+              "name": "period",
+              "type": "number",
+              "default": 0.001,
+              "required": true,
+              "unit": "s"
+            }
           ],
           "example": "afg.write('TRIGger:SEQuence:TIMer 1E-3')"
         },
@@ -817,7 +1367,16 @@
           "scpi": "TRIGger:SEQuence:SLOPe {slope}",
           "description": "Set external trigger slope",
           "params": [
-            { "name": "slope", "type": "text", "default": "POSitive", "options": ["POSitive", "NEGative"], "required": true }
+            {
+              "name": "slope",
+              "type": "text",
+              "default": "POSitive",
+              "options": [
+                "POSitive",
+                "NEGative"
+              ],
+              "required": true
+            }
           ],
           "example": "afg.write('TRIGger:SEQuence:SLOPe POSitive')"
         }
@@ -874,7 +1433,18 @@
           "scpi": "*SAV {memory}",
           "description": "Save setup to memory location (1-4)",
           "params": [
-            { "name": "memory", "type": "number", "default": 1, "options": ["1", "2", "3", "4"], "required": true }
+            {
+              "name": "memory",
+              "type": "number",
+              "default": 1,
+              "options": [
+                "1",
+                "2",
+                "3",
+                "4"
+              ],
+              "required": true
+            }
           ],
           "example": "afg.write('*SAV 1')"
         },
@@ -883,12 +1453,88 @@
           "scpi": "*RCL {memory}",
           "description": "Recall setup from memory location (1-4)",
           "params": [
-            { "name": "memory", "type": "number", "default": 1, "options": ["1", "2", "3", "4"], "required": true }
+            {
+              "name": "memory",
+              "type": "number",
+              "default": 1,
+              "options": [
+                "1",
+                "2",
+                "3",
+                "4"
+              ],
+              "required": true
+            }
           ],
           "example": "afg.write('*RCL 1')"
+        }
+      ]
+    },
+    "Reference_Clock": {
+      "description": "Reference clock and oscillator commands for AFG",
+      "commands": [
+        {
+          "id": "afg_roscillator_source",
+          "name": "Set Reference Clock Source",
+          "scpi": "ROSCillator:SOURce",
+          "header": "ROSCillator:SOURce",
+          "description": "Sets or queries the reference clock source for the AFG. INTernal uses the internal clock, EXTernal uses an external reference clock input.",
+          "shortDescription": "Sets or queries the reference clock source (INTernal or EXTernal).",
+          "commandType": "both",
+          "syntax": {
+            "set": "ROSCillator:SOURce {INTernal|EXTernal}",
+            "query": "ROSCillator:SOURce?"
+          },
+          "params": [
+            {
+              "name": "source",
+              "type": "text",
+              "options": [
+                "INTernal",
+                "EXTernal"
+              ],
+              "required": true
+            }
+          ],
+          "examples": [
+            {
+              "description": "Set reference clock to external",
+              "scpi": {
+                "code": "ROSCillator:SOURce EXTernal"
+              }
+            }
+          ],
+          "relatedCommands": [
+            "CLOCk:SOURce"
+          ],
+          "example": "afg.write('ROSCillator:SOURce EXTernal')"
+        },
+        {
+          "id": "afg_source_roscillator_source",
+          "name": "Set Reference Clock Source (Source prefix)",
+          "scpi": "SOURce:ROSCillator:SOURce",
+          "header": "SOURce:ROSCillator:SOURce",
+          "description": "Sets or queries the reference clock source for the AFG. INTernal uses the internal clock, EXTernal uses an external reference clock input.",
+          "shortDescription": "Sets or queries the reference clock source for external/internal clock selection.",
+          "commandType": "both",
+          "syntax": {
+            "set": "SOURce:ROSCillator:SOURce {INTernal|EXTernal}",
+            "query": "SOURce:ROSCillator:SOURce?"
+          },
+          "params": [
+            {
+              "name": "source",
+              "type": "text",
+              "options": [
+                "INTernal",
+                "EXTernal"
+              ],
+              "required": true
+            }
+          ],
+          "example": "afg.write('SOURce:ROSCillator:SOURce EXTernal')"
         }
       ]
     }
   }
 }
-

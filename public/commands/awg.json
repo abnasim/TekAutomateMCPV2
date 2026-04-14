@@ -2954,6 +2954,76 @@
             }
           ],
           "example": "awg.write('RADar:PULSe:HOPPing:TON ON')"
+        },
+        {
+          "name": "Set Radar PRI (Pulse Repetition Interval)",
+          "scpi": "RADar:PULSe:PENVelope:PRI",
+          "description": "Sets or returns the Pulse Repetition Interval (PRI) for the radar pulse train. PRI is the time between the start of one pulse and the start of the next.",
+          "shortDescription": "Sets the Pulse Repetition Interval (PRI) for radar pulse train.",
+          "syntax": {
+            "set": "RADar:PULSe:PENVelope:PRI <pri>",
+            "query": "RADar:PULSe:PENVelope:PRI?"
+          },
+          "params": [
+            {
+              "name": "pri",
+              "type": "number",
+              "required": true,
+              "unit": "s"
+            }
+          ],
+          "example": "awg.write('RADar:PULSe:PENVelope:PRI 100E-6')"
+        },
+        {
+          "name": "Set Radar LFM Sweep Range",
+          "scpi": "RADar:PULSe:MODulation:LFM:SRANge",
+          "description": "Sets or returns the Linear Frequency Modulation (LFM) sweep range (bandwidth) in Hz for the radar pulse modulation. This defines the frequency sweep width of the LFM chirp.",
+          "shortDescription": "Sets the LFM (chirp) sweep bandwidth/range in Hz for radar modulation.",
+          "syntax": {
+            "set": "RADar:PULSe:MODulation:LFM:SRANge <range>",
+            "query": "RADar:PULSe:MODulation:LFM:SRANge?"
+          },
+          "params": [
+            {
+              "name": "range",
+              "type": "number",
+              "required": true,
+              "unit": "Hz"
+            }
+          ],
+          "example": "awg.write('RADar:PULSe:MODulation:LFM:SRANge 20E6')"
+        },
+        {
+          "name": "Set Radar LFM Frequency Sweep Direction",
+          "scpi": "RADar:PULSe:MODulation:LFM:FSWeep",
+          "description": "Sets or returns the LFM frequency sweep direction (UP or DOWN) for the radar pulse modulation.",
+          "shortDescription": "Sets the LFM frequency sweep direction (UP or DOWN).",
+          "syntax": {
+            "set": "RADar:PULSe:MODulation:LFM:FSWeep {UP|DOWN}",
+            "query": "RADar:PULSe:MODulation:LFM:FSWeep?"
+          },
+          "params": [
+            {
+              "name": "sweep",
+              "type": "text",
+              "options": [
+                "UP",
+                "DOWN"
+              ],
+              "required": true
+            }
+          ],
+          "example": "awg.write('RADar:PULSe:MODulation:LFM:FSWeep UP')"
+        },
+        {
+          "name": "Compile and Play Radar Waveform",
+          "scpi": "RADar:COMPile:PLAY",
+          "description": "Compiles the radar waveform and immediately plays it on the AWG output.",
+          "shortDescription": "Compiles and plays the radar waveform.",
+          "syntax": {
+            "set": "RADar:COMPile:PLAY"
+          },
+          "example": "awg.write('RADar:COMPile:PLAY')"
         }
       ]
     },
