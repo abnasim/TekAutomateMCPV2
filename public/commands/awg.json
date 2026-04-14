@@ -127,10 +127,11 @@
           "example": "state = awg.query('OUTPut1:STATe?')"
         },
         {
-          "name": "Enable All Outputs",
+          "name": "Run/Play AWG Waveform",
           "scpi": "AWGControl:RUN:IMMediate",
-          "description": "Enable all outputs immediately",
-          "example": "awg.write('AWGControl:RUN:IMMediate')"
+          "description": "Starts running and playing the AWG waveform immediately. This command enables all outputs and begins waveform playback on all channels. Use AWGControl:RUN:IMMediate to play, run, or start the AWG. Equivalent to pressing the Run button on the front panel.",
+          "example": "awg.write('AWGControl:RUN:IMMediate')",
+          "shortDescription": "Starts AWG waveform playback immediately (play/run all channels)."
         },
         {
           "name": "Stop All Outputs",
@@ -724,6 +725,25 @@
       "description": "Sample rate and clock configuration",
       "color": "bg-purple-100 text-purple-700",
       "commands": [
+        {
+          "name": "Set AWG Sample Rate",
+          "scpi": "CLOCk:SRATe",
+          "description": "Sets or queries the sample rate (clock rate) of the AWG. The sample rate determines how many samples per second are output. Use CLOCk:SRATe 25E9 to set 25 GSa/s sample rate. Also known as clock rate or sampling frequency.",
+          "shortDescription": "Sets the AWG sample rate (clock rate) in samples per second.",
+          "syntax": {
+            "set": "CLOCk:SRATe <rate>",
+            "query": "CLOCk:SRATe?"
+          },
+          "params": [
+            {
+              "name": "rate",
+              "type": "number",
+              "required": true,
+              "unit": "Sa/s"
+            }
+          ],
+          "example": "awg.write('CLOCk:SRATe 25E9')"
+        },
         {
           "name": "Set External Clock Divider",
           "scpi": "CLOCk:ECLock:DIVider {divider}",

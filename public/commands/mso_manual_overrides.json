@@ -2488,109 +2488,17 @@
     "header": "TRIGger:{A|B}:EDGE:SOUrce",
     "mnemonics": [
       "TRIGger",
-      "{A|B}",
+      "A",
       "EDGE",
-      "SOUrce"
+      "SOUrce",
+      "SOURCE",
+      "CHANNEL",
+      "CH"
     ],
     "commandType": "both",
     "group": "Trigger",
-    "description": "Sets or queries the source for an edge trigger. In addition to standard analog channels, digital channels, LINE, and AUXiliary, Spectrum View derived traces can also be used as trigger sources when Spectrum View is active. The scope accepts CH<x>_MAG (Magnitude vs. Time), CH<x>_FREQ (Frequency vs. Time), and CH<x>_PHASE (Phase vs. Time) as extended trigger source identifiers. When queried, CH<x>_MAG is returned as CH<x>_MAG_VS_TIME.",
-    "shortDescription": "Set or query edge trigger source (includes Spectrum View trace sources)",
-    "instruments": {
-      "families": [
-        "MSO4",
-        "MSO5",
-        "MSO6",
-        "MSO7"
-      ],
-      "models": [],
-      "exclusions": []
-    },
-    "arguments": [
-      {
-        "name": "trigger_instance",
-        "type": "mnemonic",
-        "required": true,
-        "position": 0,
-        "description": "Trigger instance (A or B).",
-        "validValues": {
-          "type": "enum",
-          "values": [
-            "A",
-            "B"
-          ]
-        }
-      },
-      {
-        "name": "source",
-        "type": "enum_like",
-        "required": true,
-        "position": 1,
-        "description": "Trigger source. Standard sources: CH<x>, CH<x>_D<y>, LINE, AUXiliary. Spectrum View sources (when SV active): CH<x>_MAG (Magnitude vs Time, returned as CH<x>_MAG_VS_TIME), CH<x>_FREQ (Frequency vs Time), CH<x>_PHASE (Phase vs Time).",
-        "validValues": {
-          "type": "enum_like",
-          "values": [
-            "CH1",
-            "CH2",
-            "CH3",
-            "CH4",
-            "CH5",
-            "CH6",
-            "CH7",
-            "CH8",
-            "CH1_D0",
-            "CH1_D1",
-            "LINE",
-            "AUXiliary",
-            "CH1_MAG",
-            "CH2_MAG",
-            "CH3_MAG",
-            "CH4_MAG",
-            "CH1_FREQ",
-            "CH2_FREQ",
-            "CH1_PHASE",
-            "CH2_PHASE"
-          ],
-          "pattern": "CH<x> | CH<x>_D<y> | LINE | AUXiliary | CH<x>_MAG | CH<x>_FREQ | CH<x>_PHASE"
-        }
-      }
-    ],
-    "syntax": {
-      "set": "TRIGger:{A|B}:EDGE:SOUrce {CH<x>|CH<x>_D<y>|LINE|AUXiliary|CH<x>_MAG|CH<x>_FREQ|CH<x>_PHASE}",
-      "query": "TRIGger:{A|B}:EDGE:SOUrce?"
-    },
-    "examples": [
-      {
-        "scpi": "TRIGger:A:EDGE:SOUrce CH1",
-        "description": "Set edge trigger source to Channel 1."
-      },
-      {
-        "scpi": "TRIGger:A:EDGE:SOUrce CH1_MAG",
-        "description": "Set edge trigger source to Channel 1 Spectrum View Magnitude vs Time trace. Scope returns CH1_MAG_VS_TIME when queried."
-      },
-      {
-        "scpi": "TRIGger:A:EDGE:SOUrce?",
-        "description": "Query the current edge trigger source."
-      }
-    ],
-    "relatedCommands": [
-      "TRIGger:{A|B}:EDGE:SLOpe",
-      "TRIGger:{A|B}:EDGE:LEVel",
-      "SV:CH<x>:SELect:RF_MAGnitude",
-      "CH<x>:SV:STATE"
-    ],
-    "commandGroup": "Trigger",
-    "subGroup": "Edge Trigger",
-    "notes": [
-      "UNDOCUMENTED: CH<x>_MAG, CH<x>_FREQ, CH<x>_PHASE trigger sources are accepted by MSO4/5/6/7 when Spectrum View is active but are not listed in the official SCPI programmer manual.",
-      "When queried, CH<x>_MAG is returned as CH<x>_MAG_VS_TIME by the scope firmware.",
-      "Requires SV:CH<x>:SELect:RF_MAGnitude ON (or equivalent) to be set first.",
-      "Discovered via real-world testing on MSO6B firmware."
-    ],
-    "manualReference": {
-      "section": "Trigger",
-      "subsection": "TRIGger:{A|B}:EDGE:SOUrce"
-    }
+    "shortDescription": "Sets the trigger A edge source channel.",
+    "description": "Sets or queries the source channel for edge triggering on trigger A. Use TRIGger:A:EDGE:SOUrce CH1 to trigger on channel 1 edge, CH2 for channel 2, CH3 for channel 3, etc. This selects which channel the oscilloscope monitors for the trigger edge."
   },
   {
     "command": "SV:CH1:SELect:RF_MAGnitude",
@@ -2947,18 +2855,20 @@
     "description": "Sets or queries whether the instrument includes command headers in response strings. When set to OFF, response strings do not contain command headers (just values). Use HEADer OFF to turn off display headers and simplify response parsing."
   },
   {
-    "command": "TRIGger:A:LEVel",
+    "command": "TRIGger:A:LEVel:CH1",
     "header": "TRIGger:A:LEVel",
     "mnemonics": [
       "TRIGger",
       "A",
       "LEVel",
-      "LEVEL"
+      "LEVEL",
+      "THRESHOLD",
+      "VOLTAGE"
     ],
     "commandType": "both",
     "group": "Trigger",
-    "shortDescription": "Sets the trigger A level threshold voltage.",
-    "description": "Sets or queries the trigger level for trigger A. This sets the voltage threshold at which the oscilloscope triggers. Use TRIGger:A:LEVel:CH1 to set trigger level for channel 1. Related: TRIGger:A:EDGE:SOUrce."
+    "shortDescription": "Sets the trigger A level (threshold) voltage for a channel.",
+    "description": "Sets or queries the trigger level voltage for trigger A. Use TRIGger:A:LEVel:CH1 to set the trigger threshold voltage for channel 1. The oscilloscope triggers when the signal crosses this voltage level. Example: TRIGger:A:LEVel:CH1 1.5"
   },
   {
     "command": "AUXout:SOUrce",
@@ -2979,12 +2889,14 @@
     "mnemonics": [
       "SEARch",
       "ADDNew",
-      "ADD"
+      "ADD",
+      "BUS",
+      "NEW"
     ],
     "commandType": "set",
     "group": "Search",
-    "shortDescription": "Adds a new search on the oscilloscope.",
-    "description": "Adds a new search definition to the oscilloscope. After adding a search with SEARch:ADDNew, configure the search type and parameters. Use SEARch:ADDNew to create bus searches, edge searches, pulse width searches, etc."
+    "shortDescription": "Adds a new bus search or edge search on the oscilloscope.",
+    "description": "Adds a new search to the oscilloscope. Use SEARch:ADDNew to create a bus search (I2C, SPI, CAN, UART, USB bus protocol searches), edge searches, pulse width searches, runt searches, timeout searches. After adding with SEARch:ADDNew, configure search parameters using SEARCH:SEARCH1:TRIGger:A:BUS commands."
   },
   {
     "command": "DISplay:WAVEView1:CH1:STATE",
@@ -3006,12 +2918,13 @@
     "mnemonics": [
       "MEASUrement",
       "ADDMEAS",
-      "ADD"
+      "ADD",
+      "JITTER"
     ],
     "commandType": "set",
     "group": "Measurement",
-    "shortDescription": "Adds a new automated measurement to the oscilloscope.",
-    "description": "Adds a new automated measurement to the oscilloscope measurements list. Use MEASUrement:ADDMEAS to add jitter measurements, rise time, fall time, frequency, period, pulse width, eye diagram measurements, and other measurement types."
+    "shortDescription": "Adds a new automated measurement (jitter, frequency, rise time, eye diagram, etc.).",
+    "description": "Adds a new automated measurement to the oscilloscope. Use this command to add jitter measurements (TIE, DDJ, RJ, DJ, PJ), frequency, period, rise time, fall time, eye diagram, amplitude, phase measurements. MEASUrement:ADDMEAS TYPE, TIE adds time interval error jitter measurement."
   },
   {
     "command": "BUS:B1:TYPe",
@@ -3020,12 +2933,17 @@
       "BUS",
       "B",
       "TYPe",
-      "TYPE"
+      "TYPE",
+      "PROTOCOL",
+      "I2C",
+      "SPI",
+      "CAN",
+      "UART"
     ],
     "commandType": "both",
     "group": "Bus",
-    "shortDescription": "Sets the bus type/protocol for serial bus decoding.",
-    "description": "Sets or queries the type of serial bus for the specified bus. Use BUS:B1:TYPe I2C to configure the bus as I2C, SPI for SPI bus, CAN for CAN bus, RS232C for UART/RS-232, USB, LIN, FlexRay, ARINC429, etc. Must set bus type before configuring bus parameters."
+    "shortDescription": "Sets the bus protocol type (I2C, SPI, CAN, UART/RS232C, USB, LIN, etc.).",
+    "description": "Sets or queries the bus protocol type for the specified bus. Options include: I2C, SPI, CAN, RS232C (UART), USB, LIN, FLEXRAY, ARINC429, S8B10B, PCIE, MIPI, ETHERNET, DPHY, CPHY, EUSB, SVID. Use BUS:B1:TYPe I2C to configure bus 1 as an I2C bus. Must be set before configuring bus parameters like clock source or data source."
   },
   {
     "command": "ALLEv?",
@@ -3049,12 +2967,14 @@
       "I2C",
       "CLOCk",
       "SOUrce",
-      "SCLK"
+      "SCLK",
+      "SCL",
+      "CLOCK"
     ],
     "commandType": "both",
     "group": "Bus",
-    "shortDescription": "Sets the I2C clock (SCL/SCLK) source channel.",
-    "description": "Sets or queries the source channel for the I2C clock signal (SCL/SCLK). Use BUS:B1:I2C:CLOCk:SOUrce CH3 to set the I2C SCLK (clock) to channel 3. This assigns the oscilloscope channel used as the I2C clock line."
+    "shortDescription": "Sets the I2C SCLK (clock line) source channel for bus decoding.",
+    "description": "Sets or queries the channel used as the I2C clock line (SCLK/SCL) source for bus decoding. Use BUS:B1:I2C:CLOCk:SOUrce CH3 to set the I2C SCLK (serial clock) to oscilloscope channel 3. This maps the physical clock wire to an oscilloscope channel."
   },
   {
     "command": "BUS:B1:I2C:DATa:SOUrce",
@@ -3064,12 +2984,13 @@
       "I2C",
       "DATa",
       "SOUrce",
-      "SDA"
+      "SDA",
+      "DATA"
     ],
     "commandType": "both",
     "group": "Bus",
-    "shortDescription": "Sets the I2C data (SDA) source channel.",
-    "description": "Sets or queries the source channel for the I2C data signal (SDA). Use BUS:B1:I2C:DATa:SOUrce CH4 to set the I2C SDA (data) to channel 4. This assigns the oscilloscope channel used as the I2C data line."
+    "shortDescription": "Sets the I2C SDA (data line) source channel for bus decoding.",
+    "description": "Sets or queries the channel used as the I2C data line (SDA) source for bus decoding. Use BUS:B1:I2C:DATa:SOUrce CH4 to set the I2C SDA (serial data) to oscilloscope channel 4. This maps the physical data wire to an oscilloscope channel."
   },
   {
     "command": "BUS:B1:CAN:FD:STANDard",
@@ -3079,12 +3000,13 @@
       "CAN",
       "FD",
       "STANDard",
-      "ISO"
+      "ISO",
+      "NONISO"
     ],
     "commandType": "both",
     "group": "Bus",
-    "shortDescription": "Sets the CAN FD standard (ISO or NonISO).",
-    "description": "Sets or queries the CAN FD standard compliance. Use BUS:B1:CAN:FD:STANDard ISO to configure CAN FD to use the ISO 11898-1 standard. Use NonISO for non-ISO CAN FD. This affects CRC calculation and error checking in CAN FD frames."
+    "shortDescription": "Sets the CAN FD standard: ISO (11898-1) or NonISO.",
+    "description": "Sets or queries the CAN FD standard compliance mode. Use BUS:B1:CAN:FD:STANDard ISO to select ISO 11898-1:2015 standard CAN FD. Use NonISO for non-ISO CAN FD (Bosch). This affects the CRC calculation for CAN FD frames. ISO is the standard used in most modern automotive applications."
   },
   {
     "command": "SEARCH:SEARCH1:TRIGger:A:BUS:CAN:FRAMEtype",
@@ -3094,12 +3016,13 @@
       "CAN",
       "FRAMEtype",
       "ERROR",
-      "FRAME"
+      "FRAME",
+      "BUS"
     ],
     "commandType": "both",
     "group": "Search",
-    "shortDescription": "Sets the CAN bus frame type to search for.",
-    "description": "Sets or queries the CAN bus frame type for bus search. Use this to search for specific CAN frame types: DATA, REMOTE, ERROR, OVERLOAD. Use SEARCH:SEARCH1:TRIGger:A:BUS:CAN:FRAMEtype ERROR to search for CAN error frames on the bus."
+    "shortDescription": "Searches for CAN bus frame type (DATA, REMOTE, ERROR, OVERLOAD).",
+    "description": "Sets or queries the CAN frame type to search for in bus search. Use SEARCH:SEARCH1:TRIGger:A:BUS:CAN:FRAMEtype ERROR to search for CAN error frames. Options: DATA (data frames), REMOTE (remote frames), ERROR (error frames), OVERLOAD (overload frames). Useful for finding CAN bus error conditions."
   },
   {
     "command": "FASTAcq:STATE",
@@ -3142,5 +3065,20 @@
     "group": "IEEE Common",
     "shortDescription": "Clears the instrument status registers and event queue.",
     "description": "Clears the status byte register, standard event register, and the event queue. Use *CLS to clear the instrument status and reset any pending error conditions. This should be called before starting a new test sequence."
+  },
+  {
+    "command": "MEASUrement:MEAS1:SOURCE",
+    "header": "MEASUrement:MEAS<x>:SOUrce",
+    "mnemonics": [
+      "MEASUrement",
+      "MEAS",
+      "SOUrce",
+      "SOURCE",
+      "CHANNEL"
+    ],
+    "commandType": "both",
+    "group": "Measurement",
+    "shortDescription": "Sets the source channel for an automated measurement.",
+    "description": "Sets or queries the source channel for measurement MEAS<x>. Use MEASUrement:MEAS1:SOUrce1 CH1 to set measurement 1 source to channel 1. Required when configuring automated measurements."
   }
 ]
