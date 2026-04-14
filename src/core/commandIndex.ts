@@ -854,6 +854,14 @@ export class CommandIndex {
     const q = query.toLowerCase();
     const wantsFastframeCount =
       q.includes('fastframe') && /(count|frames|frame|number)/.test(q);
+    // Detect queries that want bus protocol type (not trigger/search bus sub-commands)
+    const wantsBusType = /\bbus\b/.test(q) && /\btype\b/.test(q) && !/trigger|search|edge|pulse/.test(q);
+    // Detect queries wanting measurement add/create (not jitter models or summary sub-items)
+    const wantsAddMeas = /\badd\b/.test(q) && /\bmeasure(ment)?s?\b/.test(q);
+    // Detect queries wanting to add a bus search (not add a bus)
+    const wantsBusSearch = /\bbus\b/.test(q) && /\bsearch\b/.test(q) && /\badd\b/.test(q);
+    // Detect queries wanting jitter measurement add specifically
+    const wantsJitterMeas = /\bjitter\b/.test(q) && /\bmeasure(ment)?s?\b/.test(q) && /\badd\b/.test(q);
     const reranked = scored
       .map((item) => {
         const entry = this.entries[item.index];
@@ -864,6 +872,26 @@ export class CommandIndex {
           const h = entry.header.toLowerCase();
           if (h.includes('fastframe:count')) bonus += 50;
           if (h.includes('sixteenbit')) bonus -= 8;
+        }
+        if (wantsBusType) {
+          const h = entry.header.toLowerCase();
+          // Boost the bus type command, penalize trigger/search bus type sub-commands
+          if (/^bus:b.*:type/.test(h)) bonus += 30;
+          if (/trigger.*bus.*type/.test(h) || /search.*bus.*type/.test(h)) bonus -= 10;
+        }
+        if (wantsAddMeas || wantsJitterMeas) {
+          const h = entry.header.toLowerCase();
+          // Boost the add measurement command
+          if (h.includes('measurement:addmeas') || h.includes('measur.*:addmeas')) bonus += 30;
+          // Penalize jitter model/summary sub-commands
+          if (/jitter(model|mode|summary)/.test(h) || /jittersummary/.test(h)) bonus -= 15;
+        }
+        if (wantsBusSearch) {
+          const h = entry.header.toLowerCase();
+          // Boost search:addnew for bus search queries
+          if (h.includes('search:addnew') || h === 'search:addnew') bonus += 30;
+          // Penalize bus:addnew since that adds a bus, not a search
+          if (h === 'bus:addnew') bonus -= 10;
         }
         return { ...item, score: item.score + bonus };
       })
