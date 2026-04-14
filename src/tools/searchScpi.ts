@@ -74,7 +74,6 @@ const GROUP_AFFINITY: Record<string, Set<string>> = {
   filesystem: new Set(['File System', 'Save and Recall']),
   event: new Set(['Act On Event', 'Save on']),
   waveform: new Set(['Waveform Transfer', 'Acquisition']),
-  power: new Set(['Power', 'Measurement']),
 };
 
 // Groups that should NEVER appear for non-matching intents
@@ -598,6 +597,129 @@ function reRankWithIntent(
       }
     }
 
+    // ── 9. MEASUrement:ADDMEAS broad-match penalty ──
+    // ADDMEAS has a very broad description that causes it to appear in unrelated results.
+    // Penalize it heavily when the query is clearly NOT about adding a measurement.
+    const isAddMeas = headerLower === 'measurement:addmeas' || headerLower === 'measurement:addnew';
+    if (isAddMeas) {
+      if (intent.intent === 'trigger' || intent.intent === 'afg' ||
+          intent.subject === 'save_setup' || intent.subject === 'save' ||
+          intent.intent === 'save' || intent.intent === 'ieee488' ||
+          intent.intent === 'acquisition' || intent.intent === 'waveform' ||
+          intent.subject === 'trigger_holdoff' || intent.subject === 'holdoff') {
+        score -= 50;
+      }
+    }
+    // Also penalize MEASUrement:MEAS<x>:SOUrce for non-measurement intents
+    const isMeasSource = headerLower.includes('measurement:meas') && headerLower.includes(':source');
+    if (isMeasSource) {
+      if (intent.intent === 'trigger' || intent.intent === 'afg' ||
+          intent.intent === 'save' || intent.intent === 'ieee488' ||
+          intent.intent === 'acquisition' || intent.intent === 'waveform') {
+        score -= 40;
+      }
+    }
+
+    // ── 10. Trigger holdoff → TRIGger:A:HOLDoff:TIMe boost ──
+    if (intent.subject === 'trigger_holdoff') {
+      if (headerLower.includes('holdoff') && headerLower.includes('time')) {
+        score += 60;
+      } else if (headerLower.includes('holdoff')) {
+        score += 30;
+      }
+    }
+
+    // ── 11. Save setup → SAVe:SETUp boost ──
+    if (intent.subject === 'save_setup') {
+      if (headerLower === 'save:setup' || headerLower === 'save:setup:includerefs') {
+        score += 60;
+      } else if (headerLower.startsWith('save:')) {
+        score += 20;
+      }
+      // Penalize measurement commands for save intent
+      if (headerLower.startsWith('measurement:') || headerLower.includes('addmeas')) {
+        score -= 40;
+      }
+    }
+
+    // ── 12. Single-shot / continuous → ACQuire:STOPAfter boost ──
+    if (intent.subject === 'single' || intent.subject === 'continuous_run') {
+      if (headerLower.includes('acquire:stopafter') || headerLower === 'acquire:stopafter') {
+        score += 60;
+      }
+      // Penalize ACQuire:MODE and ACQuire:STATE when intent is single/continuous
+      if (intent.subject === 'single' || intent.subject === 'continuous_run') {
+        if (headerLower === 'acquire:mode' || headerLower === 'acquire:state') {
+          score -= 20;
+        }
+      }
+    }
+
+    // ── 13. FastFrame timestamp → HORizontal:FASTframe:TIMEStamp boost ──
+    if (intent.subject === 'fastframe' && /timestamp/i.test(queryLower)) {
+      if (headerLower.includes('fastframe') && headerLower.includes('timestamp')) {
+        score += 60;
+      }
+    }
+
+    // ── 14. Waveform data source → DATa:SOUrce boost ──
+    if (intent.subject === 'waveform_data_source' || intent.subject === 'waveform_transfer') {
+      if (headerLower === 'data:source' || headerLower.startsWith('data:sour')) {
+        score += 60;
+      }
+    }
+
+    // ── 15. CAN error frame SEARCH boost ──
+    if (intent.subject === 'can_error_frame') {
+      if (headerLower.startsWith('search:') && headerLower.includes('can') && headerLower.includes('frame')) {
+        score += 60;
+      } else if (headerLower.startsWith('search:') && headerLower.includes('can')) {
+        score += 30;
+      } else if (headerLower.startsWith('trigger:') && headerLower.includes('can') && headerLower.includes('frame')) {
+        score -= 20;
+      }
+    }
+
+    // ── 16. I2C threshold → BUS:B<x>:I2C:CLOCk/DATa:THReshold boost ──
+    if (intent.subject === 'i2c') {
+      if (/clock.*threshold|threshold.*clock/i.test(queryLower)) {
+        if (headerLower.includes('i2c') && headerLower.includes('clock') && headerLower.includes('threshold')) {
+          score += 60;
+        }
+      }
+      if (/data.*threshold|threshold.*data/i.test(queryLower)) {
+        if (headerLower.includes('i2c') && headerLower.includes('data') && headerLower.includes('threshold')) {
+          score += 60;
+        }
+      }
+    }
+
+    // ── 17. AUXout:SOUrce boost ──
+    if (/\baux\s*out\b|\bauxout\b/i.test(queryLower)) {
+      if (headerLower.startsWith('auxout:')) {
+        score += 80;
+      } else {
+        score -= 30;
+      }
+    }
+
+    // ── 18. Spectrum view center frequency → CH<x>:SV:CENTERFrequency boost ──
+    if (/spectrum.*center.*freq|center.*freq.*spectrum/i.test(queryLower)) {
+      if (headerLower.includes('sv:') && headerLower.includes('center')) {
+        score += 80;
+      } else if (headerLower.includes('measurement') || headerLower.includes('addmeas')) {
+        score -= 40;
+      }
+    }
+
+    // ── 19. ALLEv? boost for error queue subject ──
+    if (intent.subject === 'allev' || intent.subject === 'error_queue' ||
+        /error\s*queue|check.*error/i.test(queryLower)) {
+      if (headerLower === 'allev?' || headerLower === 'allev') {
+        score += 80;
+      }
+    }
+
     return { cmd, score };
   });
 
@@ -684,6 +806,21 @@ export async function searchScpi(input: SearchScpiInput): Promise<ToolResult<unk
     { pattern: /\b(results?\s*table|measurement\s*table|meas.*table)\b/i, expand: 'MEASTABle CUSTOMTABle ADDNew results table' },
     // Waveform data source
     { pattern: /\bwaveform\b.*(data\s*source|source\s*channel|data.*channel)\b/i, expand: 'DATa SOUrce data source waveform' },
+    // Single shot / continuous run → ACQuire:STOPAfter
+    { pattern: /\bsingle\s*shot\b/i, expand: 'ACQuire STOPAfter SEQuence single shot' },
+    { pattern: /\bcontinuous\s*run|run\s*continuous|back\s*to\s*continuous/i, expand: 'ACQuire STOPAfter RUNSTop continuous run' },
+    // Spectrum view center frequency
+    { pattern: /\bspectrum.*center.*freq|center.*freq.*spectrum/i, expand: 'SV CENTERFrequency spectrum view center frequency CH' },
+    // FastFrame timestamps
+    { pattern: /\bfastframe.*timestamp|timestamp.*fastframe/i, expand: 'HORizontal FASTframe TIMEStamp timestamp frames' },
+    // Trigger holdoff time
+    { pattern: /\btrigger.*holdoff.*time|holdoff.*time/i, expand: 'TRIGger HOLDoff TIMe holdoff time' },
+    // Save setup file
+    { pattern: /\bsave\s*setup\s*(file|on)|\bsave.*setup\b/i, expand: 'SAVe SETUp setup file save' },
+    // I2C clock threshold
+    { pattern: /\bi2c.*clock.*threshold|clock.*threshold.*i2c/i, expand: 'BUS I2C CLOCk THReshold clock threshold' },
+    // I2C data threshold
+    { pattern: /\bi2c.*data.*threshold|data.*threshold.*i2c/i, expand: 'BUS I2C DATa THReshold data threshold' },
   ];
   let expandedQuery = q;
   for (const { pattern, expand } of QUERY_EXPANSIONS) {
@@ -752,6 +889,7 @@ export async function searchScpi(input: SearchScpiInput): Promise<ToolResult<unk
     afg: [
       'AFG:FUNCtion', 'AFG:FREQuency', 'AFG:AMPLitude', 'AFG:OFFSet',
       'AFG:OUTPut:STATE', 'AFG:PERIod', 'AFG:SYMMetry', 'AFG:PHASe',
+      'AFG:OUTPut:LOAd:IMPEDance',
     ],
     dvm: [
       'DVM:MODe', 'DVM:AUTORange', 'DVM:SOUrce', 'DVM:MEASUrement:FREQuency?',
@@ -813,7 +951,7 @@ export async function searchScpi(input: SearchScpiInput): Promise<ToolResult<unk
       'SAVe:WAVEform', 'SAVe:WAVEform:FILEFormat',
     ],
     trigger_level: [
-      'TRIGger:{A|B}:LEVel:CH<x>', 'TRIGger:A:LEVel:CH<x>',
+      'TRIGger:A:LEVel', 'TRIGger:{A|B}:LEVel:CH<x>', 'TRIGger:A:LEVel:CH<x>',
     ],
     screenshot: [
       'SAVe:IMAGe', 'SAVe:IMAGe:FILEFormat',
@@ -859,6 +997,31 @@ export async function searchScpi(input: SearchScpiInput): Promise<ToolResult<unk
     fastframe: [
       'HORizontal:FASTframe:STATE', 'HORizontal:FASTframe:COUNt',
       'HORizontal:FASTframe:MAXFRames', 'HORizontal:FASTframe:SELECTED',
+      'HORizontal:FASTframe:TIMEStamp:ALL?', 'HORizontal:FASTframe:TIMEStamp:DELTa?',
+      'HORizontal:FASTframe:TIMEStamp:SELECTED?', 'HORizontal:FASTframe:TIMEStamp:REFerence?',
+    ],
+    trigger_holdoff: [
+      'TRIGger:A:HOLDoff:TIMe', 'TRIGger:A:HOLDoff:BY',
+    ],
+    save_setup: [
+      'SAVe:SETUp', 'SAVe:SETUp:INCLUDEREFs',
+    ],
+    single: [
+      'ACQuire:STOPAfter',
+    ],
+    continuous_run: [
+      'ACQuire:STOPAfter',
+    ],
+    can_error_frame: [
+      'SEARCH:SEARCH1:TRIGger:A:BUS:CAN:FRAMEtype',
+      'SEARCH:SEARCH<x>:TRIGger:A:BUS:CAN:FRAMEtype',
+      'SEARCH:SEARCH<x>:TRIGger:A:BUS:CAN:CONDition',
+    ],
+    waveform_data_source: [
+      'DATa:SOUrce',
+    ],
+    auxout: [
+      'AUXout:SOUrce',
     ],
   };
 

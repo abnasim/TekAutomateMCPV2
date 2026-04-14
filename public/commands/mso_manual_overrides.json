@@ -3092,5 +3092,75 @@
     "group": "Measurement",
     "shortDescription": "Sets the source channel for an automated measurement.",
     "description": "Sets or queries the source channel for measurement MEAS<x>. Use MEASUrement:MEAS1:SOUrce1 CH1 to set measurement 1 source to channel 1. Required when configuring automated measurements."
+  },
+  {
+    "command": "TRIGger:A:HOLDoff:TIMe",
+    "header": "TRIGger:A:HOLDoff:TIMe",
+    "mnemonics": [
+      "TRIGger",
+      "HOLDoff",
+      "TIMe",
+      "HOLDOFF",
+      "TIME",
+      "TRIGGER"
+    ],
+    "commandType": "both",
+    "group": "Trigger",
+    "shortDescription": "Sets the trigger holdoff time duration on the oscilloscope.",
+    "description": "Sets or queries the trigger holdoff time on the oscilloscope. The holdoff time prevents the oscilloscope from triggering for a specified duration after a trigger event. Use TRIGger:A:HOLDoff:TIMe 100e-9 to set 100ns holdoff. Must set TRIGger:A:HOLDoff:BY TIMe first to enable time-based holdoff."
+  },
+  {
+    "command": "ACQuire:STOPAfter",
+    "header": "ACQuire:STOPAfter",
+    "mnemonics": [
+      "ACQuire",
+      "STOPAfter",
+      "STOP",
+      "AFTER",
+      "SINGLE",
+      "SHOT",
+      "SEQUENCE",
+      "CONTINUOUS",
+      "RUN"
+    ],
+    "commandType": "both",
+    "group": "Acquisition",
+    "shortDescription": "Sets acquisition to single shot (SEQuence) or continuous run (RUNSTop) mode.",
+    "description": "Sets or queries when the oscilloscope stops acquiring. ACQuire:STOPAfter SEQuence sets single shot mode — the scope acquires one waveform then stops. ACQuire:STOPAfter RUNSTop sets continuous run mode — the scope acquires continuously. Use this command to set up single shot acquisition or return to continuous run."
+  },
+  {
+    "command": "SAVe:SETUp",
+    "header": "SAVe:SETUp",
+    "mnemonics": [
+      "SAVe",
+      "SETUp",
+      "SAVE",
+      "SETUP",
+      "FILE",
+      "STORE",
+      "SETTINGS"
+    ],
+    "commandType": "both",
+    "group": "Save and Recall",
+    "shortDescription": "Saves the oscilloscope setup/configuration to a file.",
+    "description": "Saves or queries the oscilloscope setup configuration to a file. Use SAVe:SETUp 'C:/setup.set' to save the current scope settings to a file. Use SAVe:SETUp? to query the last saved setup file path. To save a setup file on the oscilloscope, use this command with a file path string."
+  },
+  {
+    "command": "HORizontal:FASTframe:TIMEStamp:ALL?",
+    "header": "HORizontal:FASTframe:TIMEStamp:ALL?",
+    "mnemonics": [
+      "HORizontal",
+      "FASTframe",
+      "TIMEStamp",
+      "TIMESTAMP",
+      "ALL",
+      "FRAMES",
+      "FASTFRAME",
+      "TIME"
+    ],
+    "commandType": "query",
+    "group": "Horizontal",
+    "shortDescription": "Queries timestamps for all FastFrame acquisitions.",
+    "description": "Returns the absolute timestamp for all FastFrame acquisitions. Use HORizontal:FASTframe:TIMEStamp:ALL? to query the timestamps of all FastFrame frames. Related commands: HORizontal:FASTframe:TIMEStamp:DELTa? (delta between frames), HORizontal:FASTframe:TIMEStamp:SELECTED? (selected frame timestamp), HORizontal:FASTframe:TIMEStamp:REFerence? (reference frame timestamp)."
   }
 ]

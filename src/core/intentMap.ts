@@ -177,6 +177,9 @@ const SUBJECT_GROUP_MAP: Array<{
   // SOA / safe operating area — before "area" matches measurement area
   { pattern: /\b(SOA|safe\s*operating\s*area)\b/i, groups: ['Power'], intent: 'power', subject: 'power_soa' },
 
+  // AUXout — before generic patterns
+  { pattern: /\b(aux\s*out|auxout)\b/i, groups: ['Miscellaneous'], intent: 'misc', subject: 'auxout' },
+
   // AFG — before "frequency"/"amplitude" match measurement
   { pattern: /\bAFG\b/i, groups: ['AFG'], intent: 'afg', subject: 'afg' },
 
@@ -344,6 +347,7 @@ const SUBJECT_GROUP_MAP: Array<{
   { pattern: /\b(sample\s*rate|sampling|samplerate)\b/i, groups: ['Acquisition', 'Horizontal'], intent: 'acquisition', subject: 'sample_rate' },
   { pattern: /\b(record\s*length|record|rlength)\b/i, groups: ['Horizontal'], intent: 'acquisition', subject: 'record_length' },
   { pattern: /\b(single\s*seq|single\s*shot|single)\b/i, groups: ['Acquisition'], intent: 'acquisition', subject: 'single' },
+  { pattern: /\b(continuous\s*run|run\s*continuous|back\s*to\s*continuous|run\s*mode\s*continuous)\b/i, groups: ['Acquisition'], intent: 'acquisition', subject: 'continuous_run' },
   { pattern: /\b(run|stop|acquire|acquisition)\b/i, groups: ['Acquisition'], intent: 'acquisition', subject: 'acquisition' },
   { pattern: /\b(fastframe|fast\s*frame|fast.frame|enable\s*fastframe|fastframe\s*mode|fast\s*acq)\b/i, groups: ['Horizontal'], intent: 'acquisition', subject: 'fastframe' },
   { pattern: /\b(numavg|num\s*avg|averaging)\b/i, groups: ['Acquisition'], intent: 'acquisition', subject: 'averaging' },
@@ -433,6 +437,7 @@ const SUBJECT_GROUP_MAP: Array<{
   { pattern: /\b(filename|file\s*name|save\s*as)\b/i, groups: ['Save and Recall'], intent: 'save', subject: 'filename' },
 
   // ── Search and Mark ──
+  { pattern: /\bsearch\b.*(can|bus).*(error|frame)\b/i, groups: ['Search and Mark'], intent: 'search', subject: 'can_error_frame' },
   { pattern: /\b(search|mark|find\s*packet|error\s*frame)\b/i, groups: ['Search and Mark'], intent: 'search', subject: 'search' },
 
   // ── Mask ──
@@ -477,6 +482,7 @@ const SUBJECT_GROUP_MAP: Array<{
   { pattern: /\b(directory|readfile|file\s*system|mkdir|rmdir)\b/i, groups: ['File System'], intent: 'filesystem', subject: 'filesystem' },
 
   // ── Waveform transfer ──
+  { pattern: /\bwaveform\b.*(data\s*source|source\s*channel)\b/i, groups: ['Waveform Transfer'], intent: 'waveform', subject: 'waveform_data_source' },
   { pattern: /\b(curve|waveform\s*data|wfm|wfmoutpre|data\s*source|waveform\s*transfer)\b/i, groups: ['Waveform Transfer'], intent: 'waveform', subject: 'waveform_transfer' },
 
   // ── Act on event ──
