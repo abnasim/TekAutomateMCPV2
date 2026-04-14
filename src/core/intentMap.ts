@@ -303,6 +303,9 @@ const SUBJECT_GROUP_MAP: Array<{
   { pattern: /\b(period)\b/i, groups: ['Measurement'], intent: 'measurement', subject: 'period' },
   { pattern: /\b(amplitude|amp)\b/i, groups: ['Measurement'], intent: 'measurement', subject: 'amplitude' },
   { pattern: /\b(rms|vrms)\b/i, groups: ['Measurement'], intent: 'measurement', subject: 'rms' },
+  // fastframe_timestamps early guard — MUST come before fastframe and acq_mode
+  { pattern: /\b(fastframe|fast\s*frame)\b.*\btimestamps?\b/i, groups: ['Horizontal'], intent: 'acquisition', subject: 'fastframe_timestamps' },
+  { pattern: /\btimestamps?\b.*\b(fastframe|fast\s*frame)\b/i, groups: ['Horizontal'], intent: 'acquisition', subject: 'fastframe_timestamps' },
   // fastframe + fastacq early guards — MUST come before acq_mode
   // prevents "fast frame acquisition mode" and "fast acquisition mode" → acq_mode
   { pattern: /\b(fastframe|fast\s*frame)\b/i, groups: ['Horizontal'], intent: 'acquisition', subject: 'fastframe' },
