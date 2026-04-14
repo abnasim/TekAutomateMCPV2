@@ -1135,6 +1135,15 @@ export async function searchScpi(input: SearchScpiInput): Promise<ToolResult<unk
     reRanked = [...top2, ...rest2];
   }
 
+  // Dedup by normalized header (keep first occurrence = highest ranked)
+  const seenHeaders = new Set<string>();
+  reRanked = reRanked.filter((cmd) => {
+    const key = cmd.header.toLowerCase().replace(/[\s?]/g, '').replace(/<[^>]+>/g, '<x>');
+    if (seenHeaders.has(key)) return false;
+    seenHeaders.add(key);
+    return true;
+  });
+
   const total = reRanked.length;
   const final = reRanked.slice(offset, offset + limit);
   const hasMore = offset + final.length < total;
