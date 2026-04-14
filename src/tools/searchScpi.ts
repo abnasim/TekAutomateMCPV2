@@ -854,6 +854,15 @@ function reRankWithIntent(
       }
     }
 
+    // ── 32b. serial/UART parity → BUS:B<x>:RS232C:PARity boost ──
+    if (intent.subject === 'serial' && /parity/i.test(queryLower)) {
+      if (headerLower.includes('rs232') && headerLower.includes('parity')) {
+        score += 80;
+      } else if (headerLower === 'bus:b<x>:type' || headerLower === 'bus:b:type') {
+        score -= 40;
+      }
+    }
+
     // ── 33. search_i2c_addr → SEARCH:SEARCH<x>:TRIGger:A:BUS:I2C:ADDRess:TYPE boost ──
     if (intent.subject === 'search_i2c_addr') {
       if (headerLower.includes('search') && headerLower.includes('i2c') && headerLower.includes('address')) {
@@ -1109,6 +1118,7 @@ export async function searchScpi(input: SearchScpiInput): Promise<ToolResult<unk
     // UART/RS232
     { pattern: /\buart\b.*(source|channel)\b/i, expand: 'BUS RS232C RS232 SOUrce source uart' },
     { pattern: /\buart\b.*(data\s*bits|databits)\b/i, expand: 'BUS RS232C DATABits data bits uart' },
+    { pattern: /\buart\b.*\bparity\b|\brs.?232\b.*\bparity\b|\bparity\b.*\buart\b|\bparity\b.*\brs.?232\b/i, expand: 'BUS RS232C PARity parity uart serial' },
     // Search CAN error frames
     { pattern: /\bsearch\b.*(can|bus).*(error|frame)\b/i, expand: 'SEARCH TRIGger BUS CAN FRAMEtype error frame search' },
     // Measurement table / results table

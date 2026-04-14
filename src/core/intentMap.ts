@@ -310,6 +310,8 @@ const SUBJECT_GROUP_MAP: Array<{
   // prevents "fast frame acquisition mode" and "fast acquisition mode" → acq_mode
   { pattern: /\b(fastframe|fast\s*frame)\b/i, groups: ['Horizontal'], intent: 'acquisition', subject: 'fastframe' },
   { pattern: /\b(fast\s*acq(uisition)?(\s*mode)?|fastacq|FASTAcq)\b(?!.*\bframe\b)/i, groups: ['Acquisition'], intent: 'acquisition', subject: 'fastacq' },
+  // continuous_run early guard — MUST come before acq_mode (prevents "acquisition mode...continuous run" → acq_mode)
+  { pattern: /\b(continuous\s*run|run\s*continuous|back\s*to\s*continuous|run\s*mode\s*continuous)\b/i, groups: ['Acquisition'], intent: 'acquisition', subject: 'continuous_run' },
   // acq_mode + numavg — BEFORE generic "average" → measurement:mean
   { pattern: /\b(acquisition\s*mode|acq\s*mode|mode.*acq(uisition)?)\b/i, groups: ['Acquisition'], intent: 'acquisition', subject: 'acq_mode' },
   { pattern: /\b(num\s*avg|numavg|number\s*of\s*(averages?|waveforms?\s*to\s*average)|waveforms?\s*to\s*average|how\s*many\s*waveforms.*average|waveforms?\s*averaged|averaging.*noise|noise.*reduction.*average)\b/i, groups: ['Acquisition'], intent: 'acquisition', subject: 'numavg' },
