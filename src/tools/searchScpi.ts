@@ -1022,6 +1022,11 @@ export async function searchScpi(input: SearchScpiInput): Promise<ToolResult<unk
     horizontal_scale: [
       'HORizontal:SCAle', 'HORizontal:POSition', 'HORizontal:MODe',
     ],
+    fastframe_timestamps: [
+      'HORizontal:FASTframe:TIMEStamp:ALL?', 'HORizontal:FASTframe:TIMEStamp:DELTa?',
+      'HORizontal:FASTframe:TIMEStamp:SELECTED?', 'HORizontal:FASTframe:TIMEStamp:REFerence?',
+      'HORizontal:FASTframe:STATE', 'HORizontal:FASTframe:COUNt',
+    ],
     fastframe: [
       'HORizontal:FASTframe:STATE', 'HORizontal:FASTframe:COUNt',
       'HORizontal:FASTframe:MAXFRames', 'HORizontal:FASTframe:SELECTED',
