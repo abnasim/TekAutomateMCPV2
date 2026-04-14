@@ -42,14 +42,69 @@ const SUBJECT_GROUP_MAP: Array<{
   subject: string;
 }> = [
   // ── IEEE 488.2 common commands (MUST be first — short words like "clear" collide with other groups) ──
-  { pattern: /\b(reset|rst|\*rst)\b.*\b(scope|instrument|device|factory)\b/i, groups: ['Miscellaneous', 'Status and Error'], intent: 'misc', subject: 'reset' },
-  { pattern: /\b(scope|instrument|device)\b.*\b(reset|rst|\*rst)\b/i, groups: ['Miscellaneous', 'Status and Error'], intent: 'misc', subject: 'reset' },
-  { pattern: /\b(identify|identification)\b.*\b(scope|instrument|device)\b/i, groups: ['Miscellaneous', 'Status and Error'], intent: 'misc', subject: 'identify' },
-  { pattern: /\b(scope|instrument|device)\b.*\b(identify|identification)\b/i, groups: ['Miscellaneous', 'Status and Error'], intent: 'misc', subject: 'identify' },
+  // SCPI star commands: *RST, *CLS, *IDN?, *OPC — match BEFORE any scope/vertical/trigger patterns
+  // Note: \b does not work before *, use (?:^|\s) or just \* without leading \b
+  { pattern: /(?:^|\s|\()\*rst\b/i, groups: ['PI Only', 'Miscellaneous', 'Status and Error'], intent: 'ieee488', subject: 'rst' },
+  { pattern: /(?:^|\s|\()\*cls\b/i, groups: ['Status and Error', 'Miscellaneous'], intent: 'ieee488', subject: 'cls' },
+  { pattern: /(?:^|\s|\()\*idn\b/i, groups: ['PI Only', 'Miscellaneous', 'Status and Error'], intent: 'ieee488', subject: 'idn' },
+  // Natural language → *RST / *CLS / *IDN?
+  { pattern: /\b(reset|rst)\b.*(oscilloscope|scope|instrument|device|awg|afg|smu|rsa)/i, groups: ['PI Only', 'Miscellaneous', 'Status and Error'], intent: 'ieee488', subject: 'rst' },
+  { pattern: /(oscilloscope|scope|instrument|awg|afg|smu|rsa).*(reset|rst)\b/i, groups: ['PI Only', 'Miscellaneous', 'Status and Error'], intent: 'ieee488', subject: 'rst' },
+  { pattern: /\b(reset)\b(?!.*\b(trigger|measurement|meas|search|bus|mask|counter))/i, groups: ['PI Only', 'Miscellaneous', 'Status and Error'], intent: 'ieee488', subject: 'rst' },
+  { pattern: /\b(identification\s*string|query\s*idn|instrument\s*id(entification)?|idn\s*query)\b/i, groups: ['PI Only', 'Miscellaneous', 'Status and Error'], intent: 'ieee488', subject: 'idn' },
+  { pattern: /\b(clear\s*(the\s*)?(instrument|scope|device|status)|status\s*clear|cls)\b/i, groups: ['Status and Error', 'Miscellaneous'], intent: 'ieee488', subject: 'cls' },
+  { pattern: /\berror\s*queue\b/i, groups: ['Status and Error'], intent: 'ieee488', subject: 'allev' },
+  { pattern: /\b(allev|all\s*events?)\b/i, groups: ['Status and Error'], intent: 'ieee488', subject: 'allev' },
+  // HEADer command — MUST be before display patterns ("display header" → HEADer SCPI, not DISplay group)
+  { pattern: /\b(header|scpi\s*header|message\s*header|command\s*header|turn\s*off\s*header|disable\s*header|header\s*(on|off))\b/i, groups: ['PI Only', 'Miscellaneous'], intent: 'ieee488', subject: 'header' },
+  { pattern: /\b(autoset|auto\s*set)\b/i, groups: ['PI Only', 'Miscellaneous'], intent: 'ieee488', subject: 'autoset' },
   { pattern: /\bclear\s*status\b/i, groups: ['Status and Error'], intent: 'status', subject: 'cls' },
   { pattern: /\boperation\s*complete\b/i, groups: ['Status and Error', 'Miscellaneous'], intent: 'status', subject: 'opc' },
   { pattern: /\bself\s*test\b/i, groups: ['Miscellaneous'], intent: 'misc', subject: 'tst' },
   { pattern: /\bevent\s*status\s*register\b/i, groups: ['Status and Error'], intent: 'status', subject: 'esr' },
+
+  // ── AWG device type (MUST be before scope/acquisition patterns — "run", "output", "channel" collide) ──
+  // WPLUGIN — AWG plugin loading (HSSerial, Radar, Pulse, etc.)
+  { pattern: /\b(wplugin|waveform\s*plugin|load\s*plugin|active\s*plugin)\b/i, groups: ['AWG', 'AWG Plugin'], intent: 'awg', subject: 'awg_plugin' },
+  { pattern: /\bawg\b.*\b(plugin|module|application|hsserial|high.?speed.?serial|radar|pulse)\b/i, groups: ['AWG', 'AWG Plugin'], intent: 'awg', subject: 'awg_plugin' },
+  { pattern: /\b(plugin|module)\b.*\b(awg|arbitrary\s*waveform)\b/i, groups: ['AWG', 'AWG Plugin'], intent: 'awg', subject: 'awg_plugin' },
+  { pattern: /\b(load|activate|install)\b.*\b(high.?speed.?serial|hsserial|hss\b|radar|pulse\s*train)\b/i, groups: ['AWG', 'AWG Plugin'], intent: 'awg', subject: 'awg_plugin' },
+  // AWG HSSerial commands
+  { pattern: /\b(hsserial|hs.?serial|high.?speed.?serial)\b/i, groups: ['AWG', 'AWG Plugin'], intent: 'awg', subject: 'awg_hsserial' },
+  { pattern: /\b(prbs|nrz\s*encoding|nrz\s*scheme|ber\s*pattern|bit\s*pattern)\b.*\b(awg|serial)\b/i, groups: ['AWG', 'AWG Plugin'], intent: 'awg', subject: 'awg_hsserial' },
+  { pattern: /\bawg\b.*\b(prbs|nrz|encoding|pattern|scheme)\b/i, groups: ['AWG', 'AWG Plugin'], intent: 'awg', subject: 'awg_hsserial' },
+  { pattern: /\b(prbs7|prbs15|prbs31|prbs\d+)\b/i, groups: ['AWG', 'AWG Plugin'], intent: 'awg', subject: 'awg_prbs' },
+  // AWG clock / sample rate
+  { pattern: /\bawg\b.*\b(sample\s*rate|srate|clock|drate)\b/i, groups: ['AWG'], intent: 'awg', subject: 'awg_clock' },
+  { pattern: /\b(sample\s*rate|srate)\b.*\bawg\b/i, groups: ['AWG'], intent: 'awg', subject: 'awg_clock' },
+  // AWG output channel
+  { pattern: /\bawg\b.*\b(output|channel|ch\s*\d)\b.*\b(state|on|off|enable|disable)\b/i, groups: ['AWG'], intent: 'awg', subject: 'awg_output' },
+  { pattern: /\b(output|channel)\b.*\b(state|on|off)\b.*\bawg\b/i, groups: ['AWG'], intent: 'awg', subject: 'awg_output' },
+  // AWG compile
+  { pattern: /\bawg\b.*\b(compile|overwrite)\b/i, groups: ['AWG', 'AWG Plugin'], intent: 'awg', subject: 'awg_compile' },
+  { pattern: /\b(compile)\b.*\b(awg|waveform|hsserial|overwrite)\b/i, groups: ['AWG', 'AWG Plugin'], intent: 'awg', subject: 'awg_compile' },
+  { pattern: /\b(compile\s*waveform|compile\s*and\s*play)\b/i, groups: ['AWG', 'AWG Plugin'], intent: 'awg', subject: 'awg_compile' },
+  // AWG run/play (MUST be before scope acquisition "run" pattern)
+  { pattern: /\bawg\b.*\b(run|play|start|stop)\b/i, groups: ['AWG'], intent: 'awg', subject: 'awg_run' },
+  { pattern: /\b(run|play|start)\b.*\bawg\b/i, groups: ['AWG'], intent: 'awg', subject: 'awg_run' },
+  { pattern: /\bawg\b.*\b(waveform)\b/i, groups: ['AWG'], intent: 'awg', subject: 'awg_waveform' },
+  // AWG Radar plugin
+  { pattern: /\b(radar)\b.*\b(awg|plugin|compile|play|pulse|carrier|pri|lfm|modulation)\b/i, groups: ['AWG', 'AWG Plugin'], intent: 'awg', subject: 'awg_radar' },
+  { pattern: /\bawg\b.*\bradar\b/i, groups: ['AWG', 'AWG Plugin'], intent: 'awg', subject: 'awg_radar' },
+  { pattern: /\b(radar\s*carrier|radar\s*frequency|radar\s*pulse|radar\s*pri|radar\s*lfm|lfm\s*modulation)\b/i, groups: ['AWG', 'AWG Plugin'], intent: 'awg', subject: 'awg_radar' },
+  { pattern: /\b(load|set\s*up|configure)\b.*\bradar\b/i, groups: ['AWG', 'AWG Plugin'], intent: 'awg', subject: 'awg_radar' },
+  // Generic AWG catchall (after all specific AWG patterns)
+  { pattern: /\bawg\b/i, groups: ['AWG'], intent: 'awg', subject: 'awg' },
+  { pattern: /\b(arbitrary\s*waveform\s*generator|awgcontrol)\b/i, groups: ['AWG'], intent: 'awg', subject: 'awg' },
+
+  // ── SignalVu / RSA instrument (MUST be before scope patterns) ──
+  { pattern: /\b(signalvu|signal\s*vu|signalvu.?pc|rsa\s*\d{4}|spectrum\s*analyzer)\b.*\b(connect|disconnect)\b/i, groups: ['SignalVu', 'RSA'], intent: 'rsa', subject: 'rsa_connect' },
+  { pattern: /\b(connect|disconnect)\b.*\b(signalvu|signal\s*vu|rsa|spectrum\s*analyzer\s*pc)\b/i, groups: ['SignalVu', 'RSA'], intent: 'rsa', subject: 'rsa_connect' },
+  { pattern: /\b(instrument\s*connect|instrument\s*disconnect|inst\s*conn|inst\s*disc)\b/i, groups: ['SignalVu', 'RSA'], intent: 'rsa', subject: 'rsa_connect' },
+  { pattern: /\b(signalvu|signal\s*vu|signalvu.?pc)\b.*\b(preset|system|reset)\b/i, groups: ['SignalVu', 'RSA'], intent: 'rsa', subject: 'rsa_preset' },
+  { pattern: /\bpreset\b.*\b(signalvu|signal\s*vu|rsa)\b/i, groups: ['SignalVu', 'RSA'], intent: 'rsa', subject: 'rsa_preset' },
+  { pattern: /\b(signalvu|signal\s*vu|signalvu.?pc)\b/i, groups: ['SignalVu', 'RSA'], intent: 'rsa', subject: 'rsa' },
+  { pattern: /\b(rsa\b|spectrum\s*analyzer\s*pc|vector\s*signal\s*analyzer|vsa)\b/i, groups: ['SignalVu', 'RSA'], intent: 'rsa', subject: 'rsa' },
 
   // ── Horizontal scale (MUST be before generic "scale" which maps to vertical) ──
   { pattern: /\bhorizontal\b.*\bscale\b/i, groups: ['Horizontal'], intent: 'horizontal', subject: 'horizontal_scale' },
@@ -349,7 +404,10 @@ const SUBJECT_GROUP_MAP: Array<{
   { pattern: /\b(cursor\s*type|cursor\s*mode|cursor\s*function)\b/i, groups: ['Cursor'], intent: 'display', subject: 'cursor_type' },
 
   // ── Fallback Display Patterns ──
-  { pattern: /\b(on|off|enable|disable|show|hide)\b/i, groups: ['Display'], intent: 'display', subject: 'display_general' },
+  // NOTE: Do NOT use bare "on|off|enable|disable|show|hide" — too broad, catches "on" in "save X on scope"
+  // Only match display-specific words WITH a display-related context word
+  { pattern: /\b(display|screen|waveview|graticule|grid)\b.*\b(on|off|enable|disable|show|hide)\b/i, groups: ['Display'], intent: 'display', subject: 'display_general' },
+  { pattern: /\b(on|off|enable|disable|show|hide)\b.*\b(display|screen|waveview|graticule|grid)\b/i, groups: ['Display'], intent: 'display', subject: 'display_general' },
   { pattern: /\b(grid|graticule|intensity|brightness)\b/i, groups: ['Display'], intent: 'display', subject: 'display_general' },
 
   // ── Save / Recall ──

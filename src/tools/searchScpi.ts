@@ -52,7 +52,7 @@ const GROUP_AFFINITY: Record<string, Set<string>> = {
   vertical: new Set(['Vertical']),
   horizontal: new Set(['Horizontal', 'Acquisition']),
   display: new Set(['Display', 'Cursor']),
-  save: new Set(['Save and Recall', 'File System', 'Save on']),
+  save: new Set(['Save and Recall', 'File System', 'Save on', 'PI Only']),
   acquisition: new Set(['Acquisition', 'Horizontal']),
   math: new Set(['Math', 'Spectrum view']),
   mask: new Set(['Mask']),
@@ -62,8 +62,19 @@ const GROUP_AFFINITY: Record<string, Set<string>> = {
   dpm: new Set(['Digital Power Management']),
   imda: new Set(['Inverter Motors and Drive Analysis']),
   wbg: new Set(['Wide Band Gap Analysis (WBG)']),
-  misc: new Set(['Miscellaneous', 'Status and Error']),
-  status: new Set(['Status and Error', 'Miscellaneous']),
+  misc: new Set(['Miscellaneous', 'Status and Error', 'PI Only']),
+  status: new Set(['Status and Error', 'Miscellaneous', 'PI Only']),
+  // New intents from expanded intentMap
+  ieee488: new Set(['PI Only', 'Miscellaneous', 'Status and Error']),
+  awg: new Set(['AWG', 'AWG Plugin', 'Miscellaneous']),
+  rsa: new Set(['SignalVu', 'RSA', 'Miscellaneous']),
+  afg: new Set(['AFG']),
+  network: new Set(['Ethernet', 'Miscellaneous']),
+  calibration: new Set(['Calibration', 'Miscellaneous']),
+  filesystem: new Set(['File System', 'Save and Recall']),
+  event: new Set(['Act On Event', 'Save on']),
+  waveform: new Set(['Waveform Transfer', 'Acquisition']),
+  power: new Set(['Power', 'Measurement']),
 };
 
 // Groups that should NEVER appear for non-matching intents
@@ -465,10 +476,108 @@ function reRankWithIntent(
       score -= 40;
     }
 
+    // ── AWG intent boosting ──
+    if (intent.intent === 'awg') {
+      // Strong boost for AWG-specific commands
+      if (headerLower.startsWith('awgcontrol') || headerLower.startsWith('outp') ||
+          headerLower.startsWith('clock') || headerLower.startsWith('wplugin') ||
+          headerLower.startsWith('hsserial') || headerLower.startsWith('radar:') ||
+          headerLower.startsWith('pulse:') || headerLower.startsWith('source') ||
+          headerLower.startsWith('slist') || headerLower.startsWith('wlist')) {
+        score += 40;
+      }
+      // Strong penalty for scope-specific commands when AWG intent
+      if (headerLower.startsWith('trigger:') || headerLower.startsWith('trig:') ||
+          headerLower.startsWith('acquire:') || headerLower.startsWith('acq:') ||
+          headerLower.startsWith('measurement:') || headerLower.startsWith('meas:') ||
+          headerLower.startsWith('bus:') || headerLower.startsWith('search:') ||
+          headerLower.startsWith('horizontal:') || headerLower.startsWith('hor:') ||
+          headerLower.startsWith('ch1:') || headerLower.startsWith('ch2:')) {
+        score -= 50;
+      }
+      // Subject-specific boosts
+      if (intent.subject === 'awg_plugin' || intent.subject === 'awg_radar' || intent.subject === 'awg_hsserial') {
+        if (headerLower.includes('wplugin') || headerLower.includes('active')) score += 30;
+        if (headerLower.includes('hsserial') || headerLower.includes('radar') || headerLower.includes('pulse:')) score += 30;
+      }
+      if (intent.subject === 'awg_run') {
+        if (headerLower.includes('awgcontrol') && headerLower.includes('run')) score += 50;
+        if (headerLower.includes('immediate')) score += 20;
+      }
+      if (intent.subject === 'awg_compile') {
+        if (headerLower.includes('compile') || headerLower.includes('overwrite') || headerLower.includes('play')) score += 40;
+      }
+      if (intent.subject === 'awg_output') {
+        if (headerLower.match(/outp(ut)?\d*:state/i)) score += 50;
+      }
+      if (intent.subject === 'awg_clock') {
+        if (headerLower.includes('clock') && headerLower.includes('srate')) score += 50;
+        if (headerLower.includes('awgcontrol:clock')) score += 30;
+      }
+      if (intent.subject === 'awg_prbs') {
+        if (headerLower.includes('prbs') || headerLower.includes('bdata')) score += 50;
+      }
+    }
+
+    // ── IEEE 488 / misc intent boosting ──
+    if (intent.intent === 'ieee488') {
+      // Hard boost for star commands and PI Only commands
+      if (headerLower.startsWith('*') || headerLower === 'header' || headerLower === 'allev') {
+        score += 60;
+      }
+      if (headerLower === 'autoset' || headerLower === 'autoset:execute') {
+        score += 50;
+      }
+      // Penalize everything else heavily
+      if (!headerLower.startsWith('*') && !['header', 'allev', 'autoset', 'autoset:execute'].includes(headerLower)) {
+        if (intent.subject === 'rst') {
+          if (headerLower.includes('reset') || headerLower.includes('rst')) score += 30;
+          else score -= 30;
+        }
+        if (intent.subject === 'cls') {
+          if (headerLower.includes('cls') || headerLower.includes('clear')) score += 20;
+        }
+        if (intent.subject === 'idn') {
+          if (headerLower.includes('idn') || headerLower.includes('ident')) score += 30;
+          else score -= 20;
+        }
+        if (intent.subject === 'allev' || intent.subject === 'error_queue') {
+          if (headerLower.includes('allev') || headerLower.includes('system:error')) score += 50;
+        }
+        if (intent.subject === 'header') {
+          if (headerLower === 'header') score += 100;
+          else score -= 20;
+        }
+        if (intent.subject === 'autoset') {
+          if (headerLower === 'autoset' || headerLower === 'autoset:execute') score += 80;
+          else score -= 20;
+        }
+      }
+    }
+
+    // ── RSA / SignalVu intent boosting ──
+    if (intent.intent === 'rsa') {
+      if (headerLower.startsWith('instrument:') || headerLower.includes('instrument:connect') ||
+          headerLower.includes('instrument:disconnect') || headerLower.includes('system:preset') ||
+          headerLower.startsWith('signalvu') || headerLower.includes(':connect') || headerLower.includes(':disconnect')) {
+        score += 60;
+      }
+      if (intent.subject === 'rsa_connect') {
+        if (headerLower.includes('instrument') && (headerLower.includes('connect') || headerLower.includes('disconnect'))) {
+          score += 80;
+        }
+      }
+      if (intent.subject === 'rsa_preset') {
+        if (headerLower.includes('system:preset') || headerLower.includes('preset')) {
+          score += 50;
+        }
+      }
+    }
+
     // ── 8. RSA/Audio command penalty ──
     // RSA spectrum analyzer and audio commands pollute scope queries.
     // Only show them when explicitly asked for RSA/audio.
-    const wantsRsa = /\b(rsa|audio|spectrum\s*anal)/i.test(queryLower);
+    const wantsRsa = /\b(rsa|signalvu|audio|spectrum\s*anal|connect.*scope|signalvu.?pc)\b/i.test(queryLower);
     if (!wantsRsa) {
       const isRsaAudio = headerLower.startsWith('fetch:') || headerLower.startsWith('read:')
         || headerLower.startsWith('[sense]') || headerLower.includes(':audio:')
@@ -501,7 +610,7 @@ export async function searchScpi(input: SearchScpiInput): Promise<ToolResult<unk
   const QUERY_EXPANSIONS: Array<{ pattern: RegExp; expand: string }> = [
     { pattern: /\bzone\s*trigger/i, expand: 'VISual AREA trigger zone' },
     { pattern: /\bvisual\s*trigger/i, expand: 'VISual AREA trigger' },
-    { pattern: /\bscreenshot/i, expand: 'SAVe IMAGe screenshot' },
+    { pattern: /\bscreenshot|save\s*image|screen\s*capture|hardcopy/i, expand: 'SAVe IMAGe HARDCopy screenshot image' },
     { pattern: /\bbaud\s*rate/i, expand: 'BITRate baud rate' },
     { pattern: /\brecord\s*length/i, expand: 'RECOrdlength horizontal record' },
     { pattern: /\bsample\s*rate/i, expand: 'SAMPLERate sample rate horizontal' },
@@ -513,6 +622,57 @@ export async function searchScpi(input: SearchScpiInput): Promise<ToolResult<unk
     { pattern: /\bbadge/i, expand: 'DISPlaystat badge measurement display' },
     { pattern: /\bpreamble/i, expand: 'WFMOutpre preamble waveform transfer encoding' },
     { pattern: /\bsequence\b.*\btrigger|trigger\b.*\bsequence/i, expand: 'TRIGger:B:BY trigger sequence A B delayed' },
+    // IEEE 488 star commands — natural language → SCPI header
+    { pattern: /\b(reset|rst)\b.*(oscilloscope|scope|instrument|awg|afg|smu)/i, expand: '*RST reset instrument factory' },
+    { pattern: /\b(clear\s*(the\s*)?(instrument|scope|status)|status\s*clear)\b/i, expand: '*CLS clear status event' },
+    { pattern: /\b(identification|idn\s*query|query.*\bidn\b|instrument\s*id)\b/i, expand: '*IDN identification query manufacturer' },
+    { pattern: /\b(error\s*queue|check\s*error|allev)\b/i, expand: 'ALLEv SYSTem:ERRor error queue event' },
+    { pattern: /\b(display\s*header|turn\s*off\s*header|header\s*(on|off))\b/i, expand: 'HEADer header off on' },
+    { pattern: /\bheader\b(?!.*\b(bus|manchester|length|bits|frame|sync|preamble))/i, expand: 'HEADer header off on' },
+    // AWG plugin / HSSerial
+    { pattern: /\b(load|activate)\b.*(plugin|module|hsserial|high.?speed.?serial)\b.*\bawg\b/i, expand: 'WPLugin ACTive HSSerial plugin awg' },
+    { pattern: /\bawg\b.*(load|activate)\b.*(plugin|module|hsserial)/i, expand: 'WPLugin ACTive HSSerial plugin awg' },
+    { pattern: /\bload\b.*(high.?speed.?serial|hsserial|radar|pulse)\b.*\bawg\b/i, expand: 'WPLugin ACTive plugin awg' },
+    { pattern: /\bawg\b.*(plugin|hsserial|high.?speed.?serial)/i, expand: 'WPLugin ACTive HSSerial plugin awg' },
+    { pattern: /\bawg\b.*(radar|load\s*radar|radar\s*plugin)\b/i, expand: 'WPLugin RADar ACTive plugin awg' },
+    { pattern: /\b(prbs7|prbs15|prbs31|prbs\d+)\b/i, expand: 'HSSerial BDATa PRBS pattern awg' },
+    { pattern: /\b(nrz)\b.*(awg|serial|encoding)/i, expand: 'HSSerial ENCode SCHeme NRZ encoding awg' },
+    { pattern: /\bawg\b.*(run|play|start)\b/i, expand: 'AWGControl RUN IMMediate play' },
+    { pattern: /\b(run|play)\b.*\bawg\b/i, expand: 'AWGControl RUN IMMediate play' },
+    { pattern: /\bawg\b.*\bcompile\b/i, expand: 'HSSerial COMPile OVERwrite compile awg' },
+    { pattern: /\bcompile\b.*(waveform|awg|overwrite)/i, expand: 'HSSerial COMPile OVERwrite compile awg' },
+    { pattern: /\bcompile\s*and\s*play\b/i, expand: 'RADar COMPile PLAY compile play awg' },
+    { pattern: /\bawg\b.*(sample\s*rate|clock|srate)\b/i, expand: 'CLOCk SRATe sample rate awg clock' },
+    { pattern: /\bawg\b.*(output|channel).*(state|on|off)\b/i, expand: 'OUTPut STATe channel output awg' },
+    // AWG radar plugin details
+    { pattern: /\bradar\b.*(carrier|frequency|cf)\b/i, expand: 'RADar PTRain CARRier FREQuency carrier' },
+    { pattern: /\bradar\b.*(pulse.?width|pw|width)\b/i, expand: 'RADar PULSe PENVelope WIDTh pulse width' },
+    { pattern: /\bradar\b.*(pri|pulse\s*repetition)\b/i, expand: 'RADar PULSe PENVelope PRI repetition' },
+    { pattern: /\bradar\b.*(lfm|modulation|sweep)\b/i, expand: 'RADar PULSe MODulation LFM SRANge sweep' },
+    // SignalVu / RSA
+    { pattern: /\b(connect|disconnect)\b.*(signalvu|rsa|spectrum.*pc)/i, expand: 'INSTrument CONNect DISConnect signalvu connect' },
+    { pattern: /\b(signalvu|rsa)\b.*(connect|disconnect)\b/i, expand: 'INSTrument CONNect DISConnect signalvu connect' },
+    { pattern: /\bsignalvu\b.*(preset|reset)\b/i, expand: 'SYSTem PRESet preset signalvu' },
+    // Scope AFG (built-in)
+    { pattern: /\bafg\b.*(frequency|freq)\b/i, expand: 'AFG FREQuency frequency afg' },
+    { pattern: /\bafg\b.*(amplitude|ampl)\b/i, expand: 'AFG AMPLitude amplitude afg' },
+    { pattern: /\bafg\b.*(function|waveform|shape)\b/i, expand: 'AFG FUNCtion function waveform afg' },
+    { pattern: /\bafg\b.*(impedance|load|50\s*ohm)\b/i, expand: 'AFG OUTPut LOAd IMPEDance impedance afg' },
+    // External AFG (AFG31000)
+    { pattern: /\bexternal\s*afg\b.*(clock|reference)\b/i, expand: 'ROSCillator SOURce clock reference external' },
+    { pattern: /\b(aux\s*out|auxout)\b/i, expand: 'AUXout SOUrce aux out reference clock' },
+    // CAN FD
+    { pattern: /\bcan\s*fd\b.*(standard|iso)\b/i, expand: 'BUS CAN FD STANDard ISO standard' },
+    { pattern: /\bcan\s*fd\b.*(bit\s*rate|data\s*phase)\b/i, expand: 'BUS CAN FD BITRate data phase bit rate' },
+    // UART/RS232
+    { pattern: /\buart\b.*(source|channel)\b/i, expand: 'BUS RS232C RS232 SOUrce source uart' },
+    { pattern: /\buart\b.*(data\s*bits|databits)\b/i, expand: 'BUS RS232C DATABits data bits uart' },
+    // Search CAN error frames
+    { pattern: /\bsearch\b.*(can|bus).*(error|frame)\b/i, expand: 'SEARCH TRIGger BUS CAN FRAMEtype error frame search' },
+    // Measurement table / results table
+    { pattern: /\b(results?\s*table|measurement\s*table|meas.*table)\b/i, expand: 'MEASTABle CUSTOMTABle ADDNew results table' },
+    // Waveform data source
+    { pattern: /\bwaveform\b.*(data\s*source|source\s*channel|data.*channel)\b/i, expand: 'DATa SOUrce data source waveform' },
   ];
   let expandedQuery = q;
   for (const { pattern, expand } of QUERY_EXPANSIONS) {
