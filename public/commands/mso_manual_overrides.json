@@ -2497,8 +2497,8 @@
     ],
     "commandType": "both",
     "group": "Trigger",
-    "shortDescription": "Sets the trigger A edge source channel.",
-    "description": "Sets or queries the source channel for edge triggering on trigger A. Use TRIGger:A:EDGE:SOUrce CH1 to trigger on channel 1 edge, CH2 for channel 2, CH3 for channel 3, etc. This selects which channel the oscilloscope monitors for the trigger edge."
+    "shortDescription": "Sets the edge trigger source channel (CH1, CH2, CH3, etc.). Use to change trigger source.",
+    "description": "Sets or queries the source channel for edge triggering on trigger A or B. TRIGger:A:EDGE:SOUrce CH1 sets trigger source to channel 1. TRIGger:A:EDGE:SOUrce CH3 changes the trigger source to channel 3. Use this command to change trigger source, select trigger channel. Options: CH1, CH2, CH3, CH4, D0-D15 (digital channels), AUX, LINE."
   },
   {
     "command": "SV:CH1:SELect:RF_MAGnitude",
@@ -2893,12 +2893,13 @@
       "BUS",
       "NEW",
       "SEARCH",
-      "CREATE"
+      "CREATE",
+      "ADDNEW"
     ],
     "commandType": "set",
     "group": "Search",
-    "shortDescription": "Adds a new bus or edge search on the oscilloscope.",
-    "description": "Adds a new search definition to the oscilloscope. Use SEARch:ADDNew to add a bus search for I2C, SPI, CAN, UART, USB bus protocol searches, or to add an edge search, pulse width search, runt search, or timeout search. After adding, configure with SEARCH:SEARCH1:TRIGger:A commands. Use 'add bus search' or 'add new search' to invoke this command."
+    "shortDescription": "Adds a new search (bus search, edge search, etc.) on the oscilloscope.",
+    "description": "Adds a new search definition to the oscilloscope. SEARch:ADDNew adds a bus search or edge search or pulse width search. Use 'add bus search' or 'add search' or 'create search' with this command. After adding a search with SEARch:ADDNew, configure with SEARCH:SEARCH1:TRIGger:A:BUS commands. Use for adding I2C search, SPI search, CAN bus search, UART search, edge search."
   },
   {
     "command": "DISplay:WAVEView1:CH1:STATE",
@@ -2943,12 +2944,14 @@
       "SPI",
       "CAN",
       "UART",
-      "SERIAL"
+      "SERIAL",
+      "SET",
+      "BUS_TYPE"
     ],
     "commandType": "both",
     "group": "Bus",
-    "shortDescription": "Sets the serial bus protocol type (I2C, SPI, CAN, UART, USB, etc.) for bus decoding.",
-    "description": "Sets or queries the bus protocol type for the specified bus B<x>. Use BUS:B1:TYPe I2C to configure bus 1 as an I2C bus. Available protocol types: I2C, SPI, CAN, RS232C (UART/serial), USB, LIN, FLEXRAY, ARINC429, S8B10B, PCIE, MIPI, ETHERNET, DPHY, CPHY, EUSB, SVID. This command must be set before configuring bus parameters. Setting the bus type is the first step in serial bus decoding setup."
+    "shortDescription": "Sets the serial bus type/protocol (I2C, SPI, CAN, UART, USB...). Use to set bus type.",
+    "description": "Sets or queries the bus TYPE for the specified bus number B<x>. The bus type selects the serial bus protocol for decoding. BUS:B1:TYPe I2C sets bus 1 type to I2C. BUS:B1:TYPe SPI sets bus 1 type to SPI. BUS:B1:TYPe CAN sets bus 1 type to CAN. BUS:B1:TYPe RS232C sets bus 1 type to UART/RS-232. Other types: USB, LIN, FLEXRAY, ARINC429, MIPI, ETHERNET. This sets the type/protocol of the bus. 'Set bus type' uses this command."
   },
   {
     "command": "ALLEv?",
