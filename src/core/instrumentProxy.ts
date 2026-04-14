@@ -591,6 +591,8 @@ export function processWaveformScpiResponses(
     channel:          p.channel,
     stats,
     n_points_returned: 0,
+    _dbg_format:      p.format,
+    _dbg_downsample:  p.downsample,
     ...(clipWarning ? { CLIPPING: clipWarning } : {}),
   };
 
