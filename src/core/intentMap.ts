@@ -93,6 +93,21 @@ const SUBJECT_GROUP_MAP: Array<{
   { pattern: /\bawg\b.*\bradar\b/i, groups: ['AWG', 'AWG Plugin'], intent: 'awg', subject: 'awg_radar' },
   { pattern: /\b(radar\s*carrier|radar\s*frequency|radar\s*pulse|radar\s*pri|radar\s*lfm|lfm\s*modulation)\b/i, groups: ['AWG', 'AWG Plugin'], intent: 'awg', subject: 'awg_radar' },
   { pattern: /\b(load|set\s*up|configure)\b.*\bradar\b/i, groups: ['AWG', 'AWG Plugin'], intent: 'awg', subject: 'awg_radar' },
+  // AWG burst mode
+  { pattern: /\bawg\b.*\bburst\b/i, groups: ['AWG'], intent: 'awg', subject: 'awg_burst' },
+  { pattern: /\bburst\b.*\b(awg|source\s*\d|source\s*output)\b/i, groups: ['AWG'], intent: 'awg', subject: 'awg_burst' },
+  { pattern: /\bburst\s*mode\b.*\b(output|source|awg)\b/i, groups: ['AWG'], intent: 'awg', subject: 'awg_burst' },
+  // AWG waveform shape/function — BEFORE generic "function" or "shape" in measurement
+  { pattern: /\bawg\b.*\b(shape|function|waveform\s*shape)\b/i, groups: ['AWG'], intent: 'awg', subject: 'awg_shape' },
+  { pattern: /\b(shape|function)\b.*\b(awg|source\s*output)\b/i, groups: ['AWG'], intent: 'awg', subject: 'awg_shape' },
+  { pattern: /\bsource\s*(output|1|2)?\b.*\b(function|shape)\b/i, groups: ['AWG'], intent: 'awg', subject: 'awg_shape' },
+  // AWG output frequency — BEFORE generic "frequency" matches measurement
+  { pattern: /\bawg\b.*\b(frequency|freq)\b/i, groups: ['AWG'], intent: 'awg', subject: 'awg_frequency' },
+  { pattern: /\b(output\s*frequency|frequency\s*output)\b.*\b(awg|source)\b/i, groups: ['AWG'], intent: 'awg', subject: 'awg_frequency' },
+  { pattern: /\bconfigure.*output.*frequency.*awg|awg.*output.*frequency\b/i, groups: ['AWG'], intent: 'awg', subject: 'awg_frequency' },
+  // AWG waveform list size
+  { pattern: /\b(waveform\s*list|wlist)\b.*\b(size|count|how\s*many|number)\b/i, groups: ['AWG'], intent: 'awg', subject: 'wlist_size' },
+  { pattern: /\bhow\s*many\s*waveforms?\b.*\b(waveform\s*list|wlist)\b/i, groups: ['AWG'], intent: 'awg', subject: 'wlist_size' },
   // Generic AWG catchall (after all specific AWG patterns)
   { pattern: /\bawg\b/i, groups: ['AWG'], intent: 'awg', subject: 'awg' },
   { pattern: /\b(arbitrary\s*waveform\s*generator|awgcontrol)\b/i, groups: ['AWG'], intent: 'awg', subject: 'awg' },
@@ -103,6 +118,9 @@ const SUBJECT_GROUP_MAP: Array<{
   { pattern: /\b(instrument\s*connect|instrument\s*disconnect|inst\s*conn|inst\s*disc)\b/i, groups: ['SignalVu', 'RSA'], intent: 'rsa', subject: 'rsa_connect' },
   { pattern: /\b(signalvu|signal\s*vu|signalvu.?pc)\b.*\b(preset|system|reset)\b/i, groups: ['SignalVu', 'RSA'], intent: 'rsa', subject: 'rsa_preset' },
   { pattern: /\bpreset\b.*\b(signalvu|signal\s*vu|rsa)\b/i, groups: ['SignalVu', 'RSA'], intent: 'rsa', subject: 'rsa_preset' },
+  // RSA + factory/default → SYSTem:PRESet (BEFORE generic reset → *RST)
+  { pattern: /\b(rsa\b|spectrum\s*analyzer)\b.*\b(factory|default|preset)\b/i, groups: ['SignalVu', 'RSA'], intent: 'rsa', subject: 'rsa_preset' },
+  { pattern: /\b(factory|default)\b.*\b(rsa\b|spectrum\s*analyzer)\b/i, groups: ['SignalVu', 'RSA'], intent: 'rsa', subject: 'rsa_preset' },
   { pattern: /\b(signalvu|signal\s*vu|signalvu.?pc)\b/i, groups: ['SignalVu', 'RSA'], intent: 'rsa', subject: 'rsa' },
   { pattern: /\b(rsa\b|spectrum\s*analyzer\s*pc|vector\s*signal\s*analyzer|vsa)\b/i, groups: ['SignalVu', 'RSA'], intent: 'rsa', subject: 'rsa' },
 
@@ -157,6 +175,9 @@ const SUBJECT_GROUP_MAP: Array<{
 
   // Spectrum view — before "frequency" matches measurement
   // Also matches "spectrumview" (one word), "sv:" prefix, peak/marker queries
+  // RBW mode auto/manual — before generic spectrum_view
+  { pattern: /\b(rbw\s*mode|resolution\s*bandwidth\s*mode|auto.*rbw|manual.*rbw|rbw.*auto|rbw.*manual)\b/i, groups: ['Spectrum view'], intent: 'math', subject: 'spectrum_rbw_mode' },
+  { pattern: /\bspectrum\b.*\b(rbw\s*mode|resolution\s*bandwidth\s*mode)\b/i, groups: ['Spectrum view'], intent: 'math', subject: 'spectrum_rbw_mode' },
   { pattern: /\b(spectrum\s*view|spectral\s*view|spectrumview)\b/i, groups: ['Spectrum view'], intent: 'math', subject: 'spectrum_view' },
   { pattern: /\bSV:/i, groups: ['Spectrum view'], intent: 'math', subject: 'spectrum_view' },
   { pattern: /\b(peak\s*marker|marker.*peak|rf\s*peak|spectrum.*peak|peak.*spectrum)\b/i, groups: ['Spectrum view'], intent: 'math', subject: 'spectrum_peak_marker' },
@@ -180,6 +201,10 @@ const SUBJECT_GROUP_MAP: Array<{
   // AUXout — before generic patterns
   { pattern: /\b(aux\s*out|auxout)\b/i, groups: ['Miscellaneous'], intent: 'misc', subject: 'auxout' },
 
+  // AFG + clock reference → ROSCillator:SOURce (BEFORE the AFG catchall and oscillator pattern)
+  { pattern: /\b(afg|external)\b.*\bclock\s*(ref|reference|source)\b/i, groups: ['AFG'], intent: 'afg', subject: 'oscillator' },
+  { pattern: /\bclock\s*(ref|reference|source)\b.*\b(afg|external)\b/i, groups: ['AFG'], intent: 'afg', subject: 'oscillator' },
+  { pattern: /\bswitch\b.*\b(afg|arbitrary\s*function)\b.*\bclock\b/i, groups: ['AFG'], intent: 'afg', subject: 'oscillator' },
   // AFG — before "frequency"/"amplitude" match measurement
   { pattern: /\bAFG\b/i, groups: ['AFG'], intent: 'afg', subject: 'afg' },
 
@@ -197,6 +222,8 @@ const SUBJECT_GROUP_MAP: Array<{
   { pattern: /\b(statistics|stats)\b/i, groups: ['Measurement'], intent: 'measurement', subject: 'statistics' },
 
   // ── Probe attenuation (before generic channel and probe) ──
+  // probe attenuation SETTING (configure it) → CH<x>:PRObe:SET (MUST be before plain probe_atten)
+  { pattern: /\b(probe\s*attenuation\s*setting|configure.*probe.*attenuation|probe.*setting.*channel|channel.*probe.*attenuation)\b/i, groups: ['Vertical'], intent: 'vertical', subject: 'probe_set' },
   { pattern: /\bprobe\s*attenuation\b/i, groups: ['Vertical'], intent: 'vertical', subject: 'probe_atten' },
   { pattern: /\bchannel\b.*\bprobe\b/i, groups: ['Vertical'], intent: 'vertical', subject: 'probe' },
 
@@ -213,11 +240,16 @@ const SUBJECT_GROUP_MAP: Array<{
   // ── Bus protocols (most specific first) ──
   // "search for CAN bus error frames" must match can_error_frame BEFORE generic can_bus
   { pattern: /\bsearch\b.*(can|bus).*(error|frame)\b/i, groups: ['Search and Mark'], intent: 'search', subject: 'can_error_frame' },
+  // I2C search address type — MUST come before generic i2c
+  { pattern: /\bi2c\b.*\b(address\s*type|addr\s*type)\b/i, groups: ['Search and Mark'], intent: 'search', subject: 'search_i2c_addr' },
+  { pattern: /\b(search)\b.*\bi2c\b.*\baddress\b/i, groups: ['Search and Mark'], intent: 'search', subject: 'search_i2c_addr' },
   { pattern: /\bi2c\b/i, groups: ['Bus', 'Trigger'], intent: 'bus', subject: 'i2c' },
   { pattern: /\bspi\b/i, groups: ['Bus', 'Trigger'], intent: 'bus', subject: 'spi' },
   { pattern: /\b(can\s*fd|canfd)\b/i, groups: ['Bus', 'Trigger'], intent: 'bus', subject: 'can_fd' },
   { pattern: /\b(can\s*bus|can\s*decode|can\s*trigger|can\s*2\.0|can\s*protocol)\b/i, groups: ['Bus', 'Trigger'], intent: 'bus', subject: 'can' },
   { pattern: /\blin\b/i, groups: ['Bus', 'Trigger'], intent: 'bus', subject: 'lin' },
+  // RS232 stop bits — BEFORE generic serial/RS232 catchall
+  { pattern: /\b(stop\s*bits?|rs.?232.*stop|serial.*stop\s*bits?)\b/i, groups: ['Bus'], intent: 'bus', subject: 'rs232_stop' },
   { pattern: /\b(uart|rs232|rs422|rs485|serial)\b/i, groups: ['Bus', 'Trigger'], intent: 'bus', subject: 'serial' },
   { pattern: /\b(flexray|flex\s*ray)\b/i, groups: ['Bus', 'Trigger'], intent: 'bus', subject: 'flexray' },
   { pattern: /\b(ethernet|eth|100base|1000base)\b/i, groups: ['Bus', 'Trigger'], intent: 'bus', subject: 'ethernet' },
@@ -235,11 +267,17 @@ const SUBJECT_GROUP_MAP: Array<{
 
   // ── Measurement types (specific before generic) ──
   { pattern: /\b(eye\s*diagram|eye\s*pattern|eye)\b/i, groups: ['Measurement'], intent: 'measurement', subject: 'eye' },
+  // clock recovery method — BEFORE generic jitter/measurement
+  { pattern: /\b(clock\s*recovery|clockrecovery)\b/i, groups: ['Measurement'], intent: 'measurement', subject: 'clock_recovery' },
+  { pattern: /\bjitter\b.*\b(clock\s*recovery|recovery\s*method)\b/i, groups: ['Measurement'], intent: 'measurement', subject: 'clock_recovery' },
   { pattern: /\b(jitter|tj|rj|dj|pj)\b/i, groups: ['Measurement'], intent: 'measurement', subject: 'jitter' },
   { pattern: /\b(rise\s*time|risetime)\b/i, groups: ['Measurement'], intent: 'measurement', subject: 'rise_time' },
   { pattern: /\b(fall\s*time|falltime)\b/i, groups: ['Measurement'], intent: 'measurement', subject: 'fall_time' },
   { pattern: /\b(duty\s*cycle|duty)\b/i, groups: ['Measurement'], intent: 'measurement', subject: 'duty_cycle' },
   { pattern: /\b(overshoot|preshoot|undershoot)\b/i, groups: ['Measurement'], intent: 'measurement', subject: 'overshoot' },
+  // delay between waveform edges → MEASUrement:MEAS<x>:DELay (BEFORE generic skew/delay)
+  { pattern: /\bdelay\b.*\b(between|edges?|waveform|two)\b/i, groups: ['Measurement'], intent: 'measurement', subject: 'delay_measurement' },
+  { pattern: /\b(between|edges?|two\s*waveforms?)\b.*\bdelay\b/i, groups: ['Measurement'], intent: 'measurement', subject: 'delay_measurement' },
   { pattern: /\b(skew|delay)\b/i, groups: ['Measurement'], intent: 'measurement', subject: 'skew' },
   { pattern: /\b(pk2pk|peak.to.peak|pkpk|vpp|peak\s*to\s*peak)\b/i, groups: ['Measurement'], intent: 'measurement', subject: 'pk2pk' },
   { pattern: /\b(frequency|freq)\b/i, groups: ['Measurement'], intent: 'measurement', subject: 'frequency' },
@@ -247,12 +285,22 @@ const SUBJECT_GROUP_MAP: Array<{
   { pattern: /\b(amplitude|amp)\b/i, groups: ['Measurement'], intent: 'measurement', subject: 'amplitude' },
   { pattern: /\b(rms|vrms)\b/i, groups: ['Measurement'], intent: 'measurement', subject: 'rms' },
   { pattern: /\b(mean|average|avg)\b/i, groups: ['Measurement', 'Acquisition'], intent: 'measurement', subject: 'mean' },
+  // "burst mode output" without "awg" explicit — still an AWG pattern if "output" or "source" present
+  { pattern: /\bburst\s*mode\b.*\b(output|source|ch\s*\d)\b/i, groups: ['AWG'], intent: 'awg', subject: 'awg_burst' },
+  { pattern: /\b(enable|configure)\b.*\bburst\b.*\b(mode|output)\b/i, groups: ['AWG'], intent: 'awg', subject: 'awg_burst' },
   { pattern: /\b(burst)\b/i, groups: ['Measurement'], intent: 'measurement', subject: 'burst' },
   { pattern: /\b(area|cycle\s*area)\b/i, groups: ['Measurement'], intent: 'measurement', subject: 'area' },
   { pattern: /\b(phase)\b/i, groups: ['Measurement'], intent: 'measurement', subject: 'phase' },
   { pattern: /\b(result|results\s*table|detailed\s*results|statistics)\b/i, groups: ['Measurement'], intent: 'measurement', subject: 'results' },
 
   // ── Specific measurement actions — MUST come before generic "measurement" catchall ──
+  // delete/remove a specific measurement → MEASUrement:DELETE
+  { pattern: /\b(delete|remove)\b.*\b(measurement|meas)\b/i, groups: ['Measurement'], intent: 'measurement', subject: 'meas_delete' },
+  { pattern: /\b(measurement|meas)\b.*\b(delete|remove)\b/i, groups: ['Measurement'], intent: 'measurement', subject: 'meas_delete' },
+  // measurement statistics enable — BEFORE generic statistics
+  { pattern: /\b(measurement\s*statistics|statistics\s*(collection|enable)|enable\s*statistics)\b/i, groups: ['Measurement'], intent: 'measurement', subject: 'meas_statistics' },
+  // measurement results table → MEASTABle:ADDNew
+  { pattern: /\b(measurement\s*results\s*table|add\s*.*\bmeasurement.*table|results?\s*table|meastable)\b/i, groups: ['Measurement'], intent: 'measurement', subject: 'meastable_add' },
   { pattern: /\b(clear\s*measurements|clear\s*meas|reset\s*measurements|delete\s*measurements)\b/i, groups: ['Measurement'], intent: 'measurement', subject: 'clear_measurements' },
   { pattern: /\b(add\s*measurement\s*table|measurement\s*table|results\s*table|meas\s*table)\b/i, groups: ['Measurement'], intent: 'measurement', subject: 'measurement_table' },
   { pattern: /\b(custom\s*table|add\s*table|new\s*table)\b/i, groups: ['Measurement'], intent: 'measurement', subject: 'custom_table' },
@@ -278,7 +326,12 @@ const SUBJECT_GROUP_MAP: Array<{
   { pattern: /\b(delete\s*math\s*channel|remove\s*math\s*channel|clear\s*math\s*channel)\b/i, groups: ['Math'], intent: 'math', subject: 'delete_math_channel' },
   { pattern: /\b(add\s*math|create\s*math|new\s*math\s*expression|math\s*add)\b/i, groups: ['Math'], intent: 'math', subject: 'add_math' },
   { pattern: /\b(delete\s*math|remove\s*math|clear\s*math|math\s*delete)\b/i, groups: ['Math'], intent: 'math', subject: 'delete_math' },
+  // math source with channel — BEFORE generic waveform_data_source (avoids "source channel" stealing math)
+  { pattern: /\bmath\b.*\b(source|input|ch\s*\d|channel)\b/i, groups: ['Math'], intent: 'math', subject: 'math_source' },
+  { pattern: /\b(source|input)\b.*\bmath\b.*\b(operation|channel|waveform)\b/i, groups: ['Math'], intent: 'math', subject: 'math_source' },
   { pattern: /\b(math\s*source|math\s*input|math\s*sourcing)\b/i, groups: ['Math'], intent: 'math', subject: 'math_source' },
+  // math type / operation type (BEFORE generic math catchall)
+  { pattern: /\b(math\s*(waveform\s*)?(operation\s*type|type|operation)|set\s*math.*type|math.*operation\s*type)\b/i, groups: ['Math'], intent: 'math', subject: 'math_type' },
   { pattern: /\b(math\s*expression|math\s*formula|math\s*definition)\b/i, groups: ['Math'], intent: 'math', subject: 'math_expression' },
   { pattern: /\b(spectrum\s*view|fft\s*view|frequency\s*analysis|spectral)\b/i, groups: ['Math', 'Spectrum view'], intent: 'math', subject: 'spectrum_view' },
   // Generic math catchall — AFTER specific patterns
@@ -325,6 +378,8 @@ const SUBJECT_GROUP_MAP: Array<{
   { pattern: /\b(select\s*channel|channel\s*select)\b/i, groups: ['Vertical'], intent: 'vertical', subject: 'select_channel' },
   { pattern: /\b(invert\s*channel|channel\s*invert)\b/i, groups: ['Vertical'], intent: 'vertical', subject: 'invert_channel' },
   { pattern: /\b(probe\s*compensation|probe\s*comp)\b/i, groups: ['Vertical'], intent: 'vertical', subject: 'probe_comp' },
+  // probe attenuation setting on a channel → CH<x>:PRObe:SET (before generic probe_atten)
+  { pattern: /\b(probe\s*attenuation\s*setting|configure.*probe.*attenuation|probe.*setting|channel.*probe.*attenuation)\b/i, groups: ['Vertical'], intent: 'vertical', subject: 'probe_set' },
   { pattern: /\b(probe\s*attenuation|probe\s*atten)\b/i, groups: ['Vertical'], intent: 'vertical', subject: 'probe_atten' },
   { pattern: /\b(vernier|fine\s*scale)\b/i, groups: ['Vertical'], intent: 'vertical', subject: 'vernier' },
 
@@ -332,10 +387,20 @@ const SUBJECT_GROUP_MAP: Array<{
   // "edge trigger level" must match trigger_level, not edge
   { pattern: /\bedge\s*trigger\s*level\b/i, groups: ['Trigger'], intent: 'trigger', subject: 'trigger_level' },
   { pattern: /\btrigger\s*edge\s*level\b/i, groups: ['Trigger'], intent: 'trigger', subject: 'trigger_level' },
-  { pattern: /\b(trigger\s*level|level\s*trigger)\b/i, groups: ['Trigger'], intent: 'trigger', subject: 'trigger_level' },
+  { pattern: /\b(trigger\s*(level|threshold)|level\s*trigger)\b.*\b(ch\s*\d|channel\s*\d)\b/i, groups: ['Trigger'], intent: 'trigger', subject: 'trigger_level' },
+  { pattern: /\b(ch\s*\d|channel\s*\d)\b.*\b(trigger\s*(level|threshold))\b/i, groups: ['Trigger'], intent: 'trigger', subject: 'trigger_level' },
+  { pattern: /\b(trigger\s*(level|threshold)|level\s*trigger)\b/i, groups: ['Trigger'], intent: 'trigger', subject: 'trigger_level' },
+  // AWG + sequence trigger slope must come BEFORE generic trigger_slope to avoid routing to scope
+  { pattern: /\b(awg|sequence)\b.*\b(trigger\s*slope|slope\s*trigger)\b/i, groups: ['AWG'], intent: 'awg', subject: 'awg_seq_trigger' },
+  { pattern: /\b(trigger\s*slope|slope\s*trigger)\b.*\b(awg|sequence)\b/i, groups: ['AWG'], intent: 'awg', subject: 'awg_seq_trigger' },
   { pattern: /\b(trigger\s*slope|slope\s*trigger)\b/i, groups: ['Trigger'], intent: 'trigger', subject: 'trigger_slope' },
   { pattern: /\b(trigger\s*holdoff|holdoff\s*trigger)\b/i, groups: ['Trigger'], intent: 'trigger', subject: 'trigger_holdoff' },
   { pattern: /\b(trigger\s*mode|mode\s*trigger)\b/i, groups: ['Trigger'], intent: 'trigger', subject: 'trigger_mode' },
+  // trigger + frequency compound (before generic frequency → measurement)
+  { pattern: /\btrigger\b.*\bfreq(uency)?\b/i, groups: ['Trigger'], intent: 'trigger', subject: 'trigger_frequency' },
+  { pattern: /\bfreq(uency)?\b.*\btrigger\b/i, groups: ['Trigger'], intent: 'trigger', subject: 'trigger_frequency' },
+  // force trigger (before generic trigger catchall)
+  { pattern: /\b(force\s*trigger|trigger\s*force|force\s*trig)\b/i, groups: ['Trigger'], intent: 'trigger', subject: 'trigger_force' },
   // Standard trigger types
   { pattern: /\b(edge\s*trigger|trigger\s*edge|set\s*trigger\s*to\s*edge)\b/i, groups: ['Trigger'], intent: 'trigger', subject: 'edge' },
   { pattern: /\btrigger\b.*\b(rising|falling)\b/i, groups: ['Trigger'], intent: 'trigger', subject: 'edge' },
@@ -355,16 +420,24 @@ const SUBJECT_GROUP_MAP: Array<{
   { pattern: /\b(record\s*length|record|rlength)\b/i, groups: ['Horizontal'], intent: 'acquisition', subject: 'record_length' },
   { pattern: /\b(single\s*seq|single\s*shot|single)\b/i, groups: ['Acquisition'], intent: 'acquisition', subject: 'single' },
   { pattern: /\b(continuous\s*run|run\s*continuous|back\s*to\s*continuous|run\s*mode\s*continuous)\b/i, groups: ['Acquisition'], intent: 'acquisition', subject: 'continuous_run' },
-  { pattern: /\b(run|stop|acquire|acquisition)\b/i, groups: ['Acquisition'], intent: 'acquisition', subject: 'acquisition' },
+  // fastframe MUST come before generic acquisition "run|stop|acquire|acquisition"
   // fastframe+timestamp must match fastframe_timestamps before generic fastframe
   { pattern: /\b(fastframe|fast\s*frame)\b.*\btimestamps?\b/i, groups: ['Horizontal'], intent: 'acquisition', subject: 'fastframe_timestamps' },
   { pattern: /\btimestamps?\b.*\b(fastframe|fast\s*frame)\b/i, groups: ['Horizontal'], intent: 'acquisition', subject: 'fastframe_timestamps' },
   { pattern: /\b(fastframe|fast\s*frame|fast.frame|enable\s*fastframe|fastframe\s*mode|fast\s*acq)\b/i, groups: ['Horizontal'], intent: 'acquisition', subject: 'fastframe' },
+  // acquisition mode compound — BEFORE generic "acquisition" catchall
+  { pattern: /\b(acquisition\s*mode|acq\s*mode|acq.*mode|mode.*acq(uisition)?)\b/i, groups: ['Acquisition'], intent: 'acquisition', subject: 'acq_mode' },
+  // numavg / waveform averaging count — BEFORE generic "acquisition" catchall
+  { pattern: /\b(num\s*avg|numavg|number\s*of\s*(averages?|waveforms?\s*to\s*average)|waveforms?\s*to\s*average|averaging.*noise|noise.*reduction.*average)\b/i, groups: ['Acquisition'], intent: 'acquisition', subject: 'numavg' },
+  { pattern: /\b(run|stop|acquire|acquisition)\b/i, groups: ['Acquisition'], intent: 'acquisition', subject: 'acquisition' },
   { pattern: /\b(numavg|num\s*avg|averaging)\b/i, groups: ['Acquisition'], intent: 'acquisition', subject: 'averaging' },
 
   // ── Horizontal / Timebase ──
   // Compound patterns MUST come before general "horizontal" pattern
   { pattern: /\b(horizontal\s*scale|time\s*scale|timebase\s*scale|set\s*timebase)\b/i, groups: ['Horizontal'], intent: 'horizontal', subject: 'horizontal_scale' },
+  // shift waveform left/right → HORizontal:POSition
+  { pattern: /\b(shift|move|pan)\b.*(waveform|trace|signal).*(left|right)\b/i, groups: ['Horizontal'], intent: 'horizontal', subject: 'horizontal_position' },
+  { pattern: /\b(waveform|trace|signal).*(left|right|shift)\b/i, groups: ['Horizontal'], intent: 'horizontal', subject: 'horizontal_position' },
   { pattern: /\b(horizontal\s*position|time\s*position|delay|time\s*delay)\b/i, groups: ['Horizontal'], intent: 'horizontal', subject: 'horizontal_position' },
   { pattern: /\b(horizontal\s*offset)\b/i, groups: ['Horizontal'], intent: 'horizontal', subject: 'horizontal_offset' },
   { pattern: /\b(horizontal\s*delay)\b/i, groups: ['Horizontal'], intent: 'horizontal', subject: 'horizontal_delay' },
@@ -373,6 +446,13 @@ const SUBJECT_GROUP_MAP: Array<{
   // General patterns (after specific ones)
   { pattern: /\b(timebase|time\s*base|time\s*per\s*div|horizontal)\b/i, groups: ['Horizontal'], intent: 'horizontal', subject: 'timebase' },
   { pattern: /\b(zoom|magnify)\b/i, groups: ['Zoom'], intent: 'horizontal', subject: 'zoom' },
+
+  // ── Display style / view style (before generic display) ──
+  { pattern: /\b(stacked|overlay)\b.*\b(view|display|style)\b/i, groups: ['Display'], intent: 'display', subject: 'view_style' },
+  { pattern: /\b(view\s*style|display\s*style|switch.*view|overlay.*stacked|stacked.*overlay)\b/i, groups: ['Display'], intent: 'display', subject: 'view_style' },
+  // Waveform display style: dots vs vectors
+  { pattern: /\b(dots?|vectors?|draw.*dots?|draw.*vectors?|individual.*dots?|dots?.*vectors?)\b.*\b(waveform|display|style)\b/i, groups: ['Display'], intent: 'display', subject: 'display_style' },
+  { pattern: /\b(waveform|display)\b.*(dots?|vectors?|draw.*style)\b/i, groups: ['Display'], intent: 'display', subject: 'display_style' },
 
   // ── Specific Horizontal Commands (nested) ──
   { pattern: /\b(record\s*length|memory\s*depth|acquisition\s*depth|recordlength)\b/i, groups: ['Horizontal'], intent: 'horizontal', subject: 'record_length' },
@@ -430,7 +510,12 @@ const SUBJECT_GROUP_MAP: Array<{
   // ── Save / Recall ──
   { pattern: /\b(recall\s*waveform|reference\s*waveform\s*recall|recall\s*ref|load\s*waveform|load\s*reference)\b/i, groups: ['Save and Recall'], intent: 'save', subject: 'recall_waveform' },
   { pattern: /\b(recall\s*setup|load\s*setup|setup\s*recall|load\s*.*\.tss|recall\s*.*\.tss|load\s*.*\.set)\b/i, groups: ['Save and Recall', 'File System'], intent: 'save', subject: 'recall_setup' },
+  // "load ... setup file" with words in between → recall_setup
+  { pattern: /\b(load|restore)\b.*\b(setup|instrument\s*setup|saved.*setup)\b/i, groups: ['Save and Recall', 'File System'], intent: 'save', subject: 'recall_setup' },
   { pattern: /\b(save\s*setup|store\s*setup|setup\s*save)\b/i, groups: ['Save and Recall'], intent: 'save', subject: 'save_setup' },
+  // "save ... setup" with words in between → save_setup
+  { pattern: /\bsave\b.*\bsetup\b/i, groups: ['Save and Recall'], intent: 'save', subject: 'save_setup' },
+  { pattern: /\bsetup\b.*\bsave\b/i, groups: ['Save and Recall'], intent: 'save', subject: 'save_setup' },
   { pattern: /\b(screenshot|screen\s*capture|save\s*image|print)\b/i, groups: ['Save and Recall'], intent: 'save', subject: 'screenshot' },
   { pattern: /\b(save|recall|session|store|export|load)\b/i, groups: ['Save and Recall', 'File System'], intent: 'save', subject: 'save' },
 
@@ -443,10 +528,20 @@ const SUBJECT_GROUP_MAP: Array<{
   { pattern: /\b(recall\s*setup|load\s*setup|setup\s*recall)\b/i, groups: ['Save and Recall'], intent: 'save', subject: 'recall_setup' },
   { pattern: /\b(save\s*image|save\s*screenshot|capture\s*screen)\b/i, groups: ['Save and Recall'], intent: 'save', subject: 'save_image' },
   { pattern: /\b(csv|export\s*csv|save\s*csv|data\s*export)\b/i, groups: ['Save and Recall'], intent: 'save', subject: 'export_csv' },
+  // save session (all settings + waveforms) — BEFORE generic save
+  { pattern: /\b(save\s*session|session\s*save|save.*all.*settings.*waveforms?|save.*session.*waveforms?)\b/i, groups: ['Save and Recall'], intent: 'save', subject: 'save_session' },
+  // waveform file format — BEFORE generic file_format (SAVe:WAVEform:FILEFormat not SAVEON)
+  { pattern: /\b(waveform\s*file\s*format|file\s*format.*saving\s*waveform|save.*waveform.*file\s*format|waveform.*format.*disk)\b/i, groups: ['Save and Recall'], intent: 'save', subject: 'save_waveform_format' },
   { pattern: /\b(file\s*format|image\s*format|waveform\s*format)\b/i, groups: ['Save and Recall'], intent: 'save', subject: 'file_format' },
   { pattern: /\b(filename|file\s*name|save\s*as)\b/i, groups: ['Save and Recall'], intent: 'save', subject: 'filename' },
 
   // ── Search and Mark ──
+  // add new search — BEFORE generic search
+  { pattern: /\b(add|new|create)\b.*\bsearch\b(?!.*\bi2c\b)(?!.*\bcan\b)/i, groups: ['Search and Mark'], intent: 'search', subject: 'search_add' },
+  { pattern: /\bnew\s*search\s*mark\b/i, groups: ['Search and Mark'], intent: 'search', subject: 'search_add' },
+  // I2C search address type — BEFORE generic i2c/search
+  { pattern: /\b(i2c)\b.*\b(address\s*type|addr\s*type)\b.*\b(search|find)\b/i, groups: ['Search and Mark'], intent: 'search', subject: 'search_i2c_addr' },
+  { pattern: /\b(search|configure\s*search)\b.*\bi2c\b.*\baddress\b/i, groups: ['Search and Mark'], intent: 'search', subject: 'search_i2c_addr' },
   { pattern: /\b(search|mark|find\s*packet|error\s*frame)\b/i, groups: ['Search and Mark'], intent: 'search', subject: 'search' },
 
   // ── Mask ──
@@ -479,7 +574,11 @@ const SUBJECT_GROUP_MAP: Array<{
   { pattern: /\b(autoset|preset)\b/i, groups: ['Miscellaneous'], intent: 'misc', subject: 'autoset' },
   { pattern: /\b(factory\s*reset|factory\s*default)\b/i, groups: ['Save and Recall', 'Miscellaneous'], intent: 'misc', subject: 'factory' },
   { pattern: /\b(reset|\*rst)\b/i, groups: ['Miscellaneous', 'Status and Error'], intent: 'misc', subject: 'reset' },
+  // *IDN? natural language — instrument model and serial identification
+  { pattern: /\b(identify\s*the\s*instrument|instrument\s*model|instrument\s*serial|model\s*and\s*serial|serial\s*number.*model)\b/i, groups: ['PI Only', 'Miscellaneous'], intent: 'ieee488', subject: 'idn' },
   { pattern: /\b(idn|\*idn|identify)\b/i, groups: ['Miscellaneous', 'Status and Error'], intent: 'misc', subject: 'identify' },
+  // VERBose / long-form SCPI headers
+  { pattern: /\b(verbose|long.form\s*(header|scpi)|scpi\s*(header|long)|turn\s*off\s*verbose)\b/i, groups: ['PI Only', 'Miscellaneous'], intent: 'ieee488', subject: 'verbose_header' },
 
   // ── Calibration ──
   { pattern: /\b(cal|\*cal|calibrat|spc|signal\s*path)\b/i, groups: ['Calibration'], intent: 'calibration', subject: 'calibration' },
