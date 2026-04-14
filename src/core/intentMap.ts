@@ -357,8 +357,8 @@ const SUBJECT_GROUP_MAP: Array<{
   { pattern: /\b(continuous\s*run|run\s*continuous|back\s*to\s*continuous|run\s*mode\s*continuous)\b/i, groups: ['Acquisition'], intent: 'acquisition', subject: 'continuous_run' },
   { pattern: /\b(run|stop|acquire|acquisition)\b/i, groups: ['Acquisition'], intent: 'acquisition', subject: 'acquisition' },
   // fastframe+timestamp must match fastframe_timestamps before generic fastframe
-  { pattern: /\b(fastframe|fast\s*frame)\b.*\btimestamp\b/i, groups: ['Horizontal'], intent: 'acquisition', subject: 'fastframe_timestamps' },
-  { pattern: /\btimestamp\b.*\b(fastframe|fast\s*frame)\b/i, groups: ['Horizontal'], intent: 'acquisition', subject: 'fastframe_timestamps' },
+  { pattern: /\b(fastframe|fast\s*frame)\b.*\btimestamps?\b/i, groups: ['Horizontal'], intent: 'acquisition', subject: 'fastframe_timestamps' },
+  { pattern: /\btimestamps?\b.*\b(fastframe|fast\s*frame)\b/i, groups: ['Horizontal'], intent: 'acquisition', subject: 'fastframe_timestamps' },
   { pattern: /\b(fastframe|fast\s*frame|fast.frame|enable\s*fastframe|fastframe\s*mode|fast\s*acq)\b/i, groups: ['Horizontal'], intent: 'acquisition', subject: 'fastframe' },
   { pattern: /\b(numavg|num\s*avg|averaging)\b/i, groups: ['Acquisition'], intent: 'acquisition', subject: 'averaging' },
 
