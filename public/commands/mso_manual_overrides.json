@@ -2891,12 +2891,14 @@
       "ADDNew",
       "ADD",
       "BUS",
-      "NEW"
+      "NEW",
+      "SEARCH",
+      "CREATE"
     ],
     "commandType": "set",
     "group": "Search",
-    "shortDescription": "Adds a new bus search or edge search on the oscilloscope.",
-    "description": "Adds a new search to the oscilloscope. Use SEARch:ADDNew to create a bus search (I2C, SPI, CAN, UART, USB bus protocol searches), edge searches, pulse width searches, runt searches, timeout searches. After adding with SEARch:ADDNew, configure search parameters using SEARCH:SEARCH1:TRIGger:A:BUS commands."
+    "shortDescription": "Adds a new bus or edge search on the oscilloscope.",
+    "description": "Adds a new search definition to the oscilloscope. Use SEARch:ADDNew to add a bus search for I2C, SPI, CAN, UART, USB bus protocol searches, or to add an edge search, pulse width search, runt search, or timeout search. After adding, configure with SEARCH:SEARCH1:TRIGger:A commands. Use 'add bus search' or 'add new search' to invoke this command."
   },
   {
     "command": "DISplay:WAVEView1:CH1:STATE",
@@ -2919,12 +2921,14 @@
       "MEASUrement",
       "ADDMEAS",
       "ADD",
-      "JITTER"
+      "MEASUREMENT",
+      "CREATE",
+      "NEW"
     ],
     "commandType": "set",
     "group": "Measurement",
-    "shortDescription": "Adds a new automated measurement (jitter, frequency, rise time, eye diagram, etc.).",
-    "description": "Adds a new automated measurement to the oscilloscope. Use this command to add jitter measurements (TIE, DDJ, RJ, DJ, PJ), frequency, period, rise time, fall time, eye diagram, amplitude, phase measurements. MEASUrement:ADDMEAS TYPE, TIE adds time interval error jitter measurement."
+    "shortDescription": "Adds a new automated measurement to the oscilloscope (rise time, frequency, TIE, eye, etc.).",
+    "description": "Adds a new automated measurement slot to the oscilloscope measurement list. MEASUrement:ADDMEAS TYPE, TIE adds time interval error measurement. Use this command to add measurements: frequency, period, rise time, fall time, pulse width, eye diagram, phase, amplitude. For jitter analysis: use MEASUrement:ADDMEAS to add a TIE (jitter) or JITTer measurement. This is the command to 'add a measurement' or 'create a measurement'."
   },
   {
     "command": "BUS:B1:TYPe",
@@ -2938,12 +2942,13 @@
       "I2C",
       "SPI",
       "CAN",
-      "UART"
+      "UART",
+      "SERIAL"
     ],
     "commandType": "both",
     "group": "Bus",
-    "shortDescription": "Sets the bus protocol type (I2C, SPI, CAN, UART/RS232C, USB, LIN, etc.).",
-    "description": "Sets or queries the bus protocol type for the specified bus. Options include: I2C, SPI, CAN, RS232C (UART), USB, LIN, FLEXRAY, ARINC429, S8B10B, PCIE, MIPI, ETHERNET, DPHY, CPHY, EUSB, SVID. Use BUS:B1:TYPe I2C to configure bus 1 as an I2C bus. Must be set before configuring bus parameters like clock source or data source."
+    "shortDescription": "Sets the serial bus protocol type (I2C, SPI, CAN, UART, USB, etc.) for bus decoding.",
+    "description": "Sets or queries the bus protocol type for the specified bus B<x>. Use BUS:B1:TYPe I2C to configure bus 1 as an I2C bus. Available protocol types: I2C, SPI, CAN, RS232C (UART/serial), USB, LIN, FLEXRAY, ARINC429, S8B10B, PCIE, MIPI, ETHERNET, DPHY, CPHY, EUSB, SVID. This command must be set before configuring bus parameters. Setting the bus type is the first step in serial bus decoding setup."
   },
   {
     "command": "ALLEv?",
@@ -3059,12 +3064,16 @@
     "mnemonics": [
       "CLS",
       "*CLS",
-      "CLEAR"
+      "CLEAR",
+      "STATUS",
+      "EVENT",
+      "QUEUE",
+      "ERROR"
     ],
     "commandType": "set",
     "group": "IEEE Common",
-    "shortDescription": "Clears the instrument status registers and event queue.",
-    "description": "Clears the status byte register, standard event register, and the event queue. Use *CLS to clear the instrument status and reset any pending error conditions. This should be called before starting a new test sequence."
+    "shortDescription": "Clears all status registers and the event/error queue (does not reset settings).",
+    "description": "Clears the status byte register, standard event register, and event queue. *CLS clears all pending events and status bits without resetting instrument settings. Unlike *RST which resets instrument configuration, *CLS only clears the status and error queue. Use *CLS before a test sequence to clear any previous errors."
   },
   {
     "command": "MEASUrement:MEAS1:SOURCE",
