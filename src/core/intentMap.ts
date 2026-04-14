@@ -301,6 +301,9 @@ const SUBJECT_GROUP_MAP: Array<{
   { pattern: /\b(ch\s*\d|channel\s*\d)\s*termination\b/i, groups: ['Vertical'], intent: 'vertical', subject: 'termination' },
   { pattern: /\b(ch\s*\d|channel\s*\d)\s*coupling\b/i, groups: ['Vertical'], intent: 'vertical', subject: 'coupling' },
   { pattern: /\bscale\b.*\b(ch\s*\d|channel\s*\d)\b/i, groups: ['Vertical'], intent: 'vertical', subject: 'channel_scale' },
+  // "trigger level on channel N" — must match trigger_level BEFORE the generic channel pattern
+  { pattern: /\btrigger\s*level\b.*\b(ch\s*\d|channel\s*\d)\b/i, groups: ['Trigger'], intent: 'trigger', subject: 'trigger_level' },
+  { pattern: /\b(ch\s*\d|channel\s*\d)\b.*\btrigger\s*level\b/i, groups: ['Trigger'], intent: 'trigger', subject: 'trigger_level' },
   { pattern: /\b(ch\d|channel\s*\d)\b/i, groups: ['Vertical'], intent: 'vertical', subject: 'channel' },
   { pattern: /\b(probe|attenuation|atten)\b/i, groups: ['Vertical'], intent: 'vertical', subject: 'probe' },
   { pattern: /\b(bandwidth|bw)\b/i, groups: ['Vertical'], intent: 'vertical', subject: 'bandwidth' },
