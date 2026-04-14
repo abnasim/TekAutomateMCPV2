@@ -773,8 +773,20 @@ export class CommandIndex {
       const descWords = (entry.description || '').toLowerCase().replace(/[^a-z]/g, ' ').split(/\s+/).filter(w => w.length > 3);
       const uniqueDescWords = descWords.filter(w => !commonWords.has(w)).slice(0, 12).join(' ');
 
+      // Extract SCPI abbreviations from mixed-case mnemonics (e.g. MEASUrement → measu, TRIGger → trig).
+      // This allows BM25 to match abbreviated queries like "meas", "trig", "acq", "freq".
+      // The SCPI convention: capital letters = minimum abbreviation, lowercase = optional extension.
+      const scpiAbbrevTokens = entry.header
+        .split(/[:\s<>{}()\[\]|,?]+/)
+        .flatMap(tok => {
+          const m = tok.match(/^([A-Z]{2,})[a-z]/);  // e.g. MEASUrement, TRIGger, FREQuency
+          return m ? [m[1].toLowerCase()] : [];         // → measu, trig, freq
+        })
+        .join(' ');
+
       return [
         entry.header,
+        scpiAbbrevTokens,       // SCPI abbreviations for mnemonic queries (meas, trig, freq, etc.)
         entry.shortDescription,
         entry.shortDescription, // weight semantic intent heavier in BM25 ranking
         GROUP_DESCRIPTIONS[entry.group] || '',
