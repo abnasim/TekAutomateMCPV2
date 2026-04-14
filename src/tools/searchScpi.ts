@@ -1,5 +1,5 @@
-import { getCommandIndex, type CommandType, type CommandRecord } from '../core/commandIndex';
-import { classifyIntent } from '../core/intentMap';
+import { getCommandIndex, type CommandType, type CommandRecord, type CommandIndex } from '../core/commandIndex';
+import { classifyIntent, type IntentResult } from '../core/intentMap';
 import { buildMeasurementSearchPlan } from '../core/measurementCatalog';
 import type { ToolResult } from '../core/schemas';
 import { serializeCommandResult, serializeCommandSearchResult } from './commandResultShape';
@@ -1045,6 +1045,87 @@ function reRankWithIntent(
   return scored.map(s => s.cmd);
 }
 
+/**
+ * Sibling command expansion.
+ *
+ * For each of the top BM25 results, compute the parent prefix (all tokens
+ * except the last), then fetch all index entries whose header starts with
+ * that prefix. This expands the candidate pool with related sub-commands
+ * so reRankWithIntent() can surface the most relevant sibling.
+ *
+ * Only active for bus / trigger / search intents, and only when the prefix
+ * is at least 3 tokens deep (avoids over-broad expansion on short prefixes).
+ */
+function expandSiblings(
+  results: CommandRecord[],
+  index: CommandIndex,
+  modelFamily: string | undefined,
+  intent: IntentResult,
+): CommandRecord[] {
+  const GATED_INTENTS = new Set(['bus', 'trigger', 'search']);
+  if (!GATED_INTENTS.has(intent.intent)) return results;
+
+  // Dedup key used throughout the pipeline (mirrors the dedup logic at line ~1735)
+  const dedupKey = (cmd: CommandRecord): string =>
+    cmd.header.toLowerCase().replace(/[\s?]/g, '').replace(/<[^>]+>/g, '<x>');
+
+  // Seed the pool with existing results (already deduped upstream, but be safe)
+  const pool: CommandRecord[] = [...results];
+  const seen = new Set<string>(pool.map(dedupKey));
+
+  // Compute a normalised prefix key from a raw header string.
+  // Split on ":" and strip {} placeholders and angle-bracket placeholders,
+  // then uppercase — this lets us compare regardless of case/placeholder style.
+  const normToken = (t: string): string =>
+    t.replace(/\{[^}]*\}/g, '').replace(/<[^>]*>/g, '').replace(/[^A-Za-z0-9_*]/g, '').toUpperCase();
+
+  const normPrefixKey = (header: string): string => {
+    const tokens = header
+      .replace(/\?$/, '')
+      .replace(/,/g, ' ')
+      .split(/[:\s]+/)
+      .map(t => t.trim())
+      .filter(Boolean);
+    return tokens.map(normToken).filter(Boolean).join(':');
+  };
+
+  // Get all entries for this family once — used for prefix filtering
+  const allEntries = index.getEntries(modelFamily);
+
+  const top5 = results.slice(0, 5);
+  for (const cmd of top5) {
+    // Tokenise the header to find the parent prefix
+    const rawTokens = cmd.header
+      .replace(/\?$/, '')
+      .replace(/,/g, ' ')
+      .split(/[:\s]+/)
+      .map(t => t.trim())
+      .filter(Boolean);
+
+    if (rawTokens.length < 4) continue; // prefix must be >= 3 tokens (root + at least 2 more)
+
+    // Parent prefix = all tokens except the last
+    const prefixTokens = rawTokens.slice(0, -1);
+    const prefixNorm = prefixTokens.map(normToken).filter(Boolean).join(':');
+    if (!prefixNorm) continue;
+
+    let siblingCount = 0;
+    for (const entry of allEntries) {
+      if (siblingCount >= 10) break;
+      const entryPrefixNorm = normPrefixKey(entry.header);
+      // A sibling shares the same parent prefix but may be deeper or same depth
+      if (!entryPrefixNorm.startsWith(prefixNorm)) continue;
+      const key = dedupKey(entry);
+      if (seen.has(key)) continue;
+      seen.add(key);
+      pool.push(entry);
+      siblingCount++;
+    }
+  }
+
+  return pool;
+}
+
 export async function searchScpi(input: SearchScpiInput): Promise<ToolResult<unknown[]>> {
   const q = (input.query || '').trim();
   if (!q) {
@@ -1672,8 +1753,13 @@ export async function searchScpi(input: SearchScpiInput): Promise<ToolResult<unk
     merged.push(entry);
   }
 
+  // ── Sibling command expansion ──
+  // For bus / trigger / search intents, expand the top-5 BM25 results with
+  // their sibling sub-commands so reRankWithIntent() can pick the best one.
+  const expandedMerged = expandSiblings(merged, index, input.modelFamily, intent);
+
   // Re-rank using intent classification and group-aware scoring
-  let reRanked = reRankWithIntent(merged, q);
+  let reRanked = reRankWithIntent(expandedMerged, q);
 
   // For intents with injected headers, force them to the top.
   // BM25 scores can be so high that additive boosts can't overcome them.
