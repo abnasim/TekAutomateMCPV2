@@ -850,8 +850,14 @@ export class CommandIndex {
   }
   searchByQuery(query: string, family?: string, limit = 10, commandType?: CommandType, offset = 0): CommandRecord[] {
     const normalizedOffset = Math.max(0, offset || 0);
-    const scored = this.bm25.search(query, Math.max((normalizedOffset + limit) * 4, 25));
     const q = query.toLowerCase();
+    // For queries that need special reranking, use a larger candidate pool
+    // to ensure the target commands are included even if BM25 doesn't rank them high
+    const needsLargerPool = /(\bbus\b.*\btype\b|\btype\b.*\bbus\b)|(\badd\b.*\b(bus|measure)|\b(bus|measure).*\badd\b)/.test(q);
+    const candidateCount = needsLargerPool
+      ? Math.max((normalizedOffset + limit) * 10, 200)
+      : Math.max((normalizedOffset + limit) * 4, 25);
+    const scored = this.bm25.search(query, candidateCount);
     const wantsFastframeCount =
       q.includes('fastframe') && /(count|frames|frame|number)/.test(q);
     // Detect queries that want bus protocol type (not trigger/search bus sub-commands)
@@ -877,10 +883,10 @@ export class CommandIndex {
           const h = entry.header.toLowerCase();
           // Boost the bus type command strongly
           if (/^bus:b[^:]*:type$/.test(h)) bonus += 80;
-          // Penalize trigger/search bus sub-commands
-          if (/^trigger.*bus/.test(h) || /^search.*bus/.test(h)) bonus -= 20;
+          // Penalize trigger/search bus commands
+          if (/^trigger/.test(h) || /^search/.test(h)) bonus -= 25;
           // Penalize I2C/SPI/CAN/UART specific bus sub-commands (they're config, not type-setting)
-          if (/^bus:b[^:]*:(i2c|spi|can|rs232|usb|lin|arinc|flex)/.test(h)) bonus -= 20;
+          if (/^bus:b[^:]*:(i2c|spi|can|rs232|usb|lin|arinc|flex)/.test(h)) bonus -= 25;
         }
         if (wantsAddMeas || wantsJitterMeas) {
           const h = entry.header.toLowerCase();
