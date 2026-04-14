@@ -188,6 +188,8 @@ const SUBJECT_GROUP_MAP: Array<{
   // RBW mode auto/manual — before generic spectrum_view
   { pattern: /\b(rbw\s*mode|resolution\s*bandwidth\s*mode|auto.*rbw|manual.*rbw|rbw.*auto|rbw.*manual)\b/i, groups: ['Spectrum view'], intent: 'math', subject: 'spectrum_rbw_mode' },
   { pattern: /\bspectrum\b.*\b(rbw\s*mode|resolution\s*bandwidth\s*mode)\b/i, groups: ['Spectrum view'], intent: 'math', subject: 'spectrum_rbw_mode' },
+  // resolution bandwidth (without "mode") — for "set the resolution bandwidth" → spectrum_rbw_mode
+  { pattern: /\b(resolution\s*bandwidth|rbw)\b/i, groups: ['Spectrum view'], intent: 'math', subject: 'spectrum_rbw_mode' },
   { pattern: /\b(spectrum\s*view|spectral\s*view|spectrumview)\b/i, groups: ['Spectrum view'], intent: 'math', subject: 'spectrum_view' },
   { pattern: /\bSV:/i, groups: ['Spectrum view'], intent: 'math', subject: 'spectrum_view' },
   { pattern: /\b(peak\s*marker|marker.*peak|rf\s*peak|spectrum.*peak|peak.*spectrum)\b/i, groups: ['Spectrum view'], intent: 'math', subject: 'spectrum_peak_marker' },

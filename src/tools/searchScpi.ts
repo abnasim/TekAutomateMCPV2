@@ -1282,6 +1282,11 @@ export async function searchScpi(input: SearchScpiInput): Promise<ToolResult<unk
       'VISual:AREA<x>:HITType', 'VISual:AREA<x>:HEIGht', 'VISual:AREA<x>:VERTICES',
       'VISual:AREA<x>:RESET', 'VISual:AREA<x>:ROTAtion',
     ],
+    // ── N4-05: FFT window function ──
+    fft: [
+      'SV:WINDOW', 'CH<x>:SV:STATE', 'SV:SPAN', 'SV:RBW',
+    ],
+
     spectrum_view: [
       'CH<x>:SV:SPAN', 'SV:SPAN', 'CH<x>:SV:CENTERFrequency', 'SV:CENTERFrequency',
       'CH<x>:SV:STATE', 'SV:RBW', 'SV:WINDOW', 'SV:SPANRBWRatio',
