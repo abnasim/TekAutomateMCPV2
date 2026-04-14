@@ -10,9 +10,9 @@
  *   384× reduction, 99.7% token savings
  */
 
-import { fetchWaveformProxy, type WaveformParams } from '../core/instrumentProxy';
+import { buildWaveformCode, fetchWaveformProxy, type WaveformParams } from '../core/instrumentProxy';
 import type { ToolResult } from '../core/schemas';
-import { withRuntimeInstrumentDefaults } from './liveToolSupport';
+import { dispatchLiveActionThroughTekAutomate, shouldBridgeToTekAutomate, withRuntimeInstrumentDefaults } from './liveToolSupport';
 
 const VALID_FORMATS = new Set(['stats', 'csv', 'both']);
 const VALID_CHANNELS = /^(CH[1-4]|MATH[1-4]|REF[1-8]|D[0-9]|D1[0-5])$/i;
@@ -81,5 +81,63 @@ export async function fetchWaveform(input: FetchWaveformInput): Promise<ToolResu
   const timeoutMs  = Math.min(Math.max(Number(input.timeoutMs ?? 30000), 5000), 120000);
 
   const params: WaveformParams = { channel, format, downsample, width, start, stop, timeoutMs };
+
+  // ── Hosted mode: route through TekAutomate browser bridge ──
+  // In hosted/Railway mode the executor (192.168.x.x) is unreachable from the
+  // server. The bridge dispatcher passes toolName straight to the executor
+  // action — 'run_python' is already handled natively, so no frontend changes
+  // are needed.
+  if (shouldBridgeToTekAutomate(input)) {
+    const code = buildWaveformCode(merged.visaResource || '', params);
+    const timeoutBridge = timeoutMs + 20_000;
+    const bridged = await dispatchLiveActionThroughTekAutomate(
+      'run_python',
+      { code, scope_visa: merged.visaResource || '', timeout_sec: Math.ceil(timeoutMs / 1000) + 15 },
+      timeoutBridge,
+    );
+
+    if (!bridged.ok) {
+      return {
+        ok: false,
+        data: { error: 'BRIDGE_FAILED', message: bridged.error || 'TekAutomate bridge failed to run waveform fetch.' },
+        sourceMeta: [],
+        warnings: [bridged.error || 'Bridge error'],
+      };
+    }
+
+    // Executor returns { ok, stdout, stderr, result_data, ... }
+    // Our Python code prints JSON to stdout — find and parse it.
+    const payload = bridged.result && typeof bridged.result === 'object'
+      ? bridged.result as Record<string, unknown>
+      : {};
+    const stdout = typeof payload.stdout === 'string' ? payload.stdout : '';
+    const jsonLine = stdout.split(/\r?\n/).map(l => l.trim()).find(l => l.startsWith('{') && l.endsWith('}'));
+    if (!jsonLine) {
+      return {
+        ok: false,
+        data: { error: 'NO_WAVEFORM_OUTPUT', message: payload.error || payload.stderr || 'No waveform JSON in executor output', stdout: stdout.slice(0, 500) },
+        sourceMeta: [],
+        warnings: ['Waveform fetch produced no output via bridge'],
+      };
+    }
+    try {
+      const parsed = JSON.parse(jsonLine) as Record<string, unknown>;
+      return {
+        ok:         parsed.ok === true,
+        data:       parsed,
+        sourceMeta: [],
+        warnings:   parsed.ok ? [] : [String(parsed.error || 'Waveform fetch error')],
+      };
+    } catch {
+      return {
+        ok: false,
+        data: { error: 'PARSE_ERROR', raw: jsonLine.slice(0, 500) },
+        sourceMeta: [],
+        warnings: ['Could not parse waveform JSON from bridge'],
+      };
+    }
+  }
+
+  // ── Direct mode: executor is reachable (local mcp-server) ──
   return fetchWaveformProxy(merged as any, params);
 }

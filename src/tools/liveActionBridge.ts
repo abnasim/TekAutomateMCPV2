@@ -6,6 +6,7 @@ export type LiveActionToolName =
   | 'get_instrument_state'
   | 'get_visa_resources'
   | 'probe_command'
+  | 'run_python'
   | 'workflow_proposal'; // fire-and-forget — no browser result required
 
 export interface LiveActionRequest {

@@ -441,7 +441,7 @@ export interface WaveformParams {
   timeoutMs: number;
 }
 
-function buildWaveformCode(visa: string, p: WaveformParams): string {
+export function buildWaveformCode(visa: string, p: WaveformParams): string {
   // JSON.stringify produces a properly-escaped Python string literal for the VISA address.
   const visaLit = JSON.stringify(visa);
   const dtype = p.width === 2 ? 'h' : 'b';   // signed int16 or int8
