@@ -3267,5 +3267,131 @@
     "group": "Spectrum view",
     "shortDescription": "Set the resolution bandwidth for the spectrum view on a specific channel.",
     "description": "Sets or queries the resolution bandwidth (RBW) for the spectrum view on the specified channel. Related commands: SV:RBW, CH<x>:SV:RBWMode, SV:RBWMode."
+  },
+  {
+    "command": "TRIGger FORCe",
+    "header": "TRIGger:FORCe",
+    "mnemonics": ["TRIGger", "FORCe"],
+    "commandType": "set",
+    "group": "Trigger",
+    "shortDescription": "Force the oscilloscope to trigger immediately.",
+    "description": "Forces a trigger event to occur immediately. If TRIGger:STATE is set to READy, the acquisition will complete. Equivalent to pressing the Force button on the front panel.",
+    "instruments": {
+      "families": ["MSO2", "MSO4", "MSO5", "MSO6", "MSO7"],
+      "models": [],
+      "exclusions": []
+    },
+    "syntax": {
+      "set": "TRIGger FORCe"
+    }
+  },
+  {
+    "command": "TRIGger:FREQuency",
+    "header": "TRIGger:FREQuency",
+    "mnemonics": ["TRIGger", "FREQuency"],
+    "commandType": "query",
+    "group": "Trigger",
+    "shortDescription": "Returns the current trigger frequency in hertz.",
+    "description": "Returns the trigger frequency in hertz if available. If the trigger frequency is not currently available, the IEEE Not A Number (NaN = 99.10E+36) value is returned.",
+    "instruments": {
+      "families": ["MSO2", "MSO4", "MSO5", "MSO6", "MSO7"],
+      "models": [],
+      "exclusions": []
+    },
+    "syntax": {
+      "query": "TRIGger:FREQuency?"
+    }
+  },
+  {
+    "command": "BUS:B1:RS232C:STOPbits",
+    "header": "BUS:B<x>:RS232C:STOPbits",
+    "mnemonics": ["BUS", "B<x>", "RS232C", "STOPbits", "STOP", "BITS", "SERIAL"],
+    "commandType": "both",
+    "group": "Bus",
+    "shortDescription": "Set or query the number of stop bits for RS-232C serial bus decoding.",
+    "description": "Sets or queries the number of stop bits for RS-232C (UART) serial bus decoding. Stop bits mark the end of each serial data byte. Related commands: BUS:B<x>:RS232C:DATABits, BUS:B<x>:RS232C:PARity, BUS:B<x>:RS232C:BITRate.",
+    "instruments": {
+      "families": ["MSO2", "MSO4", "MSO5", "MSO6", "MSO7"],
+      "models": [],
+      "exclusions": []
+    },
+    "arguments": [
+      {
+        "name": "stopbits",
+        "type": "enum",
+        "required": true,
+        "position": 0,
+        "description": "Number of stop bits.",
+        "validValues": {
+          "type": "enum",
+          "values": ["1", "1.5", "2"]
+        }
+      }
+    ],
+    "syntax": {
+      "set": "BUS:B<x>:RS232C:STOPbits {1|1.5|2}",
+      "query": "BUS:B<x>:RS232C:STOPbits?"
+    }
+  },
+  {
+    "command": "TRIGger:A:PULSEWidth:WIDth",
+    "header": "TRIGger:{A|B}:PULSEWidth:WIDth",
+    "mnemonics": ["TRIGger", "{A|B}", "PULSEWidth", "WIDth", "WIDTH", "PULSE", "DURATION"],
+    "commandType": "both",
+    "group": "Trigger",
+    "shortDescription": "Set or query the pulse width duration for a pulse width trigger.",
+    "description": "Sets or queries the pulse width duration used for pulse width triggering. Use with TRIGger:{A|B}:PULSEWidth:WHEn to specify when to trigger (less than, greater than, equal, etc.). Related commands: TRIGger:{A|B}:PULSEWidth:WHEn, TRIGger:{A|B}:PULSEWidth:POLarity.",
+    "instruments": {
+      "families": ["MSO2", "MSO4", "MSO5", "MSO6", "MSO7"],
+      "models": [],
+      "exclusions": []
+    },
+    "arguments": [
+      {
+        "name": "width",
+        "type": "numeric",
+        "required": true,
+        "position": 0,
+        "description": "Pulse width in seconds.",
+        "validValues": {
+          "type": "NR3"
+        }
+      }
+    ],
+    "syntax": {
+      "set": "TRIGger:{A|B}:PULSEWidth:WIDth <NR3>",
+      "query": "TRIGger:{A|B}:PULSEWidth:WIDth?"
+    }
+  },
+  {
+    "command": "SEARCH:SEARCH1:TRIGger:A:BUS:I2C:ADDRess:TYPE",
+    "header": "SEARCH:SEARCH<x>:TRIGger:A:BUS:I2C:ADDRess:TYPE",
+    "mnemonics": ["SEARCH", "SEARCH<x>", "TRIGger", "A", "BUS", "I2C", "ADDRess", "TYPE", "ADDRESS", "I2C", "7BIT", "10BIT"],
+    "commandType": "both",
+    "group": "Search and Mark",
+    "shortDescription": "Set or query the I2C address type for a bus search.",
+    "description": "Sets or queries the I2C address type to match during a search. Address types include 7-bit, 10-bit general call, and other I2C addressing modes. Related commands: SEARCH:SEARCH<x>:TRIGger:A:BUS:I2C:ADDRess:VALue, SEARCH:SEARCH<x>:TRIGger:A:BUS:I2C:CONDition.",
+    "instruments": {
+      "families": ["MSO2", "MSO4", "MSO5", "MSO6", "MSO7"],
+      "models": [],
+      "exclusions": []
+    },
+    "arguments": [
+      {
+        "name": "type",
+        "type": "enum",
+        "required": true,
+        "position": 0,
+        "description": "I2C address type.",
+        "validValues": {
+          "type": "enum",
+          "values": ["ADDR7", "ADDR10", "GENeralcall", "STARtbyte", "HSMODe"]
+        }
+      }
+    ],
+    "syntax": {
+      "set": "SEARCH:SEARCH<x>:TRIGger:A:BUS:I2C:ADDRess:TYPE {ADDR7|ADDR10|GENeralcall}",
+      "query": "SEARCH:SEARCH<x>:TRIGger:A:BUS:I2C:ADDRess:TYPE?"
+    }
   }
 ]

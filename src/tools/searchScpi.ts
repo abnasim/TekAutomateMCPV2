@@ -1478,7 +1478,7 @@ export async function searchScpi(input: SearchScpiInput): Promise<ToolResult<unk
 
     // ── N1-13: trigger frequency ──
     trigger_frequency: [
-      'TRIGger:FREQuency?', 'TRIGger:A:LEVel', 'TRIGger:A:EDGE:SOUrce',
+      'TRIGger:FREQuency', 'TRIGger:A:LEVel', 'TRIGger:A:EDGE:SOUrce',
     ],
 
     // ── N1-14: pulse width trigger width ──
