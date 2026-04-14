@@ -1097,13 +1097,37 @@ export async function searchScpi(input: SearchScpiInput): Promise<ToolResult<unk
     reRanked = [...top, ...rest];
   }
 
+  // Pin exact header matches to the top — BUT only for non-measurement intents
+  // pin measurement catalog direct entries (ADDMEAS, MeasSource). For non-measurement
+  // intents (trigger, afg, acquisition, save, etc.), measurement catalog false positives
+  // (e.g. "hold" → Hold Time, "setup" → Setup Time) would override the injection pinning.
+  const isMeasurementIntent = intent.intent === 'measurement' || intent.intent === 'jitter';
+  const pinnedSet = isMeasurementIntent
+    ? [...measurementDirectEntries, ...directEntries]
+    : [...directEntries];  // exclude measurementDirectEntries for non-measurement intents
   const exactPinnedHeaders = new Set(
-    [...measurementDirectEntries, ...directEntries].map((entry) => entry.header.toLowerCase())
+    pinnedSet.map((entry) => entry.header.toLowerCase())
   );
   if (exactPinnedHeaders.size > 0) {
     const top = reRanked.filter((cmd) => exactPinnedHeaders.has(cmd.header.toLowerCase()));
     const rest = reRanked.filter((cmd) => !exactPinnedHeaders.has(cmd.header.toLowerCase()));
     reRanked = [...top, ...rest];
+  }
+
+  // Re-apply injection pinning AFTER exactPinnedHeaders so injected headers always win
+  // when the intent is known (e.g., trigger_holdoff forces TRIGger:A:HOLDoff:TIMe to top
+  // even if the measurement catalog false-positively pinned ADDMEAS above it).
+  if (injectionHeaders.length > 0) {
+    const injectedSet2 = new Set<string>();
+    for (const h of injectionHeaders) {
+      injectedSet2.add(h.toLowerCase());
+      const stripped = h.replace(/<[^>]+>/g, '').replace(/:$/, '').toLowerCase();
+      if (stripped !== h.toLowerCase()) injectedSet2.add(stripped);
+    }
+    const isInjected2 = (cmd: CommandRecord) => injectedSet2.has(cmd.header.toLowerCase());
+    const top2 = reRanked.filter(isInjected2);
+    const rest2 = reRanked.filter(c => !isInjected2(c));
+    reRanked = [...top2, ...rest2];
   }
 
   const total = reRanked.length;
