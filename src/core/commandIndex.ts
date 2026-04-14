@@ -875,9 +875,12 @@ export class CommandIndex {
         }
         if (wantsBusType) {
           const h = entry.header.toLowerCase();
-          // Boost the bus type command, penalize trigger/search bus type sub-commands
-          if (/^bus:b.*:type/.test(h)) bonus += 30;
-          if (/trigger.*bus.*type/.test(h) || /search.*bus.*type/.test(h)) bonus -= 10;
+          // Boost the bus type command strongly
+          if (/^bus:b[^:]*:type$/.test(h)) bonus += 80;
+          // Penalize trigger/search bus sub-commands
+          if (/^trigger.*bus/.test(h) || /^search.*bus/.test(h)) bonus -= 20;
+          // Penalize I2C/SPI/CAN/UART specific bus sub-commands (they're config, not type-setting)
+          if (/^bus:b[^:]*:(i2c|spi|can|rs232|usb|lin|arinc|flex)/.test(h)) bonus -= 20;
         }
         if (wantsAddMeas || wantsJitterMeas) {
           const h = entry.header.toLowerCase();
@@ -888,10 +891,10 @@ export class CommandIndex {
         }
         if (wantsBusSearch) {
           const h = entry.header.toLowerCase();
-          // Boost search:addnew for bus search queries
-          if (h.includes('search:addnew') || h === 'search:addnew') bonus += 30;
+          // Boost search:addnew strongly for bus search queries
+          if (h === 'search:addnew') bonus += 80;
           // Penalize bus:addnew since that adds a bus, not a search
-          if (h === 'bus:addnew') bonus -= 10;
+          if (h === 'bus:addnew') bonus -= 30;
         }
         return { ...item, score: item.score + bonus };
       })
