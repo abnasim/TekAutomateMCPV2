@@ -446,6 +446,9 @@ const SUBJECT_GROUP_MAP: Array<{
   // force trigger (before generic trigger catchall) — broad form for "force ... trigger ... immediately"
   { pattern: /\b(force\s*trigger|trigger\s*force|force\s*trig)\b/i, groups: ['Trigger'], intent: 'trigger', subject: 'trigger_force' },
   { pattern: /\bforce\b.*\btrigger\b/i, groups: ['Trigger'], intent: 'trigger', subject: 'trigger_force' },
+  // trigger type (set which type: edge/pulse/runt etc.) — BEFORE generic trigger catchall
+  { pattern: /\btrigger\b.*\btype\b/i, groups: ['Trigger'], intent: 'trigger', subject: 'trigger_type' },
+  { pattern: /\btype\b.*\btrigger\b/i, groups: ['Trigger'], intent: 'trigger', subject: 'trigger_type' },
   // Standard trigger types
   { pattern: /\b(edge\s*trigger|trigger\s*edge|set\s*trigger\s*to\s*edge)\b/i, groups: ['Trigger'], intent: 'trigger', subject: 'edge' },
   { pattern: /\btrigger\b.*\b(rising|falling)\b/i, groups: ['Trigger'], intent: 'trigger', subject: 'edge' },

@@ -611,7 +611,7 @@ function reRankWithIntent(
           intent.intent === 'horizontal' || intent.intent === 'bus' ||
           intent.intent === 'math' || intent.intent === 'search' ||
           intent.subject === 'numavg' || intent.subject === 'acq_mode' ||
-          intent.subject === 'trigger_frequency' || intent.subject === 'trigger_force' ||
+          intent.subject === 'trigger_frequency' || intent.subject === 'trigger_force' || intent.subject === 'trigger_type' ||
           intent.subject === 'awg_burst' || intent.subject === 'awg_shape' ||
           intent.subject === 'awg_frequency' || intent.subject === 'awg_seq_trigger' ||
           intent.subject === 'meas_delete' || intent.subject === 'meastable_add') {
@@ -1062,7 +1062,9 @@ function expandSiblings(
   modelFamily: string | undefined,
   intent: IntentResult,
 ): CommandRecord[] {
-  const GATED_INTENTS = new Set(['bus', 'trigger', 'search']);
+  // Trigger has too many sibling families (EDGE, PULSEWidth, RUNT, etc.) and
+  // already relies on injections — expanding blindly breaks TYPe/MODE queries.
+  const GATED_INTENTS = new Set(['bus', 'search']);
   if (!GATED_INTENTS.has(intent.intent)) return results;
 
   // Dedup key used throughout the pipeline (mirrors the dedup logic at line ~1735)
@@ -1463,6 +1465,11 @@ export async function searchScpi(input: SearchScpiInput): Promise<ToolResult<unk
     save_waveform: [
       'SAVe:WAVEform', 'SAVe:WAVEform:FILEFormat',
     ],
+    // ── N1-18: trigger type (edge vs pulse vs runt etc.) ──
+    trigger_type: [
+      'TRIGger:A:TYPe', 'TRIGger:{A|B}:TYPe',
+    ],
+
     trigger_level: [
       'TRIGger:A:LEVel', 'TRIGger:A:LEVel:CH<x>', 'TRIGger:{A|B}:LEVel:CH<x>',
     ],
