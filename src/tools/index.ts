@@ -14,6 +14,7 @@ import { finalizeScpiCommands } from './finalizeScpiCommands';
 import { materializeTmDevicesCall } from './materializeTmDevicesCall';
 import { probeCommand } from './probeCommand';
 import { captureScreenshot } from './captureScreenshot';
+import { fetchWaveform } from './fetchWaveform';
 import { sendScpi } from './sendScpi';
 import { retrieveRagChunks } from './retrieveRagChunks';
 import { searchKnownFailures } from './searchKnownFailures';
@@ -127,6 +128,7 @@ export const TOOL_HANDLERS = {
   send_scpi: sendScpi,
   discover_scpi: discoverScpi,
   capture_screenshot: captureScreenshot,
+  fetch_waveform: fetchWaveform,
   get_visa_resources: getVisaResources,
   get_environment: getEnvironment,
 } as const;
@@ -145,7 +147,7 @@ export function getToolDefinitions() {
         properties: {
           action: {
             type: 'string',
-            enum: ['context', 'send', 'screenshot', 'snapshot', 'diff', 'inspect', 'resources'],
+            enum: ['context', 'send', 'screenshot', 'snapshot', 'diff', 'inspect', 'resources', 'waveform'],
             description: 'Live instrument operation to run.',
           },
           args: {
@@ -1050,6 +1052,74 @@ export function getToolDefinitions() {
       },
     },
     {
+      name: 'fetch_waveform',
+      description:
+        'Fetch and process waveform data from the live scope. Use this when the user asks to:\n' +
+        '  - Plot or graph a waveform (CH1, CH2, CH3, CH4, MATH, REF)\n' +
+        '  - Measure signal statistics: min/max voltage, mean, std deviation, Vpp, peak-to-peak\n' +
+        '  - Check if a signal is clipping, noisy, DC-biased, or has a particular shape\n' +
+        '  - Export or analyze waveform CSV data\n' +
+        '  - Compare multiple channels (call once per channel)\n\n' +
+        'HOW IT WORKS: Sends DATa:SOUrce, DATa:ENCdg SRIBinary, DATa:WIDth, WFMOutpre, and CURVe? to the scope. ' +
+        'The raw binary is processed entirely on the executor using numpy (LTTB downsampling). ' +
+        'Binary NEVER reaches Claude — only a lean JSON result is returned. ' +
+        'This saves ~384× tokens vs raw ASCII CURVe? (1M pts: 2.5M tokens raw → ~200 stats / ~6K CSV).\n\n' +
+        'FORMAT GUIDANCE:\n' +
+        '  - format:"stats" (default) — returns min/max/mean/std/Vpp/time range. Use for: "what is the voltage?", "is it clipping?", "measure noise", frequency/period estimation.\n' +
+        '  - format:"csv" — returns LTTB-downsampled time,voltage CSV only. Use for: "plot the waveform", "export data".\n' +
+        '  - format:"both" — stats + CSV together. Use for: full analysis + plot.\n\n' +
+        'WIDTH GUIDANCE:\n' +
+        '  - width:2 (default) — int16, full 12-bit ADC precision. Best for noise, signal integrity, accurate voltage.\n' +
+        '  - width:1 — int8, 8-bit only. Faster for very large records when exact precision is not critical.\n\n' +
+        'RESPONSE FIELDS:\n' +
+        '  stats.min_v, max_v, mean_v, std_v, pk_pk_v — voltage statistics (full resolution)\n' +
+        '  stats.t_start, t_end, x_incr, x_unit, y_unit — time axis info\n' +
+        '  stats.n_points_captured — total raw points fetched\n' +
+        '  n_points_returned — LTTB downsampled count (only with csv/both)\n' +
+        '  csv — "s,V\\n<time>,<voltage>\\n..." — ready for plotting',
+      parameters: {
+        type: 'object',
+        properties: {
+          channel: {
+            type: 'string',
+            description: 'Scope channel to fetch. CH1, CH2, CH3, CH4, MATH1, REF1, etc. Default: CH1.',
+          },
+          format: {
+            type: 'string',
+            enum: ['stats', 'csv', 'both'],
+            description: 'stats (default) = voltage/time statistics only (~200 tokens). csv = LTTB-downsampled time+voltage table. both = stats + csv. Use csv/both only when user asks to plot or export.',
+          },
+          downsample: {
+            type: 'number',
+            description: 'Number of points in the returned CSV after LTTB downsampling. Default 1000. Range 10–50000. Only applies when format is csv or both.',
+          },
+          width: {
+            type: 'number',
+            enum: [1, 2],
+            description: 'ADC sample width. 2 (default) = int16, full 12-bit precision. 1 = int8, 8-bit only, faster for huge records.',
+          },
+          start: {
+            type: 'number',
+            description: 'First record point to fetch (1-based). Default 1 (start of record).',
+          },
+          stop: {
+            type: 'number',
+            description: 'Last record point to fetch. 0 (default) = full record length.',
+          },
+          timeoutMs: {
+            type: 'number',
+            description: 'VISA timeout in ms. Default 30000. Increase for very long records (>10M points).',
+          },
+          executorUrl: { type: 'string' },
+          visaResource: { type: 'string' },
+          backend:      { type: 'string' },
+          liveMode:     { type: 'boolean' },
+        },
+        required: [],
+        additionalProperties: false,
+      },
+    },
+    {
       name: 'get_visa_resources',
       description: 'List available VISA resources from the local executor. Use this first when more than one instrument may be connected, then pass the chosen visaResource into send_scpi, probe_command, capture_screenshot, or other live tools. Prefer this over guessing instrument selection.',
       parameters: {
@@ -1151,6 +1221,7 @@ const MCP_EXPOSED_TOOLS = new Set([
   'get_visa_resources',
   'send_scpi',
   'capture_screenshot',
+  'fetch_waveform',
   'discover_scpi',
 ]);
 

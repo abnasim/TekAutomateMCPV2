@@ -1,5 +1,6 @@
 import { captureScreenshot } from './captureScreenshot';
 import { discoverScpi } from './discoverScpi';
+import { fetchWaveform } from './fetchWaveform';
 import { getInstrumentInfo } from './getInstrumentInfo';
 import { getVisaResources } from './getVisaResources';
 import { sendScpi } from './sendScpi';
@@ -40,13 +41,15 @@ export async function instrumentLive(input: InstrumentLiveInput) {
       });
     case 'resources':
       return getVisaResources(args as any);
+    case 'waveform':
+      return fetchWaveform(args as any);
     default:
       return {
         ok: false,
         data: null,
         sourceMeta: [],
         warnings: [
-          'Unknown instrument_live action. Use one of: context, send, screenshot, snapshot, diff, inspect, resources.',
+          'Unknown instrument_live action. Use one of: context, send, screenshot, snapshot, diff, inspect, resources, waveform.',
         ],
       };
   }

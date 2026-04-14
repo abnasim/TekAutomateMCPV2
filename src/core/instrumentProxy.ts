@@ -428,3 +428,154 @@ export async function captureScreenshotProxy(endpoint: Endpoint): Promise<ToolRe
     };
   }
 }
+
+// ── Waveform fetch ─────────────────────────────────────────────────────────
+
+export interface WaveformParams {
+  channel: string;         // CH1, CH2, CH3, CH4, MATH1, REF1 etc.
+  format: 'stats' | 'csv' | 'both';
+  downsample: number;      // LTTB target points
+  width: 1 | 2;            // 1=int8 (8-bit), 2=int16 (12-bit full ADC precision)
+  start: number;           // DATa:STARt record point
+  stop: number;            // DATa:STOP (0 = full record)
+  timeoutMs: number;
+}
+
+function buildWaveformCode(visa: string, p: WaveformParams): string {
+  // JSON.stringify produces a properly-escaped Python string literal for the VISA address.
+  const visaLit = JSON.stringify(visa);
+  const dtype = p.width === 2 ? 'h' : 'b';   // signed int16 or int8
+
+  return `
+import json, sys
+import pyvisa
+import numpy as np
+
+def lttb(t, v, n_out):
+    n = len(t)
+    if n_out >= n or n_out < 3:
+        return t, v
+    idx = [0]
+    bkt = (n - 2) / (n_out - 2)
+    a = 0
+    for i in range(1, n_out - 1):
+        avg_s = int((i + 1) * bkt) + 1
+        avg_e = min(int((i + 2) * bkt) + 1, n)
+        at = float(np.mean(t[avg_s:avg_e]))
+        av = float(np.mean(v[avg_s:avg_e]))
+        rs = int(i * bkt) + 1
+        re = int((i + 1) * bkt) + 1
+        ta, va = float(t[a]), float(v[a])
+        areas = np.abs((ta - at) * (v[rs:re] - va) - (ta - t[rs:re]) * (av - va)) * 0.5
+        m = rs + int(np.argmax(areas))
+        idx.append(m)
+        a = m
+    idx.append(n - 1)
+    return t[np.array(idx)], v[np.array(idx)]
+
+try:
+    rm = pyvisa.ResourceManager()
+    scope = rm.open_resource(${visaLit})
+    scope.timeout = ${p.timeoutMs}
+    scope.write_termination = "\\n"
+    scope.read_termination = "\\n"
+    try:
+        scope.write("DATa:SOUrce ${p.channel}")
+        scope.write("DATa:ENCdg SRIBinary")
+        scope.write("DATa:WIDth ${p.width}")
+        nr_pt = int(scope.query("WFMOutpre:NR_Pt?").strip())
+        actual_stop = nr_pt if ${p.stop} == 0 else min(${p.stop}, nr_pt)
+        scope.write("DATa:STARt ${p.start}")
+        scope.write("DATa:STOP " + str(actual_stop))
+        y_mult = float(scope.query("WFMOutpre:YMUlt?").strip())
+        y_off  = float(scope.query("WFMOutpre:YOFf?").strip())
+        y_zero = float(scope.query("WFMOutpre:YZEro?").strip())
+        x_incr = float(scope.query("WFMOutpre:XINcr?").strip())
+        pt_off = float(scope.query("WFMOutpre:PT_Off?").strip())
+        x_unit = scope.query("WFMOutpre:XUNit?").strip().strip('"')
+        y_unit = scope.query("WFMOutpre:YUNit?").strip().strip('"')
+        raw = scope.query_binary_values("CURVe?", datatype="${dtype}", container=np.ndarray, is_big_endian=True)
+        n_pts = int(len(raw))
+        voltage = (raw.astype(np.float32) - y_off) * y_mult + y_zero
+        t_axis  = (np.arange(n_pts, dtype=np.float32) - pt_off) * x_incr
+        stats = {
+            "n_points_captured": n_pts,
+            "min_v":   round(float(np.min(voltage)),  9),
+            "max_v":   round(float(np.max(voltage)),  9),
+            "mean_v":  round(float(np.mean(voltage)), 9),
+            "std_v":   round(float(np.std(voltage)),  9),
+            "pk_pk_v": round(float(np.max(voltage) - np.min(voltage)), 9),
+            "t_start": round(float(t_axis[0]),  15),
+            "t_end":   round(float(t_axis[-1]), 15),
+            "x_incr":  float(x_incr),
+            "x_unit":  x_unit,
+            "y_unit":  y_unit,
+        }
+        result = {"ok": True, "channel": "${p.channel}", "stats": stats, "n_points_returned": 0}
+        if "${p.format}" in ("csv", "both"):
+            t_ds, v_ds = lttb(t_axis, voltage, ${p.downsample})
+            n_ds = int(len(t_ds))
+            result["n_points_returned"] = n_ds
+            lines = [x_unit + "," + y_unit]
+            for ti, vi in zip(t_ds.tolist(), v_ds.tolist()):
+                lines.append("%.9g,%.6g" % (ti, vi))
+            result["csv"] = "\\n".join(lines)
+        print(json.dumps(result))
+    finally:
+        try: scope.close()
+        except: pass
+        try: rm.close()
+        except: pass
+except Exception as e:
+    print(json.dumps({"ok": False, "error": str(e), "channel": "${p.channel}"}))
+`.trim();
+}
+
+export async function fetchWaveformProxy(
+  endpoint: Endpoint,
+  params: WaveformParams,
+): Promise<ToolResult<unknown>> {
+  if (!isLiveModeEnabled(endpoint)) {
+    return { ok: false, data: {}, sourceMeta: [], warnings: ['live instrument mode is disabled'] };
+  }
+  const timeoutSec = Math.ceil(params.timeoutMs / 1000) + 15;
+  const code = buildWaveformCode(endpoint.visaResource, params);
+  const run = await runPython(endpoint, code, timeoutSec);
+
+  // Find the JSON line in stdout (executor may prefix with other output)
+  const jsonLine = run.stdout
+    .split(/\r?\n/)
+    .map(l => l.trim())
+    .find(l => l.startsWith('{') && l.endsWith('}'));
+
+  if (!jsonLine) {
+    return {
+      ok: false,
+      data: {
+        error:   'NO_WAVEFORM_OUTPUT',
+        message: run.error || run.stderr.trim() || 'Executor produced no waveform JSON',
+        stdout:  run.stdout.slice(0, 500),
+        stderr:  run.stderr.slice(0, 500),
+      },
+      sourceMeta: [],
+      warnings: [run.error || 'Waveform fetch produced no output'],
+    };
+  }
+
+  try {
+    const parsed = JSON.parse(jsonLine) as Record<string, unknown>;
+    return {
+      ok:         parsed.ok === true,
+      data:       { ...parsed, durationSec: run.durationSec },
+      sourceMeta: [],
+      warnings:   parsed.ok ? [] : [String(parsed.error || 'Waveform fetch error')],
+    };
+  } catch {
+    return {
+      ok: false,
+      data: { error: 'PARSE_ERROR', message: 'Executor output was not valid JSON', raw: jsonLine.slice(0, 500) },
+      sourceMeta: [],
+      warnings: ['Could not parse waveform result JSON'],
+    };
+  }
+}
