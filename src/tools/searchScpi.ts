@@ -656,9 +656,9 @@ function reRankWithIntent(
     }
 
     // ── 13. FastFrame timestamp → HORizontal:FASTframe:TIMEStamp boost ──
-    if (intent.subject === 'fastframe' && /timestamp/i.test(queryLower)) {
+    if ((intent.subject === 'fastframe' || intent.subject === 'fastframe_timestamps') && /timestamps?/i.test(queryLower)) {
       if (headerLower.includes('fastframe') && headerLower.includes('timestamp')) {
-        score += 60;
+        score += 90;
       }
     }
 
