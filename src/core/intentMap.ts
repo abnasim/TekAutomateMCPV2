@@ -518,11 +518,12 @@ export function classifyIntent(query: string): IntentResult {
 
   if (hasAdd && hasMeas) return { groups: ['Measurement'], intent: 'measurement', subject: 'add_measurement', action, confidence: 'medium' };
   if (hasDelete && hasMeas) return { groups: ['Measurement'], intent: 'measurement', subject: 'clear_measurements', action, confidence: 'medium' };
+  // Check add_search BEFORE add_bus — "add bus search" should route to SEARch:ADDNew not BUS:ADDNew
+  if (hasAdd && hasSearch) return { groups: ['Search and Mark'], intent: 'search', subject: 'add_search', action, confidence: 'medium' };
   if (hasAdd && hasBus) return { groups: ['Bus'], intent: 'bus', subject: 'add_bus', action, confidence: 'medium' };
   if (hasAdd && hasMath) return { groups: ['Math'], intent: 'math', subject: 'add_math', action, confidence: 'medium' };
   if (hasAdd && hasPlot) return { groups: ['Measurement'], intent: 'measurement', subject: 'add_plot', action, confidence: 'medium' };
   if (hasAdd && hasTable) return { groups: ['Measurement'], intent: 'measurement', subject: 'custom_table', action, confidence: 'medium' };
-  if (hasAdd && hasSearch) return { groups: ['Search and Mark'], intent: 'search', subject: 'add_search', action, confidence: 'medium' };
 
   // Fallback: use existing suggestCommandGroups from commandGroups.ts
   const suggested = suggestCommandGroups(q, 3);
