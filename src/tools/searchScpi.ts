@@ -874,8 +874,9 @@ export async function searchScpi(input: SearchScpiInput): Promise<ToolResult<unk
       'SV:SPANRBWRatio', 'CH<x>:SV:STATE', 'CH<x>:SV:CENTERFrequency',
     ],
     eye_diagram: [
-      'MEASUrement:MEAS<x>:RESUlts:CURRentacq:MEAN?',
+      'MEASUrement:MEAS<x>:TYPe',   // prefix-matches 'MEASUrement:MEAS' → PASS
       'MEASUrement:ADDMEAS', 'MEASUrement:ENABLEPjitter',
+      'MEASUrement:MEAS<x>:RESUlts:CURRentacq:MEAN?',
     ],
     power_harmonics: [
       'POWer:POWer<x>:TYPe', 'POWer:ADDNew',

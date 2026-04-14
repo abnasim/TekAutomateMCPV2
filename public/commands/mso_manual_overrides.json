@@ -2169,11 +2169,11 @@
   {
     "command": "MEASUrement:MEAS<x>:TYPe",
     "header": "MEASUrement:MEAS<x>:TYPe",
-    "commandType": "query",
+    "commandType": "both",
     "commandGroup": "Measurement",
     "group": "Measurement",
-    "description": "Returns the measurement type for the specified measurement slot. Use to identify what type of measurement (FREQUENCY, PERIOD, IMDAPOWERQUALITY, IMDAEFFICIENCY, JITTERSUMMARY, etc.) is configured in each slot.",
-    "shortDescription": "Query measurement type for a given measurement slot",
+    "description": "Sets or queries the measurement type for the specified measurement slot. Use MEASUrement:MEAS<x>:TYPe EYEDiagram to set up an eye diagram measurement. Other types include FREQUENCY, PERIOD, AMPLITUDE, JITTERSUMMARY, IMDAPOWERQUALITY, TIE (time interval error), RISINGSLEW, FALLINGSLEW. After adding a measurement with MEASUrement:ADDMEAS, use this command to configure the measurement type (e.g., eye diagram, jitter, TIE, frequency).",
+    "shortDescription": "Set or query measurement type (EYEDiagram, FREQUENCY, TIE, JITTERSUMMARY, etc.)",
     "instruments": {
       "families": [
         "MSO2",
