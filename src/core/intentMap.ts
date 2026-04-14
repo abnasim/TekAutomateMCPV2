@@ -211,6 +211,8 @@ const SUBJECT_GROUP_MAP: Array<{
   { pattern: /\bsample\s*rate\b/i, groups: ['Acquisition', 'Horizontal'], intent: 'acquisition', subject: 'sample_rate' },
 
   // ── Bus protocols (most specific first) ──
+  // "search for CAN bus error frames" must match can_error_frame BEFORE generic can_bus
+  { pattern: /\bsearch\b.*(can|bus).*(error|frame)\b/i, groups: ['Search and Mark'], intent: 'search', subject: 'can_error_frame' },
   { pattern: /\bi2c\b/i, groups: ['Bus', 'Trigger'], intent: 'bus', subject: 'i2c' },
   { pattern: /\bspi\b/i, groups: ['Bus', 'Trigger'], intent: 'bus', subject: 'spi' },
   { pattern: /\b(can\s*fd|canfd)\b/i, groups: ['Bus', 'Trigger'], intent: 'bus', subject: 'can_fd' },
@@ -316,6 +318,8 @@ const SUBJECT_GROUP_MAP: Array<{
   { pattern: /\b(invert)\b/i, groups: ['Vertical'], intent: 'vertical', subject: 'invert' },
 
   // ── Specific Vertical/Channel Commands (nested) ──
+  // "waveform data source channel" must match waveform_data_source BEFORE channel_on (avoids "channel on" false-positive)
+  { pattern: /\bwaveform\b.*(data\s*source|source\s*channel)\b/i, groups: ['Waveform Transfer'], intent: 'waveform', subject: 'waveform_data_source' },
   { pattern: /\b(channel\s*on|turn\s*on\s*channel|enable\s*channel|show\s*channel)\b/i, groups: ['Vertical', 'Display'], intent: 'vertical', subject: 'channel_on' },
   { pattern: /\b(channel\s*off|turn\s*off\s*channel|disable\s*channel|hide\s*channel)\b/i, groups: ['Vertical', 'Display'], intent: 'vertical', subject: 'channel_off' },
   { pattern: /\b(select\s*channel|channel\s*select)\b/i, groups: ['Vertical'], intent: 'vertical', subject: 'select_channel' },
@@ -443,7 +447,6 @@ const SUBJECT_GROUP_MAP: Array<{
   { pattern: /\b(filename|file\s*name|save\s*as)\b/i, groups: ['Save and Recall'], intent: 'save', subject: 'filename' },
 
   // ── Search and Mark ──
-  { pattern: /\bsearch\b.*(can|bus).*(error|frame)\b/i, groups: ['Search and Mark'], intent: 'search', subject: 'can_error_frame' },
   { pattern: /\b(search|mark|find\s*packet|error\s*frame)\b/i, groups: ['Search and Mark'], intent: 'search', subject: 'search' },
 
   // ── Mask ──
@@ -488,7 +491,6 @@ const SUBJECT_GROUP_MAP: Array<{
   { pattern: /\b(directory|readfile|file\s*system|mkdir|rmdir)\b/i, groups: ['File System'], intent: 'filesystem', subject: 'filesystem' },
 
   // ── Waveform transfer ──
-  { pattern: /\bwaveform\b.*(data\s*source|source\s*channel)\b/i, groups: ['Waveform Transfer'], intent: 'waveform', subject: 'waveform_data_source' },
   { pattern: /\b(curve|waveform\s*data|wfm|wfmoutpre|data\s*source|waveform\s*transfer)\b/i, groups: ['Waveform Transfer'], intent: 'waveform', subject: 'waveform_transfer' },
 
   // ── Act on event ──
