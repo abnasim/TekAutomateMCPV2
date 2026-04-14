@@ -107,9 +107,17 @@ export async function fetchWaveform(input: FetchWaveformInput): Promise<ToolResu
 
     // Executor returns { ok, stdout, stderr, result_data, ... }
     // Our Python code prints JSON to stdout — find and parse it.
-    const payload = bridged.result && typeof bridged.result === 'object'
+    // The TekAutomate frontend wraps the executor response in a ToolResult envelope:
+    //   { ok, data: <executor JSON>, sourceMeta, warnings }
+    // Unwrap one level to reach the actual executor response with stdout/stderr.
+    const envelope = bridged.result && typeof bridged.result === 'object'
       ? bridged.result as Record<string, unknown>
       : {};
+    const payload: Record<string, unknown> =
+      (envelope.data && typeof envelope.data === 'object')
+        ? envelope.data as Record<string, unknown>
+        : envelope;
+
     // Executor returns stdout at top level; combined_output is fallback
     const stdout = typeof payload.stdout === 'string' ? payload.stdout
       : typeof payload.combined_output === 'string' ? payload.combined_output
@@ -121,11 +129,11 @@ export async function fetchWaveform(input: FetchWaveformInput): Promise<ToolResu
         ok: false,
         data: {
           error: 'NO_WAVEFORM_OUTPUT',
-          message: String(payload.error || payload.stderr || 'No waveform JSON in executor output'),
+          message: String(payload.error || stderr || 'No waveform JSON in executor output'),
           stdout: stdout.slice(0, 800),
           stderr: stderr.slice(0, 800),
-          // Include raw bridge result shape for debugging
-          bridgeResultKeys: Object.keys(payload),
+          bridgeResultKeys: Object.keys(envelope),
+          payloadKeys: Object.keys(payload),
         },
         sourceMeta: [],
         warnings: ['Waveform fetch produced no output via bridge'],
