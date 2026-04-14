@@ -1075,8 +1075,14 @@ export function getToolDefinitions() {
         '  stats.min_v, max_v, mean_v, std_v, pk_pk_v — voltage statistics (full resolution)\n' +
         '  stats.t_start, t_end, x_incr, x_unit, y_unit — time axis info\n' +
         '  stats.n_points_captured — total raw points fetched\n' +
+        '  stats.clipping — true/false: ADC rail saturation detected in raw samples\n' +
+        '  stats.clip_high_count, clip_low_count — number of samples at top/bottom ADC rail\n' +
         '  n_points_returned — LTTB downsampled count (only with csv/both)\n' +
-        '  csv — "s,V\\n<time>,<voltage>\\n..." — ready for plotting',
+        '  csv — "s,V\\n<time>,<voltage>\\n..." — ready for plotting\n\n' +
+        'CLIPPING RESPONSE: If stats.clipping is true, a top-level "CLIPPING" key is present with a\n' +
+        'human-readable warning string. IMMEDIATELY reduce the channel vertical scale (CH<x>:SCAle)\n' +
+        'or adjust offset (CH<x>:OFFSet) and re-fetch before reporting any measurements.\n' +
+        'Do NOT report min/max/mean/std from a clipping waveform — they are invalid.',
       parameters: {
         type: 'object',
         properties: {

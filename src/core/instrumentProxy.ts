@@ -511,7 +511,19 @@ try:
             "x_unit":  x_unit,
             "y_unit":  y_unit,
         }
-        result = {"ok": True, "channel": "${p.channel}", "stats": stats, "n_points_returned": 0}
+        max_rail = 32767 if ${p.width} == 2 else 127
+        min_rail = -32768 if ${p.width} == 2 else -128
+        clip_high = int(np.sum(raw >= max_rail))
+        clip_low  = int(np.sum(raw <= min_rail))
+        clipping  = clip_high > 0 or clip_low > 0
+        stats["clipping"]        = clipping
+        stats["clip_high_count"] = clip_high
+        stats["clip_low_count"]  = clip_low
+        clip_warning = ("⚠️ CLIPPING DETECTED on ${p.channel}! " +
+            str(clip_high + clip_low) + " of " + str(n_pts) + " samples hit the ADC rail. " +
+            "Reduce vertical scale or channel offset immediately — measurements are invalid while clipping.") if clipping else None
+        result = {"ok": True, "channel": "${p.channel}", "stats": stats, "n_points_returned": 0,
+                  **({"CLIPPING": clip_warning} if clipping else {})}
         if "${p.format}" in ("csv", "both"):
             t_ds, v_ds = lttb(t_axis, voltage, ${p.downsample})
             n_ds = int(len(t_ds))
