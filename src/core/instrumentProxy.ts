@@ -526,8 +526,10 @@ export function processWaveformScpiResponses(
   }
 
   // Parse CURVe? ASCII: "12,34,-56,78,..." (comma or space separated)
+  // Strip raw response immediately — it must never appear in any output or error path.
   const curveR = responses.find(r => /CURVe/i.test(r.command));
   const rawStr = curveR?.response?.trim() ?? '';
+  if (curveR) curveR.response = '';
   if (!rawStr) {
     return {
       ok: false,
