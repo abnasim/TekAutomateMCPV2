@@ -480,7 +480,7 @@ export function getToolDefinitions() {
       description:
         'Interactive 3-level drill-down for exploring SCPI commands. ' +
         'Use when you want to browse by command group, or when search_scpi / smart_scpi_lookup did not narrow things down enough.\n\n' +
-        'Level 1 (no args): List all command groups (Vertical, Trigger, Measurement, Bus, etc.)\n' +
+        'Level 1 (no args): List all command groups (Horizontal, Trigger, Measurement, Bus, etc.)\n' +
         'Level 2 (group): List commands in a group, optionally filtered by keyword\n' +
         'Level 3 (header): Full command details — syntax, arguments, valid values, examples\n\n' +
         'Call sequence example:\n' +
@@ -493,7 +493,7 @@ export function getToolDefinitions() {
         properties: {
           group: {
             type: 'string',
-            description: 'Command group to browse (e.g. "Trigger", "Measurement", "Vertical"). Omit to list all groups.',
+            description: 'Command group to browse (e.g. "Trigger", "Measurement", "Horizontal"). Omit to list all groups.',
           },
           header: {
             type: 'string',
