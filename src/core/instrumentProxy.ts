@@ -519,7 +519,7 @@ export function processWaveformScpiResponses(
   if (!yMult || !xIncr) {
     return {
       ok: false,
-      data: { error: 'BAD_PREAMBLE', message: 'WFMOutpre queries returned unusable values', responses: responses.slice(0, 10) },
+      data: { error: 'BAD_PREAMBLE', message: 'WFMOutpre queries returned unusable values — check channel source and scope state' },
       sourceMeta: [],
       warnings: ['Preamble parse failed — check channel source and scope state'],
     };
