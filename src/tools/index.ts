@@ -141,7 +141,17 @@ export function getToolDefinitions() {
     ...(isLiveInstrumentEnabled() ? [{
       name: 'instrument_live',
       description:
-        'Live instrument gateway for TekAutomate. Use `context` for connection info, `send` for SCPI commands, `screenshot` for capture, `snapshot`/`diff`/`inspect` for *LRN?-based state discovery, `resources` for VISA discovery, and `waveform` for signal health check + data fetch. For screenshots: call with action:"screenshot" and analyze:true — the response returns an MCP {type:"image"} content block containing the screenshot, rendered as vision by your client. Use as a verification tool after any action that changes the display (channel enable/disable, scale, decode, trigger), when measurements are unexpected, or as final task sign-off. For waveform: action:"waveform" fetches raw ADC samples, computes stats (min/max/mean/std/Vpp), and automatically detects clipping — look for top-level "CLIPPING" key in the response. Pass saveLocal:true to save the full-resolution CSV to a local file and receive a localPath instead of inline data — use the Read tool to access it.',
+        'Live instrument gateway for TekAutomate. Use `context` for connection info, `send` for SCPI commands, `screenshot` for capture, `snapshot`/`diff`/`inspect` for *LRN?-based state discovery, `resources` for VISA discovery, and `waveform` for signal health check + data fetch.\n\n' +
+        'For screenshots: call with action:"screenshot" and analyze:true — the response returns an MCP {type:"image"} content block containing the screenshot, rendered as vision by your client. Use as a verification tool after any action that changes the display (channel enable/disable, scale, decode, trigger), when measurements are unexpected, or as final task sign-off.\n\n' +
+        'For waveform: action:"waveform" fetches raw ADC samples, computes stats (min/max/mean/std/Vpp), and automatically detects clipping — look for top-level "CLIPPING" key in the response. Pass saveLocal:true to save the full-resolution CSV to a local file and receive a localPath instead of inline data — use the Read tool to access it.\n\n' +
+        'ERROR CHECKING after action:"send" — mandatory after any write batch:\n' +
+        'SCPI write commands do not confirm success. Always append "*ESR?" and "ALLEV?" to the commands array after writes (or call send immediately after). Rules:\n' +
+        '• *ESR? = 0 → all commands accepted. Non-zero → something failed:\n' +
+        '    32 = Command Error (bad syntax / unknown command)\n' +
+        '    16 = Execution Error (rejected — wrong mode, value out of range)\n' +
+        '     8 = Device-Dependent Error\n' +
+        '     4 = Query Error\n' +
+        '• If *ESR? is non-zero: read ALLEV? for the exact error string, report it, and do NOT continue configuring on top of a bad state.',
       parameters: {
         type: 'object',
         properties: {
@@ -1005,7 +1015,17 @@ export function getToolDefinitions() {
     },
     {
       name: 'send_scpi',
-      description: 'Send one or more SCPI commands to the selected VISA instrument via the local executor. Queries return responses; writes return OK or error status. In TekAutomate this usually uses the active live instrument automatically. When multiple instruments are connected, call get_visa_resources first and pass visaResource explicitly.',
+      description:
+        'Send one or more SCPI commands to the selected VISA instrument via the local executor. Queries return responses; writes return OK or error status. In TekAutomate this usually uses the active live instrument automatically. When multiple instruments are connected, call get_visa_resources first and pass visaResource explicitly.\n\n' +
+        'ERROR CHECKING — mandatory after any write batch:\n' +
+        'SCPI write commands do not confirm success on their own. After sending a group of write commands, always append ["*ESR?", "ALLEV?"] to the same commands array (or send them immediately after). Rules:\n' +
+        '• *ESR? returns a bitmask integer — 0 means no errors. Non-zero means something failed:\n' +
+        '    bit 5 (32) = Command Error (bad syntax / unknown command)\n' +
+        '    bit 4 (16) = Execution Error (command rejected — wrong mode, out of range)\n' +
+        '    bit 3  (8) = Device-Dependent Error\n' +
+        '    bit 2  (4) = Query Error (interrupted or unterminated)\n' +
+        '• ALLEV? returns the full human-readable error queue — read this whenever *ESR? is non-zero to understand exactly what failed.\n' +
+        '• If *ESR? is non-zero: stop, report the ALLEV? errors, do NOT continue configuring the instrument on top of a bad state.',
       parameters: {
         type: 'object',
         properties: {
