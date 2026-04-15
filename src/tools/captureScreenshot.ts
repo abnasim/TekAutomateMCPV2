@@ -34,7 +34,7 @@ interface Input extends Record<string, unknown> {
   modelFamily?: string;
   deviceDriver?: string;
   analyze?: boolean;
-  analysisTransport?: 'auto' | 'url' | 'file_id' | 'base64' | 'mcp_image' | 'openai_image' | 'claude_image';
+  analysisTransport?: 'auto' | 'url' | 'base64' | 'mcp_image' | 'openai_image' | 'claude_image';
   __mcpBaseUrl?: string;
 }
 
@@ -291,6 +291,7 @@ export async function captureScreenshot(input: Input): Promise<ToolResult<Record
   if (input.analyze === true && analysisTransport === 'mcp_image') {
     const imagePayload = buildMcpImageScreenshotPayload(maybeCompressed);
     if (!imagePayload) {
+      // mcp_image build failed — fall back to localPath so the caller isn't empty-handed
       if (localPath) {
         return {
           ...result,
@@ -322,7 +323,9 @@ export async function captureScreenshot(input: Input): Promise<ToolResult<Record
 
   // For 'auto', 'url' (and remapped 'openai_image') transports:
   // 1. If we have a base URL (HTTP server mode), return a short-lived URL.
-  // 2. Otherwise (stdio/local mode) — prefer the local file path.
+  // 2. Otherwise (stdio/local mode) — prefer the local file path.  No massive
+  //    base64 blob in the JSON-RPC stream.  Fall back to mcp_image only when
+  //    localPath is unavailable (e.g. tmpdir write failure).
   if (input.analyze === true && (analysisTransport === 'auto' || analysisTransport === 'url')) {
     const urlPayload = buildUrlOnlyScreenshotPayload(maybeCompressed, input);
     if (urlPayload) {
@@ -334,7 +337,11 @@ export async function captureScreenshot(input: Input): Promise<ToolResult<Record
       };
     }
 
+    // No HTTP base URL — stdio / local mode.
     if (localPath) {
+      // Primary: compact text response with file path.  The stdio handler
+      // (buildExternalMcpToolContent) will emit a clean text block; Claude Code
+      // can then use its Read tool to render the image.
       return {
         ...result,
         ok: true,
@@ -352,6 +359,7 @@ export async function captureScreenshot(input: Input): Promise<ToolResult<Record
       };
     }
 
+    // Last resort: try mcp_image content block (may fail for very large images)
     const imagePayload = buildMcpImageScreenshotPayload(maybeCompressed);
     if (imagePayload) {
       return { ...result, ok: true, data: imagePayload, warnings: [] };

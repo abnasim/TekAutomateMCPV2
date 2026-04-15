@@ -9,7 +9,7 @@ interface InstrumentLiveInput extends Record<string, unknown> {
   action?: string;
   args?: Record<string, unknown>;
   analyze?: boolean;
-  analysisTransport?: 'auto' | 'url' | 'file_id' | 'base64' | 'mcp_image' | 'openai_image' | 'claude_image';
+  analysisTransport?: 'auto' | 'url' | 'base64' | 'mcp_image' | 'openai_image' | 'claude_image';
 }
 
 function mergeArgs(input: InstrumentLiveInput): Record<string, unknown> {
@@ -49,7 +49,7 @@ export async function instrumentLive(input: InstrumentLiveInput) {
         data: null,
         sourceMeta: [],
         warnings: [
-          'Unknown instrument_live action. Use one of: context, send, screenshot, snapshot, diff, inspect, resources, waveform.',
+          'Unknown instrument_live action. Use one of: context, send, screenshot, snapshot, diff, inspect, resources.',
         ],
       };
   }

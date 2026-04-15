@@ -12,15 +12,22 @@ export function withRuntimeInstrumentDefaults<T extends Record<string, unknown>>
   const connectionKey = typeof (input as any).__connectionSessionKey === 'string' && (input as any).__connectionSessionKey
     ? (input as any).__connectionSessionKey as string : null;
   const instrument = getInstrumentInfoState(connectionKey);
+  // Env vars act as a hard override for local direct-executor mode (EXECUTOR_URL set in .env)
+  // In local mode (not Railway), fall back to localhost:8765 — the default executor port
+  const isHosted = Boolean(process.env.RAILWAY_ENVIRONMENT || process.env.RAILWAY_SERVICE_NAME);
+  const localFallback = isHosted ? '' : 'http://localhost:8765';
+  const envExecutorUrl = process.env.EXECUTOR_URL || instrument.executorUrl || localFallback;
+  const envVisaResource = process.env.VISA_RESOURCE || '';
   return {
+    ...input,
     executorUrl:
       typeof input.executorUrl === 'string' && input.executorUrl
         ? input.executorUrl
-        : instrument.executorUrl || '',
+        : instrument.executorUrl || envExecutorUrl,
     visaResource:
       typeof input.visaResource === 'string' && input.visaResource
         ? input.visaResource
-        : instrument.visaResource || '',
+        : instrument.visaResource || envVisaResource,
     backend:
       typeof input.backend === 'string' && input.backend
         ? input.backend
@@ -28,8 +35,7 @@ export function withRuntimeInstrumentDefaults<T extends Record<string, unknown>>
     liveMode:
       typeof input.liveMode === 'boolean'
         ? input.liveMode
-        : instrument.liveMode,
-    ...input,
+        : instrument.liveMode || Boolean(envExecutorUrl),
   } as T & RuntimeBackedEndpoint;
 }
 
@@ -38,6 +44,9 @@ export function shouldBridgeToTekAutomate(input: {
   liveMode?: unknown;
   [key: string]: unknown;
 }): boolean {
+  // If EXECUTOR_URL is set in env, we're in direct local mode — never bridge through browser
+  if (process.env.EXECUTOR_URL) return false;
+
   const runtime = getRuntimeContextState();
   const connectionKey = typeof (input as any).__connectionSessionKey === 'string' && (input as any).__connectionSessionKey
     ? (input as any).__connectionSessionKey as string : null;

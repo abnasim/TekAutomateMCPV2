@@ -16,6 +16,9 @@
 import { config } from 'dotenv';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import fs from 'fs';
+import os from 'os';
+import path from 'path';
 import { Server } from '@modelcontextprotocol/sdk/server';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import {
@@ -99,37 +102,51 @@ function buildExternalMcpToolContent(toolName: string, result: unknown) {
     return [{ type: 'text' as const, text: JSON.stringify(meta, null, 2) }];
   }
 
-  // ── No local path: fall back to embedded image content block ───────────────
-  if (!isScreenshotLike || !imageContent || imageContent.type !== 'image') {
+  // ── imageContent present but no localPath — save to disk, never embed base64 ─
+  // Embedding base64 PNG in a single JSON-RPC line causes "error decoding
+  // response body" in Claude Code / Claude Desktop readline parsers and inflates
+  // AI token usage.  Always write to a temp file and return a localPath pointer.
+  if (isScreenshotLike && imageContent && imageContent.type === 'image') {
+    const b64 = String(imageContent.data || '');
+    const mimeStr = String(imageContent.mimeType || source.mimeType || 'image/png');
+    const ext = mimeStr.includes('jpeg') ? 'jpg' : 'png';
+    let savedPath: string | null = null;
+    if (b64) {
+      try {
+        const dir = path.join(os.tmpdir(), 'tekautomate');
+        fs.mkdirSync(dir, { recursive: true });
+        const filePath = path.join(dir, `screenshot_${Date.now()}.${ext}`);
+        fs.writeFileSync(filePath, Buffer.from(b64, 'base64'));
+        savedPath = filePath;
+      } catch {
+        // fall through to error text
+      }
+    }
+    const meta: Record<string, unknown> = {
+      ok: source.ok === false ? false : true,
+      captured: true,
+    };
+    if (typeof source.capturedAt === 'string') meta.capturedAt = source.capturedAt;
+    if (typeof source.scopeType === 'string') meta.scopeType = source.scopeType;
+    if (typeof source.sizeBytes === 'number') meta.sizeBytes = source.sizeBytes;
+    if (typeof source.mimeType === 'string') meta.mimeType = source.mimeType;
+    if (savedPath) {
+      meta.localPath = savedPath;
+      meta._hint = 'Screenshot saved locally. Use the Read tool to open this file and view the oscilloscope image.';
+    } else {
+      meta.error = 'Screenshot captured but could not be saved to local temp directory.';
+    }
+    return [{ type: 'text' as const, text: JSON.stringify(meta, null, 2) }];
+  }
+
+  // ── Non-screenshot tool result ─────────────────────────────────────────────
+  if (!isScreenshotLike) {
     const safeResult = sanitizeToolResultForExternalMcp(toolName, result);
     const text = typeof safeResult === 'string'
       ? safeResult
       : JSON.stringify(safeResult, null, 2);
     return [{ type: 'text' as const, text }];
   }
-
-  const metadata: Record<string, unknown> = {
-    ok: source.ok === false ? false : true,
-    captured: true,
-  };
-  if (typeof source.capturedAt === 'string') metadata.capturedAt = source.capturedAt;
-  if (typeof source.scopeType === 'string') metadata.scopeType = source.scopeType;
-  if (typeof source.sizeBytes === 'number') metadata.sizeBytes = source.sizeBytes;
-  if (typeof source.mimeType === 'string') metadata.mimeType = source.mimeType;
-  if (typeof source.originalMimeType === 'string') metadata.originalMimeType = source.originalMimeType;
-  if (typeof source.originalSizeBytes === 'number') metadata.originalSizeBytes = source.originalSizeBytes;
-
-  return [
-    {
-      type: 'image' as const,
-      data: String(imageContent.data || ''),
-      mimeType: String(imageContent.mimeType || source.mimeType || 'image/png'),
-    },
-    {
-      type: 'text' as const,
-      text: JSON.stringify(metadata),
-    },
-  ];
 }
 
 // ── env ──────────────────────────────────────────────────────────────

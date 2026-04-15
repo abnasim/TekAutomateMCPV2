@@ -25,6 +25,7 @@ export interface FetchWaveformInput extends Record<string, unknown> {
   start?:      number;
   stop?:       number;
   timeoutMs?:  number;
+  saveLocal?:  boolean;
   executorUrl?: string;
   visaResource?: string;
   backend?: string;
@@ -70,17 +71,26 @@ export async function fetchWaveform(input: FetchWaveformInput): Promise<ToolResu
   const downsample = Math.min(Math.max(Number(input.downsample ?? 1000), 10), 50000);
   const start      = Math.max(1, Math.floor(Number(input.start ?? 1)));
 
-  // Smart default stop:
-  //   stats only  → 10 000 pts (fast, plenty for accurate stats + clipping detection)
-  //   csv / both  → 0 = full record (need shape fidelity before LTTB downsampling)
-  // User can always override by passing stop explicitly.
-  const stopDefault = (input.stop !== undefined && input.stop !== null)
-    ? Math.max(0, Math.floor(Number(input.stop)))
-    : (format === 'stats' ? 10000 : 0);
-  const stop     = stopDefault;
+  // stop=0 (or not provided) → auto: buildWaveformCommands will query HORizontal:MODE:RECOrdlength?
+  // and set DATa:STOP to the full record length. User can pass an explicit stop to cap transfer.
+  const stop = (input.stop !== undefined && input.stop !== null && Number(input.stop) > 0)
+    ? Math.floor(Number(input.stop))
+    : 0;
   const timeoutMs = Math.min(Math.max(Number(input.timeoutMs ?? 30000), 5000), 120000);
 
-  const params: WaveformParams = { channel, format, downsample, width, start, stop, timeoutMs };
+  const saveLocal = Boolean(input.saveLocal);
+
+  // Derive a filesystem-safe scope identifier from the VISA resource string.
+  // e.g. "TCPIP0::192.168.1.138::inst0::INSTR" → "192.168.1.138"
+  //      "TCPIP::10.0.0.5::4000::SOCKET"       → "10.0.0.5"
+  //      "USB0::0x0699::..."                    → "USB0_0x0699"
+  const rawVisa = String(merged.visaResource || '');
+  const scopeIdMatch = rawVisa.match(/TCPIP\d*::([^:]+)/i) || rawVisa.match(/^([^:]+)/);
+  const scopeId = scopeIdMatch
+    ? scopeIdMatch[1].replace(/[^a-zA-Z0-9._\-]/g, '_')
+    : 'scope';
+
+  const params: WaveformParams = { channel, format, downsample, width, start, stop, timeoutMs, saveLocal, scopeId };
 
   // ── Hosted mode: route through TekAutomate browser bridge via send_scpi ──
   // send_scpi IS supported by the bridge (in fC set). We build the full command

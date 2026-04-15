@@ -310,7 +310,7 @@ async function runSmartScpiAssistant(req: McpChatRequest) {
     } catch { /* ignore */ }
 
     // IMPORTANT: toolResult.data is string[] (text for Claude).
-    // Use commandSuggestions (raw CommandSuggestion objects) for building cards.
+    // Use commandSuggestions (raw CommandSuggestion objects) for building ACTIONS_JSON.
     // Using data[] here caused "Cannot read properties of undefined (reading 'replace')"
     // because cmd.header was undefined on a string element.
     const commandObjects: any[] = toolResult.commandSuggestions || [];
@@ -358,6 +358,7 @@ async function runSmartScpiAssistant(req: McpChatRequest) {
           resolved = resolved.replace(nrPattern, userValue).trim();
         }
         // Fallback: if user provided a value but no NR placeholder matched, append it
+        // (guard: only if the last token of resolved isn't already a number)
         if (userValue && !resolved.includes(userValue) && !/^\d/.test((resolved.split(/\s+/).pop() || ''))) {
           resolved = `${resolved} ${userValue}`;
         }
@@ -388,8 +389,8 @@ async function runSmartScpiAssistant(req: McpChatRequest) {
     // Build SCPI command cards for the rich widget renderer in TekAutomate UI.
     // The SCPI_COMMANDS: format renders each command as a card with + Query / + Write
     // buttons, plus an "Apply All to Flow" bulk button at the bottom.
-    // resolvedCommand carries the value-substituted command so the card shows
-    // "CH1:SCALERATio 2" not "CH<x>:SCALERATio <NR2>".
+    // resolvedCommand carries the RESOLVED command (value substituted) from the actions array,
+    // so the card footer and Write button show "CH1:SCALERATio 2" not "CH<x>:SCALERATio <NR2>".
     const scpiCards = commandObjects.map((cmd: any, idx: number) => {
       const resolvedAction = actions[idx];
       const resolvedCommand: string | null =
@@ -399,7 +400,7 @@ async function runSmartScpiAssistant(req: McpChatRequest) {
         description: cmd.shortDescription || cmd.description || '',
         set: cmd.syntax?.set || null,
         query: cmd.syntax?.query || null,
-        resolvedCommand,
+        resolvedCommand,   // resolved write command (value-substituted), null if query-only
         type: cmd.commandType || 'both',
         group: cmd.group || '',
         families: cmd.families || [],
@@ -7727,7 +7728,7 @@ async function runOpenAiToolLoop(
                     new Date().toISOString(),
                   )
                 : null);
-              const analysisFileId = (analysisTransport === 'file_id' || wantsOpenAiImage) && analysisImageData
+              const analysisFileId = wantsOpenAiImage && analysisImageData
                 ? await uploadVisionImageToOpenAiFileHosted(
                     req.apiKey,
                     analysisImageData.base64,
@@ -7736,7 +7737,7 @@ async function runOpenAiToolLoop(
                   )
                 : null;
               // AI wants to see the image — inject it
-              if ((analysisTransport === 'file_id' || wantsOpenAiImage) && !analysisFileId) {
+              if (wantsOpenAiImage && !analysisFileId) {
                 liveMessages.push({
                   role: 'tool',
                   tool_call_id: toolId,
@@ -7761,7 +7762,7 @@ async function runOpenAiToolLoop(
                 continue;
               }
               const textSummary = buildImageToolResultSummary(result);
-              const resolvedTransport = wantsOpenAiImage ? 'file_id' : analysisImageUrl ? 'url' : analysisFileId ? 'file_id' : 'base64';
+              const resolvedTransport = wantsOpenAiImage ? 'openai_image' : analysisImageUrl ? 'url' : 'base64';
               liveMessages.push({ role: 'tool', tool_call_id: toolId, content: `${textSummary} Vision transport: ${resolvedTransport}.` });
               liveMessages.push({
                 role: 'user',
@@ -7771,8 +7772,6 @@ async function runOpenAiToolLoop(
                     ? [{ type: 'image_url', image_url: { file_id: analysisFileId, detail: 'auto' } }]
                     : analysisImageUrl
                     ? [{ type: 'image_url', image_url: { url: analysisImageUrl, detail: 'auto' } }]
-                    : analysisFileId
-                    ? [{ type: 'image_url', image_url: { file_id: analysisFileId, detail: 'auto' } }]
                     : [{ type: 'image_url', image_url: { url: `data:${analysisImageData.mimeType};base64,${analysisImageData.base64}`, detail: 'auto' } }]),
                 ],
               });
@@ -8035,7 +8034,7 @@ async function uploadVisionImageToOpenAiFileHosted(
   }
 }
 
-type ScreenshotAnalysisTransport = 'auto' | 'url' | 'file_id' | 'base64' | 'mcp_image' | 'openai_image' | 'claude_image';
+type ScreenshotAnalysisTransport = 'auto' | 'url' | 'base64' | 'mcp_image' | 'openai_image' | 'claude_image';
 
 function buildVisionImageUrlForHostedLoop(
   req: McpChatRequest,

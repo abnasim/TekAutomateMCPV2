@@ -141,7 +141,7 @@ export function getToolDefinitions() {
     ...(isLiveInstrumentEnabled() ? [{
       name: 'instrument_live',
       description:
-        'Live instrument gateway for TekAutomate. Use `context` for connection info, `send` for SCPI commands, `screenshot` for capture, `snapshot`/`diff`/`inspect` for *LRN?-based state discovery, `resources` for VISA discovery, and `waveform` for signal health check + data fetch. For screenshots: call with action:"screenshot" and analyze:true — the response returns an MCP {type:"image"} content block containing the screenshot, rendered as vision by your client. Use as a verification tool after any action that changes the display (channel enable/disable, scale, decode, trigger), when measurements are unexpected, or as final task sign-off. For waveform: action:"waveform" fetches raw ADC samples, computes stats (min/max/mean/std/Vpp), and automatically detects clipping — look for top-level "CLIPPING" key in the response.',
+        'Live instrument gateway for TekAutomate. Use `context` for connection info, `send` for SCPI commands, `screenshot` for capture, `snapshot`/`diff`/`inspect` for *LRN?-based state discovery, `resources` for VISA discovery, and `waveform` for signal health check + data fetch. For screenshots: call with action:"screenshot" and analyze:true — the response returns an MCP {type:"image"} content block containing the screenshot, rendered as vision by your client. Use as a verification tool after any action that changes the display (channel enable/disable, scale, decode, trigger), when measurements are unexpected, or as final task sign-off. For waveform: action:"waveform" fetches raw ADC samples, computes stats (min/max/mean/std/Vpp), and automatically detects clipping — look for top-level "CLIPPING" key in the response. Pass saveLocal:true to save the full-resolution CSV to a local file and receive a localPath instead of inline data — use the Read tool to access it.',
       parameters: {
         type: 'object',
         properties: {
@@ -165,7 +165,7 @@ export function getToolDefinitions() {
           },
           analysisTransport: {
             type: 'string',
-            enum: ['claude_image', 'mcp_image', 'openai_image', 'url', 'file_id'],
+            enum: ['claude_image', 'mcp_image', 'openai_image', 'url'],
             description: 'Optional internal transport hint — leave unset. The server automatically selects the correct image format for your client.',
           },
           timeoutMs: {
@@ -343,26 +343,17 @@ export function getToolDefinitions() {
     {
       name: 'search_scpi',
       description:
-        'Keyword search over 16,500+ verified SCPI commands for Tektronix oscilloscopes (MSO2/4/5/6/7, DPO), AFG31000, AWG70000/5200, SignalVu/RSA, and Keithley SMU.\n\n' +
-        'WHEN TO USE: When you need a command from a short noun phrase. Best for: "edge trigger", "vertical scale", "I2C bus decode", "record length", "spectrum view", "save setup".\n\n' +
-        'WHEN NOT TO USE: If you already know the header (use get_command_by_header). For procedures and lessons (use knowledge). For exact code examples (use knowledge).\n\n' +
-        'SCPI VOCABULARY TIPS — use these exact terms for best results:\n' +
-        '- Impedance / 50 ohm → search "termination" (CH<x>:TERmination)\n' +
-        '- Sine wave → search "sinusoid" (SINusoid is the SCPI enum value)\n' +
-        '- Time base → search "horizontal scale"\n' +
-        '- Screenshot → search "save image" or "hardcopy"\n' +
-        '- Single shot → search "stopafter sequence"\n' +
-        '- Continuous run → search "stopafter runstop"\n' +
-        '- Add measurement → search "addmeas" (MEASUrement:ADDMEAS)\n' +
-        '- Eye diagram → search "eye diagram measurement"\n' +
-        '- Trigger holdoff → search "holdoff time"\n\n' +
-        'INSTRUMENT FILTERING: Use modelFamily to narrow results:\n' +
-        '- Oscilloscope: "mso_5_series", "mso_6_series"\n' +
-        '- AFG: "afg_31000" | AWG: "awg_70000" | SignalVu: "signalvu"\n\n' +
-        'Returns: header, type, description, group. Use verbosity:"full" for full argument enumeration.\n\n' +
-        'Examples: search_scpi("trigger level channel 1") → TRIGger:A:LEVel:CH<x>\n' +
-        '          search_scpi("acquire stopafter") → ACQuire:STOPAfter\n' +
-        '          search_scpi("termination 50") → CH<x>:TERmination',
+        'Cheap keyword/header search over the SCPI command database. ' +
+        'Use for fast discovery when you want likely headers or command families from short targeted phrases such as "edge trigger", "measurement frequency", or "I2C bus".\n\n' +
+        'Best for:\n' +
+        '- cheap first-pass command discovery\n' +
+        '- short noun-heavy queries\n' +
+        '- finding likely headers before get_command_by_header\n\n' +
+        'Avoid for:\n' +
+        '- long conversational prompts\n' +
+        '- exact known headers (use get_command_by_header)\n' +
+        '- procedure or bug retrieval (use retrieve_rag_chunks)\n\n' +
+        'Returns compact discovery results by default: header, type, description, and group. Use verbosity:"full" only when you explicitly need richer command blobs.',
       parameters: {
         type: 'object',
         properties: {
@@ -1052,100 +1043,6 @@ export function getToolDefinitions() {
       },
     },
     {
-      name: 'fetch_waveform',
-      description:
-        '━━ WAVEFORM HEALTH CHECK + DATA FETCH ━━\n' +
-        'THE tool to use any time you need to inspect, measure, or verify a live signal.\n' +
-        'Reads raw ADC samples directly — no SCPI measurement commands needed.\n\n' +
-        'CALL THIS TOOL WHEN:\n' +
-        '  • User asks anything about voltage, amplitude, noise, DC level, or signal shape\n' +
-        '  • Before reporting any measurement — always confirm not clipping first\n' +
-        '  • "Is CH1 clipping?" / "Vpp on CH2?" / "noise on signal?" / "plot the waveform"\n' +
-        '  • "Show me CH1 and CH2" / "export waveform data" / "capture the trace"\n' +
-        '  • After changing vertical scale/offset — re-fetch to verify adjustment worked\n' +
-        '  • Any time a measurement returns 9.9E37 or looks wrong — clipping check first\n\n' +
-        '⚡ CLIPPING DETECTION (automatic, always on):\n' +
-        '  ADC samples checked against hardware saturation rail (±32767 int16 / ±127 int8).\n' +
-        '  Clipping → top-level "CLIPPING" key with loud warning. STOP. Fix scale/offset first.\n' +
-        '  NEVER report stats from a clipping waveform — all values are invalid.\n\n' +
-        'QUICK CALL GUIDE — copy these exactly:\n' +
-        '  Health check / Vpp / noise:  {channel:"CH1", format:"stats"}\n' +
-        '  Plot waveform (full record):  {channel:"CH1", format:"csv", downsample:1000}\n' +
-        '  Full analysis + plot:         {channel:"CH1", format:"both", downsample:1000}\n' +
-        '  Multi-channel plot (parallel):{channel:"CH1",...} + {channel:"CH2",...} in parallel\n' +
-        '  Large record (>1M pts):       {channel:"CH1", format:"csv", downsample:2000, width:1, timeoutMs:90000}\n' +
-        '  Zoom into record window:      {channel:"CH1", format:"csv", start:50000, stop:150000}\n\n' +
-        'FORMAT:\n' +
-        '  "stats" (DEFAULT) — min/max/mean/std/Vpp + clipping. Fast, ~200 tokens. For all measurement questions.\n' +
-        '  "csv"             — LTTB-downsampled "s,V\\n..." table. For plotting/export. ~6K tokens at 1000 pts.\n' +
-        '  "both"            — stats + csv together. Full analysis in one call.\n\n' +
-        'LTTB DOWNSAMPLING (Largest Triangle Three Buckets):\n' +
-        '  Compresses millions of raw points to downsample target while preserving ALL peaks/troughs/edges.\n' +
-        '  Shape-faithful — not averaging. Use downsample:1000 for most plots.\n' +
-        '  More detail? Use downsample:5000. Simple signal? downsample:500 is enough.\n' +
-        '  Token cost = roughly downsample × 6 tokens. 1000 pts ≈ 6K tokens.\n\n' +
-        'STOP / RECORD WINDOW:\n' +
-        '  stats default: stop=10000 (fast, enough for stats + clipping, ~1s)\n' +
-        '  csv/both default: stop=0 = FULL record (captures everything for shape fidelity)\n' +
-        '  Large records (500K–2.5M): always set timeoutMs:60000–120000 or bridge may time out.\n' +
-        '  Use start+stop to zoom into a sub-window: start:100000, stop:200000\n\n' +
-        'WIDTH (ADC precision):\n' +
-        '  width:2 (DEFAULT) — int16, full 12-bit precision. Use for all normal measurements.\n' +
-        '  width:1           — int8, 8-bit only. 2× faster transfer on huge records (>1M pts).\n' +
-        '                      Trade-off: coarser voltage resolution. Use only when speed matters.\n\n' +
-        'RESPONSE FIELDS:\n' +
-        '  CLIPPING              — READ FIRST. Present only when clipping detected.\n' +
-        '  stats.clipping        — true/false\n' +
-        '  stats.clip_high_count, clip_low_count — count of samples at ADC rail\n' +
-        '  stats.min_v, max_v, mean_v, std_v, pk_pk_v — voltage stats (invalid if clipping)\n' +
-        '  stats.t_start, t_end, x_incr, x_unit, y_unit — time axis info\n' +
-        '  stats.n_points_captured — actual points fetched from scope\n' +
-        '  n_points_returned     — LTTB output count (only when format is csv or both)\n' +
-        '  csv                   — "s,V\\n-0.001,1.23\\n..." ready to plot or export\n\n' +
-        'TOKEN COST: stats=~200, csv(1000pt)=~6K, csv(5000pt)=~30K. Raw would be millions — this tool saves that.',
-      parameters: {
-        type: 'object',
-        properties: {
-          channel: {
-            type: 'string',
-            description: 'Scope channel to fetch. CH1, CH2, CH3, CH4, MATH1, REF1, etc. Default: CH1.',
-          },
-          format: {
-            type: 'string',
-            enum: ['stats', 'csv', 'both'],
-            description: 'stats (default) = voltage/time statistics only (~200 tokens). csv = LTTB-downsampled time+voltage table. both = stats + csv. Use csv/both only when user asks to plot or export.',
-          },
-          downsample: {
-            type: 'number',
-            description: 'Number of points in the returned CSV after LTTB downsampling. Default 1000. Range 10–50000. Only applies when format is csv or both.',
-          },
-          width: {
-            type: 'number',
-            enum: [1, 2],
-            description: 'ADC sample width. 2 (default) = int16, full 12-bit precision. 1 = int8, 8-bit only, faster for huge records.',
-          },
-          start: {
-            type: 'number',
-            description: 'First record point to fetch (1-based). Default 1 (start of record).',
-          },
-          stop: {
-            type: 'number',
-            description: 'Last record point to fetch. 0 (default) = full record length.',
-          },
-          timeoutMs: {
-            type: 'number',
-            description: 'VISA timeout in ms. Default 30000. Increase for very long records (>10M points).',
-          },
-          executorUrl: { type: 'string' },
-          visaResource: { type: 'string' },
-          backend:      { type: 'string' },
-          liveMode:     { type: 'boolean' },
-        },
-        required: [],
-        additionalProperties: false,
-      },
-    },
-    {
       name: 'get_visa_resources',
       description: 'List available VISA resources from the local executor. Use this first when more than one instrument may be connected, then pass the chosen visaResource into send_scpi, probe_command, capture_screenshot, or other live tools. Prefer this over guessing instrument selection.',
       parameters: {
@@ -1247,7 +1144,6 @@ const MCP_EXPOSED_TOOLS = new Set([
   'get_visa_resources',
   'send_scpi',
   'capture_screenshot',
-  'fetch_waveform',
   'discover_scpi',
 ]);
 

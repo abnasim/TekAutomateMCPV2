@@ -1,3 +1,10 @@
+import fs from 'fs';
+import os from 'os';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+// Resolve project root relative to this file: mcp-server/src/core/ → up 3 dirs
+const _projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
 import type { InstrumentOutputMode, ToolResult } from './schemas';
 import { decodeCommandStatus, decodeStatusFromText } from './statusDecoder';
 
@@ -429,337 +436,228 @@ export async function captureScreenshotProxy(endpoint: Endpoint): Promise<ToolRe
   }
 }
 
-// ── Waveform fetch ─────────────────────────────────────────────────────────
+// ── Waveform fetch ────────────────────────────────────────────────────────────
 
 export interface WaveformParams {
-  channel: string;         // CH1, CH2, CH3, CH4, MATH1, REF1 etc.
-  format: 'stats' | 'csv' | 'both';
-  downsample: number;      // LTTB target points
-  width: 1 | 2;            // 1=int8 (8-bit), 2=int16 (12-bit full ADC precision)
-  start: number;           // DATa:STARt record point
-  stop: number;            // DATa:STOP (0 = full record)
-  timeoutMs: number;
+  channel:    string;
+  format:     'stats' | 'csv' | 'both';
+  downsample: number;
+  width:      1 | 2;
+  start:      number;
+  stop:       number;
+  timeoutMs:  number;
+  saveLocal?: boolean; // save full-res CSV to disk; strip csv from MCP response (AI uses Read tool on localPath)
+  scopeId?:   string;  // folder name under waveforms/ — derived from VISA resource (e.g. "192.168.1.138")
 }
 
-/** Build the ordered SCPI command list for a waveform fetch (ASCII encoding). */
-export function buildWaveformCommands(p: WaveformParams): string[] {
-  const stopCmd = p.stop === 0 ? 'DATa:STOP 10000' : `DATa:STOP ${p.stop}`;
-  return [
-    `DATa:SOUrce ${p.channel}`,
-    'DATa:ENCdg ASCIi',
-    `DATa:WIDth ${p.width}`,
-    `DATa:STARt ${p.start}`,
-    stopCmd,
-    'WFMOutpre:NR_Pt?',
+export function buildWaveformCommands(params: WaveformParams): string[] {
+  // stop=0 means "auto" — fetch full record. We query the record length first so
+  // we can set DATa:STOP correctly rather than guessing 1_000_000.
+  const autoStop = params.stop === 0;
+  const stopVal  = autoStop ? 1_000_000 : params.stop;
+  const cmds: string[] = [];
+  if (autoStop) {
+    // Query actual record length so we can cap DATa:STOP correctly
+    cmds.push('HORizontal:MODE:RECOrdlength?');
+  }
+  cmds.push(
+    `DATa:SOUrce ${params.channel}`,
+    'DATa:ENCdg ASCii',
+    `DATa:WIDth ${params.width}`,
+    `DATa:STARt ${params.start}`,
+    `DATa:STOP ${stopVal}`,
+    'DATa:STOP?',   // verify setting was accepted
+    '*OPC?',        // synchronisation barrier — scope processes all writes before responding
+    // Query individual preamble fields for reliable parsing (WFMOutpre? format varies by firmware)
     'WFMOutpre:YMUlt?',
     'WFMOutpre:YOFf?',
     'WFMOutpre:YZEro?',
     'WFMOutpre:XINcr?',
-    'WFMOutpre:PT_Off?',
-    'WFMOutpre:XUNit?',
-    'WFMOutpre:YUNit?',
+    'WFMOutpre:XZEro?',
+    'WFMOutpre:NR_Pt?',
     'CURVe?',
-  ];
+  );
+  return cmds;
 }
 
-/** LTTB downsampling — pure TypeScript, no numpy needed. */
-function lttb(t: Float64Array, v: Float64Array, nOut: number): [Float64Array, Float64Array] {
-  const n = t.length;
-  if (nOut >= n || nOut < 3) return [t, v];
-  const idxs: number[] = [0];
-  const bkt = (n - 2) / (nOut - 2);
-  let a = 0;
-  for (let i = 1; i < nOut - 1; i++) {
-    const avgS = Math.floor((i + 1) * bkt) + 1;
-    const avgE = Math.min(Math.floor((i + 2) * bkt) + 1, n);
-    let sumT = 0, sumV = 0;
-    for (let j = avgS; j < avgE; j++) { sumT += t[j]; sumV += v[j]; }
-    const cnt  = avgE - avgS || 1;
-    const at   = sumT / cnt;
-    const av   = sumV / cnt;
-    const rs   = Math.floor(i * bkt) + 1;
-    const re   = Math.min(Math.floor((i + 1) * bkt) + 1, n);
-    let maxArea = -1, best = rs;
-    const ta = t[a], va = v[a];
-    for (let j = rs; j < re; j++) {
-      const area = Math.abs((ta - at) * (v[j] - va) - (ta - t[j]) * (av - va)) * 0.5;
-      if (area > maxArea) { maxArea = area; best = j; }
-    }
-    idxs.push(best);
-    a = best;
+function parsePreamble(raw: string): Record<string, number> {
+  const out: Record<string, number> = {};
+  for (const part of raw.split(';')) {
+    const m = part.trim().match(/^(\w+)\s+(.+)$/);
+    if (!m) continue;
+    const v = parseFloat(m[2]);
+    if (!isNaN(v)) out[m[1].toUpperCase()] = v;
   }
-  idxs.push(n - 1);
-  const tOut = new Float64Array(idxs.length);
-  const vOut = new Float64Array(idxs.length);
-  for (let i = 0; i < idxs.length; i++) { tOut[i] = t[idxs[i]]; vOut[i] = v[idxs[i]]; }
-  return [tOut, vOut];
+  return out;
 }
 
-/**
- * Process CURVe? ASCII response + preamble queries into a waveform result.
- * Called by fetchWaveformProxy (direct) and fetchWaveform bridge path.
- */
+/** Largest-Triangle-Three-Buckets downsampling (shape-preserving). */
+function lttb(data: number[], threshold: number): number[] {
+  const n = data.length;
+  if (n <= threshold) return data;
+  const out: number[] = [data[0]];
+  const bSize = (n - 2) / (threshold - 2);
+  let a = 0;
+  for (let i = 0; i < threshold - 2; i++) {
+    const avgFrom = Math.floor((i + 1) * bSize) + 1;
+    const avgTo   = Math.min(Math.floor((i + 2) * bSize) + 1, n);
+    let avgY = 0;
+    for (let j = avgFrom; j < avgTo; j++) avgY += data[j];
+    avgY /= (avgTo - avgFrom);
+    const rFrom = Math.floor(i * bSize) + 1;
+    const rTo   = Math.min(Math.floor((i + 1) * bSize) + 1, n);
+    const aY    = out[out.length - 1];
+    let maxArea = -1, nextA = rFrom;
+    for (let j = rFrom; j < rTo; j++) {
+      const area = Math.abs((a - avgFrom) * (data[j] - aY) - (a - j) * (avgY - aY)) * 0.5;
+      if (area > maxArea) { maxArea = area; nextA = j; }
+    }
+    out.push(data[nextA]);
+    a = nextA;
+  }
+  out.push(data[n - 1]);
+  return out;
+}
+
 export function processWaveformScpiResponses(
   responses: Array<{ command: string; response: string }>,
-  p: WaveformParams,
+  params: WaveformParams,
 ): ToolResult<unknown> {
-  const get = (key: string): string => {
-    const r = responses.find(r => r.command.toUpperCase().includes(key.toUpperCase()));
-    return r?.response?.trim() ?? '';
-  };
+  const get = (pattern: RegExp) => responses.find(r => pattern.test(r.command))?.response ?? '';
+  const curveRaw     = get(/^CURV/i);
+  const dataStopResp = get(/^DATa:STOP\?/i);
+  const verifiedStop = dataStopResp ? parseInt(dataStopResp, 10) : null;
 
-  const yMult = parseFloat(get('YMUlt')) || 0;
-  const yOff  = parseFloat(get('YOFf'))  || 0;
-  const yZero = parseFloat(get('YZEro')) || 0;
-  const xIncr = parseFloat(get('XINcr')) || 0;
-  const ptOff = parseFloat(get('PT_Off')) || 0;
-  const xUnit = get('XUNit').replace(/"/g, '') || 's';
-  const yUnit = get('YUNit').replace(/"/g, '') || 'V';
-
-  if (!yMult || !xIncr) {
+  if (!curveRaw) {
     return {
       ok: false,
-      data: { error: 'BAD_PREAMBLE', message: 'WFMOutpre queries returned unusable values — check channel source and scope state' },
-      sourceMeta: [],
-      warnings: ['Preamble parse failed — check channel source and scope state'],
+      data: {
+        error: 'NO_CURVE_DATA',
+        message: 'CURVe? returned no data.',
+        diagnostics: {
+          verifiedStop,
+          responses: responses.map(r => ({ cmd: r.command, resp: r.response?.slice(0, 80) })),
+        },
+      },
+      sourceMeta: [], warnings: ['No curve data'],
     };
   }
 
-  // Parse CURVe? ASCII: "12,34,-56,78,..." (comma or space separated)
-  // Strip raw response immediately — it must never appear in any output or error path.
-  const curveR = responses.find(r => /CURVe/i.test(r.command));
-  const rawStr = curveR?.response?.trim() ?? '';
-  if (curveR) curveR.response = '';
-  if (!rawStr) {
-    return {
-      ok: false,
-      data: { error: 'NO_CURVE_DATA', message: 'CURVe? returned empty response' },
-      sourceMeta: [],
-      warnings: ['CURVe? response was empty — scope may not be acquiring'],
-    };
+  // Use individual preamble field queries for reliable parsing — WFMOutpre? format
+  // varies across firmware versions and may include quoted strings that break simple parsing.
+  const parseF = (pattern: RegExp, fallback: number) => {
+    const v = parseFloat(get(pattern));
+    return isNaN(v) ? fallback : v;
+  };
+  const ymult = parseF(/WFMOutpre:YMUlt/i,  1);
+  const yoff  = parseF(/WFMOutpre:YOFf/i,   0);
+  const yzero = parseF(/WFMOutpre:YZEro/i,  0);
+  const xincr = parseF(/WFMOutpre:XINcr/i,  1e-9);
+  const xzero = parseF(/WFMOutpre:XZEro/i,  0);
+
+  // Strip IEEE binary header if present: #<n><bytes><data>
+  let raw = curveRaw.trim();
+  if (raw.startsWith('#')) raw = raw.slice(2 + parseInt(raw[1], 10));
+
+  const samples = raw.split(',').map(Number).filter(v => !isNaN(v));
+  if (!samples.length) {
+    return { ok: false, data: { error: 'PARSE_FAILED', message: 'Could not parse CURVe? as ASCII integers.' }, sourceMeta: [], warnings: ['CURVe? parse failed'] };
   }
 
-  const rawNums = rawStr.split(/[,\s]+/).filter(Boolean);
-  const n = rawNums.length;
-  const maxRail = p.width === 2 ? 32767 : 127;
-  const minRail = p.width === 2 ? -32768 : -128;
+  // Convert ADC counts → volts
+  const volts = samples.map(s => (s - yoff) * ymult + yzero);
 
-  const voltage = new Float64Array(n);
-  const tAxis   = new Float64Array(n);
-  let minV = Infinity, maxV = -Infinity, sumV = 0, sumV2 = 0;
-  let clipHigh = 0, clipLow = 0;
+  let min = Infinity, max = -Infinity, sum = 0;
+  for (const v of volts) { if (v < min) min = v; if (v > max) max = v; sum += v; }
+  const mean = sum / volts.length;
+  let variance = 0;
+  for (const v of volts) variance += (v - mean) ** 2;
+  const std = Math.sqrt(variance / volts.length);
 
-  for (let i = 0; i < n; i++) {
-    const raw = parseInt(rawNums[i], 10);
-    const v   = (raw - yOff) * yMult + yZero;
-    voltage[i] = v;
-    tAxis[i]   = (i - ptOff) * xIncr;
-    if (v < minV) minV = v;
-    if (v > maxV) maxV = v;
-    sumV  += v;
-    sumV2 += v * v;
-    if (raw >= maxRail) clipHigh++;
-    if (raw <= minRail) clipLow++;
-  }
+  const railLow  = params.width === 2 ? -32768 : -128;
+  const railHigh = params.width === 2 ?  32767 :  127;
+  const clipLow  = samples.filter(s => s <= railLow).length;
+  const clipHigh = samples.filter(s => s >= railHigh).length;
+  const clipPct  = (clipLow + clipHigh) / samples.length * 100;
 
-  const r9 = (x: number) => Math.round(x * 1e9) / 1e9;
-  const meanV = sumV / n;
-  const stdV  = Math.sqrt(Math.max(0, sumV2 / n - meanV * meanV));
-  const clipping = clipHigh > 0 || clipLow > 0;
-
-  const stats = {
-    n_points_captured: n,
-    min_v:   r9(minV),
-    max_v:   r9(maxV),
-    mean_v:  r9(meanV),
-    std_v:   r9(stdV),
-    pk_pk_v: r9(maxV - minV),
-    t_start: tAxis[0],
-    t_end:   tAxis[n - 1],
-    x_incr:  xIncr,
-    x_unit:  xUnit,
-    y_unit:  yUnit,
-    clipping,
-    clip_high_count: clipHigh,
-    clip_low_count:  clipLow,
+  const stats: Record<string, unknown> = {
+    channel:       params.channel,
+    nPoints:       volts.length,
+    min:           +min.toFixed(6),
+    max:           +max.toFixed(6),
+    mean:          +mean.toFixed(6),
+    std:           +std.toFixed(6),
+    vpp:           +(max - min).toFixed(6),
+    xincr,
+    xzero,
+    clipLowCount:  clipLow,
+    clipHighCount: clipHigh,
+    clipPct:       +clipPct.toFixed(2),
+    ...(verifiedStop !== null ? { verifiedDATaSTOP: verifiedStop } : {}),
   };
+  if (clipPct >= 1) stats['CLIPPING'] = true;
 
-  const clipWarning = clipping
-    ? `⚠️ CLIPPING DETECTED on ${p.channel}! ${clipHigh + clipLow} of ${n} samples hit the ADC rail. Reduce vertical scale or channel offset immediately — measurements are invalid while clipping.`
-    : undefined;
+  // ── saveLocal: write full-res CSV to disk BEFORE any early returns ──────────
+  // Must run before the `format === 'stats'` guard — when saveLocal is true the
+  // caller wants the file regardless of the format they requested for the response.
+  if (params.saveLocal) {
+    const fullCsvLines = volts.map((v, i) => `${(xzero + i * xincr).toExponential(4)},${v.toFixed(6)}`);
+    const fullCsv = `time_s,voltage_v\n${fullCsvLines.join('\n')}`;
 
-  const result: Record<string, unknown> = {
-    ok:               true,
-    channel:          p.channel,
-    stats,
-    n_points_returned: 0,
-    ...(clipWarning ? { CLIPPING: clipWarning } : {}),
-  };
+    const scopeFolder = (params.scopeId || 'scope').replace(/[^a-zA-Z0-9._\-]/g, '_');
+    const waveDir     = path.join(_projectRoot, 'waveforms', scopeFolder);
+    const fileName    = `waveform_${params.channel}_${Date.now()}.csv`;
+    const filePath    = path.join(waveDir, fileName);
 
-  if (p.format === 'csv' || p.format === 'both') {
-    const [tDs, vDs] = lttb(tAxis, voltage, p.downsample);
-    result.n_points_returned = tDs.length;
-    const lines = [`${xUnit},${yUnit}`];
-    for (let i = 0; i < tDs.length; i++) {
-      lines.push(`${tDs[i].toExponential(9)},${vDs[i].toPrecision(6)}`);
+    let localPath: string | null = null;
+    let saveError: string | null = null;
+    try {
+      fs.mkdirSync(waveDir, { recursive: true });
+      fs.writeFileSync(filePath, fullCsv, 'utf8');
+      localPath = filePath;
+    } catch (e) {
+      saveError = e instanceof Error ? e.message : String(e);
     }
-    result.csv = lines.join('\n');
+
+    const result: Record<string, unknown> = {
+      ...stats,
+      totalPoints: volts.length,
+      ...(localPath
+        ? { localPath, _hint: 'Full-resolution waveform CSV saved. Use the Read tool to open it.' }
+        : { saveLocalError: saveError || 'Unknown write error', savePath: filePath }),
+    };
+    return {
+      ok: true,
+      data: result,
+      sourceMeta: [],
+      warnings: saveError ? [`saveLocal write failed: ${saveError}`] : [],
+    };
   }
 
-  return {
-    ok:         true,
-    data:       result,
-    sourceMeta: [],
-    warnings:   clipping ? [clipWarning!] : [],
-  };
-}
+  if (params.format === 'stats') {
+    return { ok: true, data: stats, sourceMeta: [], warnings: [] };
+  }
 
-/** @deprecated — kept so TypeScript doesn't error on old callers; remove after next sync */
-export function buildWaveformCode(visa: string, p: WaveformParams): string {
-  // JSON.stringify produces a properly-escaped Python string literal for the VISA address.
-  const visaLit = JSON.stringify(visa);
-  const dtype = p.width === 2 ? 'h' : 'b';   // signed int16 or int8
+  // Inline path: LTTB-downsample for response
+  const ds = lttb(volts, params.downsample);
+  const ratio = volts.length / ds.length;
+  const csvLines = ds.map((v, i) => `${(xzero + i * xincr * ratio).toExponential(4)},${v.toFixed(6)}`);
+  const result: Record<string, unknown> = { ...stats, downsampledPoints: ds.length, csv: `time_s,voltage_v\n${csvLines.join('\n')}` };
 
-  return `
-import json, sys
-
-try:
-    import pyvisa
-    import numpy as np
-
-    def lttb(t, v, n_out):
-        n = len(t)
-        if n_out >= n or n_out < 3:
-            return t, v
-        idx = [0]
-        bkt = (n - 2) / (n_out - 2)
-        a = 0
-        for i in range(1, n_out - 1):
-            avg_s = int((i + 1) * bkt) + 1
-            avg_e = min(int((i + 2) * bkt) + 1, n)
-            at = float(np.mean(t[avg_s:avg_e]))
-            av = float(np.mean(v[avg_s:avg_e]))
-            rs = int(i * bkt) + 1
-            re = int((i + 1) * bkt) + 1
-            ta, va = float(t[a]), float(v[a])
-            areas = np.abs((ta - at) * (v[rs:re] - va) - (ta - t[rs:re]) * (av - va)) * 0.5
-            m = rs + int(np.argmax(areas))
-            idx.append(m)
-            a = m
-        idx.append(n - 1)
-        return t[np.array(idx)], v[np.array(idx)]
-
-    rm = pyvisa.ResourceManager()
-    scope = rm.open_resource(${visaLit})
-    scope.timeout = ${p.timeoutMs}
-    scope.write_termination = "\\n"
-    scope.read_termination = "\\n"
-    try:
-        scope.write("DATa:SOUrce ${p.channel}")
-        scope.write("DATa:ENCdg SRIBinary")
-        scope.write("DATa:WIDth ${p.width}")
-        nr_pt = int(scope.query("WFMOutpre:NR_Pt?").strip())
-        actual_stop = nr_pt if ${p.stop} == 0 else min(${p.stop}, nr_pt)
-        scope.write("DATa:STARt ${p.start}")
-        scope.write("DATa:STOP " + str(actual_stop))
-        y_mult = float(scope.query("WFMOutpre:YMUlt?").strip())
-        y_off  = float(scope.query("WFMOutpre:YOFf?").strip())
-        y_zero = float(scope.query("WFMOutpre:YZEro?").strip())
-        x_incr = float(scope.query("WFMOutpre:XINcr?").strip())
-        pt_off = float(scope.query("WFMOutpre:PT_Off?").strip())
-        x_unit = scope.query("WFMOutpre:XUNit?").strip().strip('"')
-        y_unit = scope.query("WFMOutpre:YUNit?").strip().strip('"')
-        raw = scope.query_binary_values("CURVe?", datatype="${dtype}", container=np.ndarray, is_big_endian=True)
-        n_pts = int(len(raw))
-        voltage = (raw.astype(np.float32) - y_off) * y_mult + y_zero
-        t_axis  = (np.arange(n_pts, dtype=np.float32) - pt_off) * x_incr
-        stats = {
-            "n_points_captured": n_pts,
-            "min_v":   round(float(np.min(voltage)),  9),
-            "max_v":   round(float(np.max(voltage)),  9),
-            "mean_v":  round(float(np.mean(voltage)), 9),
-            "std_v":   round(float(np.std(voltage)),  9),
-            "pk_pk_v": round(float(np.max(voltage) - np.min(voltage)), 9),
-            "t_start": round(float(t_axis[0]),  15),
-            "t_end":   round(float(t_axis[-1]), 15),
-            "x_incr":  float(x_incr),
-            "x_unit":  x_unit,
-            "y_unit":  y_unit,
-        }
-        max_rail = 32767 if ${p.width} == 2 else 127
-        min_rail = -32768 if ${p.width} == 2 else -128
-        clip_high = int(np.sum(raw >= max_rail))
-        clip_low  = int(np.sum(raw <= min_rail))
-        clipping  = clip_high > 0 or clip_low > 0
-        stats["clipping"]        = clipping
-        stats["clip_high_count"] = clip_high
-        stats["clip_low_count"]  = clip_low
-        clip_warning = ("⚠️ CLIPPING DETECTED on ${p.channel}! " +
-            str(clip_high + clip_low) + " of " + str(n_pts) + " samples hit the ADC rail. " +
-            "Reduce vertical scale or channel offset immediately — measurements are invalid while clipping.") if clipping else None
-        result = {"ok": True, "channel": "${p.channel}", "stats": stats, "n_points_returned": 0,
-                  **({"CLIPPING": clip_warning} if clipping else {})}
-        if "${p.format}" in ("csv", "both"):
-            t_ds, v_ds = lttb(t_axis, voltage, ${p.downsample})
-            n_ds = int(len(t_ds))
-            result["n_points_returned"] = n_ds
-            lines = [x_unit + "," + y_unit]
-            for ti, vi in zip(t_ds.tolist(), v_ds.tolist()):
-                lines.append("%.9g,%.6g" % (ti, vi))
-            result["csv"] = "\\n".join(lines)
-        print(json.dumps(result))
-    finally:
-        try: scope.close()
-        except: pass
-        try: rm.close()
-        except: pass
-except Exception as e:
-    print(json.dumps({"ok": False, "error": str(e), "channel": "${p.channel}"}))
-`.trim();
+  return { ok: true, data: result, sourceMeta: [], warnings: [] };
 }
 
 export async function fetchWaveformProxy(
   endpoint: Endpoint,
   params: WaveformParams,
 ): Promise<ToolResult<unknown>> {
-  if (!isLiveModeEnabled(endpoint)) {
-    return { ok: false, data: {}, sourceMeta: [], warnings: ['live instrument mode is disabled'] };
-  }
-
   const commands = buildWaveformCommands(params);
-  // Give generous timeout — CURVe? on large records can be slow
-  const timeoutMs = params.timeoutMs;
-  const run = await runExecutorAction(
-    endpoint,
-    'send_scpi',
-    { commands, timeout_ms: timeoutMs },
-    Math.max(60, Math.ceil(timeoutMs / 1000) + 15),
-  );
+  const scpiResult = await sendScpiProxy(endpoint, commands, params.timeoutMs);
+  if (!scpiResult.ok) return scpiResult;
 
-  if (!run.ok) {
-    return {
-      ok: false,
-      data: { error: 'SCPI_FAILED', message: run.error || 'Executor send_scpi failed', stderr: run.stderr.slice(0, 400) },
-      sourceMeta: [],
-      warnings: [run.error || 'Waveform SCPI fetch failed'],
-    };
-  }
-
-  const resultData = run.resultData && typeof run.resultData === 'object'
-    ? run.resultData as Record<string, unknown>
-    : {};
-  const responses = Array.isArray(resultData.responses)
-    ? (resultData.responses as Array<{ command: string; response: string }>)
+  const responses = Array.isArray((scpiResult.data as Record<string, unknown>)?.responses)
+    ? (scpiResult.data as Record<string, unknown>).responses as Array<{ command: string; response: string }>
     : [];
-
-  if (!responses.length) {
-    return {
-      ok: false,
-      data: { error: 'NO_RESPONSES', message: 'Executor returned no SCPI responses', stdout: run.stdout.slice(0, 400) },
-      sourceMeta: [],
-      warnings: ['Waveform SCPI returned no responses'],
-    };
-  }
 
   return processWaveformScpiResponses(responses, params);
 }

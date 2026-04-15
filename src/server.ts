@@ -8,7 +8,7 @@ import { runToolLoop } from './core/toolLoop';
 import { getSlimToolDefinitions, getToolDefinitions, runTool } from './tools/index';
 import type { McpChatRequest } from './core/schemas';
 import { getLastWorkflowProposal, stageWorkflowProposal } from './tools/stageWorkflowProposal';
-import { getRuntimeContextState, updateRuntimeContext, getLiveSessionState, getActiveSessionKeys, enqueueMcpSessionKey, dequeueMcpSessionKey } from './tools/runtimeContextStore';
+import { getRuntimeContextState, updateRuntimeContext, getActiveSessionKeys, getLiveSessionState, enqueueMcpSessionKey, dequeueMcpSessionKey } from './tools/runtimeContextStore';
 import { completeLiveAction, getPendingLiveActionCount, waitForNextLiveAction } from './tools/liveActionBridge';
 import { bootRouter, createReloadProvidersHandler, createRouterHandler, getRouterHealth } from './core/routerIntegration';
 import { getCommandIndex } from './core/commandIndex';
@@ -475,6 +475,7 @@ export async function createServer(port = 8787): Promise<http.Server> {
     ListToolsRequestSchema: any;
     ListResourcesRequestSchema: any;
     ListResourceTemplatesRequestSchema: any;
+    ReadResourceRequestSchema: any;
   } | null = null;
 
   async function getMcpSdk() {
@@ -492,6 +493,7 @@ export async function createServer(port = 8787): Promise<http.Server> {
         ListToolsRequestSchema: typesMod.ListToolsRequestSchema,
         ListResourcesRequestSchema: typesMod.ListResourcesRequestSchema,
         ListResourceTemplatesRequestSchema: typesMod.ListResourceTemplatesRequestSchema,
+        ReadResourceRequestSchema: typesMod.ReadResourceRequestSchema,
       };
       return _mcpSdk;
     } catch {
@@ -511,36 +513,139 @@ export async function createServer(port = 8787): Promise<http.Server> {
       { capabilities: { tools: {}, resources: {} } },
     );
 
-    // ── resources/list handler ────────────────────────────────────────
-    mcp.setRequestHandler(sdk.ListResourcesRequestSchema, async () => ({
-      resources: [
-        {
-          uri: 'tekautomate://rag/manifest',
-          name: 'RAG Index Manifest',
-          description: 'Corpus names, shard file paths, and chunk counts for all RAG indexes.',
-          mimeType: 'application/json',
-        },
-        {
-          uri: 'tekautomate://runtime/context',
-          name: 'Runtime Context',
-          description: 'Live snapshot of current workflow steps, instrument connection state, and run log tail.',
-          mimeType: 'application/json',
-        },
-      ],
-    }));
+    // ── Resource discovery ────────────────────────────────────────────────────
+    // Implements the optional MCP self-describing layer so clients like Codex
+    // can discover what data sources this server exposes without hardcoding them.
 
-    // ── resources/templates/list handler ─────────────────────────────
-    mcp.setRequestHandler(sdk.ListResourceTemplatesRequestSchema, async () => ({
-      resourceTemplates: [
-        {
-          uriTemplate: 'tekautomate://rag/corpus/{corpus}',
-          name: 'RAG Corpus Info',
-          description: 'Metadata for a specific RAG corpus. {corpus}: scpi, tmdevices, app_logic, scope_logic, templates, errors, pyvisa_tekhsi, tek_docs.',
-          mimeType: 'application/json',
-        },
-      ],
-    }));
+    mcp.setRequestHandler(sdk.ListResourcesRequestSchema, async () => {
+      const base = getConfiguredPublicBaseUrl().replace(/\/+$/, '');
+      return {
+        resources: [
+          {
+            uri: 'tekautomate://rag/manifest',
+            name: 'RAG Index Manifest',
+            description: 'Corpus names, shard file paths, and chunk counts for all RAG indexes (scpi, tmdevices, app_logic, templates, errors, pyvisa_tekhsi, tek_docs).',
+            mimeType: 'application/json',
+          },
+          {
+            uri: 'tekautomate://runtime/context',
+            name: 'Runtime Context',
+            description: 'Live snapshot of current workflow steps, instrument connection state, run log tail, and active session key. Updated by the frontend every 15 s.',
+            mimeType: 'application/json',
+          },
+          {
+            uri: 'tekautomate://proposals/latest',
+            name: 'Latest Staged Proposal',
+            description: 'Most recent workflow proposal staged by the AI agent via workflow_ui{stage}. Append ?sessionKey=<key> to scope to a specific user session.',
+            mimeType: 'application/json',
+          },
+          {
+            uri: `${base}/tools/list`,
+            name: 'Router Tool Catalog',
+            description: 'Full list of router-hydrated tools including all SCPI, template, and built-in tools (may be 4000+). Use tek_router for semantic search instead of enumerating.',
+            mimeType: 'application/json',
+          },
+        ],
+      };
+    });
 
+    mcp.setRequestHandler(sdk.ListResourceTemplatesRequestSchema, async () => {
+      return {
+        resourceTemplates: [
+          {
+            uriTemplate: 'tekautomate://proposals/session/{sessionKey}',
+            name: 'Proposal by Session Key',
+            description: 'Fetch the staged workflow proposal for a specific ChatKit session. {sessionKey} is the value returned by workflow_ui{current}.sessionKey.',
+            mimeType: 'application/json',
+          },
+          {
+            uriTemplate: 'tekautomate://rag/corpus/{corpus}',
+            name: 'RAG Corpus Info',
+            description: 'Metadata for a specific RAG corpus. {corpus} is one of: scpi, tmdevices, app_logic, scope_logic, templates, errors, pyvisa_tekhsi, tek_docs.',
+            mimeType: 'application/json',
+          },
+        ],
+      };
+    });
+
+    mcp.setRequestHandler(sdk.ReadResourceRequestSchema, async (request: any) => {
+      const uri: string = request.params?.uri ?? '';
+
+      // tekautomate://rag/manifest
+      if (uri === 'tekautomate://rag/manifest') {
+        let manifest: unknown = null;
+        try {
+          const { readFileSync } = await import('fs');
+          const { join, dirname } = await import('path');
+          const { fileURLToPath } = await import('url');
+          const __dirname = dirname(fileURLToPath(import.meta.url));
+          const manifestPath = join(__dirname, '../../public/rag/manifest.json');
+          manifest = JSON.parse(readFileSync(manifestPath, 'utf-8'));
+        } catch { /* manifest not built yet */ }
+        return {
+          contents: [{
+            uri,
+            mimeType: 'application/json',
+            text: JSON.stringify(manifest ?? { note: 'RAG manifest not found — run npm run build:rag first.' }, null, 2),
+          }],
+        };
+      }
+
+      // tekautomate://runtime/context
+      if (uri === 'tekautomate://runtime/context') {
+        return {
+          contents: [{
+            uri,
+            mimeType: 'application/json',
+            text: JSON.stringify(getRuntimeContextState(), null, 2),
+          }],
+        };
+      }
+
+      // tekautomate://proposals/latest  OR  tekautomate://proposals/session/{key}
+      if (uri === 'tekautomate://proposals/latest' || uri.startsWith('tekautomate://proposals/session/')) {
+        const sessionKey = uri.startsWith('tekautomate://proposals/session/')
+          ? decodeURIComponent(uri.slice('tekautomate://proposals/session/'.length))
+          : undefined;
+        return {
+          contents: [{
+            uri,
+            mimeType: 'application/json',
+            text: JSON.stringify(getLastWorkflowProposal(sessionKey) ?? null, null, 2),
+          }],
+        };
+      }
+
+      // tekautomate://rag/corpus/{corpus}
+      if (uri.startsWith('tekautomate://rag/corpus/')) {
+        const corpus = uri.slice('tekautomate://rag/corpus/'.length);
+        let manifest: any = null;
+        try {
+          const { readFileSync } = await import('fs');
+          const { join, dirname } = await import('path');
+          const { fileURLToPath } = await import('url');
+          const __dirname = dirname(fileURLToPath(import.meta.url));
+          manifest = JSON.parse(readFileSync(join(__dirname, '../../public/rag/manifest.json'), 'utf-8'));
+        } catch { /* ignore */ }
+        const count = manifest?.counts?.[corpus] ?? null;
+        return {
+          contents: [{
+            uri,
+            mimeType: 'application/json',
+            text: JSON.stringify({
+              corpus,
+              chunkCount: count,
+              available: count !== null,
+              searchVia: 'knowledge tool with corpus param, or tek_router for SCPI/tmdevices',
+            }, null, 2),
+          }],
+        };
+      }
+
+      throw new Error(`Unknown resource URI: ${uri}`);
+    });
+
+    // ─────────────────────────────────────────────────────────────────────────
     mcp.setRequestHandler(sdk.ListToolsRequestSchema, async () => {
       if (startupInitPromise) {
         try { await startupInitPromise; } catch { /* degrade gracefully */ }
@@ -601,7 +706,7 @@ export async function createServer(port = 8787): Promise<http.Server> {
                 sessionKey: sk,
               });
             } else {
-              console.warn(`[MCP auto-stage] ${name} returned actions but no sessionKey resolved — skipping auto-stage`);
+              console.warn(`[MCP auto-stage] ${name} — no sessionKey available`);
             }
           }
         }
@@ -831,6 +936,15 @@ function filterTools(q) {
       return;
     }
 
+    // ── URL normalisation ─────────────────────────────────────────────────────
+    // Some clients store the MCP host as "<origin>/mcp" and append REST paths
+    // directly, producing "/mcp/live-actions/next", "/mcp/runtime-context" etc.
+    // Strip the "/mcp/" prefix from any path that is NOT the MCP JSON-RPC
+    // endpoint itself ("/mcp" or "/mcp?...") so all custom REST routes match.
+    if (req.url?.startsWith('/mcp/')) {
+      req.url = req.url.slice(4); // "/mcp/live-actions/next" → "/live-actions/next"
+    }
+
     if (req.method === 'GET' && req.url?.startsWith('/temp/vision/')) {
       const requestedId = decodeURIComponent(req.url.slice('/temp/vision/'.length));
       const id = requestedId.split('.')[0];
@@ -896,6 +1010,10 @@ function filterTools(q) {
             const transport = new sdk.StreamableHTTPServerTransport({
               sessionIdGenerator: () => newSessionId,
             });
+            // Dequeue the sessionKey enqueued by /chatkit/session for this browser.
+            // FIFO order matches ChatKit session creation order to MCP connection order —
+            // immune to other browsers' periodic key-pushes overwriting shared state.
+            // Falls back to getLiveSessionState() for backward compatibility.
             const capturedSessionKey = dequeueMcpSessionKey() ?? getLiveSessionState().sessionKey ?? undefined;
             console.log(`[MCP] new connection ${newSessionId} — capturedSessionKey=${capturedSessionKey ?? 'none'}`);
             const mcpServer = await createMcpProtocolServer(capturedSessionKey);
@@ -1078,6 +1196,8 @@ function filterTools(q) {
       return;
     }
 
+    // Accept /live-actions/next OR /mcp/live-actions/next (latter happens when
+    // the user stores the MCP host with a trailing /mcp path component).
     if (req.method === 'GET' && req.url?.startsWith('/live-actions/next')) {
       try {
         const requestUrl = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
