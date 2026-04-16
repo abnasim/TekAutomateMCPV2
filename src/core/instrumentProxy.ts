@@ -576,12 +576,11 @@ export function processWaveformScpiResponses(
   for (const v of volts) variance += (v - mean) ** 2;
   const std = Math.sqrt(variance / volts.length);
 
-  const railLow  = params.width === 2 ? -32768 : -128;
-  const railHigh = params.width === 2 ?  32767 :  127;
-  const clipLow  = samples.filter(s => s <= railLow).length;
-  const clipHigh = samples.filter(s => s >= railHigh).length;
-  const clipPct  = (clipLow + clipHigh) / samples.length * 100;
-
+  // Clipping detection was removed: the ADC-rail heuristic (sample == ±full-scale)
+  // gave false positives on signals riding near a vertical rail even when the
+  // analog front-end was not saturating, and false negatives on soft clipping.
+  // The resulting CLIPPING flag misled the agent more often than it helped.
+  // Inspect min/max/vpp against the set vertical scale for a manual check.
   const stats: Record<string, unknown> = {
     channel:       params.channel,
     nPoints:       volts.length,
@@ -592,12 +591,8 @@ export function processWaveformScpiResponses(
     vpp:           +(max - min).toFixed(6),
     xincr,
     xzero,
-    clipLowCount:  clipLow,
-    clipHighCount: clipHigh,
-    clipPct:       +clipPct.toFixed(2),
     ...(verifiedStop !== null ? { verifiedDATaSTOP: verifiedStop } : {}),
   };
-  if (clipPct >= 1) stats['CLIPPING'] = true;
 
   // ── saveLocal: write full-res CSV to disk BEFORE any early returns ──────────
   // Must run before the `format === 'stats'` guard — when saveLocal is true the

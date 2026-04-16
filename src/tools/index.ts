@@ -143,7 +143,7 @@ export function getToolDefinitions() {
       description:
         'Live instrument gateway for TekAutomate. Use `context` for connection info, `send` for SCPI commands, `screenshot` for capture, `snapshot`/`diff`/`inspect` for *LRN?-based state discovery, `resources` for VISA discovery, and `waveform` for signal health check + data fetch.\n\n' +
         'For screenshots: call with action:"screenshot" and analyze:true — the response returns an MCP {type:"image"} content block containing the screenshot, rendered as vision by your client. Use as a verification tool after any action that changes the display (channel enable/disable, scale, decode, trigger), when measurements are unexpected, or as final task sign-off.\n\n' +
-        'For waveform: action:"waveform" fetches ADC samples and computes stats (min/max/mean/std/Vpp); auto-detects clipping (top-level "CLIPPING" key).\n' +
+        'For waveform: action:"waveform" fetches ADC samples and computes stats (min/max/mean/std/Vpp). No automatic clipping flag — compare min/max against the set vertical scale to judge saturation.\n' +
         'Pick the mode that matches your task — do not use more data than you need:\n' +
         '  • Quick stats only (min/max/mean/Vpp):           default — no format or saveLocal. ~300 B response.\n' +
         '  • Show signal shape, voltage ranges, clipping:    format:"csv" + downsample:1000-5000. LTTB-downsampled CSV inline (~6-30K tokens). Shape-preserving; do NOT use for edge timing.\n' +
