@@ -26,6 +26,7 @@ import {
   ListToolsRequestSchema,
   ListResourcesRequestSchema,
   ListResourceTemplatesRequestSchema,
+  ReadResourceRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
 
 import { initCommandIndex } from './core/commandIndex.js';
@@ -35,6 +36,8 @@ import { initTemplateIndex } from './core/templateIndex.js';
 import { initProviderCatalog, providerSupplementsEnabled } from './core/providerCatalog.js';
 import { bootRouter } from './core/routerIntegration.js';
 import { getSlimToolDefinitions, isLiveInstrumentEnabled, runTool } from './tools/index.js';
+import { getInstrumentInfoState } from './tools/runtimeContextStore.js';
+import { getLastWorkflowProposal } from './tools/stageWorkflowProposal.js';
 
 function sanitizeToolResultForExternalMcp(toolName: string, result: unknown): unknown {
   if (toolName !== 'capture_screenshot' || !result || typeof result !== 'object') return result;
@@ -233,6 +236,117 @@ async function main() {
       },
     ],
   }));
+
+  // ── resources/read handler ──────────────────────────────────────
+  // Per-family SCPI quirks attached to the instrument/profile resource.
+  const STDIO_FAMILY_QUIRKS: Record<string, string[]> = {
+    MSO2: [
+      'SPI decode paths live under BUS:B<x>:SPI: (not BUS:B<x>:SERIAL:SPI:).',
+      'Record length caps at 1M for 2-channel models.',
+      'No AFG — do not attempt AFG:* commands.',
+    ],
+    MSO4: [
+      'Supports up to 6 analog channels; verify channel count from profile.channels.',
+      'SV: (Spectrum View) requires the BW option — check profile.options.',
+    ],
+    MSO5: [
+      'Digital channels require the MSO option; gated on profile.options.',
+      'Extended record length requires RL option.',
+    ],
+    MSO6: [
+      'Bandwidth upgrades are license-gated — see profile.options for BW entries.',
+      'Supports 4/6/8 channel configurations; confirm via profile.channels.',
+    ],
+  };
+
+  function buildStdioInstrumentProfile(): Record<string, unknown> | null {
+    const state = getInstrumentInfoState(null);
+    if (!state || !state.visaResource) return null;
+    const visa = state.visaResource;
+    const transportType = /::SOCKET$/i.test(visa) ? 'socket' : /::INSTR$/i.test(visa) ? 'vxi11' : 'other';
+    const family = state.modelFamily || null;
+    const quirks = family && STDIO_FAMILY_QUIRKS[family] ? STDIO_FAMILY_QUIRKS[family] : [];
+    return {
+      connected: Boolean(state.connected),
+      family,
+      deviceDriver: state.deviceDriver,
+      backend: state.backend,
+      executorUrl: state.executorUrl,
+      transports: [
+        { visaResource: visa, type: transportType, active: true },
+      ],
+      devices: Array.isArray(state.devices) ? state.devices : [],
+      quirks,
+      note: 'Identity fields (model/serial/firmware/options/channels) populate after a live probe. Call instrument_live{context} or send *IDN? + *OPT? to fill them in.',
+    };
+  }
+
+  server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
+    const uri: string = (request.params as any)?.uri ?? '';
+
+    // tekautomate://deployment/mode
+    if (uri === 'tekautomate://deployment/mode') {
+      const liveEnabled = isLiveInstrumentEnabled();
+      const availableTools = getSlimToolDefinitions().map((def: any) => def.name);
+      const payload = liveEnabled
+        ? {
+            mode: 'live',
+            liveInstrumentEnabled: true,
+            availableTools,
+            guidance: [
+              'Live instrument control is ENABLED on this deployment.',
+              'Use instrument_live{send} to run SCPI, {context} for identity, {screenshot} for visual verification.',
+              'Always verify configuration changes with a query-back or screenshot.',
+              'After every write batch, append *ESR? and ALLEV? — non-zero ESR means the batch failed.',
+            ],
+          }
+        : {
+            mode: 'public',
+            liveInstrumentEnabled: false,
+            availableTools,
+            guidance: [
+              'Live instrument control is DISABLED on this deployment.',
+              'Use knowledge{retrieve} and tek_router for all SCPI lookups.',
+              'Stage proposals via workflow_ui{stage} — the user runs them locally.',
+              'Do NOT attempt instrument_live:* — it is not exposed and will fail.',
+            ],
+          };
+      return {
+        contents: [{ uri, mimeType: 'application/json', text: JSON.stringify(payload, null, 2) }],
+      };
+    }
+
+    // tekautomate://instrument/profile  (live-mode only)
+    if (uri === 'tekautomate://instrument/profile') {
+      if (!isLiveInstrumentEnabled()) {
+        throw new Error('Instrument profile is not available — live instrument is disabled on this deployment.');
+      }
+      const profile = buildStdioInstrumentProfile();
+      return {
+        contents: [{
+          uri,
+          mimeType: 'application/json',
+          text: JSON.stringify(profile ?? { connected: false, note: 'No instrument connected yet.' }, null, 2),
+        }],
+      };
+    }
+
+    // tekautomate://proposals/latest  OR  tekautomate://proposals/session/{key}
+    if (uri === 'tekautomate://proposals/latest' || uri.startsWith('tekautomate://proposals/session/')) {
+      const sessionKey = uri.startsWith('tekautomate://proposals/session/')
+        ? decodeURIComponent(uri.slice('tekautomate://proposals/session/'.length))
+        : undefined;
+      return {
+        contents: [{
+          uri,
+          mimeType: 'application/json',
+          text: JSON.stringify(getLastWorkflowProposal(sessionKey) ?? null, null, 2),
+        }],
+      };
+    }
+
+    throw new Error(`Unknown resource URI: ${uri}`);
+  });
 
   // ── tools/list handler ───────────────────────────────────────────
   server.setRequestHandler(ListToolsRequestSchema, async () => ({
