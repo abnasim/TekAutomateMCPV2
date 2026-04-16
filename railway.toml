@@ -2,7 +2,10 @@
 builder = "NIXPACKS"
 
 [deploy]
-startCommand = "npm start"
+# Use direct node command to bypass the npm 'prestart' lifecycle hook.
+# prestart rebuilds the BM25 RAG index (28MB, ~44k docs) which OOMs on Railway.
+# The RAG index is pre-built and committed to the repo — no rebuild needed.
+startCommand = "node --import tsx/esm src/index.ts"
 restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 10
 healthcheckPath = "/health"
