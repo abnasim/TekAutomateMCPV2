@@ -285,13 +285,13 @@ export function getToolDefinitions() {
           corpus: {
             type: 'string',
             description:
-              'Corpus for action:"retrieve". ' +
-              'tek_docs — Tektronix product docs, app notes, FAQs, protocol decode how-tos (I2C/CAN/SPI/USB/Ethernet/LIN/RS232/MIL-1553); results include tek.com source URLs. ' +
-              'scope_logic — oscilloscope measurement and acquisition concepts. ' +
-              'tmdevices — tm_devices Python driver API. ' +
-              'app_logic — TekAutomate architecture and AiAction schemas. ' +
-              'pyvisa_tekhsi — PyVISA and TekHSI connection examples. ' +
-              'scpi — SCPI programming guide (prefer tek_router instead).',
+              'WARNING: do NOT use corpus:"scpi" for SCPI commands — that corpus is a raw manual dump and will be noisier than tek_router. Use tek_router{search} or tek_router{lookup} for any SCPI work.\n\n' +
+              'Corpus for action:"retrieve":\n' +
+              '• tek_docs — Tektronix product docs, app notes, FAQs, protocol decode how-tos (I2C/CAN/SPI/USB/Ethernet/LIN/RS232/MIL-1553); results include tek.com source URLs.\n' +
+              '• scope_logic — oscilloscope measurement and acquisition concepts.\n' +
+              '• tmdevices — tm_devices Python driver API.\n' +
+              '• app_logic — TekAutomate architecture and AiAction schemas.\n' +
+              '• pyvisa_tekhsi — PyVISA and TekHSI connection examples.',
           },
           query: {
             type: 'string',

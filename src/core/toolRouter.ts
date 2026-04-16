@@ -935,21 +935,19 @@ async function handleBuild(req: RouterRequest, startedAt: number): Promise<Route
 export const TEK_ROUTER_TOOL_DEFINITION = {
   name: 'tek_router',
   description:
-    'TekAutomate SCPI power gateway. For simple search/verify/browse/lookup, prefer the direct tools ' +
-    '(search_scpi, verify_scpi_commands, browse_scpi_commands, get_command_by_header). ' +
-    'Use tek_router for advanced operations:\n\n' +
+    'TekAutomate SCPI gateway. Pick an action — each one dispatches to a specialized internal handler:\n\n' +
 
-    '## Actions (use tek_router for these):\n' +
-    'BUILD WORKFLOW:   {"action":"build","query":"set up jitter measurement on CH1"}\n' +
-    'MATERIALIZE:      {"action":"search_exec","query":"materialize scpi command","args":{"header":"CH<x>:SCAle","commandType":"set","value":"1.0","placeholderBindings":{"CH<x>":"CH1"}}}\n' +
-    'SAVE/LEARN:       {"action":"create","toolName":"Edge Trigger Setup","toolDescription":"Configure edge trigger","toolTriggers":["edge trigger","set trigger"],"toolCategory":"shortcut","toolSteps":[{"tool":"send_scpi","args":{"commands":["TRIGger:A:TYPe EDGE"]}}]}\n' +
-    'LIST GROUPS:      {"action":"search_exec","query":"list command groups","args":{}}\n\n' +
+    '• action:"search" — keyword search over the SCPI database. Cheapest; returns header + description + examples.\n' +
+    '• action:"lookup" — exact header lookup (header:"TRIGger:A:EDGE:SOUrce") for full syntax + valid values.\n' +
+    '• action:"browse" — drill into a command group (group:"Trigger", optional filter:...) to enumerate commands.\n' +
+    '• action:"verify" — validate fully-formed SCPI strings (commands:[...]) before sending.\n' +
+    '• action:"build" — natural-language workflow builder (query:"set up jitter measurement on CH1").\n\n' +
 
     '## Recommended chain:\n' +
-    '1. search_scpi / browse_scpi_commands → find commands\n' +
-    '2. get_command_by_header → exact syntax + valid values\n' +
-    '3. verify_scpi_commands → confirm before sending\n' +
-    '4. send_scpi → execute on instrument\n\n' +
+    '1. search / browse → find candidate commands\n' +
+    '2. lookup → exact syntax + valid values for the header you picked\n' +
+    '3. verify → confirm your strings parse cleanly before sending\n' +
+    '4. instrument_live{send} → execute on the scope (live deployments only; on public/hosted, stage via workflow_ui{stage} instead)\n\n' +
 
     '## SCPI syntax rules:\n' +
     '• Mnemonics are mixed-case: uppercase = required, lowercase = optional. Send the full form (TRIGger:A:EDGE:SOUrce) OR the short form (TRIG:A:EDGE:SOU) — never mid-case.\n' +
