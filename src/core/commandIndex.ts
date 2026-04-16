@@ -63,7 +63,8 @@ export interface SearchFilters {
 }
 
 const DEFAULT_COMMAND_FILES = [
-  'mso_2_4_5_6_7.json',
+  'mso2.json',
+  'mso_4_5_6_7.json',
   'mso_manual_overrides.json',
   'MSO_DPO_5k_7k_70K.json',
   'legacy_scope_manual_overrides.json',
@@ -77,7 +78,8 @@ const DEFAULT_COMMAND_FILES = [
 ];
 
 const SOURCE_FILE_FAMILY_HINTS: Record<string, string[]> = {
-  'mso_2_4_5_6_7.json': ['MSO2', 'MSO4', 'MSO5', 'MSO6', 'MSO7'],
+  'mso2.json':           ['MSO22', 'MSO24', 'MSO2'],
+  'mso_4_5_6_7.json':   ['MSO4', 'MSO5', 'MSO6', 'MSO7'],
   'mso_manual_overrides.json': ['MSO4', 'MSO5', 'MSO6', 'MSO7'],
   'MSO_DPO_5k_7k_70K.json': ['MSO5000', 'DPO5000', 'DPO7000', 'DPO70000'],
   'legacy_scope_manual_overrides.json': ['MSO5000', 'DPO5000', 'DPO7000', 'DPO70000'],
@@ -279,7 +281,8 @@ function searchSourceFilePriority(sourceFile: string): number {
   const name = String(sourceFile || '');
   // manual_overrides get -5 so they receive a +10 bonus in search scoring
   if (/manual_overrides\.json$/i.test(name)) return -5;
-  if (/mso_2_4_5_6_7\.json$/i.test(name)) return 0;
+  if (/mso2\.json$/i.test(name)) return 0;
+  if (/mso_4_5_6_7\.json$/i.test(name)) return 0;
   if (/MSO_DPO_5k_7k_70K\.json$/i.test(name)) return 0;
   return 2;
 }
@@ -706,8 +709,15 @@ function entryFamilyKeys(entry: CommandRecord): Set<string> {
     .forEach((value) => out.add(value));
 
   if (
-    entry.sourceFile === 'mso_2_4_5_6_7.json' ||
-    ['MSO2', 'MSO4', 'MSO5', 'MSO6', 'MSO7'].some((family) => out.has(family))
+    entry.sourceFile === 'mso2.json' ||
+    ['MSO22', 'MSO24', 'MSO2'].some((family) => out.has(family))
+  ) {
+    out.add('MSO2_SERIES');
+    out.add('MODERN_MSO');
+  }
+  if (
+    entry.sourceFile === 'mso_4_5_6_7.json' ||
+    ['MSO4', 'MSO5', 'MSO6', 'MSO7'].some((family) => out.has(family))
   ) {
     out.add('MODERN_MSO');
   }

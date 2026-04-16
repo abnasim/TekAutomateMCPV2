@@ -955,9 +955,10 @@ export function getCommandFile(deviceType: string, modelFamily: string): string 
       return 'rsa.json';
     case 'SCOPE':
       if (/DPO|5K|7K|70K/.test(normalizedModelFamily)) return 'MSO_DPO_5k_7k_70K.json';
-      return 'mso_2_4_5_6_7.json';
+      if (/MSO2|2\s*SERIES|^MSO2[24]/i.test(normalizedModelFamily)) return 'mso2.json';
+      return 'mso_4_5_6_7.json';
     default:
-      return 'mso_2_4_5_6_7.json';
+      return 'mso_4_5_6_7.json';
   }
 }
 

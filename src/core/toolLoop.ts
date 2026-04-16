@@ -694,15 +694,15 @@ async function runFlowValidation(req: McpChatRequest) {
  * Filters out irrelevant instrument families (RSA, AWG, AFG, SMU, DPOJET, TEKEXP).
  */
 const RAG_SOURCE_ALLOW: Record<string, RegExp> = {
-  mso_2_series: /mso_2_4_5_6_7|mso_manual/i,
-  mso_4_series: /mso_2_4_5_6_7|mso_manual/i,
-  mso_5_series: /mso_2_4_5_6_7|mso_manual/i,
-  mso_6_series: /mso_2_4_5_6_7|mso_manual/i,
-  mso_7_series: /mso_2_4_5_6_7|mso_manual/i,
+  mso_2_series: /mso2|mso_4_5_6_7|mso_manual/i,
+  mso_4_series: /mso_4_5_6_7|mso_manual/i,
+  mso_5_series: /mso_4_5_6_7|mso_manual/i,
+  mso_6_series: /mso_4_5_6_7|mso_manual/i,
+  mso_7_series: /mso_4_5_6_7|mso_manual/i,
   dpo_5_series: /MSO_DPO_5k_7k|dpojet|legacy_scope/i,
   dpo_7_series: /MSO_DPO_5k_7k|dpojet|legacy_scope/i,
-  tekscopepc:   /mso_2_4_5_6_7|MSO_DPO_5k_7k|mso_manual|legacy_scope/i,
-  tekscope_pc:  /mso_2_4_5_6_7|MSO_DPO_5k_7k|mso_manual|legacy_scope/i,
+  tekscopepc:   /mso2|mso_4_5_6_7|MSO_DPO_5k_7k|mso_manual|legacy_scope/i,
+  tekscope_pc:  /mso2|mso_4_5_6_7|MSO_DPO_5k_7k|mso_manual|legacy_scope/i,
 };
 
 /**
