@@ -949,7 +949,11 @@ export const TEK_ROUTER_TOOL_DEFINITION = {
     '1. search_scpi / browse_scpi_commands → find commands\n' +
     '2. get_command_by_header → exact syntax + valid values\n' +
     '3. verify_scpi_commands → confirm before sending\n' +
-    '4. send_scpi → execute on instrument',
+    '4. send_scpi → execute on instrument\n\n' +
+
+    '## SCPI syntax rules:\n' +
+    '• Mnemonics are mixed-case: uppercase = required, lowercase = optional. Send the full form (TRIGger:A:EDGE:SOUrce) OR the short form (TRIG:A:EDGE:SOU) — never mid-case.\n' +
+    '• After writes, verify with a query-back. set+query commands must be confirmed; set-only commands verify via a related query or screenshot.',
   parameters: {
     type: 'object',
     properties: {

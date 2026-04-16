@@ -151,7 +151,13 @@ export function getToolDefinitions() {
         '    16 = Execution Error (rejected — wrong mode, value out of range)\n' +
         '     8 = Device-Dependent Error\n' +
         '     4 = Query Error\n' +
-        '• If *ESR? is non-zero: read ALLEV? for the exact error string, report it, and do NOT continue configuring on top of a bad state.',
+        '• If *ESR? is non-zero: read ALLEV? for the exact error string, report it, and do NOT continue configuring on top of a bad state.\n\n' +
+        'SCPI GOTCHAS — know these before sending:\n' +
+        '• OPC polling — *RST, DEFaultsetup, AUTOset, SAVe:*, RECAll:*, CALibrate:INTERNal, FACtory, TEKSecure are long-running. Poll *OPC? in a LOOP until it returns 1 — not once. Ordinary commands complete immediately; do NOT add *OPC? after every command.\n' +
+        '• Burst size — keep write bursts to 5-6 commands max. Use *WAI between groups if sending many. Larger bursts overflow the instrument queue.\n' +
+        '• 9.9E37 in a measurement result means "no valid measurement" (channel off, no signal, no trigger) — not a real reading.\n' +
+        '• Trigger level is per-channel: TRIGger:{A|B}:LEVel:CH<x>. There is NO TRIGger:A:EDGE:LEVel.\n' +
+        '• Set-only commands have no query form — verify via screenshot or a related query, not by querying the command itself.',
       parameters: {
         type: 'object',
         properties: {

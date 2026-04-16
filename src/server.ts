@@ -5,10 +5,10 @@ import { initTmDevicesIndex } from './core/tmDevicesIndex';
 import { initRagIndexes } from './core/ragIndex';
 import { initTemplateIndex } from './core/templateIndex';
 import { runToolLoop } from './core/toolLoop';
-import { getSlimToolDefinitions, getToolDefinitions, runTool } from './tools/index';
+import { getSlimToolDefinitions, getToolDefinitions, isLiveInstrumentEnabled, runTool } from './tools/index';
 import type { McpChatRequest } from './core/schemas';
 import { getLastWorkflowProposal, stageWorkflowProposal } from './tools/stageWorkflowProposal';
-import { getRuntimeContextState, updateRuntimeContext, getActiveSessionKeys, getLiveSessionState, enqueueMcpSessionKey, dequeueMcpSessionKey } from './tools/runtimeContextStore';
+import { getInstrumentInfoState, getRuntimeContextState, updateRuntimeContext, getActiveSessionKeys, getLiveSessionState, enqueueMcpSessionKey, dequeueMcpSessionKey } from './tools/runtimeContextStore';
 import { completeLiveAction, getPendingLiveActionCount, waitForNextLiveAction } from './tools/liveActionBridge';
 import { bootRouter, createReloadProvidersHandler, createRouterHandler, getRouterHealth } from './core/routerIntegration';
 import { getCommandIndex } from './core/commandIndex';
@@ -517,36 +517,78 @@ export async function createServer(port = 8787): Promise<http.Server> {
     // Implements the optional MCP self-describing layer so clients like Codex
     // can discover what data sources this server exposes without hardcoding them.
 
-    mcp.setRequestHandler(sdk.ListResourcesRequestSchema, async () => {
-      const base = getConfiguredPublicBaseUrl().replace(/\/+$/, '');
+    // Per-family SCPI quirks — attached to the instrument/profile resource.
+    // Keep each list short (3-5 items) so the pinned context stays cheap.
+    const FAMILY_QUIRKS: Record<string, string[]> = {
+      MSO2: [
+        'SPI decode paths live under BUS:B<x>:SPI: (not BUS:B<x>:SERIAL:SPI:).',
+        'Record length caps at 1M for 2-channel models.',
+        'No AFG — do not attempt AFG:* commands.',
+      ],
+      MSO4: [
+        'Supports up to 6 analog channels; verify channel count from profile.channels.',
+        'SV: (Spectrum View) requires the BW option — check profile.options.',
+      ],
+      MSO5: [
+        'Digital channels require the MSO option; gated on profile.options.',
+        'Extended record length requires RL option.',
+      ],
+      MSO6: [
+        'Bandwidth upgrades are license-gated — see profile.options for BW entries.',
+        'Supports 4/6/8 channel configurations; confirm via profile.channels.',
+      ],
+    };
+
+    // Merge multiple VISA endpoints for the same physical instrument (same serial)
+    // into one entry with a transports[] array. Avoids the "3 vs 6" confusion when
+    // VXI-11 (INSTR) and raw socket (:4000::SOCKET) both expose the same box.
+    function buildInstrumentProfile(): Record<string, unknown> | null {
+      const state = getInstrumentInfoState(null);
+      if (!state || !state.visaResource) return null;
+      const visa = state.visaResource;
+      const transportType = /::SOCKET$/i.test(visa) ? 'socket' : /::INSTR$/i.test(visa) ? 'vxi11' : 'other';
+      const family = state.modelFamily || null;
+      const quirks = family && FAMILY_QUIRKS[family] ? FAMILY_QUIRKS[family] : [];
       return {
-        resources: [
-          {
-            uri: 'tekautomate://rag/manifest',
-            name: 'RAG Index Manifest',
-            description: 'Corpus names, shard file paths, and chunk counts for all RAG indexes (scpi, tmdevices, app_logic, templates, errors, pyvisa_tekhsi, tek_docs).',
-            mimeType: 'application/json',
-          },
-          {
-            uri: 'tekautomate://runtime/context',
-            name: 'Runtime Context',
-            description: 'Live snapshot of current workflow steps, instrument connection state, run log tail, and active session key. Updated by the frontend every 15 s.',
-            mimeType: 'application/json',
-          },
-          {
-            uri: 'tekautomate://proposals/latest',
-            name: 'Latest Staged Proposal',
-            description: 'Most recent workflow proposal staged by the AI agent via workflow_ui{stage}. Append ?sessionKey=<key> to scope to a specific user session.',
-            mimeType: 'application/json',
-          },
-          {
-            uri: `${base}/tools/list`,
-            name: 'Router Tool Catalog',
-            description: 'Full list of router-hydrated tools including all SCPI, template, and built-in tools (may be 4000+). Use tek_router for semantic search instead of enumerating.',
-            mimeType: 'application/json',
-          },
+        connected: Boolean(state.connected),
+        family,
+        deviceDriver: state.deviceDriver,
+        backend: state.backend,
+        executorUrl: state.executorUrl,
+        transports: [
+          { visaResource: visa, type: transportType, active: true },
         ],
+        devices: Array.isArray(state.devices) ? state.devices : [],
+        quirks,
+        note: 'Identity fields (model/serial/firmware/options/channels) populate after a live probe. Call instrument_live{context} or send *IDN? + *OPT? to fill them in.',
       };
+    }
+
+    mcp.setRequestHandler(sdk.ListResourcesRequestSchema, async () => {
+      const resources: any[] = [
+        {
+          uri: 'tekautomate://deployment/mode',
+          name: 'Deployment Mode',
+          description: 'Tells the client which tools are available on this deployment and how to use them. Live vs public/hosted mode is determined server-side.',
+          mimeType: 'application/json',
+        },
+        {
+          uri: 'tekautomate://proposals/latest',
+          name: 'Latest Staged Proposal',
+          description: 'Most recent workflow proposal staged by the AI agent via workflow_ui{stage}.',
+          mimeType: 'application/json',
+        },
+      ];
+      // Instrument profile is only meaningful when live instrument control is enabled.
+      if (isLiveInstrumentEnabled()) {
+        resources.unshift({
+          uri: 'tekautomate://instrument/profile',
+          name: 'Instrument Profile',
+          description: 'Active scope identity (family, firmware, options, transports) plus family-specific SCPI quirks. Stable session context — pin this to avoid re-querying identity.',
+          mimeType: 'application/json',
+        });
+      }
+      return { resources };
     });
 
     mcp.setRequestHandler(sdk.ListResourceTemplatesRequestSchema, async () => {
@@ -558,12 +600,6 @@ export async function createServer(port = 8787): Promise<http.Server> {
             description: 'Fetch the staged workflow proposal for a specific ChatKit session. {sessionKey} is the value returned by workflow_ui{current}.sessionKey.',
             mimeType: 'application/json',
           },
-          {
-            uriTemplate: 'tekautomate://rag/corpus/{corpus}',
-            name: 'RAG Corpus Info',
-            description: 'Metadata for a specific RAG corpus. {corpus} is one of: scpi, tmdevices, app_logic, scope_logic, templates, errors, pyvisa_tekhsi, tek_docs.',
-            mimeType: 'application/json',
-          },
         ],
       };
     });
@@ -571,33 +607,49 @@ export async function createServer(port = 8787): Promise<http.Server> {
     mcp.setRequestHandler(sdk.ReadResourceRequestSchema, async (request: any) => {
       const uri: string = request.params?.uri ?? '';
 
-      // tekautomate://rag/manifest
-      if (uri === 'tekautomate://rag/manifest') {
-        let manifest: unknown = null;
-        try {
-          const { readFileSync } = await import('fs');
-          const { join, dirname } = await import('path');
-          const { fileURLToPath } = await import('url');
-          const __dirname = dirname(fileURLToPath(import.meta.url));
-          const manifestPath = join(__dirname, '../../public/rag/manifest.json');
-          manifest = JSON.parse(readFileSync(manifestPath, 'utf-8'));
-        } catch { /* manifest not built yet */ }
+      // tekautomate://deployment/mode
+      if (uri === 'tekautomate://deployment/mode') {
+        const liveEnabled = isLiveInstrumentEnabled();
+        const availableTools = getSlimToolDefinitions().map((def: any) => def.name);
+        const payload = liveEnabled
+          ? {
+              mode: 'live',
+              liveInstrumentEnabled: true,
+              availableTools,
+              guidance: [
+                'Live instrument control is ENABLED on this deployment.',
+                'Use instrument_live{send} to run SCPI, {context} for identity, {screenshot} for visual verification.',
+                'Always verify configuration changes with a query-back or screenshot.',
+                'After every write batch, append *ESR? and ALLEV? — non-zero ESR means the batch failed.',
+              ],
+            }
+          : {
+              mode: 'public',
+              liveInstrumentEnabled: false,
+              availableTools,
+              guidance: [
+                'Live instrument control is DISABLED on this deployment.',
+                'Use knowledge{retrieve} and tek_router for all SCPI lookups.',
+                'Stage proposals via workflow_ui{stage} — the user runs them locally.',
+                'Do NOT attempt instrument_live:* — it is not exposed and will fail.',
+              ],
+            };
         return {
-          contents: [{
-            uri,
-            mimeType: 'application/json',
-            text: JSON.stringify(manifest ?? { note: 'RAG manifest not found — run npm run build:rag first.' }, null, 2),
-          }],
+          contents: [{ uri, mimeType: 'application/json', text: JSON.stringify(payload, null, 2) }],
         };
       }
 
-      // tekautomate://runtime/context
-      if (uri === 'tekautomate://runtime/context') {
+      // tekautomate://instrument/profile  (live-mode only)
+      if (uri === 'tekautomate://instrument/profile') {
+        if (!isLiveInstrumentEnabled()) {
+          throw new Error('Instrument profile is not available — live instrument is disabled on this deployment.');
+        }
+        const profile = buildInstrumentProfile();
         return {
           contents: [{
             uri,
             mimeType: 'application/json',
-            text: JSON.stringify(getRuntimeContextState(), null, 2),
+            text: JSON.stringify(profile ?? { connected: false, note: 'No instrument connected yet.' }, null, 2),
           }],
         };
       }
@@ -612,32 +664,6 @@ export async function createServer(port = 8787): Promise<http.Server> {
             uri,
             mimeType: 'application/json',
             text: JSON.stringify(getLastWorkflowProposal(sessionKey) ?? null, null, 2),
-          }],
-        };
-      }
-
-      // tekautomate://rag/corpus/{corpus}
-      if (uri.startsWith('tekautomate://rag/corpus/')) {
-        const corpus = uri.slice('tekautomate://rag/corpus/'.length);
-        let manifest: any = null;
-        try {
-          const { readFileSync } = await import('fs');
-          const { join, dirname } = await import('path');
-          const { fileURLToPath } = await import('url');
-          const __dirname = dirname(fileURLToPath(import.meta.url));
-          manifest = JSON.parse(readFileSync(join(__dirname, '../../public/rag/manifest.json'), 'utf-8'));
-        } catch { /* ignore */ }
-        const count = manifest?.counts?.[corpus] ?? null;
-        return {
-          contents: [{
-            uri,
-            mimeType: 'application/json',
-            text: JSON.stringify({
-              corpus,
-              chunkCount: count,
-              available: count !== null,
-              searchVia: 'knowledge tool with corpus param, or tek_router for SCPI/tmdevices',
-            }, null, 2),
           }],
         };
       }

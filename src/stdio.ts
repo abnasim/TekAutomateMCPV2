@@ -34,7 +34,7 @@ import { initRagIndexes } from './core/ragIndex.js';
 import { initTemplateIndex } from './core/templateIndex.js';
 import { initProviderCatalog, providerSupplementsEnabled } from './core/providerCatalog.js';
 import { bootRouter } from './core/routerIntegration.js';
-import { getSlimToolDefinitions, runTool } from './tools/index.js';
+import { getSlimToolDefinitions, isLiveInstrumentEnabled, runTool } from './tools/index.js';
 
 function sanitizeToolResultForExternalMcp(toolName: string, result: unknown): unknown {
   if (toolName !== 'capture_screenshot' || !result || typeof result !== 'object') return result;
@@ -196,30 +196,39 @@ async function main() {
   }));
 
   // ── resources/list handler ──────────────────────────────────────
-  server.setRequestHandler(ListResourcesRequestSchema, async () => ({
-    resources: [
+  server.setRequestHandler(ListResourcesRequestSchema, async () => {
+    const resources: any[] = [
       {
-        uri: 'tekautomate://rag/manifest',
-        name: 'RAG Index Manifest',
-        description: 'Corpus names, shard file paths, and chunk counts for all RAG indexes.',
+        uri: 'tekautomate://deployment/mode',
+        name: 'Deployment Mode',
+        description: 'Tells the client which tools are available on this deployment and how to use them.',
         mimeType: 'application/json',
       },
       {
-        uri: 'tekautomate://runtime/context',
-        name: 'Runtime Context',
-        description: 'Live snapshot of current workflow steps, instrument connection state, and run log tail.',
+        uri: 'tekautomate://proposals/latest',
+        name: 'Latest Staged Proposal',
+        description: 'Most recent workflow proposal staged by the AI agent via workflow_ui{stage}.',
         mimeType: 'application/json',
       },
-    ],
-  }));
+    ];
+    if (isLiveInstrumentEnabled()) {
+      resources.unshift({
+        uri: 'tekautomate://instrument/profile',
+        name: 'Instrument Profile',
+        description: 'Active scope identity (family, firmware, options, transports) plus family-specific SCPI quirks.',
+        mimeType: 'application/json',
+      });
+    }
+    return { resources };
+  });
 
   // ── resources/templates/list handler ────────────────────────────
   server.setRequestHandler(ListResourceTemplatesRequestSchema, async () => ({
     resourceTemplates: [
       {
-        uriTemplate: 'tekautomate://rag/corpus/{corpus}',
-        name: 'RAG Corpus Info',
-        description: 'Metadata for a specific RAG corpus. {corpus}: scpi, tmdevices, app_logic, scope_logic, templates, errors, pyvisa_tekhsi, tek_docs.',
+        uriTemplate: 'tekautomate://proposals/session/{sessionKey}',
+        name: 'Proposal by Session Key',
+        description: 'Fetch the staged workflow proposal for a specific ChatKit session. {sessionKey} is the value returned by workflow_ui{current}.sessionKey.',
         mimeType: 'application/json',
       },
     ],
