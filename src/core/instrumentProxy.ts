@@ -450,17 +450,19 @@ export interface WaveformParams {
   scopeId?:   string;  // folder name under waveforms/ — derived from VISA resource (e.g. "192.168.1.138")
 }
 
+// Auto-stop default when the caller doesn't specify stop. ASCII CURVe? over
+// VXI-11 handles ~10K points well inside the default 30s timeout; full records
+// (500K–1M points) reliably time out, so we cap here. Callers who actually
+// need the full record can pass an explicit stop value.
+const AUTO_STOP_DEFAULT = 10_000;
+
 export function buildWaveformCommands(params: WaveformParams): string[] {
-  // stop=0 means "auto" — fetch full record. We query the record length first so
-  // we can set DATa:STOP correctly rather than guessing 1_000_000.
+  // stop=0 means "auto" — cap at AUTO_STOP_DEFAULT so ASCII transfer fits the
+  // timeout. The scope silently clamps DATa:STOP to the actual record length,
+  // and DATa:STOP? verifies what was accepted.
   const autoStop = params.stop === 0;
-  const stopVal  = autoStop ? 1_000_000 : params.stop;
-  const cmds: string[] = [];
-  if (autoStop) {
-    // Query actual record length so we can cap DATa:STOP correctly
-    cmds.push('HORizontal:MODE:RECOrdlength?');
-  }
-  cmds.push(
+  const stopVal  = autoStop ? AUTO_STOP_DEFAULT : params.stop;
+  return [
     `DATa:SOUrce ${params.channel}`,
     'DATa:ENCdg ASCii',
     `DATa:WIDth ${params.width}`,
@@ -476,8 +478,7 @@ export function buildWaveformCommands(params: WaveformParams): string[] {
     'WFMOutpre:XZEro?',
     'WFMOutpre:NR_Pt?',
     'CURVe?',
-  );
-  return cmds;
+  ];
 }
 
 function parsePreamble(raw: string): Record<string, number> {
