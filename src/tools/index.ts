@@ -143,7 +143,12 @@ export function getToolDefinitions() {
       description:
         'Live instrument gateway for TekAutomate. Use `context` for connection info, `send` for SCPI commands, `screenshot` for capture, `snapshot`/`diff`/`inspect` for *LRN?-based state discovery, `resources` for VISA discovery, and `waveform` for signal health check + data fetch.\n\n' +
         'For screenshots: call with action:"screenshot" and analyze:true — the response returns an MCP {type:"image"} content block containing the screenshot, rendered as vision by your client. Use as a verification tool after any action that changes the display (channel enable/disable, scale, decode, trigger), when measurements are unexpected, or as final task sign-off.\n\n' +
-        'For waveform: action:"waveform" fetches raw ADC samples, computes stats (min/max/mean/std/Vpp), and automatically detects clipping — look for top-level "CLIPPING" key in the response. Pass saveLocal:true to save the full-resolution CSV to a local file and receive a localPath instead of inline data — use the Read tool to access it.\n\n' +
+        'For waveform: action:"waveform" fetches ADC samples and computes stats (min/max/mean/std/Vpp); auto-detects clipping (top-level "CLIPPING" key).\n' +
+        'Pick the mode that matches your task — do not use more data than you need:\n' +
+        '  • Quick stats only (min/max/mean/Vpp):           default — no format or saveLocal. ~300 B response.\n' +
+        '  • Show signal shape, voltage ranges, clipping:    format:"csv" + downsample:1000-5000. LTTB-downsampled CSV inline (~6-30K tokens). Shape-preserving; do NOT use for edge timing.\n' +
+        '  • Edge timing, jitter, FM/PM, modulation:         saveLocal:true + allowLargeDownload:true. Returns localPath + downloadUrl to a full-res raw CSV (can be 10s–100s of MB) — ONLY opt in if you have code-execution/curl to process the bytes on disk. Do NOT WebFetch the URL into chat context; it will overflow.\n' +
+        'Two-step handshake for raw data: saveLocal:true alone returns localPath (useful if your client shares a filesystem with the server, i.e. stdio MCP on the same machine). Add allowLargeDownload:true to also receive a downloadUrl for remote HTTP clients — required before the URL is emitted.\n\n' +
         'ERROR CHECKING after action:"send" — mandatory after any write batch:\n' +
         'SCPI write commands do not confirm success. Always append "*ESR?" and "ALLEV?" to the commands array after writes (or call send immediately after). Rules:\n' +
         '• *ESR? = 0 → all commands accepted. Non-zero → something failed:\n' +

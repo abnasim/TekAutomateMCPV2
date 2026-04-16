@@ -26,6 +26,7 @@ export interface FetchWaveformInput extends Record<string, unknown> {
   stop?:       number;
   timeoutMs?:  number;
   saveLocal?:  boolean;
+  allowLargeDownload?: boolean;
   executorUrl?: string;
   visaResource?: string;
   backend?: string;
@@ -92,10 +93,20 @@ export async function fetchWaveform(input: FetchWaveformInput): Promise<ToolResu
 
   const params: WaveformParams = { channel, format, downsample, width, start, stop, timeoutMs, saveLocal, scopeId };
 
+  // Two-step handshake for the full-resolution CSV:
+  // - saveLocal:true alone writes the file and returns localPath only.
+  // - saveLocal:true + allowLargeDownload:true also returns a downloadUrl.
+  // This forces the caller to explicitly acknowledge it can handle a
+  // multi-MB HTTP fetch (code-execution sandbox, curl + Read tool, etc.)
+  // before we hand it a URL a naive agent could accidentally paste into context.
+  const allowLargeDownload = Boolean(input.allowLargeDownload);
+
   // Public base URL of the MCP HTTP server (set by the caller when available).
-  // When saveLocal succeeds, this lets us emit a downloadUrl alongside the
-  // localPath so remote HTTP MCP clients can fetch the CSV over HTTP.
-  const baseUrl = typeof input.__mcpBaseUrl === 'string' ? input.__mcpBaseUrl : undefined;
+  // Only forwarded to the waveform processor when allowLargeDownload is set;
+  // otherwise the URL is suppressed regardless of baseUrl availability.
+  const baseUrl = allowLargeDownload && typeof input.__mcpBaseUrl === 'string'
+    ? input.__mcpBaseUrl
+    : undefined;
 
   // ── Hosted mode: route through TekAutomate browser bridge via send_scpi ──
   // send_scpi IS supported by the bridge (in fC set). We build the full command

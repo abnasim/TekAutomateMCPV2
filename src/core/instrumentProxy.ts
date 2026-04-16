@@ -621,14 +621,33 @@ export function processWaveformScpiResponses(
       saveError = e instanceof Error ? e.message : String(e);
     }
 
-    // If we have a public base URL AND the file landed, expose a download URL
-    // so remote HTTP MCP clients (which can't reach the server's filesystem)
-    // can fetch the CSV via GET /waveforms/<scope>/<file>.
+    // baseUrl is set by fetchWaveform ONLY when the caller passed
+    // allowLargeDownload:true. Absent baseUrl → suppress downloadUrl. This is
+    // the opt-in handshake: default saveLocal returns localPath only; remote
+    // HTTP clients must explicitly acknowledge they can handle a multi-MB
+    // download (code-execution sandbox, curl-to-disk, etc.) before the URL
+    // is emitted.
     let downloadUrl: string | undefined;
     if (localPath && baseUrl) {
       const cleanBase = baseUrl.replace(/\/+$/, '');
       downloadUrl = `${cleanBase}/waveforms/${encodeURIComponent(scopeFolder)}/${encodeURIComponent(fileName)}`;
     }
+
+    // File size (post-write) so agents can decide how to handle the bytes.
+    let sizeBytes: number | undefined;
+    if (localPath) {
+      try { sizeBytes = fs.statSync(localPath).size; } catch { /* ignore */ }
+    }
+
+    const HINT_WITH_URL =
+      '⚠ Full-resolution CSV. Can be 10s–100s of MB. Do NOT fetch downloadUrl directly into chat context — ' +
+      'pipe through code-execution (curl → disk → numpy/pandas) or a file-read tool. ' +
+      'If your client shares a filesystem with the server (stdio MCP on the same machine), open localPath with the Read tool instead.';
+
+    const HINT_NO_URL =
+      'Full-resolution CSV saved. localPath is usable only if your client shares a filesystem with the server (stdio MCP on same machine).' +
+      ' For remote HTTP MCP clients with code-execution/curl, re-call with allowLargeDownload:true to receive a downloadUrl.' +
+      ' For shape-only analysis (charts, trend checks), drop saveLocal and pass format:"csv" to get an LTTB-downsampled CSV inline (~1K points, safe for context).';
 
     const result: Record<string, unknown> = {
       ...stats,
@@ -636,10 +655,9 @@ export function processWaveformScpiResponses(
       ...(localPath
         ? {
             localPath,
+            ...(sizeBytes !== undefined ? { sizeBytes } : {}),
             ...(downloadUrl ? { downloadUrl } : {}),
-            _hint: downloadUrl
-              ? 'Full-resolution waveform CSV saved. If your client shares a filesystem with this server (e.g. stdio MCP on the same machine), open localPath with the Read tool. Otherwise fetch downloadUrl over HTTP.'
-              : 'Full-resolution waveform CSV saved. Use the Read tool to open localPath.',
+            _hint: downloadUrl ? HINT_WITH_URL : HINT_NO_URL,
           }
         : { saveLocalError: saveError || 'Unknown write error', savePath: filePath }),
     };
