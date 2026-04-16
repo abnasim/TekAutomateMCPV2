@@ -92,6 +92,11 @@ export async function fetchWaveform(input: FetchWaveformInput): Promise<ToolResu
 
   const params: WaveformParams = { channel, format, downsample, width, start, stop, timeoutMs, saveLocal, scopeId };
 
+  // Public base URL of the MCP HTTP server (set by the caller when available).
+  // When saveLocal succeeds, this lets us emit a downloadUrl alongside the
+  // localPath so remote HTTP MCP clients can fetch the CSV over HTTP.
+  const baseUrl = typeof input.__mcpBaseUrl === 'string' ? input.__mcpBaseUrl : undefined;
+
   // ── Hosted mode: route through TekAutomate browser bridge via send_scpi ──
   // send_scpi IS supported by the bridge (in fC set). We build the full command
   // list, bridge it, then process the responses server-side.
@@ -135,9 +140,9 @@ export async function fetchWaveform(input: FetchWaveformInput): Promise<ToolResu
       };
     }
 
-    return processWaveformScpiResponses(responses, params);
+    return processWaveformScpiResponses(responses, params, baseUrl);
   }
 
   // ── Direct mode: executor is reachable (local mcp-server) ──
-  return fetchWaveformProxy(merged as any, params);
+  return fetchWaveformProxy(merged as any, params, baseUrl);
 }

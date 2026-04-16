@@ -523,6 +523,7 @@ function lttb(data: number[], threshold: number): number[] {
 export function processWaveformScpiResponses(
   responses: Array<{ command: string; response: string }>,
   params: WaveformParams,
+  baseUrl?: string,
 ): ToolResult<unknown> {
   const get = (pattern: RegExp) => responses.find(r => pattern.test(r.command))?.response ?? '';
   const curveRaw     = get(/^CURV/i);
@@ -620,11 +621,26 @@ export function processWaveformScpiResponses(
       saveError = e instanceof Error ? e.message : String(e);
     }
 
+    // If we have a public base URL AND the file landed, expose a download URL
+    // so remote HTTP MCP clients (which can't reach the server's filesystem)
+    // can fetch the CSV via GET /waveforms/<scope>/<file>.
+    let downloadUrl: string | undefined;
+    if (localPath && baseUrl) {
+      const cleanBase = baseUrl.replace(/\/+$/, '');
+      downloadUrl = `${cleanBase}/waveforms/${encodeURIComponent(scopeFolder)}/${encodeURIComponent(fileName)}`;
+    }
+
     const result: Record<string, unknown> = {
       ...stats,
       totalPoints: volts.length,
       ...(localPath
-        ? { localPath, _hint: 'Full-resolution waveform CSV saved. Use the Read tool to open it.' }
+        ? {
+            localPath,
+            ...(downloadUrl ? { downloadUrl } : {}),
+            _hint: downloadUrl
+              ? 'Full-resolution waveform CSV saved. If your client shares a filesystem with this server (e.g. stdio MCP on the same machine), open localPath with the Read tool. Otherwise fetch downloadUrl over HTTP.'
+              : 'Full-resolution waveform CSV saved. Use the Read tool to open localPath.',
+          }
         : { saveLocalError: saveError || 'Unknown write error', savePath: filePath }),
     };
     return {
@@ -651,6 +667,7 @@ export function processWaveformScpiResponses(
 export async function fetchWaveformProxy(
   endpoint: Endpoint,
   params: WaveformParams,
+  baseUrl?: string,
 ): Promise<ToolResult<unknown>> {
   const commands = buildWaveformCommands(params);
   const scpiResult = await sendScpiProxy(endpoint, commands, params.timeoutMs);
@@ -660,5 +677,5 @@ export async function fetchWaveformProxy(
     ? (scpiResult.data as Record<string, unknown>).responses as Array<{ command: string; response: string }>
     : [];
 
-  return processWaveformScpiResponses(responses, params);
+  return processWaveformScpiResponses(responses, params, baseUrl);
 }

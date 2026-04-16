@@ -990,6 +990,47 @@ function filterTools(q) {
       return;
     }
 
+    // ── GET /waveforms/<scope>/<file>.csv — serve saved waveform CSVs ─────
+    // When instrument_live{waveform} is called with saveLocal:true, the CSV is
+    // written to <projectRoot>/waveforms/<scope>/<file>. Remote HTTP MCP clients
+    // can't reach that path, so this route exposes the same file over HTTP —
+    // the tool emits a downloadUrl alongside localPath for clients that need it.
+    if (req.method === 'GET' && req.url?.startsWith('/waveforms/')) {
+      const [urlPath] = req.url.split('?');
+      const rel = decodeURIComponent(urlPath.slice('/waveforms/'.length));
+      // Path-traversal protection: resolve and confirm the result is still
+      // inside the waveforms root. Rejects ".." segments and absolute paths.
+      const waveformsRoot = path.resolve(__dirname, '..', '..', 'waveforms');
+      const resolved = path.resolve(waveformsRoot, rel);
+      if (!resolved.startsWith(waveformsRoot + path.sep) && resolved !== waveformsRoot) {
+        res.statusCode = 400;
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.end('Invalid path');
+        return;
+      }
+      if (!resolved.toLowerCase().endsWith('.csv')) {
+        res.statusCode = 400;
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.end('Only .csv files are served from this route');
+        return;
+      }
+      try {
+        const body = fs.readFileSync(resolved);
+        const filename = path.basename(resolved);
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+        res.setHeader('Content-Disposition', `inline; filename="${filename}"`);
+        res.setHeader('Cache-Control', 'private, max-age=300');
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.end(body);
+      } catch {
+        res.statusCode = 404;
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.end('Not found');
+      }
+      return;
+    }
+
     // ── GET / — Tools & API reference page ────────────────────────
     if (req.method === 'GET' && (req.url === '/' || req.url === '/index.html')) {
       res.statusCode = 200;
