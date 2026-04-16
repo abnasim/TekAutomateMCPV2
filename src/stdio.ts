@@ -83,8 +83,12 @@ function buildExternalMcpToolContent(toolName: string, result: unknown) {
     ? (source.imageContent as Record<string, unknown>)
     : null;
 
+  // NOTE: localPath alone is NOT a screenshot signal — other tools (e.g.
+  // instrument_live{waveform} with saveLocal:true) also return localPath for
+  // saved CSVs. Real screenshots always also carry imageContent / imageUrl /
+  // base64 / analysisBase64, so matching on those is sufficient.
   const isScreenshotLike = toolName === 'capture_screenshot'
-    || (toolName === 'instrument_live' && Boolean(imageContent || source.imageUrl || source.localPath || source.base64 || source.analysisBase64));
+    || (toolName === 'instrument_live' && Boolean(imageContent || source.imageUrl || source.base64 || source.analysisBase64));
 
   // ── Local-file path (stdio/direct mode) ────────────────────────────────────
   // When the capture saved the image locally, return a compact text block that
