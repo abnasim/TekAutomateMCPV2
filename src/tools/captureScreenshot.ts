@@ -57,7 +57,7 @@ function stripScreenshotPayloadForNonAnalysis(
     ...(typeof sizeBytes === 'number' ? { sizeBytes } : {}),
     ...(scopeType ? { scopeType } : {}),
     ...(originalMimeType ? { originalMimeType } : {}),
-    note: 'Screenshot sent to TekAutomate UI display. No image data returned to you. Call capture_screenshot again with analyze:true to receive the image.',
+    note: 'Screenshot sent to TekAutomate UI display. No image data returned to you. Call again with analyze:true to receive the image (e.g. instrument_live with action:"screenshot" and analyze:true).',
   };
 }
 
@@ -199,7 +199,7 @@ export async function captureScreenshot(input: Input): Promise<ToolResult<Record
           ok: false,
           data: {
             error: 'VISION_IMAGE_UNAVAILABLE',
-            message: 'capture_screenshot requested MCP image transport, but MCP could not build an image content block.',
+            message: 'The screenshot handler requested MCP image transport, but MCP could not build an image content block.',
           },
           sourceMeta: [],
           warnings: ['MCP image content block could not be created.'],
@@ -250,7 +250,7 @@ export async function captureScreenshot(input: Input): Promise<ToolResult<Record
         ok: false,
         data: {
           error: 'VISION_URL_UNAVAILABLE',
-          message: 'capture_screenshot could not save the screenshot locally or create a temporary image URL.',
+          message: 'The screenshot handler could not save the screenshot locally or create a temporary image URL.',
           debug: buildVisionUrlDebug(maybeCompressed, input, 'bridge'),
         },
         sourceMeta: [],
@@ -307,7 +307,7 @@ export async function captureScreenshot(input: Input): Promise<ToolResult<Record
         ok: false,
         data: {
           error: 'VISION_IMAGE_UNAVAILABLE',
-          message: 'capture_screenshot requested MCP image transport, but MCP could not build an image content block.',
+          message: 'The screenshot handler requested MCP image transport, but MCP could not build an image content block.',
         },
         sourceMeta: [],
         warnings: ['MCP image content block could not be created.'],
@@ -369,7 +369,7 @@ export async function captureScreenshot(input: Input): Promise<ToolResult<Record
       ok: false,
       data: {
         error: 'VISION_URL_UNAVAILABLE',
-        message: 'capture_screenshot could not save the screenshot locally or create a temporary image URL. Check that the temp directory is writable.',
+        message: 'The screenshot handler could not save the screenshot locally or create a temporary image URL. Check that the temp directory is writable.',
         debug: buildVisionUrlDebug(maybeCompressed, input, 'proxy'),
       },
       sourceMeta: [],
