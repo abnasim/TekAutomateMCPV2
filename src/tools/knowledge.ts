@@ -1,4 +1,5 @@
 import { getTemplateExamples } from './getTemplateExamples';
+import { personality } from './personality';
 import { retrieveRagChunks } from './retrieveRagChunks';
 import { searchKnownFailures } from './searchKnownFailures';
 
@@ -26,12 +27,14 @@ export async function knowledge(input: KnowledgeInput) {
       return getTemplateExamples(args as any);
     case 'failures':
       return searchKnownFailures(args as any);
+    case 'personality':
+      return personality(args as any);
     default:
       return {
         ok: false,
         data: null,
         sourceMeta: [],
-        warnings: ['Unknown knowledge action. Use one of: retrieve, examples, failures.'],
+        warnings: ['Unknown knowledge action. Use one of: retrieve, examples, failures, personality.'],
       };
   }
 }

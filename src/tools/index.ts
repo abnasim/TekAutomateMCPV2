@@ -271,16 +271,17 @@ export function getToolDefinitions() {
     {
       name: 'knowledge',
       description:
-        'Use for HOW-to questions, protocol setup, and supporting material — not for SCPI syntax (use tek_router for commands). ' +
-        'retrieve: RAG search by corpus — use tek_docs for protocol decode setup (I2C, CAN, SPI, USB, Ethernet, LIN, RS232, MIL-1553), trigger concepts, and product how-tos; results include tek.com source URLs — web-fetch the URL when the chunk preview is incomplete, then extract SCPI via tek_router before staging. ' +
-        'examples: find matching workflow templates. ' +
-        'failures: diagnose runtime errors and unexpected behavior.',
+        'Use for HOW-to questions, protocol setup, supporting material, and prompt overlays — not for SCPI syntax (use tek_router for commands).\n' +
+        '• retrieve — RAG search by corpus. Use tek_docs for protocol decode how-tos (I2C/CAN/SPI/USB/Ethernet/LIN/RS232/MIL-1553), trigger concepts, and product how-tos; results include tek.com source URLs — web-fetch the URL when the chunk preview is incomplete, then extract SCPI via tek_router before staging.\n' +
+        '• examples — find matching workflow templates.\n' +
+        '• failures — diagnose runtime errors and unexpected behavior.\n' +
+        '• personality — list or load prompt overlays (personas: setup / debug / scpi_discovery / validation / learning / data_analysis) and base prompts. op:"list" returns name + one-line bias; op:"load" returns the full markdown. After loading, follow the overlay\'s guidance for the rest of the session — do NOT load another in the same turn (overlay conflicts muddy priorities).',
       parameters: {
         type: 'object',
         properties: {
           action: {
             type: 'string',
-            enum: ['retrieve', 'examples', 'failures'],
+            enum: ['retrieve', 'examples', 'failures', 'personality'],
             description: 'Knowledge operation to run.',
           },
           args: {
@@ -313,6 +314,20 @@ export function getToolDefinitions() {
           modelFamily: {
             type: 'string',
             description: 'Filter tek_docs to a specific instrument family (e.g. MSO6, MSO5, DPO7000). General protocol/measurement content always passes through.',
+          },
+          op: {
+            type: 'string',
+            enum: ['list', 'load'],
+            description: 'For action:"personality" — "list" returns available overlay names + one-line bias; "load" returns the full markdown of one overlay. Defaults to "list".',
+          },
+          category: {
+            type: 'string',
+            enum: ['persona', 'base'],
+            description: 'For action:"personality" — which directory to read. "persona" (default) = task-specific overlays; "base" = base prompts. A bare op:"list" with no category returns both.',
+          },
+          name: {
+            type: 'string',
+            description: 'For action:"personality" op:"load" — the overlay name (without .md extension), e.g. "debug_copilot". Get valid names via op:"list".',
           },
         },
         required: ['action'],

@@ -8,6 +8,7 @@ import { runToolLoop } from './core/toolLoop';
 import { getSlimToolDefinitions, getToolDefinitions, isLiveInstrumentEnabled, runTool } from './tools/index';
 import type { McpChatRequest } from './core/schemas';
 import { getLastWorkflowProposal, stageWorkflowProposal } from './tools/stageWorkflowProposal';
+import { listPersonalityResources, readPersonalityByUri } from './tools/personality';
 import { getInstrumentInfoState, getRuntimeContextState, updateRuntimeContext, getActiveSessionKeys, getLiveSessionState, enqueueMcpSessionKey, dequeueMcpSessionKey } from './tools/runtimeContextStore';
 import { completeLiveAction, getPendingLiveActionCount, waitForNextLiveAction } from './tools/liveActionBridge';
 import { bootRouter, createReloadProvidersHandler, createRouterHandler, getRouterHealth } from './core/routerIntegration';
@@ -588,6 +589,16 @@ export async function createServer(port = 8787): Promise<http.Server> {
           mimeType: 'application/json',
         });
       }
+      // Personality overlays (personas + bases) shipped on-disk.
+      // Same content served by knowledge{action:"personality", op:"load"}.
+      for (const p of listPersonalityResources()) {
+        resources.push({
+          uri: `tekautomate://${p.category}/${p.name}`,
+          name: `${p.category === 'persona' ? 'Persona' : 'Base Prompt'}: ${p.name}`,
+          description: p.bias ? `${p.bias}` : `${p.category} overlay`,
+          mimeType: 'text/markdown',
+        });
+      }
       return { resources };
     });
 
@@ -664,6 +675,19 @@ export async function createServer(port = 8787): Promise<http.Server> {
             uri,
             mimeType: 'application/json',
             text: JSON.stringify(getLastWorkflowProposal(sessionKey) ?? null, null, 2),
+          }],
+        };
+      }
+
+      // tekautomate://persona/<name>  OR  tekautomate://base/<name>
+      if (uri.startsWith('tekautomate://persona/') || uri.startsWith('tekautomate://base/')) {
+        const loaded = readPersonalityByUri(uri);
+        if (!loaded) throw new Error(`Personality overlay not found: ${uri}`);
+        return {
+          contents: [{
+            uri,
+            mimeType: 'text/markdown',
+            text: loaded.markdown,
           }],
         };
       }

@@ -36,6 +36,7 @@ import { initTemplateIndex } from './core/templateIndex.js';
 import { initProviderCatalog, providerSupplementsEnabled } from './core/providerCatalog.js';
 import { bootRouter } from './core/routerIntegration.js';
 import { getSlimToolDefinitions, isLiveInstrumentEnabled, runTool } from './tools/index.js';
+import { listPersonalityResources, readPersonalityByUri } from './tools/personality.js';
 import { getInstrumentInfoState } from './tools/runtimeContextStore.js';
 import { getLastWorkflowProposal } from './tools/stageWorkflowProposal.js';
 
@@ -226,6 +227,14 @@ async function main() {
         mimeType: 'application/json',
       });
     }
+    for (const p of listPersonalityResources()) {
+      resources.push({
+        uri: `tekautomate://${p.category}/${p.name}`,
+        name: `${p.category === 'persona' ? 'Persona' : 'Base Prompt'}: ${p.name}`,
+        description: p.bias ? p.bias : `${p.category} overlay`,
+        mimeType: 'text/markdown',
+      });
+    }
     return { resources };
   });
 
@@ -345,6 +354,19 @@ async function main() {
           uri,
           mimeType: 'application/json',
           text: JSON.stringify(getLastWorkflowProposal(sessionKey) ?? null, null, 2),
+        }],
+      };
+    }
+
+    // tekautomate://persona/<name>  OR  tekautomate://base/<name>
+    if (uri.startsWith('tekautomate://persona/') || uri.startsWith('tekautomate://base/')) {
+      const loaded = readPersonalityByUri(uri);
+      if (!loaded) throw new Error(`Personality overlay not found: ${uri}`);
+      return {
+        contents: [{
+          uri,
+          mimeType: 'text/markdown',
+          text: loaded.markdown,
         }],
       };
     }
