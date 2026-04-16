@@ -684,7 +684,15 @@ function requestedFamilyBuckets(family?: string): Set<string> {
   const normalized = normalizeFamilyKey(raw);
   const add = (value: string) => out.add(value);
 
-  if (/MSO24567|MSO456|MSO45|MSO56|MSO7|MSO6|MSO5|MSO4|MSO2/.test(normalized)) add('MODERN_MSO');
+  // MSO2-only queries (2 Series, MSO2, MSO22, MSO24) must NOT fall through to
+  // MODERN_MSO — that bucket includes mso_4_5_6_7 which has 4/5/6/7 Series
+  // commands that are NOT valid on the 2 Series (e.g. Trigger B, extra channels).
+  const isMso2Only = /^(MSO2|MSO22|MSO24|2SERIES|2SERIESMSO|MSO2SERIES)$/.test(normalized);
+  if (isMso2Only) {
+    add('MSO2_SERIES');
+  } else if (/MSO24567|MSO456|MSO45|MSO56|MSO7|MSO6|MSO5|MSO4|MSO2/.test(normalized)) {
+    add('MODERN_MSO');
+  }
   if (/DPO|5K|7K|70K|MSO5000/.test(normalized)) add('LEGACY_SCOPE');
   if (/TEKSCOPEPC|TEKSCOPE/.test(normalized)) {
     add('MODERN_MSO');
