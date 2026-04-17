@@ -156,6 +156,11 @@ export function getToolDefinitions() {
         '  • Quick stats only (min/max/mean/Vpp):           default — no format or saveLocal. ~300 B response.\n' +
         '  • Show signal shape, voltage ranges:              format:"csv" + downsample:1000-5000. LTTB-downsampled CSV inline (~6-30K tokens). Shape-preserving; do NOT use for edge timing.\n' +
         '  • Edge timing, jitter, FM/PM, modulation:         saveLocal:true + allowLargeDownload:true. Returns localPath + downloadUrl to a full-res raw CSV (can be 10s–100s of MB) — ONLY opt in if you have code-execution/curl to process the bytes on disk. Do NOT WebFetch the URL into chat context; it will overflow.\n' +
+        'POINT COUNT — controlled via the tool "stop" arg, NOT via a separate DATa:STOP SCPI call. Every waveform call resets DATa:STOP internally; anything you set via instrument_live{send} before calling waveform gets clobbered. Rules:\n' +
+        '  • No "stop" passed → auto mode. Server queries HORizontal:MODE:RECOrdlength? and captures min(recordLength, 100000). Plenty for most analysis; ASCII transfer fits the default 30s timeout.\n' +
+        '  • "stop":<N> passed → honors exactly N points (1 ≤ N ≤ record length). Scope silently clamps above record length.\n' +
+        '  • For large captures (>100K) bump timeoutMs too — ASCII CURVe? over VXI-11 at 500K+ points can approach 30s. timeoutMs caps at 120s.\n' +
+        '  • verifiedDATaSTOP in the response is what the scope actually accepted — check it matches your ask.\n' +
         'Two-step handshake for raw data: saveLocal:true alone returns localPath (useful if your client shares a filesystem with the server, i.e. stdio MCP on the same machine). Add allowLargeDownload:true to also receive a downloadUrl for remote HTTP clients — required before the URL is emitted.\n\n' +
         'ERROR CHECKING after action:"send" — mandatory after any write batch:\n' +
         'SCPI write commands do not confirm success. Always append "*ESR?" and "ALLEV?" to the commands array after writes (or call send immediately after). Rules:\n' +

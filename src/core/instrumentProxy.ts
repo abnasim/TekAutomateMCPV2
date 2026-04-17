@@ -450,25 +450,38 @@ export interface WaveformParams {
   scopeId?:   string;  // folder name under waveforms/ — derived from VISA resource (e.g. "192.168.1.138")
 }
 
-// Auto-stop default when the caller doesn't specify stop. ASCII CURVe? over
-// VXI-11 handles ~10K points well inside the default 30s timeout; full records
-// (500K–1M points) reliably time out, so we cap here. Callers who actually
-// need the full record can pass an explicit stop value.
-const AUTO_STOP_DEFAULT = 10_000;
+// Upper limit for the "no explicit stop" auto path. ASCII CURVe? over VXI-11
+// handles ~100K points well inside the default 30s timeout; much beyond that
+// risks timeouts. Callers who need more MUST pass an explicit params.stop
+// (and probably bump timeoutMs). Setting DATa:STOP via a separate SCPI call
+// BEFORE calling this function does NOT work — the commands below reset it.
+const AUTO_STOP_CEILING = 100_000;
 
 export function buildWaveformCommands(params: WaveformParams): string[] {
-  // stop=0 means "auto" — cap at AUTO_STOP_DEFAULT so ASCII transfer fits the
-  // timeout. The scope silently clamps DATa:STOP to the actual record length,
-  // and DATa:STOP? verifies what was accepted.
+  // stop=0 means "auto": ask the scope for its record length, then cap by
+  // AUTO_STOP_CEILING so ASCII transfer fits the timeout. If stop > 0 the
+  // caller explicitly asked for that many points and we honor it as-is.
   const autoStop = params.stop === 0;
-  const stopVal  = autoStop ? AUTO_STOP_DEFAULT : params.stop;
-  return [
+  const cmds: string[] = [];
+  if (autoStop) {
+    // Queried first so processWaveformScpiResponses can compute the effective
+    // DATa:STOP after seeing the record length. The query goes BEFORE the
+    // DATa:* writes so the response reflects the scope's actual state, not
+    // whatever we're about to set.
+    cmds.push('HORizontal:MODE:RECOrdlength?');
+  }
+  // For autoStop we set DATa:STOP to AUTO_STOP_CEILING as a best-effort upper
+  // bound. The scope silently clamps to the actual record length, and
+  // DATa:STOP? below reports what was accepted (may be < AUTO_STOP_CEILING if
+  // the record is smaller).
+  const stopVal = autoStop ? AUTO_STOP_CEILING : params.stop;
+  cmds.push(
     `DATa:SOUrce ${params.channel}`,
     'DATa:ENCdg ASCii',
     `DATa:WIDth ${params.width}`,
     `DATa:STARt ${params.start}`,
     `DATa:STOP ${stopVal}`,
-    'DATa:STOP?',   // verify setting was accepted
+    'DATa:STOP?',   // verify setting was accepted (scope may clamp to record length)
     '*OPC?',        // synchronisation barrier — scope processes all writes before responding
     // Query individual preamble fields for reliable parsing (WFMOutpre? format varies by firmware)
     'WFMOutpre:YMUlt?',
@@ -478,7 +491,8 @@ export function buildWaveformCommands(params: WaveformParams): string[] {
     'WFMOutpre:XZEro?',
     'WFMOutpre:NR_Pt?',
     'CURVe?',
-  ];
+  );
+  return cmds;
 }
 
 function parsePreamble(raw: string): Record<string, number> {
