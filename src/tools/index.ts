@@ -143,10 +143,18 @@ export function getToolDefinitions() {
       description:
         'Live instrument gateway for TekAutomate. Use `context` for connection info, `send` for SCPI commands, `screenshot` for capture, `snapshot`/`diff`/`inspect` for *LRN?-based state discovery, `resources` for VISA discovery, and `waveform` for signal health check + data fetch.\n\n' +
         'For screenshots: call with action:"screenshot" and analyze:true — the response returns an MCP {type:"image"} content block containing the screenshot, rendered as vision by your client. Use as a verification tool after any action that changes the display (channel enable/disable, scale, decode, trigger), when measurements are unexpected, or as final task sign-off.\n\n' +
-        'For waveform: action:"waveform" fetches ADC samples and computes stats (min/max/mean/std/Vpp). No automatic clipping flag — compare min/max against the set vertical scale to judge saturation.\n' +
+        'For waveform: action:"waveform" fetches ADC samples and computes stats (min/max/mean/std/Vpp).\n' +
+        'Clipping check — use a SCREENSHOT, not math. The scope draws clipped regions in red at the top/bottom rails; that is faster and more reliable than anything derived from stats. Do NOT try to infer clipping from min/max alone.\n' +
+        'SIGNAL CONDITIONING FIRST — before any capture/analysis, get the waveform fitting the display:\n' +
+        '  1. Look at the current display (screenshot) — is the waveform off-screen high/low or flatlined at a rail?\n' +
+        '  2. If clipped or off-screen: adjust CH<x>:OFFSet to center the signal on screen BEFORE changing the vertical scale. Scope offset shifts the ADC window; without centering, cranking the scale just changes gain around a bad center.\n' +
+        '  3. Then set CH<x>:SCAle so the waveform fills ~60-80% of the screen vertically. Re-screenshot to confirm.\n' +
+        '  4. Set HORizontal:SCAle to capture the time window you actually need.\n' +
+        '  5. Only then run action:"waveform" — the stats are only meaningful once the signal is on-screen and unclipped.\n' +
+        'Skipping this causes stats on saturated/off-screen data, which the AI then misreads as "real" numbers. The scope does not prevent you from capturing garbage.\n\n' +
         'Pick the mode that matches your task — do not use more data than you need:\n' +
         '  • Quick stats only (min/max/mean/Vpp):           default — no format or saveLocal. ~300 B response.\n' +
-        '  • Show signal shape, voltage ranges, clipping:    format:"csv" + downsample:1000-5000. LTTB-downsampled CSV inline (~6-30K tokens). Shape-preserving; do NOT use for edge timing.\n' +
+        '  • Show signal shape, voltage ranges:              format:"csv" + downsample:1000-5000. LTTB-downsampled CSV inline (~6-30K tokens). Shape-preserving; do NOT use for edge timing.\n' +
         '  • Edge timing, jitter, FM/PM, modulation:         saveLocal:true + allowLargeDownload:true. Returns localPath + downloadUrl to a full-res raw CSV (can be 10s–100s of MB) — ONLY opt in if you have code-execution/curl to process the bytes on disk. Do NOT WebFetch the URL into chat context; it will overflow.\n' +
         'Two-step handshake for raw data: saveLocal:true alone returns localPath (useful if your client shares a filesystem with the server, i.e. stdio MCP on the same machine). Add allowLargeDownload:true to also receive a downloadUrl for remote HTTP clients — required before the URL is emitted.\n\n' +
         'ERROR CHECKING after action:"send" — mandatory after any write batch:\n' +
