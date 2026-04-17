@@ -210,6 +210,40 @@ export function getToolDefinitions() {
             type: 'string',
             description: 'Optional VISA resource string to target a specific instrument instead of the active one (e.g. TCPIP::127.0.0.1::4000::SOCKET). Call action:"resources" first to list available targets.',
           },
+          channel: {
+            type: 'string',
+            description: 'For action:"waveform" — source channel. Accepts CH1-CH4, MATH1-MATH4, REF1-REF8. Case-insensitive. NOT "source" — that\'s the SCPI name; this tool uses "channel". Default: CH1.',
+          },
+          format: {
+            type: 'string',
+            enum: ['stats', 'csv', 'both'],
+            description: 'For action:"waveform" — output shape. "stats" (default) ≈ 300 B JSON. "csv" adds an LTTB-downsampled CSV inline (shape-only, not timing-preserving). "both" combines. For edge-timing / jitter / FM / modulation analysis, use saveLocal:true + allowLargeDownload:true instead (see downloadUrl path).',
+          },
+          downsample: {
+            type: 'number',
+            description: 'For action:"waveform" with format:"csv"/"both" — target point count after LTTB downsampling. Clamped 10..50000. Default 1000.',
+          },
+          stop: {
+            type: 'number',
+            description: 'For action:"waveform" — last sample index to fetch (DATa:STOP). If omitted, server queries record length and caps at 100000. Pass a larger explicit value (with bumped timeoutMs) for full-record captures. Setting DATa:STOP via a separate send call does NOT persist — every waveform call resets it.',
+          },
+          start: {
+            type: 'number',
+            description: 'For action:"waveform" — first sample index (DATa:STARt). Default 1.',
+          },
+          width: {
+            type: 'number',
+            enum: [1, 2],
+            description: 'For action:"waveform" — ADC sample width in bytes (1 = 8-bit, 2 = 16-bit). Default 2.',
+          },
+          saveLocal: {
+            type: 'boolean',
+            description: 'For action:"waveform" — save the full-resolution CSV to the MCP server filesystem and return localPath. Safe for stdio MCP clients on the same machine (Read tool can open localPath). For remote HTTP clients add allowLargeDownload:true to also receive downloadUrl.',
+          },
+          allowLargeDownload: {
+            type: 'boolean',
+            description: 'For action:"waveform" — opt-in gate for the HTTP downloadUrl. Only pass true if your client can process multi-MB CSV via code-execution (curl → disk → numpy/pandas). Do NOT fetch downloadUrl directly into chat context — it will overflow. Ignored unless saveLocal:true is also set.',
+          },
         },
         required: ['action'],
         additionalProperties: true,
