@@ -354,7 +354,7 @@ export function getToolDefinitions() {
               '• tmdevices — tm_devices Python driver API.\n' +
               '• app_logic — TekAutomate architecture and AiAction schemas.\n' +
               '• pyvisa_tekhsi — PyVISA and TekHSI connection examples.\n' +
-              '• lessons — Lessons Learned saved via tek_router{action:"save", kind:"lesson"}. Structured {lesson, observation, implication, tags}. Supports query (token-match across all fields), tags (AND filter), modelFamily (scope-specific or neutral). REFERENCE NOTES, NOT EXECUTABLE — do not try to dispatch them.',
+              '• lessons — Lessons Learned saved via tek_router{action:"save", kind:"lesson"}. Structured {lesson, observation, implication, tags}. Query is a fuzzy token match across all fields; tags filter is lenient (lowercase, plural/hyphen/case-insensitive: "masks" matches "mask", "arg-names" matches "argnames"); modelFamily narrows to a specific scope family or neutral. Accepts either limit or topK for max results (default 10, cap 50). REFERENCE NOTES, NOT EXECUTABLE — do not try to dispatch them.',
           },
           tags: {
             type: 'array',

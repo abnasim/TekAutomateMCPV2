@@ -53,6 +53,7 @@ interface RetrieveLessonsInput {
   tags?: unknown;
   modelFamily?: unknown;
   limit?: unknown;
+  topK?: unknown; // alias for limit (agents familiar with knowledge{retrieve} use topK)
 }
 
 // ─── Persistence ────────────────────────────────────────────────────────
@@ -182,27 +183,64 @@ export async function saveLesson(input: SaveLessonInput): Promise<ToolResult<unk
   };
 }
 
-// Token-level fuzzy match: lesson matches if ANY query token appears
-// (case-insensitive) in lesson/observation/implication/tags/modelFamily/
-// scpiContext. No ranking magic — we want predictable retrieval, not
-// a semantic-search black box that preempts the AI's reasoning.
+// Lenient token normalisation for retrieval matching. Lowercases, strips
+// non-alphanumerics (so "arg-names", "arg_names", "arg names" collapse),
+// and strips trailing "s"/"es" plurals when the stem is ≥3 chars (so
+// "masks"→"mask", "tolerances"→"tolerance", but "bus"→"bus"). Intended
+// to make search forgiving without turning it into a semantic model.
+function stemToken(raw: string): string {
+  let t = raw.toLowerCase().replace(/[^a-z0-9]+/g, '');
+  if (t.length > 4 && t.endsWith('es')) t = t.slice(0, -2);
+  else if (t.length > 3 && t.endsWith('s')) t = t.slice(0, -1);
+  return t;
+}
+
+function buildStemSet(strings: string[]): Set<string> {
+  const out = new Set<string>();
+  for (const s of strings) {
+    for (const part of s.toLowerCase().split(/[\s,]+/)) {
+      const stem = stemToken(part);
+      if (stem.length >= 2) out.add(stem);
+    }
+  }
+  return out;
+}
+
+// Token-level fuzzy match: lesson matches if every query token (stemmed)
+// appears as a substring in the stemmed haystack of the entry's text
+// fields. Predictable, no ranking magic, no semantic model.
 function matchesTokens(entry: LessonEntry, tokens: string[]): boolean {
   if (tokens.length === 0) return true;
-  const hay = [
+  const hay = stemToken([
     entry.lesson,
     entry.observation,
     entry.implication,
     entry.tags.join(' '),
     entry.modelFamily || '',
     (entry.scpiContext || []).join(' '),
-  ].join(' ').toLowerCase();
-  return tokens.every((t) => hay.includes(t));
+  ].join(' '));
+  return tokens.every((t) => {
+    const stem = stemToken(t);
+    return stem.length > 0 && hay.includes(stem);
+  });
 }
 
+// Tag match: each required tag matches if its stem equals or is a
+// substring match against any of the entry's tag stems. Handles plural
+// ("masks" matches ["mask"]), hyphen/underscore variants, and casing.
 function matchesTags(entry: LessonEntry, requiredTags: string[]): boolean {
   if (requiredTags.length === 0) return true;
-  const entryTagsLower = entry.tags.map((t) => t.toLowerCase());
-  return requiredTags.every((rt) => entryTagsLower.includes(rt.toLowerCase()));
+  const entryStems = buildStemSet(entry.tags);
+  return requiredTags.every((rt) => {
+    const want = stemToken(rt);
+    if (!want) return false;
+    if (entryStems.has(want)) return true;
+    // fall back to substring match so "trig" matches "trigger"
+    for (const es of entryStems) {
+      if (es.includes(want) || want.includes(es)) return true;
+    }
+    return false;
+  });
 }
 
 function matchesModelFamily(entry: LessonEntry, want: string): boolean {
@@ -215,11 +253,15 @@ export async function retrieveLessons(input: RetrieveLessonsInput): Promise<Tool
   const query = typeof input.query === 'string' ? input.query.trim() : '';
   const tagsFilter = normStrArray(input.tags, MAX_TAGS, MAX_TAG_LEN);
   const modelFamily = typeof input.modelFamily === 'string' ? input.modelFamily.trim() : '';
-  const rawLimit = Number(input.limit);
+  // Accept either "limit" (native) or "topK" (alias — agents familiar with
+  // knowledge{retrieve} reach for topK. Silently rejecting their param is
+  // the same class of silent-fallback trap as the waveform channel/source
+  // mismatch — accept both, document the canonical name).
+  const rawLimit = Number(input.limit ?? input.topK);
   const limit = Number.isFinite(rawLimit) && rawLimit > 0 ? Math.min(Math.floor(rawLimit), 50) : 10;
 
   const tokens = query
-    ? query.toLowerCase().split(/\s+/).filter((t) => t.length >= 2)
+    ? query.split(/\s+/).filter((t) => t.length >= 2)
     : [];
 
   const all = readLessonsFromDisk();
@@ -245,11 +287,11 @@ export async function retrieveLessons(input: RetrieveLessonsInput): Promise<Tool
 }
 
 // Synchronous helper for the tek_router{search} side-channel. No I/O error
-// throws — returns [] on any failure.
+// throws — returns [] on any failure. Uses the same stemmed matching as
+// retrieveLessons so plural/hyphen/case variants still hit.
 export function findMatchingLessonsSync(query: string, limit: number = 3): LessonEntry[] {
   try {
     const tokens = (query || '')
-      .toLowerCase()
       .split(/\s+/)
       .filter((t) => t.length >= 2);
     if (tokens.length === 0) return [];
