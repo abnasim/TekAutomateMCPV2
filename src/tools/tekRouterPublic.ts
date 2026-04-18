@@ -33,20 +33,39 @@ export async function tekRouterPublic(input: TekRouterPublicInput) {
         modelFamily: String(args.modelFamily || input.modelFamily || ''),
       });
       // ── Lessons side-channel ──────────────────────────────────────
-      // Surface any tag-matching lessons alongside (but explicitly separate
-      // from) the SCPI results. Never ranking-boost; the AI reads these as
-      // reference notes, not executable commands.
+      // Surface any tag/token-matching lessons alongside (but explicitly
+      // separate from) the SCPI results. Never ranking-boost; the AI reads
+      // these as reference notes, not executable commands.
+      //
+      // Caller can widen the cap via lessonsLimit (default 3, max 10) to
+      // avoid silent truncation on topics with many saved lessons. When
+      // the returned set is smaller than the total match count, the
+      // payload includes totalMatching + hasMore + moreHint so the agent
+      // knows to fetch the rest via knowledge{retrieve, corpus:"lessons"}
+      // instead of assuming it got everything.
       if (result && typeof result === 'object' && (result as any).ok !== false) {
-        const lessons = findMatchingLessonsSync(query, 3);
-        if (lessons.length > 0) {
+        const rawCap = Number(args.lessonsLimit ?? input.lessonsLimit);
+        const lessonsLimit = Number.isFinite(rawCap) && rawCap > 0
+          ? Math.min(Math.floor(rawCap), 10)
+          : 3;
+        const { entries, totalMatching } = findMatchingLessonsSync(query, lessonsLimit);
+        if (entries.length > 0) {
           // Attach at the TOP LEVEL of the ToolResult envelope (sibling of
           // `data`, not under it). searchScpi returns data as an array, and
           // named properties on arrays don't survive JSON.stringify — any
           // data-level attachment would silently vanish on serialisation.
+          const hasMore = totalMatching > entries.length;
           (result as unknown as Record<string, unknown>).lessons = {
             _note: 'Reference lessons (NOT executable — read and apply to your reasoning; do not dispatch as tools).',
-            count: lessons.length,
-            entries: lessons.map((l) => ({
+            count: entries.length,
+            totalMatching,
+            hasMore,
+            ...(hasMore
+              ? {
+                  moreHint: `${totalMatching - entries.length} more matched. For the full set, call knowledge{action:"retrieve", corpus:"lessons", query:"${query}"} — or pass lessonsLimit up to 10 on this search call.`,
+                }
+              : {}),
+            entries: entries.map((l) => ({
               id: l.id,
               lesson: l.lesson,
               observation: l.observation,

@@ -134,12 +134,24 @@ export async function saveLesson(input: SaveLessonInput): Promise<ToolResult<unk
   if (!observation) missing.push('observation');
   if (!implication) missing.push('implication');
   if (missing.length) {
+    // When MULTIPLE required fields are missing at once, the most likely
+    // cause is a serialization problem on the client (malformed param
+    // block, params nested inside another param, wrong arg shape) —
+    // not the user actually omitting all three fields. Surface that
+    // hypothesis so the agent checks its own payload encoding instead
+    // of assuming the schema is wrong.
+    const likelySerialization = missing.length >= 2;
+    const base = `A lesson requires non-empty: ${missing.join(', ')}. These are the Lesson / Observation / Implication triple — all three are required.`;
+    const hint = likelySerialization
+      ? ' Multiple required fields arrived empty — this usually means a client-side serialization problem (malformed parameter tags, fields nested inside another parameter block, or a stringified JSON passed where an object was expected). Verify the top-level params are actually reaching the server as separate fields before assuming the values are wrong.'
+      : '';
     return {
       ok: false,
       data: {
         error: 'MISSING_FIELDS',
-        message: `A lesson requires non-empty: ${missing.join(', ')}. These are the Lesson / Observation / Implication triple — all three are required.`,
+        message: base + hint,
         missing,
+        likelyCauseIsSerialization: likelySerialization,
       },
       sourceMeta: [],
       warnings: [`Lesson save rejected: missing ${missing.join(', ')}`],
@@ -287,20 +299,29 @@ export async function retrieveLessons(input: RetrieveLessonsInput): Promise<Tool
 }
 
 // Synchronous helper for the tek_router{search} side-channel. No I/O error
-// throws — returns [] on any failure. Uses the same stemmed matching as
-// retrieveLessons so plural/hyphen/case variants still hit.
-export function findMatchingLessonsSync(query: string, limit: number = 3): LessonEntry[] {
+// throws — returns {entries, totalMatching} so callers can disclose
+// truncation ("N of M matched") instead of silently clipping.
+export interface LessonMatchResult {
+  entries: LessonEntry[];
+  totalMatching: number;
+}
+
+export function findMatchingLessonsSync(query: string, limit: number = 3): LessonMatchResult {
   try {
     const tokens = (query || '')
       .split(/\s+/)
       .filter((t) => t.length >= 2);
-    if (tokens.length === 0) return [];
+    if (tokens.length === 0) return { entries: [], totalMatching: 0 };
     const all = readLessonsFromDisk();
-    return all
+    const allMatches = all
       .filter((e) => matchesTokens(e, tokens))
-      .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1))
-      .slice(0, Math.max(1, Math.min(limit, 10)));
+      .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
+    const cap = Math.max(1, Math.min(limit, 10));
+    return {
+      entries: allMatches.slice(0, cap),
+      totalMatching: allMatches.length,
+    };
   } catch {
-    return [];
+    return { entries: [], totalMatching: 0 };
   }
 }

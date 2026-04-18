@@ -1388,6 +1388,10 @@ const PUBLIC_TEK_ROUTER_PARAMS = {
       items: { type: 'string' },
       description: 'For action:"save" — optional list of SCPI commands this lesson is about (max 20). Helps future lookups tie lessons to specific headers.',
     },
+    lessonsLimit: {
+      type: 'number',
+      description: 'For action:"search" — max lessons surfaced in the side-channel (default 3, cap 10). When totalMatching > count, the response includes hasMore:true and a moreHint pointing at knowledge{retrieve, corpus:"lessons"} for the full set.',
+    },
   },
   required: ['action'],
   additionalProperties: true,
