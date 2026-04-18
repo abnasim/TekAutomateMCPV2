@@ -1,4 +1,5 @@
 import { getTemplateExamples } from './getTemplateExamples';
+import { retrieveLessons } from './lessons';
 import { personality } from './personality';
 import { retrieveRagChunks } from './retrieveRagChunks';
 import { searchKnownFailures } from './searchKnownFailures';
@@ -21,8 +22,13 @@ export async function knowledge(input: KnowledgeInput) {
   delete args.action;
 
   switch (action) {
-    case 'retrieve':
+    case 'retrieve': {
+      // Special-case the "lessons" corpus — it's not a RAG index, it's
+      // the saved Lessons Learned store written by tek_router{save}.
+      const corpus = typeof args.corpus === 'string' ? args.corpus.toLowerCase() : '';
+      if (corpus === 'lessons') return retrieveLessons(args as any);
       return retrieveRagChunks(args as any);
+    }
     case 'examples':
       return getTemplateExamples(args as any);
     case 'failures':

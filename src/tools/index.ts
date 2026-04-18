@@ -328,7 +328,7 @@ export function getToolDefinitions() {
       name: 'knowledge',
       description:
         'Use for HOW-to questions, protocol setup, supporting material, and prompt overlays — not for SCPI syntax (use tek_router for commands).\n' +
-        '• retrieve — RAG search by corpus. Use tek_docs for protocol decode how-tos (I2C/CAN/SPI/USB/Ethernet/LIN/RS232/MIL-1553), trigger concepts, and product how-tos; results include tek.com source URLs — web-fetch the URL when the chunk preview is incomplete, then extract SCPI via tek_router before staging.\n' +
+        '• retrieve — RAG search by corpus. Use tek_docs for protocol decode how-tos (I2C/CAN/SPI/USB/Ethernet/LIN/RS232/MIL-1553), trigger concepts, and product how-tos; results include tek.com source URLs — web-fetch the URL when the chunk preview is incomplete, then extract SCPI via tek_router before staging. Also supports corpus:"lessons" which returns saved Lessons Learned (reference notes, not executable; filter by tags or modelFamily).\n' +
         '• examples — find matching workflow templates.\n' +
         '• failures — diagnose runtime errors and unexpected behavior.\n' +
         '• personality — list or load prompt overlays (personas: setup / debug / scpi_discovery / validation / learning / data_analysis) and base prompts. op:"list" returns name + one-line bias; op:"load" returns the full markdown. After loading, follow the overlay\'s guidance for the rest of the session — do NOT load another in the same turn (overlay conflicts muddy priorities).',
@@ -353,7 +353,13 @@ export function getToolDefinitions() {
               '• scope_logic — oscilloscope measurement and acquisition concepts.\n' +
               '• tmdevices — tm_devices Python driver API.\n' +
               '• app_logic — TekAutomate architecture and AiAction schemas.\n' +
-              '• pyvisa_tekhsi — PyVISA and TekHSI connection examples.',
+              '• pyvisa_tekhsi — PyVISA and TekHSI connection examples.\n' +
+              '• lessons — Lessons Learned saved via tek_router{action:"save", kind:"lesson"}. Structured {lesson, observation, implication, tags}. Supports query (token-match across all fields), tags (AND filter), modelFamily (scope-specific or neutral). REFERENCE NOTES, NOT EXECUTABLE — do not try to dispatch them.',
+          },
+          tags: {
+            type: 'array',
+            items: { type: 'string' },
+            description: 'For corpus:"lessons" only — filter to lessons that carry ALL of these tags (AND semantics).',
           },
           query: {
             type: 'string',
@@ -1319,8 +1325,8 @@ const PUBLIC_TEK_ROUTER_PARAMS = {
   properties: {
     action: {
       type: 'string',
-      enum: ['search', 'lookup', 'browse', 'verify', 'build'],
-      description: 'SCPI/build operation to run.',
+      enum: ['search', 'lookup', 'browse', 'verify', 'build', 'save'],
+      description: 'SCPI/build/save operation to run.',
     },
     query: {
       type: 'string',
@@ -1354,6 +1360,33 @@ const PUBLIC_TEK_ROUTER_PARAMS = {
     modelFamily: {
       type: 'string',
       description: 'Optional instrument family filter.',
+    },
+    kind: {
+      type: 'string',
+      enum: ['lesson'],
+      description: 'For action:"save" — what kind of artifact to save. Only "lesson" is supported on the public surface (Lessons Learned — reference notes, NOT executable shortcuts). Default: "lesson".',
+    },
+    lesson: {
+      type: 'string',
+      description: 'For action:"save" — the one-line takeaway (max 300 chars). Required.',
+    },
+    observation: {
+      type: 'string',
+      description: 'For action:"save" — what was observed that led to the lesson (max 1200 chars). Required.',
+    },
+    implication: {
+      type: 'string',
+      description: 'For action:"save" — how automation should change going forward (max 1200 chars). Required.',
+    },
+    tags: {
+      type: 'array',
+      items: { type: 'string' },
+      description: 'For action:"save" — searchable tags (max 12, each up to 48 chars). Used for later retrieval via knowledge{retrieve, corpus:"lessons"} and for the lessons side-channel in tek_router{search} results.',
+    },
+    scpiContext: {
+      type: 'array',
+      items: { type: 'string' },
+      description: 'For action:"save" — optional list of SCPI commands this lesson is about (max 20). Helps future lookups tie lessons to specific headers.',
     },
   },
   required: ['action'],
