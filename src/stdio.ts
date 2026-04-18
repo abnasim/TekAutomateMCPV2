@@ -6,12 +6,32 @@
  * Cursor, and any other MCP-compatible client can use TekAutomate tools
  * natively.
  *
- * Usage:
- *   npx tsx mcp-server/src/stdio.ts
+ * Launch (direct — this is the ONLY supported way):
+ *   npx tsx <absolute-path>/src/stdio.ts
+ *
+ * MCP client config example (Claude Desktop, Cursor, VS Code, etc.):
+ *   {
+ *     "mcpServers": {
+ *       "tekautomate": {
+ *         "command": "npx",
+ *         "args": ["-y", "tsx", "C:/path/to/mcp-server/src/stdio.ts"]
+ *       }
+ *     }
+ *   }
+ *
+ * DO NOT launch via `npm run start:stdio` or any other `npm run` wrapper.
+ * npm prints a script banner (`> pkg@ver name` / `> tsx src/stdio.ts`) to
+ * stdout BEFORE node starts, and stdio MCP reserves stdout for JSON-RPC
+ * frames only. The banner corrupts the stream and clients reject every
+ * frame with "Unexpected token" errors.
  *
  * Nothing in the existing HTTP server is modified — this is an
  * additive, parallel entry point.
  */
+
+// Redirect stray console.log/info/warn to stderr BEFORE any other import
+// executes, so stdout stays clean for JSON-RPC frames.
+import './consoleShim.js';
 
 import { config } from 'dotenv';
 import { resolve, dirname } from 'path';
@@ -159,7 +179,7 @@ function buildExternalMcpToolContent(toolName: string, result: unknown) {
 
 // ── env ──────────────────────────────────────────────────────────────
 const __dirname = dirname(fileURLToPath(import.meta.url));
-config({ path: resolve(__dirname, '..', '.env') });
+config({ path: resolve(__dirname, '..', '.env'), quiet: true });
 
 // ── main ─────────────────────────────────────────────────────────────
 
