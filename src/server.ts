@@ -5,7 +5,7 @@ import { initTmDevicesIndex } from './core/tmDevicesIndex';
 import { initRagIndexes } from './core/ragIndex';
 import { initTemplateIndex } from './core/templateIndex';
 import { runToolLoop } from './core/toolLoop';
-import { getSlimToolDefinitions, getToolDefinitions, isLiveInstrumentEnabled, runTool } from './tools/index';
+import { getSlimToolDefinitions, getToolDefinitions, isLiveInstrumentEnabled, isWorkflowUiEnabled, runTool } from './tools/index';
 import type { McpChatRequest } from './core/schemas';
 import { getLastWorkflowProposal, stageWorkflowProposal } from './tools/stageWorkflowProposal';
 import { listPersonalityResources, readPersonalityByUri } from './tools/personality';
@@ -573,13 +573,17 @@ export async function createServer(port = 8787): Promise<http.Server> {
           description: 'Tells the client which tools are available on this deployment and how to use them. Live vs public/hosted mode is determined server-side.',
           mimeType: 'application/json',
         },
-        {
+      ];
+      // proposals/latest is only meaningful when workflow_ui is exposed —
+      // otherwise there's no UI to stage to and no proposals to surface.
+      if (isWorkflowUiEnabled()) {
+        resources.push({
           uri: 'tekautomate://proposals/latest',
           name: 'Latest Staged Proposal',
           description: 'Most recent workflow proposal staged by the AI agent via workflow_ui{stage}.',
           mimeType: 'application/json',
-        },
-      ];
+        });
+      }
       // Instrument profile is only meaningful when live instrument control is enabled.
       if (isLiveInstrumentEnabled()) {
         resources.unshift({
@@ -603,16 +607,16 @@ export async function createServer(port = 8787): Promise<http.Server> {
     });
 
     mcp.setRequestHandler(sdk.ListResourceTemplatesRequestSchema, async () => {
-      return {
-        resourceTemplates: [
-          {
-            uriTemplate: 'tekautomate://proposals/session/{sessionKey}',
-            name: 'Proposal by Session Key',
-            description: 'Fetch the staged workflow proposal for a specific ChatKit session. {sessionKey} is the value returned by workflow_ui{current}.sessionKey.',
-            mimeType: 'application/json',
-          },
-        ],
-      };
+      const templates: any[] = [];
+      if (isWorkflowUiEnabled()) {
+        templates.push({
+          uriTemplate: 'tekautomate://proposals/session/{sessionKey}',
+          name: 'Proposal by Session Key',
+          description: 'Fetch the staged workflow proposal for a specific ChatKit session. {sessionKey} is the value returned by workflow_ui{current}.sessionKey.',
+          mimeType: 'application/json',
+        });
+      }
+      return { resourceTemplates: templates };
     });
 
     mcp.setRequestHandler(sdk.ReadResourceRequestSchema, async (request: any) => {
@@ -621,30 +625,37 @@ export async function createServer(port = 8787): Promise<http.Server> {
       // tekautomate://deployment/mode
       if (uri === 'tekautomate://deployment/mode') {
         const liveEnabled = isLiveInstrumentEnabled();
+        const uiEnabled = isWorkflowUiEnabled();
         const availableTools = getSlimToolDefinitions().map((def: any) => def.name);
-        const payload = liveEnabled
-          ? {
-              mode: 'live',
-              liveInstrumentEnabled: true,
-              availableTools,
-              guidance: [
-                'Live instrument control is ENABLED on this deployment.',
-                'Use instrument_live{send} to run SCPI, {context} for identity, {screenshot} for visual verification.',
-                'Always verify configuration changes with a query-back or screenshot.',
-                'After every write batch, append *ESR? and ALLEV? — non-zero ESR means the batch failed.',
-              ],
-            }
-          : {
-              mode: 'public',
-              liveInstrumentEnabled: false,
-              availableTools,
-              guidance: [
-                'Live instrument control is DISABLED on this deployment.',
-                'Use knowledge{retrieve} and tek_router for all SCPI lookups.',
-                'Stage proposals via workflow_ui{stage} — the user runs them locally.',
-                'Do NOT attempt instrument_live:* — it is not exposed and will fail.',
-              ],
-            };
+        const guidance: string[] = [];
+        if (liveEnabled) {
+          guidance.push(
+            'Live instrument control is ENABLED on this deployment.',
+            'Use instrument_live{send} to run SCPI, {context} for identity, {screenshot} for visual verification.',
+            'Always verify configuration changes with a query-back or screenshot.',
+            'After every write batch, append *ESR? and ALLEV? — non-zero ESR means the batch failed.',
+          );
+        } else {
+          guidance.push(
+            'Live instrument control is DISABLED on this deployment.',
+            'Use knowledge{retrieve} and tek_router for all SCPI lookups.',
+            'Do NOT attempt instrument_live:* — it is not exposed and will fail.',
+          );
+        }
+        if (uiEnabled) {
+          if (!liveEnabled) {
+            guidance.push('Stage proposals via workflow_ui{stage} — the user runs them locally.');
+          }
+        } else {
+          guidance.push('workflow_ui is DISABLED on this deployment — do NOT attempt to stage proposals; there is no UI to receive them. Deliver results by returning SCPI commands and findings directly in your response.');
+        }
+        const payload = {
+          mode: liveEnabled ? 'live' : 'public',
+          liveInstrumentEnabled: liveEnabled,
+          workflowUiEnabled: uiEnabled,
+          availableTools,
+          guidance,
+        };
         return {
           contents: [{ uri, mimeType: 'application/json', text: JSON.stringify(payload, null, 2) }],
         };
@@ -667,6 +678,9 @@ export async function createServer(port = 8787): Promise<http.Server> {
 
       // tekautomate://proposals/latest  OR  tekautomate://proposals/session/{key}
       if (uri === 'tekautomate://proposals/latest' || uri.startsWith('tekautomate://proposals/session/')) {
+        if (!isWorkflowUiEnabled()) {
+          throw new Error('Proposals are not available — workflow_ui is disabled on this deployment.');
+        }
         const sessionKey = uri.startsWith('tekautomate://proposals/session/')
           ? decodeURIComponent(uri.slice('tekautomate://proposals/session/'.length))
           : undefined;
@@ -736,7 +750,8 @@ export async function createServer(port = 8787): Promise<http.Server> {
         // ChatKit conversation's connection) — not the shared global liveSession slot.
         // This gives per-conversation isolation: each browser's proposals stay isolated.
         // Skip workflow_ui itself (it already calls stageWorkflowProposal internally).
-        if (name !== 'workflow_ui' && name !== 'stage_workflow_proposal') {
+        // Entire block skipped when WORKFLOW_UI_ENABLED=false — no UI to stage to.
+        if (isWorkflowUiEnabled() && name !== 'workflow_ui' && name !== 'stage_workflow_proposal') {
           const rd = result && typeof result === 'object' ? (result as Record<string, unknown>).data : null;
           const autoActions = rd && typeof rd === 'object' && Array.isArray((rd as Record<string, unknown>).actions)
             ? (rd as Record<string, unknown>).actions as unknown[]

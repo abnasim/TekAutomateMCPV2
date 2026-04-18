@@ -46,6 +46,15 @@ export function isLiveInstrumentEnabled(): boolean {
   return String(process.env.LIVE_INSTRUMENT_ENABLED ?? 'true').trim().toLowerCase() !== 'false';
 }
 
+// workflow_ui is enabled by default (the TekAutomate web app UI exists to
+// receive proposals). Set WORKFLOW_UI_ENABLED=false on deployments where
+// no UI exists — the tool will be removed from the external surface, the
+// auto-stage behavior in server.ts is skipped, and the proposals/latest
+// resource is hidden. Keeps the bare MCP clean for scope-only workflows.
+export function isWorkflowUiEnabled(): boolean {
+  return String(process.env.WORKFLOW_UI_ENABLED ?? 'true').trim().toLowerCase() !== 'false';
+}
+
 export const TOOL_HANDLERS = {
   tek_router: async (args: Record<string, unknown>) => {
     const directResult = await tekRouterPublic(args as any);
@@ -1301,7 +1310,7 @@ export async function runTool(name: string, args: Record<string, unknown>) {
 const PUBLIC_MCP_EXPOSED_TOOLS = new Set([
   'tek_router',
   ...(isLiveInstrumentEnabled() ? ['instrument_live'] : []),
-  'workflow_ui',
+  ...(isWorkflowUiEnabled() ? ['workflow_ui'] : []),
   'knowledge',
 ]);
 

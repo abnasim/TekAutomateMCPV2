@@ -55,7 +55,7 @@ import { initRagIndexes } from './core/ragIndex.js';
 import { initTemplateIndex } from './core/templateIndex.js';
 import { initProviderCatalog, providerSupplementsEnabled } from './core/providerCatalog.js';
 import { bootRouter } from './core/routerIntegration.js';
-import { getSlimToolDefinitions, isLiveInstrumentEnabled, runTool } from './tools/index.js';
+import { getSlimToolDefinitions, isLiveInstrumentEnabled, isWorkflowUiEnabled, runTool } from './tools/index.js';
 import { listPersonalityResources, readPersonalityByUri } from './tools/personality.js';
 import { getInstrumentInfoState } from './tools/runtimeContextStore.js';
 import { getLastWorkflowProposal } from './tools/stageWorkflowProposal.js';
@@ -232,13 +232,15 @@ async function main() {
         description: 'Tells the client which tools are available on this deployment and how to use them.',
         mimeType: 'application/json',
       },
-      {
+    ];
+    if (isWorkflowUiEnabled()) {
+      resources.push({
         uri: 'tekautomate://proposals/latest',
         name: 'Latest Staged Proposal',
         description: 'Most recent workflow proposal staged by the AI agent via workflow_ui{stage}.',
         mimeType: 'application/json',
-      },
-    ];
+      });
+    }
     if (isLiveInstrumentEnabled()) {
       resources.unshift({
         uri: 'tekautomate://instrument/profile',
@@ -259,16 +261,18 @@ async function main() {
   });
 
   // ── resources/templates/list handler ────────────────────────────
-  server.setRequestHandler(ListResourceTemplatesRequestSchema, async () => ({
-    resourceTemplates: [
-      {
+  server.setRequestHandler(ListResourceTemplatesRequestSchema, async () => {
+    const templates: any[] = [];
+    if (isWorkflowUiEnabled()) {
+      templates.push({
         uriTemplate: 'tekautomate://proposals/session/{sessionKey}',
         name: 'Proposal by Session Key',
         description: 'Fetch the staged workflow proposal for a specific ChatKit session. {sessionKey} is the value returned by workflow_ui{current}.sessionKey.',
         mimeType: 'application/json',
-      },
-    ],
-  }));
+      });
+    }
+    return { resourceTemplates: templates };
+  });
 
   // ── resources/read handler ──────────────────────────────────────
   // Per-family SCPI quirks attached to the instrument/profile resource.
@@ -320,30 +324,37 @@ async function main() {
     // tekautomate://deployment/mode
     if (uri === 'tekautomate://deployment/mode') {
       const liveEnabled = isLiveInstrumentEnabled();
+      const uiEnabled = isWorkflowUiEnabled();
       const availableTools = getSlimToolDefinitions().map((def: any) => def.name);
-      const payload = liveEnabled
-        ? {
-            mode: 'live',
-            liveInstrumentEnabled: true,
-            availableTools,
-            guidance: [
-              'Live instrument control is ENABLED on this deployment.',
-              'Use instrument_live{send} to run SCPI, {context} for identity, {screenshot} for visual verification.',
-              'Always verify configuration changes with a query-back or screenshot.',
-              'After every write batch, append *ESR? and ALLEV? — non-zero ESR means the batch failed.',
-            ],
-          }
-        : {
-            mode: 'public',
-            liveInstrumentEnabled: false,
-            availableTools,
-            guidance: [
-              'Live instrument control is DISABLED on this deployment.',
-              'Use knowledge{retrieve} and tek_router for all SCPI lookups.',
-              'Stage proposals via workflow_ui{stage} — the user runs them locally.',
-              'Do NOT attempt instrument_live:* — it is not exposed and will fail.',
-            ],
-          };
+      const guidance: string[] = [];
+      if (liveEnabled) {
+        guidance.push(
+          'Live instrument control is ENABLED on this deployment.',
+          'Use instrument_live{send} to run SCPI, {context} for identity, {screenshot} for visual verification.',
+          'Always verify configuration changes with a query-back or screenshot.',
+          'After every write batch, append *ESR? and ALLEV? — non-zero ESR means the batch failed.',
+        );
+      } else {
+        guidance.push(
+          'Live instrument control is DISABLED on this deployment.',
+          'Use knowledge{retrieve} and tek_router for all SCPI lookups.',
+          'Do NOT attempt instrument_live:* — it is not exposed and will fail.',
+        );
+      }
+      if (uiEnabled) {
+        if (!liveEnabled) {
+          guidance.push('Stage proposals via workflow_ui{stage} — the user runs them locally.');
+        }
+      } else {
+        guidance.push('workflow_ui is DISABLED on this deployment — do NOT attempt to stage proposals; there is no UI to receive them. Deliver results by returning SCPI commands and findings directly in your response.');
+      }
+      const payload = {
+        mode: liveEnabled ? 'live' : 'public',
+        liveInstrumentEnabled: liveEnabled,
+        workflowUiEnabled: uiEnabled,
+        availableTools,
+        guidance,
+      };
       return {
         contents: [{ uri, mimeType: 'application/json', text: JSON.stringify(payload, null, 2) }],
       };
@@ -366,6 +377,9 @@ async function main() {
 
     // tekautomate://proposals/latest  OR  tekautomate://proposals/session/{key}
     if (uri === 'tekautomate://proposals/latest' || uri.startsWith('tekautomate://proposals/session/')) {
+      if (!isWorkflowUiEnabled()) {
+        throw new Error('Proposals are not available — workflow_ui is disabled on this deployment.');
+      }
       const sessionKey = uri.startsWith('tekautomate://proposals/session/')
         ? decodeURIComponent(uri.slice('tekautomate://proposals/session/'.length))
         : undefined;
