@@ -1,3 +1,4 @@
+import { getFirmware } from './firmware';
 import { getTemplateExamples } from './getTemplateExamples';
 import { retrieveLessons } from './lessons';
 import { personality } from './personality';
@@ -35,12 +36,14 @@ export async function knowledge(input: KnowledgeInput) {
       return searchKnownFailures(args as any);
     case 'personality':
       return personality(args as any);
+    case 'firmware':
+      return getFirmware(args as any);
     default:
       return {
         ok: false,
         data: null,
         sourceMeta: [],
-        warnings: ['Unknown knowledge action. Use one of: retrieve, examples, failures, personality.'],
+        warnings: ['Unknown knowledge action. Use one of: retrieve, examples, failures, personality, firmware.'],
       };
   }
 }

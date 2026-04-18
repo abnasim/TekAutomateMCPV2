@@ -331,14 +331,23 @@ export function getToolDefinitions() {
         '• retrieve — RAG search by corpus. Use tek_docs for protocol decode how-tos (I2C/CAN/SPI/USB/Ethernet/LIN/RS232/MIL-1553), trigger concepts, and product how-tos; results include tek.com source URLs — web-fetch the URL when the chunk preview is incomplete, then extract SCPI via tek_router before staging. Also supports corpus:"lessons" which returns saved Lessons Learned (reference notes, not executable; filter by tags or modelFamily).\n' +
         '• examples — find matching workflow templates.\n' +
         '• failures — diagnose runtime errors and unexpected behavior.\n' +
-        '• personality — list or load prompt overlays (personas: setup / debug / scpi_discovery / validation / learning / data_analysis) and base prompts. op:"list" returns name + one-line bias; op:"load" returns the full markdown. After loading, follow the overlay\'s guidance for the rest of the session — do NOT load another in the same turn (overlay conflicts muddy priorities).',
+        '• personality — list or load prompt overlays (personas: setup / debug / scpi_discovery / validation / learning / data_analysis) and base prompts. op:"list" returns name + one-line bias; op:"load" returns the full markdown. After loading, follow the overlay\'s guidance for the rest of the session — do NOT load another in the same turn (overlay conflicts muddy priorities).\n' +
+        '• firmware — current firmware version per Tektronix scope family (manually curated snapshot, not live). Pass family or model ("MSO2", "MSO24", "2 Series MSO") to scope to one family; pass nothing to get all. Returns version + release-notes URL + known-issue notes. For the full changelog content, fetch releaseNotesUrl directly — it is NOT in the tek_docs corpus.',
       parameters: {
         type: 'object',
         properties: {
           action: {
             type: 'string',
-            enum: ['retrieve', 'examples', 'failures', 'personality'],
+            enum: ['retrieve', 'examples', 'failures', 'personality', 'firmware'],
             description: 'Knowledge operation to run.',
+          },
+          family: {
+            type: 'string',
+            description: 'For action:"firmware" — scope family or model to look up. Accepts family keys ("MSO2", "MSO4", "MSO5", "MSO6"), model numbers ("MSO24", "MSO44B", "MSO68B"), or display names ("2 Series MSO"). Case-insensitive. Omit to return all families.',
+          },
+          model: {
+            type: 'string',
+            description: 'For action:"firmware" — alias for family. Accepts model number ("MSO24"). Resolves to the appropriate family entry.',
           },
           args: {
             type: 'object',

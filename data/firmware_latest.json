@@ -1,0 +1,47 @@
+{
+  "$schema": "firmware-latest.v1",
+  "note": "Manually curated snapshot of current firmware versions per Tektronix oscilloscope family. This is a STOPGAP — the full changelog / release-notes RAG corpus is the real fix. Verify against tek.com for the authoritative current version before making a call on upgrade decisions. Release notes are linked; fetch the URL directly for the full changelog PDF content (tek_docs RAG does not index these).",
+  "lastUpdated": "2026-04-18",
+  "updateProcedure": "Re-run WebSearch for 'Tektronix <family> firmware latest version site:tek.com' and update the entries below. Bump lastUpdated. Ship via the normal V2 → Public → mcp-server sync.",
+  "families": {
+    "MSO2": {
+      "displayName": "2 Series MSO",
+      "models": ["MSO22", "MSO24"],
+      "latest": "2.24.4",
+      "variant": "non-windows",
+      "releaseNotesUrl": "https://www.tek.com/en/support/software/firmware/2-series-mso-nonwindows-firmware-v2244",
+      "productSupportUrl": "https://www.tek.com/en/support/product-support?model=MSO24",
+      "notes": "Non-Windows only (2 Series has no Windows variant). Known issue on V2.14.3.2448: global MASK:COUNt:* queries hang (VI_ERROR_TMO); use per-slot MASK:MASK<x>:TESt:STATUS? — fixed status unknown in later releases, verify before relying."
+    },
+    "MSO4": {
+      "displayName": "4 Series MSO",
+      "models": ["MSO44", "MSO46"],
+      "latest": "2.12.8",
+      "variant": "non-windows",
+      "releaseNotesUrl": "https://www.tek.com/en/support/software/firmware/4-series-mso-nonwindows-firmware-v2128",
+      "productSupportUrl": "https://www.tek.com/en/support/product-support?model=MSO44",
+      "releaseDate": "2025-10-22",
+      "notes": "Compatible ONLY with MSO44 and MSO46. Do NOT install on 4 Series B (MSO44B / MSO46B) — separate firmware stream."
+    },
+    "MSO5": {
+      "displayName": "5 Series MSO",
+      "models": ["MSO54", "MSO56", "MSO58", "MSO58LP"],
+      "latest": "2.12.8",
+      "variant": "both",
+      "releaseNotesUrl": "https://www.tek.com/en/support/software/firmware/5-series-mso-nonwindows-firmware-v2128",
+      "windowsUrl": "https://www.tek.com/en/support/software/firmware/5-series-mso-windows-firmware-v2128",
+      "productSupportUrl": "https://www.tek.com/en/support/product-support?series=5+Series+MSO",
+      "notes": "Available in both Windows and non-Windows variants at the same version. Pick based on the scope OS."
+    },
+    "MSO6": {
+      "displayName": "6 Series MSO / 6 Series B MSO",
+      "models": ["MSO64", "MSO66", "MSO68", "MSO64B", "MSO66B", "MSO68B", "LPD64"],
+      "latest": "2.24.4",
+      "variant": "both",
+      "releaseNotesUrl": "https://www.tek.com/en/support/software/firmware/6-series-mso-nonwindows-firmware-v2244",
+      "windowsUrl": "https://www.tek.com/en/support/software/firmware/6-series-mso-windows-firmware-v2244",
+      "productSupportUrl": "https://www.tek.com/en/support/product-support?series=6+Series+B+MSO",
+      "notes": "6 Series and 6 Series B share the same V2.24.4 firmware stream."
+    }
+  }
+}
