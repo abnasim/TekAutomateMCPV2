@@ -1,5 +1,6 @@
 import { getFirmware } from './firmware';
 import { getTemplateExamples } from './getTemplateExamples';
+import { knowledgeRetrieveAll } from './knowledgeRetrieveAll';
 import { retrieveLessons } from './lessons';
 import { personality } from './personality';
 import { retrieveRagChunks } from './retrieveRagChunks';
@@ -25,9 +26,14 @@ export async function knowledge(input: KnowledgeInput) {
 
   switch (action) {
     case 'retrieve': {
-      // Special-case corpora that aren't RAG indexes — direct handlers
-      // read their own stores.
-      const corpus = typeof args.corpus === 'string' ? args.corpus.toLowerCase() : '';
+      const corpus = typeof args.corpus === 'string' ? args.corpus.trim().toLowerCase() : '';
+      // Unified cross-corpus retrieval — fan out to every searchable
+      // source and fuse via RRF. Default when no corpus is specified,
+      // or explicit corpus:"all". This is the "return any knowledge we
+      // have" mode — tek_docs + videos + scpi + lessons + failures +
+      // templates, ranked together.
+      if (!corpus || corpus === 'all') return knowledgeRetrieveAll(args as any);
+      // Direct per-corpus handlers for stores that aren't RAG indexes.
       if (corpus === 'lessons') return retrieveLessons(args as any);
       if (corpus === 'videos') return retrieveVideos(args as any);
       return retrieveRagChunks(args as any);

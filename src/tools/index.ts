@@ -328,7 +328,7 @@ export function getToolDefinitions() {
       name: 'knowledge',
       description:
         'Use for HOW-to questions, protocol setup, supporting material, and prompt overlays — not for SCPI syntax (use tek_router for commands).\n' +
-        '• retrieve — RAG search by corpus. Use tek_docs for protocol decode how-tos (I2C/CAN/SPI/USB/Ethernet/LIN/RS232/MIL-1553), trigger concepts, and product how-tos; results include tek.com source URLs — web-fetch the URL when the chunk preview is incomplete, then extract SCPI via tek_router before staging. Also supports corpus:"lessons" which returns saved Lessons Learned (reference notes, not executable; filter by tags or modelFamily).\n' +
+        '• retrieve — DEFAULT cross-corpus search. Pass just `query` (optionally `products[]`) and you get a single ranked list fused across every source: tek_docs (manuals, app notes, FAQs), videos (338+ curated Tektronix videos with searchable transcripts; the matched transcript excerpt is returned as the snippet), scpi (raw programmer-manual chunks — grounding only; use tek_router for execution), lessons, failures, templates. Each hit carries a `source` field; response includes a `by_source` counts sidecar. Pass `corpus:"<name>"` to scope to ONE source (tek_docs | videos | scpi | lessons | errors | templates). Results include tek.com source URLs where applicable — web-fetch a URL when the snippet is incomplete, then extract SCPI via tek_router before staging.\n' +
         '• examples — find matching workflow templates.\n' +
         '• failures — diagnose runtime errors and unexpected behavior.\n' +
         '• personality — list or load prompt overlays (personas: setup / debug / scpi_discovery / validation / learning / data_analysis) and base prompts. op:"list" returns name + one-line bias; op:"load" returns the full markdown. After loading, follow the overlay\'s guidance for the rest of the session — do NOT load another in the same turn (overlay conflicts muddy priorities).\n' +
@@ -356,15 +356,15 @@ export function getToolDefinitions() {
           corpus: {
             type: 'string',
             description:
-              'WARNING: do NOT use corpus:"scpi" for SCPI commands — that corpus is a raw manual dump and will be noisier than tek_router. Use tek_router{search} or tek_router{lookup} for any SCPI work.\n\n' +
-              'Corpus for action:"retrieve":\n' +
+              'OPTIONAL for action:"retrieve". Omit (or pass "all") to get the DEFAULT cross-corpus fused ranking. Pass one of the following to scope to a single source:\n\n' +
               '• tek_docs — Tektronix product docs, app notes, FAQs, protocol decode how-tos (I2C/CAN/SPI/USB/Ethernet/LIN/RS232/MIL-1553); results include tek.com source URLs.\n' +
+              '• videos — 338+ curated Tektronix instructional videos. Searches BOTH curated metadata (title/summary/tags/products) AND full transcripts (~1.3M chars). When a transcript excerpt matches, it\'s returned as the snippet. Filters: query (fuzzy stem match), tags[] (AND), products[] (OR — pass family "MSO2" or model "MSO24"), category.\n' +
+              '• scpi — raw programmer-manual chunks. NOISY for SCPI command lookup — prefer tek_router{search} or tek_router{lookup} for commands. Useful only as grounding context.\n' +
+              '• lessons — Lessons Learned saved via tek_router{action:"save", kind:"lesson"}. Structured {lesson, observation, implication, tags}. Tag filter is lenient (case/plural/hyphen-normalized). REFERENCE NOTES, NOT EXECUTABLE.\n' +
               '• scope_logic — oscilloscope measurement and acquisition concepts.\n' +
               '• tmdevices — tm_devices Python driver API.\n' +
               '• app_logic — TekAutomate architecture and AiAction schemas.\n' +
-              '• pyvisa_tekhsi — PyVISA and TekHSI connection examples.\n' +
-              '• lessons — Lessons Learned saved via tek_router{action:"save", kind:"lesson"}. Structured {lesson, observation, implication, tags}. Query is a fuzzy token match across all fields; tags filter is lenient (lowercase, plural/hyphen/case-insensitive: "masks" matches "mask", "arg-names" matches "argnames"); modelFamily narrows to a specific scope family or neutral. Accepts either limit or topK for max results (default 10, cap 50). REFERENCE NOTES, NOT EXECUTABLE — do not try to dispatch them.\n' +
-              '• videos — curated Tektronix instructional videos (Phase 0 pilot: MSO2 only). Each entry: {title, url, category, products[], tags[], summary}. Filters: query (fuzzy stem match across title/summary/tags/products), tags[] (AND), products[] (OR — pass family "MSO2" or model "MSO24"). Does NOT yet include transcripts; fetch the url for the full video. Reference only.',
+              '• pyvisa_tekhsi — PyVISA and TekHSI connection examples.',
           },
           tags: {
             type: 'array',
