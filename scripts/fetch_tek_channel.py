@@ -9,9 +9,12 @@ Install:
     python -m pip install yt-dlp
 
 Invoke:
+    # full @tektronix channel (optional video limit):
     python scripts/fetch_tek_channel.py [max_videos]
+    # a specific playlist:
+    python scripts/fetch_tek_channel.py --playlist <playlist_id_or_url> [max_videos]
 
-Output (stdout): JSON object { ok, channel, count, videos: [{...}] }
+Output (stdout): JSON object { ok, source, count, videos: [{...}] }
                  or { ok: false, error }. Always exits 0; TS caller
                  reads the ok field.
 
@@ -30,7 +33,30 @@ ssl._create_default_https_context = ssl._create_unverified_context
 
 
 def main() -> int:
-    max_videos = int(sys.argv[1]) if len(sys.argv) >= 2 else 0  # 0 = all
+    args = sys.argv[1:]
+    playlist_arg = None
+    max_videos = 0
+    if args and args[0] == '--playlist':
+        if len(args) < 2:
+            print(json.dumps({'ok': False, 'error': '--playlist requires an ID or URL'}))
+            return 0
+        playlist_arg = args[1]
+        if len(args) >= 3:
+            try: max_videos = int(args[2])
+            except Exception: max_videos = 0
+    elif args:
+        try: max_videos = int(args[0])
+        except Exception: max_videos = 0
+
+    if playlist_arg:
+        if playlist_arg.startswith('http'):
+            url = playlist_arg
+        else:
+            url = f'https://www.youtube.com/playlist?list={playlist_arg}'
+        source = f'playlist:{playlist_arg}'
+    else:
+        url = 'https://www.youtube.com/@tektronix/videos'
+        source = 'channel:@tektronix'
 
     try:
         import yt_dlp  # type: ignore
@@ -45,7 +71,7 @@ def main() -> int:
             ydl_opts['playlistend'] = max_videos
 
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            info = ydl.extract_info('https://www.youtube.com/@tektronix/videos', download=False)
+            info = ydl.extract_info(url, download=False)
 
         entries_raw = info.get('entries') or []
         entries = []
@@ -65,8 +91,11 @@ def main() -> int:
 
         out = {
             'ok': True,
-            'channel': info.get('channel'),
+            'source': source,
+            'channel': info.get('channel') or info.get('uploader'),
             'channel_id': info.get('channel_id'),
+            'playlist_id': info.get('id') if playlist_arg else None,
+            'playlist_title': info.get('title') if playlist_arg else None,
             'count': len(entries),
             'videos': entries,
         }

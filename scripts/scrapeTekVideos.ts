@@ -56,6 +56,7 @@ const __filename = fileURLToPath(import.meta.url);
 const _scriptDir = path.dirname(__filename);
 const _projectRoot = path.resolve(_scriptDir, '..');
 const URLS_PATH = path.join(_scriptDir, 'tek_video_urls.json');
+const PLAYLISTS_PATH = path.join(_scriptDir, 'tek_playlists.json');
 const VIDEOS_PATH = path.join(_projectRoot, 'data', 'videos.json');
 const PY_TRANSCRIPT = path.join(_scriptDir, 'fetch_yt_transcript.py');
 const PY_CHANNEL = path.join(_scriptDir, 'fetch_tek_channel.py');
@@ -68,9 +69,10 @@ const PYTHON_CMD = process.env.PYTHON_CMD || 'python';
 
 // ─── CLI parsing ─────────────────────────────────────────────────────
 interface CliOpts {
-  mode: 'collect' | 'match-yt' | 'transcribe' | 'all' | 'channel-sweep';
+  mode: 'collect' | 'match-yt' | 'transcribe' | 'all' | 'channel-sweep' | 'playlist-sweep';
   family: string | null;
   maxVideos: number;
+  onlyPlaylist: string | null;
   forceSummary: boolean;
   forceMatch: boolean;
   forceTranscribe: boolean;
@@ -81,6 +83,7 @@ function parseArgs(argv: string[]): CliOpts {
     mode: 'collect',
     family: null,
     maxVideos: 0,
+    onlyPlaylist: null,
     forceSummary: false,
     forceMatch: false,
     forceTranscribe: false,
@@ -92,16 +95,20 @@ function parseArgs(argv: string[]): CliOpts {
     else if (a === '--transcribe') opts.mode = 'transcribe';
     else if (a === '--all') opts.mode = 'all';
     else if (a === '--channel-sweep') opts.mode = 'channel-sweep';
+    else if (a === '--playlist-sweep') opts.mode = 'playlist-sweep';
     else if (a === '--family') opts.family = argv[++i] || null;
     else if (a === '--max') opts.maxVideos = Number(argv[++i]) || 0;
+    else if (a === '--only-playlist') opts.onlyPlaylist = argv[++i] || null;
     else if (a === '--force-summary') opts.forceSummary = true;
     else if (a === '--force-match') opts.forceMatch = true;
     else if (a === '--force-transcribe') opts.forceTranscribe = true;
     else if (a === '--help' || a === '-h') {
       console.log(`usage: npx tsx scripts/scrapeTekVideos.ts
   --collect | --match-yt | --transcribe | --all   per-tek.com-URL flow (uses tek_video_urls.json)
-  --channel-sweep [--max N]                       pull every video on @tektronix, auto-tag families, fetch transcripts
-  --family <name>                                 scope the per-URL modes
+  --channel-sweep [--max N]                       pull every video on @tektronix (flat; keyword product-tag)
+  --playlist-sweep [--only-playlist <id>]         iterate curated playlists in tek_playlists.json (products inherited from playlist)
+  --family <name>                                 scope per-URL modes
+  --max N                                         cap per-playlist or per-channel fetch
   --force-summary | --force-match | --force-transcribe`);
       process.exit(0);
     }
@@ -495,12 +502,17 @@ interface ChannelDump {
   error?: string;
 }
 
-function fetchChannelList(maxVideos: number): ChannelDump {
+function fetchChannelList(maxVideos: number, playlistId?: string): ChannelDump {
   if (!commandExists(PYTHON_CMD)) {
     return { ok: false, error: `python not in PATH (tried ${PYTHON_CMD})` };
   }
   const args = [PY_CHANNEL];
-  if (maxVideos > 0) args.push(String(maxVideos));
+  if (playlistId) {
+    args.push('--playlist', playlistId);
+    if (maxVideos > 0) args.push(String(maxVideos));
+  } else if (maxVideos > 0) {
+    args.push(String(maxVideos));
+  }
   const result = spawnSync(PYTHON_CMD, args, {
     encoding: 'utf-8',
     stdio: ['ignore', 'pipe', 'pipe'],
@@ -556,6 +568,142 @@ function writeStore(store: VideosStore) {
   const tmp = `${VIDEOS_PATH}.${process.pid}.tmp`;
   fs.writeFileSync(tmp, JSON.stringify(store, null, 2), 'utf-8');
   fs.renameSync(tmp, VIDEOS_PATH);
+}
+
+// ─── Playlist manifest ───────────────────────────────────────────────
+interface PlaylistEntry {
+  title: string;
+  products?: string[];
+  tags?: string[];
+  skip?: boolean;
+  skipReason?: string;
+}
+
+interface PlaylistsFile {
+  $schema?: string;
+  note?: string;
+  lastUpdated?: string;
+  updateProcedure?: string;
+  playlists: Record<string, PlaylistEntry>;
+}
+
+function readPlaylists(): PlaylistsFile {
+  const raw = fs.readFileSync(PLAYLISTS_PATH, 'utf-8');
+  const parsed = JSON.parse(raw) as PlaylistsFile;
+  if (!parsed || !parsed.playlists) {
+    throw new Error(`tek_playlists.json missing .playlists object`);
+  }
+  return parsed;
+}
+
+/**
+ * Apply playlist-level products[] and tags[] on top of a channel-derived
+ * entry. Playlist tagging is authoritative — it comes from a human-curated
+ * manifest — so playlist products replace keyword-guess products entirely
+ * (except 'general', which yields to the more specific family). Playlist
+ * tags are merged with title-derived tags, deduped.
+ */
+function applyPlaylistTagging(
+  entry: VideoEntry,
+  playlistProducts: string[] | undefined,
+  playlistTags: string[] | undefined,
+): VideoEntry {
+  const products = (() => {
+    const pp = (playlistProducts || []).filter(Boolean);
+    if (pp.length === 0) return entry.products;
+    // If the existing entry already has a non-general product (from a prior
+    // playlist or from tek.com), union with playlist products rather than
+    // overwriting — a video can belong to multiple scopes.
+    const existing = (entry.products || []).filter((p) => p && p !== 'general');
+    const union = new Set<string>([...existing, ...pp]);
+    return Array.from(union);
+  })();
+
+  const tags = (() => {
+    const base = new Set<string>([...(entry.tags || []), ...(playlistTags || [])]);
+    return Array.from(base);
+  })();
+
+  return { ...entry, products, tags };
+}
+
+// ─── Playlist-sweep main ─────────────────────────────────────────────
+async function runPlaylistSweep(opts: CliOpts, store: VideosStore): Promise<void> {
+  const manifest = readPlaylists();
+  const allIds = Object.keys(manifest.playlists);
+  const selected = allIds.filter((pid) => {
+    const p = manifest.playlists[pid];
+    if (p.skip) return false;
+    if (opts.onlyPlaylist && pid !== opts.onlyPlaylist) return false;
+    return true;
+  });
+
+  if (selected.length === 0) {
+    console.log(`[playlist-sweep] no playlists selected (only=${opts.onlyPlaylist || 'none'}, total=${allIds.length}, enabled=${allIds.filter((p) => !manifest.playlists[p].skip).length})`);
+    return;
+  }
+
+  console.log(`[playlist-sweep] ${selected.length}/${allIds.length} playlists selected, max_per_playlist=${opts.maxVideos || 'all'}`);
+
+  // Index existing store by youtube_id so we merge across playlists and
+  // preserve any prior Brightcove/tek.com data.
+  const byYtId = new Map<string, VideoEntry>();
+  for (const v of store.videos) if (v.youtube_id) byYtId.set(v.youtube_id, v);
+
+  let totalVideos = 0;
+  let touched = 0;
+  let transcribed = 0;
+  let skipped = 0;
+  let failed = 0;
+
+  for (const [plIdx, playlistId] of selected.entries()) {
+    const pl = manifest.playlists[playlistId];
+    console.log(`\n[playlist ${plIdx + 1}/${selected.length}] ${playlistId} — "${pl.title}" products=${JSON.stringify(pl.products || [])}`);
+    const dump = fetchChannelList(opts.maxVideos, playlistId);
+    if (!dump.ok || !dump.videos) {
+      console.error(`  [fail] playlist fetch: ${dump.error}`);
+      failed++;
+      continue;
+    }
+    console.log(`  [playlist] ${dump.count} videos`);
+    totalVideos += dump.count || 0;
+
+    for (const [idx, yv] of (dump.videos || []).entries()) {
+      try {
+        const existing = byYtId.get(yv.id) || null;
+        let entry = ytEntryFromChannel(yv, existing);
+        entry = applyPlaylistTagging(entry, pl.products, pl.tags);
+
+        const hasChunks = entry.transcript_chunks && entry.transcript_chunks.length > 0;
+        if (!hasChunks || opts.forceTranscribe) {
+          entry = await transcribeEntry(entry, opts);
+          if (entry.transcript_chunks && entry.transcript_chunks.length > 0) transcribed++;
+        } else {
+          skipped++;
+        }
+
+        byYtId.set(yv.id, entry);
+        touched++;
+        if ((idx + 1) % 10 === 0) {
+          console.log(`    [progress] ${idx + 1}/${dump.count} touched=${touched} transcribed=${transcribed} failed=${failed}`);
+        }
+        await sleep(RATE_LIMIT_MS / 2);
+      } catch (err) {
+        failed++;
+        console.error(`    [fail] yt=${yv.id} — ${err instanceof Error ? err.message : String(err)}`);
+      }
+    }
+
+    // Persist after each playlist so a long sweep isn't lost on Ctrl-C.
+    const merged = new Map<string, VideoEntry>();
+    for (const v of store.videos) merged.set(v.id, v);
+    for (const v of byYtId.values()) merged.set(v.id, v);
+    store.videos = Array.from(merged.values()).sort((a, b) => a.id.localeCompare(b.id));
+    store.lastUpdated = new Date().toISOString().slice(0, 10);
+    writeStore(store);
+  }
+
+  console.log(`\n[done] playlists=${selected.length} videos_seen=${totalVideos} touched=${touched} transcribed=${transcribed} skipped=${skipped} failed=${failed} total_in_store=${store.videos.length}`);
 }
 
 // ─── Channel-sweep main ──────────────────────────────────────────────
@@ -624,6 +772,11 @@ async function main() {
 
   if (opts.mode === 'channel-sweep') {
     await runChannelSweep(opts, store);
+    return;
+  }
+
+  if (opts.mode === 'playlist-sweep') {
+    await runPlaylistSweep(opts, store);
     return;
   }
 

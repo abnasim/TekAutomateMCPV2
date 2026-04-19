@@ -1,0 +1,293 @@
+{
+  "$schema": "tek-playlists.v1",
+  "note": "Curated manifest of @tektronix YouTube playlists used by scripts/scrapeTekVideos.ts --playlist-sweep. Enabled playlists are iterated; each video inherits the playlist's products[] and tags[] in addition to per-video keyword tagging. Skip:true playlists are logged but not ingested (non-scope products, language mirrors, marketing).",
+  "lastUpdated": "2026-04-18",
+  "updateProcedure": "Re-run: python scripts/fetch_tek_channel.py --list-playlists > new_list.json and diff against this file's `playlists` keys. Add new entries with thoughtful products[]/tags[]/skip. Sync via V2 → Public → mcp-server.",
+  "playlists": {
+    "PLt9TMIEXL79SuoiP5nS2HOo16ezmgjBzD": {
+      "title": "2 Series MSO Technical Overview Videos",
+      "products": ["MSO2"],
+      "tags": ["overview", "technical"]
+    },
+    "PLt9TMIEXL79STmTT-9nDjI9k-ZCw2vPVw": {
+      "title": "Tips & Tricks with the 2 Series Mixed Signal Oscilloscope",
+      "products": ["MSO2"],
+      "tags": ["tips", "how-to"]
+    },
+    "PLt9TMIEXL79TKJHCrl4wsgWtSSPorCNYo": {
+      "title": "4 Series MSO Mixed Signal Oscilloscope",
+      "products": ["MSO4"],
+      "tags": ["overview"]
+    },
+    "PLt9TMIEXL79TQXgubC_dg-gj1vNrJawrs": {
+      "title": "New 4 Series B MSO Product Overviews",
+      "products": ["MSO4B"],
+      "tags": ["overview"]
+    },
+    "PLt9TMIEXL79Q8roSapHtzygPtLSiMC2B1": {
+      "title": "5 Series B MSO Technical Overview Videos",
+      "products": ["MSO5B"],
+      "tags": ["overview", "technical"]
+    },
+    "PLt9TMIEXL79SeGVpZY0qgdiM8ZFeOTw_6": {
+      "title": "6 Series B MSO Technical Overview Videos",
+      "products": ["MSO6B"],
+      "tags": ["overview", "technical"]
+    },
+    "PLt9TMIEXL79STCw7IuaRWaxLm-IqqnI-z": {
+      "title": "New 7 Series DPO Oscilloscope",
+      "products": ["DPO7Series"],
+      "tags": ["overview"]
+    },
+    "PLt9TMIEXL79SRMylnVMwu4W1c3C7ds773": {
+      "title": "3 Series MDO Mixed Domain Oscilloscope",
+      "products": ["MDO3"],
+      "tags": ["mdo", "overview"]
+    },
+    "PLt9TMIEXL79S4MNUOZk2XU_psRK7ahn8u": {
+      "title": "Useful Tips for the 4, 5, 6 Series Mixed Signal Oscilloscopes",
+      "products": ["MSO4", "MSO5", "MSO6"],
+      "tags": ["tips", "how-to"]
+    },
+    "PLt9TMIEXL79TVsGPk_51INxX9DenEY2CD": {
+      "title": "MDO4000 Spectrum Analysis",
+      "products": ["MDO4000"],
+      "tags": ["spectrum", "rf"]
+    },
+    "PLt9TMIEXL79R0rDkkw4NkueZ7D06_uka2": {
+      "title": "MDO4000 Time Domain Analysis",
+      "products": ["MDO4000"],
+      "tags": ["time-domain", "how-to"]
+    },
+    "PLt9TMIEXL79SoZ-0fCDPML3qassjXjl7s": {
+      "title": "MDO3000 DVM",
+      "products": ["MDO3000"],
+      "tags": ["dvm", "how-to"]
+    },
+    "PLt9TMIEXL79QaZL9QcQcpxKVqEtjTDpa1": {
+      "title": "MDO3000 Logic Analysis",
+      "products": ["MDO3000"],
+      "tags": ["logic", "how-to"]
+    },
+    "PLt9TMIEXL79T2mwWyBvHqhYt1XP-izrPT": {
+      "title": "MDO3000 AFG",
+      "products": ["MDO3000"],
+      "tags": ["afg", "how-to"]
+    },
+    "PLt9TMIEXL79SBQ3vZhBQAXq3a122KPy99": {
+      "title": "MDO3000 Protocol Analysis",
+      "products": ["MDO3000"],
+      "tags": ["protocol-decode", "how-to"]
+    },
+    "PLt9TMIEXL79QNnbZEemQfRB9lwPHm9nyQ": {
+      "title": "MDO3000 Spectrum Analysis",
+      "products": ["MDO3000"],
+      "tags": ["spectrum", "rf", "how-to"]
+    },
+    "PLt9TMIEXL79QKDWuPhY7Y4JExANNqe-bV": {
+      "title": "MDO3000 Time Domain Analysis",
+      "products": ["MDO3000"],
+      "tags": ["time-domain", "how-to"]
+    },
+    "PLt9TMIEXL79TdVcsAMEOUKVWtaB9NfC1F": {
+      "title": "XYZs of Oscilloscopes Tutorials",
+      "products": ["general"],
+      "tags": ["tutorial", "fundamentals", "education"]
+    },
+    "PLt9TMIEXL79Ti6-upGZjvJaAPUk_lgkc9": {
+      "title": "Under The DUT Series",
+      "products": ["general"],
+      "tags": ["tutorial", "series"]
+    },
+    "PLt9TMIEXL79Ry5MdoTFyhj0DAQ-Vx0xY8": {
+      "title": "Applications & Solutions | Automotive",
+      "products": ["general"],
+      "tags": ["automotive", "applications"]
+    },
+    "PLt9TMIEXL79TXm0WCj0zmwXCf0by4inH_": {
+      "title": "Wireless and RF",
+      "products": ["general"],
+      "tags": ["wireless", "rf", "applications"]
+    },
+    "PLt9TMIEXL79Qv42auWEqVp5MHr41kLfCX": {
+      "title": "High Speed Serial Communications",
+      "products": ["general"],
+      "tags": ["high-speed-serial", "applications"]
+    },
+    "PLt9TMIEXL79Tx2jk962ZWkl0-LeZP6mxG": {
+      "title": "Optical Communications",
+      "products": ["general"],
+      "tags": ["optical", "applications"]
+    },
+    "PLt9TMIEXL79QHdm26YYRmhFpzDp2RLODq": {
+      "title": "Optical Design & Test",
+      "products": ["general"],
+      "tags": ["optical", "applications", "design"]
+    },
+    "PLt9TMIEXL79TloIKTkITYRs_TOEYLcqxu": {
+      "title": "Analog/Digital Design and Debug",
+      "products": ["general"],
+      "tags": ["design", "debug", "applications"]
+    },
+    "PLt9TMIEXL79S_D6mil7dUWgkQYfeNipmA": {
+      "title": "Power & Energy Efficiency",
+      "products": ["general"],
+      "tags": ["power", "energy", "applications"]
+    },
+    "PLt9TMIEXL79SGhfS9MRb9QkZ6Y_K2O1Xy": {
+      "title": "Power Analysis",
+      "products": ["general"],
+      "tags": ["power", "analysis", "applications"]
+    },
+    "PLt9TMIEXL79QKvwLVqcv4cnZbkPFy3wTN": {
+      "title": "Power Switching Converter Analysis Kit Series",
+      "products": ["general"],
+      "tags": ["power", "analysis", "how-to"]
+    },
+    "PLt9TMIEXL79SFQgIqOalG_ssyncSlcfzj": {
+      "title": "Products | Mixed Signal Oscilloscopes",
+      "products": ["general"],
+      "tags": ["product-overview", "mso"]
+    },
+    "PLt9TMIEXL79TQDMdIe5XWtP5gZCBsCar8": {
+      "title": "Products | Mixed Domain Oscilloscopes",
+      "products": ["general"],
+      "tags": ["product-overview", "mdo"]
+    },
+    "PLt9TMIEXL79TXlYxgew4QvoxI9WmkSH1X": {
+      "title": "Performance Oscilloscopes and Software Solutions",
+      "products": ["general"],
+      "tags": ["performance", "high-end"]
+    },
+    "PLt9TMIEXL79TLDyMmSnZJk8e0CdvMKK3w": {
+      "title": "Products | Education Oscilloscopes",
+      "products": ["general"],
+      "tags": ["education", "product-overview"]
+    },
+    "PLt9TMIEXL79QeYqCsuO6liOl6upvkCANk": {
+      "title": "Education & Research",
+      "products": ["general"],
+      "tags": ["education", "research"]
+    },
+    "PLt9TMIEXL79RV1RN13ADiUXsAcucd-YA8": {
+      "title": "Side by Side Comparisons",
+      "products": ["general"],
+      "tags": ["comparison"]
+    },
+    "PLt9TMIEXL79TjFEHI7syxvmqsGYQ403o_": {
+      "title": "Stories from Engineers",
+      "products": ["general"],
+      "tags": ["engineer-stories"]
+    },
+    "PLt9TMIEXL79SKk2RrOQB5qI0rUx3sdh83": {
+      "title": "Webinars",
+      "products": ["general"],
+      "tags": ["webinar", "deep-dive"]
+    },
+    "PLF6BB1B46F7AD8751": {
+      "title": "Tutorials",
+      "products": ["general"],
+      "tags": ["tutorial"]
+    },
+    "PLt9TMIEXL79QrTFOr7TWy3OsjmUIRS389": {
+      "title": "New IsoVu Isolated Current Probe",
+      "products": ["general"],
+      "tags": ["probe", "current-probe", "isovu"]
+    },
+    "PLt9TMIEXL79TW3MRHG43DFQPIU3rUQmVZ": {
+      "title": "Products | Spectrum Analyzers",
+      "skip": true,
+      "skipReason": "spectrum-analyzer only; not oscilloscope content"
+    },
+    "PLt9TMIEXL79RsEf8F8cZoAurOycGH77l2": {
+      "title": "MP5000 Modular Precision Test System",
+      "skip": true,
+      "skipReason": "non-scope modular instrument"
+    },
+    "PLt9TMIEXL79TByTWnPbGpn0lE9dY-DZlQ": {
+      "title": "Calibration Services from Tektronix",
+      "skip": true,
+      "skipReason": "services, not instrument content"
+    },
+    "PLt9TMIEXL79S2JlkvV_qeqrlzGvF-ElTS": {
+      "title": "Calibration Tutorials",
+      "skip": true,
+      "skipReason": "cal process, not instrument content"
+    },
+    "PLt9TMIEXL79QsLp17JkrlxzEKfZHzmfWd": {
+      "title": "Service Plans",
+      "skip": true,
+      "skipReason": "marketing, not technical content"
+    },
+    "PLt9TMIEXL79QcymBwDOpIhB0o8cGPAxMU": {
+      "title": "TekCloud Software",
+      "skip": true,
+      "skipReason": "different software product"
+    },
+    "PLt9TMIEXL79TA7pzTn6v7lLefifDUPG3P": {
+      "title": "Test Script Processor Software",
+      "skip": true,
+      "skipReason": "TSP/Keithley software, not scope"
+    },
+    "PLt9TMIEXL79Tsd6DH0AR1SbboU7bP6UY5": {
+      "title": "Keithley Kickstart Software Solution",
+      "skip": true,
+      "skipReason": "Keithley software, not scope"
+    },
+    "PLt9TMIEXL79SQ2Nh7r31Go9-PLTcWLn0i": {
+      "title": "Keithley Live Event",
+      "skip": true,
+      "skipReason": "Keithley, not scope"
+    },
+    "PLt9TMIEXL79SOx4vzqZspu7gssYHs6ymX": {
+      "title": "Keithley Instruments",
+      "skip": true,
+      "skipReason": "Keithley, not scope"
+    },
+    "PLt9TMIEXL79QeJVRUt2crklzV5fppFk1q": {
+      "title": "Keithley Instruments",
+      "skip": true,
+      "skipReason": "Keithley, not scope"
+    },
+    "PLt9TMIEXL79RyI-uIzFZ7dafWvvYyzWiw": {
+      "title": "CalWeb Cloud-Based Asset Management",
+      "skip": true,
+      "skipReason": "SaaS product, not scope"
+    },
+    "PLt9TMIEXL79QyAlix8dTaOMZD4fWhIzUB": {
+      "title": "Vintage Tektronix",
+      "skip": true,
+      "skipReason": "historical/marketing"
+    },
+    "PLt9TMIEXL79Qd29kKr38OY7Qn5YtvTZ7m": {
+      "title": "About Tektronix",
+      "skip": true,
+      "skipReason": "marketing"
+    },
+    "PL4D74A78BE8F01CA0": {
+      "title": "From Our Customers",
+      "skip": true,
+      "skipReason": "case studies; low technical density"
+    },
+    "PLt9TMIEXL79SVjBlllYDru75kEKMKaBM7": {
+      "title": "Europe, Middle East Africa and India",
+      "skip": true,
+      "skipReason": "regional marketing"
+    },
+    "PLt9TMIEXL79QDBJDGSANDiedN1OKwcJgD": {
+      "title": "Chinese mirror",
+      "skip": true,
+      "skipReason": "language mirror; English captions handled via primary playlists"
+    },
+    "PLt9TMIEXL79S-UD1CUBR3gaBSOePN9T0w": {
+      "title": "German mirror",
+      "skip": true,
+      "skipReason": "language mirror"
+    },
+    "PLt9TMIEXL79Ti6nlOnwskEaC7pkEz_IzL": {
+      "title": "Italian mirror",
+      "skip": true,
+      "skipReason": "language mirror"
+    }
+  }
+}

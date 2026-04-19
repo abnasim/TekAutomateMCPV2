@@ -485,6 +485,489 @@
       "transcript_lastFetched": "2026-04-19T04:02:55.026Z"
     },
     {
+      "id": "tek-yt-BX3wzTJzetA",
+      "title": "2 Series MSO Mixed Signal Oscilloscope Introduction",
+      "url": "https://www.youtube.com/watch?v=BX3wzTJzetA",
+      "category": "youtube",
+      "products": [
+        "MSO2"
+      ],
+      "tags": [
+        "overview",
+        "technical"
+      ],
+      "summary": "2 Series MSO Mixed Signal Oscilloscope Introduction",
+      "duration_ms": 233000,
+      "duration": "3:53",
+      "youtube_id": "BX3wzTJzetA",
+      "youtube_title": "2 Series MSO Mixed Signal Oscilloscope Introduction",
+      "youtube_match_lastTried": "2026-04-19T04:50:57.785Z",
+      "transcript_chunks": [
+        {
+          "start": 0.38,
+          "end": 10.95,
+          "text": "[Music]"
+        },
+        {
+          "start": 13.6,
+          "end": 18.4,
+          "text": "hello i'm prashanth from tektronix and"
+        },
+        {
+          "start": 16.48,
+          "end": 20.64,
+          "text": "i'm very excited to tell you about our"
+        },
+        {
+          "start": 18.4,
+          "end": 23.68,
+          "text": "newest benchtop oscilloscope the"
+        },
+        {
+          "start": 20.64,
+          "end": 26.4,
+          "text": "2-series mso you'll notice its unique"
+        },
+        {
+          "start": 23.68,
+          "end": 28.72,
+          "text": "advantage right away it's the first"
+        },
+        {
+          "start": 26.4,
+          "end": 30.48,
+          "text": "fully featured real-time touchscreen"
+        },
+        {
+          "start": 28.72,
+          "end": 33.28,
+          "text": "oscilloscope ever"
+        },
+        {
+          "start": 30.48,
+          "end": 34.24,
+          "text": "in this sleek compact and portable form"
+        },
+        {
+          "start": 33.28,
+          "end": 36.48,
+          "text": "factor"
+        },
+        {
+          "start": 34.24,
+          "end": 38.88,
+          "text": "in fact it brings the same level of"
+        },
+        {
+          "start": 36.48,
+          "end": 41.68,
+          "text": "convenience to test and measurement that"
+        },
+        {
+          "start": 38.88,
+          "end": 44.08,
+          "text": "laptops bought the computing decades ago"
+        },
+        {
+          "start": 41.68,
+          "end": 45.92,
+          "text": "you can put this in your backpack free"
+        },
+        {
+          "start": 44.08,
+          "end": 47.92,
+          "text": "up your bench space and make"
+        },
+        {
+          "start": 45.92,
+          "end": 50.88,
+          "text": "measurements in places you never could"
+        },
+        {
+          "start": 47.92,
+          "end": 53.6,
+          "text": "before but don't be full by its size"
+        },
+        {
+          "start": 50.88,
+          "end": 55.6,
+          "text": "with bandwidths up to 500 megahertz and"
+        },
+        {
+          "start": 53.6,
+          "end": 57.04,
+          "text": "a two and a half giga samples per second"
+        },
+        {
+          "start": 55.6,
+          "end": 59.28,
+          "text": "max sample rate"
+        },
+        {
+          "start": 57.04,
+          "end": 61.04,
+          "text": "this scope packs a lot of power"
+        },
+        {
+          "start": 59.28,
+          "end": 64.32,
+          "text": "it's fully loaded with features"
+        },
+        {
+          "start": 61.04,
+          "end": 67.12,
+          "text": "including a 16 channel mso a 50"
+        },
+        {
+          "start": 64.32,
+          "end": 68.56,
+          "text": "megahertz function generator and a 4 bit"
+        },
+        {
+          "start": 67.12,
+          "end": 70.84,
+          "text": "pattern generator"
+        },
+        {
+          "start": 68.56,
+          "end": 74.4,
+          "text": "so you can get more done with just one"
+        },
+        {
+          "start": 70.84,
+          "end": 77.44,
+          "text": "instrument it also has a comprehensive"
+        },
+        {
+          "start": 74.4,
+          "end": 79.68,
+          "text": "trigger math and measurement capability"
+        },
+        {
+          "start": 77.44,
+          "end": 81.27,
+          "text": "serial protocol decodes"
+        },
+        {
+          "start": 79.68,
+          "end": 82.4,
+          "text": "and battery operation"
+        },
+        {
+          "start": 81.27,
+          "end": 84.8,
+          "text": "[Music]"
+        },
+        {
+          "start": 82.4,
+          "end": 87.04,
+          "text": "the two slot battery pack supports two"
+        },
+        {
+          "start": 84.8,
+          "end": 88.32,
+          "text": "batteries for up to eight hours of"
+        },
+        {
+          "start": 87.04,
+          "end": 90.48,
+          "text": "operation"
+        },
+        {
+          "start": 88.32,
+          "end": 92.4,
+          "text": "and can be hot swapped for extended"
+        },
+        {
+          "start": 90.48,
+          "end": 93.36,
+          "text": "usage in the field"
+        },
+        {
+          "start": 92.4,
+          "end": 95.12,
+          "text": "plus"
+        },
+        {
+          "start": 93.36,
+          "end": 97.12,
+          "text": "this has the same award-winning"
+        },
+        {
+          "start": 95.12,
+          "end": 100.08,
+          "text": "touchscreen interface you've come to"
+        },
+        {
+          "start": 97.12,
+          "end": 102.48,
+          "text": "know and love on other tektronix scopes"
+        },
+        {
+          "start": 100.08,
+          "end": 104.4,
+          "text": "so once you used one you know how to use"
+        },
+        {
+          "start": 102.48,
+          "end": 107.28,
+          "text": "them all"
+        },
+        {
+          "start": 104.4,
+          "end": 110.64,
+          "text": "the two series mso is available with"
+        },
+        {
+          "start": 107.28,
+          "end": 113.28,
+          "text": "either two or four channels and includes"
+        },
+        {
+          "start": 110.64,
+          "end": 115.44,
+          "text": "an aux in and an aux out"
+        },
+        {
+          "start": 113.28,
+          "end": 118.8,
+          "text": "all the inputs are on the front"
+        },
+        {
+          "start": 115.44,
+          "end": 120.96,
+          "text": "so it's very easy for you to access"
+        },
+        {
+          "start": 118.8,
+          "end": 123.92,
+          "text": "with the low noise front end"
+        },
+        {
+          "start": 120.96,
+          "end": 126.64,
+          "text": "based on tech's custom asic high sample"
+        },
+        {
+          "start": 123.92,
+          "end": 129.28,
+          "text": "rate and deep record length you can"
+        },
+        {
+          "start": 126.64,
+          "end": 132.4,
+          "text": "really dive into your signals to get"
+        },
+        {
+          "start": 129.28,
+          "end": 135.28,
+          "text": "visibility into finer details that help"
+        },
+        {
+          "start": 132.4,
+          "end": 137.2,
+          "text": "you make more accurate measurements"
+        },
+        {
+          "start": 135.28,
+          "end": 138.72,
+          "text": "a wide range of probes are compatible"
+        },
+        {
+          "start": 137.2,
+          "end": 141.76,
+          "text": "with the two series"
+        },
+        {
+          "start": 138.72,
+          "end": 144,
+          "text": "including voltage current differential"
+        },
+        {
+          "start": 141.76,
+          "end": 147.12,
+          "text": "and high voltage probes so you can"
+        },
+        {
+          "start": 144,
+          "end": 149.76,
+          "text": "capture many types of signals"
+        },
+        {
+          "start": 147.12,
+          "end": 152,
+          "text": "the built-in standard vesa interface"
+        },
+        {
+          "start": 149.76,
+          "end": 154.32,
+          "text": "can be used to attach the scope to a"
+        },
+        {
+          "start": 152,
+          "end": 156.88,
+          "text": "range of tektronix accessories"
+        },
+        {
+          "start": 154.32,
+          "end": 160.72,
+          "text": "as well as a variety of off-the-shelf"
+        },
+        {
+          "start": 156.88,
+          "end": 163.84,
+          "text": "vessel mounts available in the market"
+        },
+        {
+          "start": 160.72,
+          "end": 166,
+          "text": "the vesa interface is also used to mount"
+        },
+        {
+          "start": 163.84,
+          "end": 167.04,
+          "text": "your scope in a variety of different"
+        },
+        {
+          "start": 166,
+          "end": 169.04,
+          "text": "angles"
+        },
+        {
+          "start": 167.04,
+          "end": 171.2,
+          "text": "on the stand to suit your specific"
+        },
+        {
+          "start": 169.04,
+          "end": 173.92,
+          "text": "testing environment"
+        },
+        {
+          "start": 171.2,
+          "end": 176.32,
+          "text": "the stand features an elastomer base"
+        },
+        {
+          "start": 173.92,
+          "end": 179.36,
+          "text": "making it a very stable platform for"
+        },
+        {
+          "start": 176.32,
+          "end": 182.16,
+          "text": "compact lightweight instrument"
+        },
+        {
+          "start": 179.36,
+          "end": 185.28,
+          "text": "an optional protective case safeguards"
+        },
+        {
+          "start": 182.16,
+          "end": 187.52,
+          "text": "your scope from up to 40 inch drops and"
+        },
+        {
+          "start": 185.28,
+          "end": 190.08,
+          "text": "includes a kickstand as well as a"
+        },
+        {
+          "start": 187.52,
+          "end": 192.08,
+          "text": "carrying case for whenever you're on the"
+        },
+        {
+          "start": 190.08,
+          "end": 195.28,
+          "text": "go"
+        },
+        {
+          "start": 192.08,
+          "end": 198.24,
+          "text": "the 2-series mso lets you work remotely"
+        },
+        {
+          "start": 195.28,
+          "end": 200.72,
+          "text": "from any location and collaborate easily"
+        },
+        {
+          "start": 198.24,
+          "end": 203.12,
+          "text": "with colleagues using techdrive a"
+        },
+        {
+          "start": 200.72,
+          "end": 205.76,
+          "text": "cloud-based data workspace and tech"
+        },
+        {
+          "start": 203.12,
+          "end": 208.4,
+          "text": "scope and offline waveform viewing and"
+        },
+        {
+          "start": 205.76,
+          "end": 211.68,
+          "text": "analysis software"
+        },
+        {
+          "start": 208.4,
+          "end": 214.16,
+          "text": "the 2-series mso is the world's first"
+        },
+        {
+          "start": 211.68,
+          "end": 215.44,
+          "text": "fully featured real-time touchscreen"
+        },
+        {
+          "start": 214.16,
+          "end": 217.44,
+          "text": "oscilloscope"
+        },
+        {
+          "start": 215.44,
+          "end": 220.24,
+          "text": "available in this thin"
+        },
+        {
+          "start": 217.44,
+          "end": 222.96,
+          "text": "lightweight portable form factor and"
+        },
+        {
+          "start": 220.24,
+          "end": 224.4,
+          "text": "it's ready to revolutionize your testing"
+        },
+        {
+          "start": 222.96,
+          "end": 227.2,
+          "text": "whether that happens to be in your"
+        },
+        {
+          "start": 224.4,
+          "end": 230.2,
+          "text": "classroom on your bench top or in the"
+        },
+        {
+          "start": 227.2,
+          "end": 230.2,
+          "text": "field"
+        },
+        {
+          "start": 230.35,
+          "end": 233.53,
+          "text": "[Music]"
+        }
+      ],
+      "transcript_source": "youtube-en-auto",
+      "transcript_lastFetched": "2026-04-19T04:50:59.712Z"
+    },
+    {
       "id": "tek-yt-dSeaGYwVHnU",
       "title": "7 Series DPO - Powerful Measurement System",
       "url": "https://www.youtube.com/watch?v=dSeaGYwVHnU",
@@ -1548,6 +2031,89 @@
       ],
       "transcript_source": "youtube-en-auto",
       "transcript_lastFetched": "2026-04-19T04:02:25.174Z"
+    },
+    {
+      "id": "tek-yt-LW7voaMCN3A",
+      "title": "The New Tektronix 2 Series Mixed Signal Oscilloscope",
+      "url": "https://www.youtube.com/watch?v=LW7voaMCN3A",
+      "category": "youtube",
+      "products": [
+        "MSO2"
+      ],
+      "tags": [
+        "overview",
+        "technical"
+      ],
+      "summary": "The New Tektronix 2 Series Mixed Signal Oscilloscope",
+      "duration_ms": 31000,
+      "duration": "0:31",
+      "youtube_id": "LW7voaMCN3A",
+      "youtube_title": "The New Tektronix 2 Series Mixed Signal Oscilloscope",
+      "youtube_match_lastTried": "2026-04-19T04:50:53.764Z",
+      "transcript_chunks": [
+        {
+          "start": 0.16,
+          "end": 5.28,
+          "text": "get ready to change the way you work"
+        },
+        {
+          "start": 2.24,
+          "end": 7.36,
+          "text": "forever introducing next-gen tech a"
+        },
+        {
+          "start": 5.28,
+          "end": 9.68,
+          "text": "full-featured touchscreen oscilloscope"
+        },
+        {
+          "start": 7.36,
+          "end": 11.68,
+          "text": "in a compact streamlined design that"
+        },
+        {
+          "start": 9.68,
+          "end": 13.52,
+          "text": "weighs less than four pounds and works"
+        },
+        {
+          "start": 11.68,
+          "end": 15.6,
+          "text": "like your mobile device add a battery"
+        },
+        {
+          "start": 13.52,
+          "end": 18.4,
+          "text": "pack for up to eight hours of unplugged"
+        },
+        {
+          "start": 15.6,
+          "end": 20.16,
+          "text": "debug and go easily from your bench to"
+        },
+        {
+          "start": 18.4,
+          "end": 21.68,
+          "text": "the field or to wherever your"
+        },
+        {
+          "start": 20.16,
+          "end": 24,
+          "text": "measurements take you"
+        },
+        {
+          "start": 21.68,
+          "end": 30.04,
+          "text": "this is the tektronix ii series mixed"
+        },
+        {
+          "start": 24,
+          "end": 30.04,
+          "text": "signal oscilloscope this is nextgen tech"
+        }
+      ],
+      "transcript_source": "youtube-en-auto",
+      "transcript_lastFetched": "2026-04-19T04:50:57.282Z"
     },
     {
       "id": "tek-yt-pIODXg37uFg",
