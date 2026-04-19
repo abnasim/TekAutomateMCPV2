@@ -99,6 +99,6057 @@
       "brightcove_video_id": "6376642909112",
       "mp4_url": "http://fastly-signed-us-east-1-prod.brightcovecdn.com/media/v1/pmp4/static/clear/1572118491/aac27c04-9cb2-4388-afcb-af2bfcfc4572/a3dcac57-0c98-416a-b367-d8df28faba34/main.mp4?fastly_token=NjllNGE1YWVfMWZhNWUyZTc5ODZhYTdmNzk2ZDI3YmE1NDYzYWVkNzkzNmU5MWQ0ZDg1ZDQwYzZjYTNiZjgyZjFjNWFmYTVkMF8vL2Zhc3RseS1zaWduZWQtdXMtZWFzdC0xLXByb2QuYnJpZ2h0Y292ZWNkbi5jb20vbWVkaWEvdjEvcG1wNC9zdGF0aWMvY2xlYXIvMTU3MjExODQ5MS9hYWMyN2MwNC05Y2IyLTQzODgtYWZjYi1hZjJiZmNmYzQ1NzIvYTNkY2FjNTctMGM5OC00MTZhLWIzNjctZDhkZjI4ZmFiYTM0L21haW4ubXA0",
       "page_lastFetched": "2026-04-19T03:34:12.682Z"
+    },
+    {
+      "id": "tek-yt-aJLTsEtFma0",
+      "title": "How to Set Up Vertical Scale",
+      "url": "https://www.youtube.com/watch?v=aJLTsEtFma0",
+      "category": "youtube",
+      "products": [
+        "MSO2"
+      ],
+      "tags": [
+        "how-to"
+      ],
+      "summary": "Getting the vertical scale right is key to accurate, readable measurements. In this quick demo, we walk through how to adjust vertical scale on the Tektronix 2 Series MSO using: \n\n• The vertical...",
+      "duration_ms": 96000,
+      "duration": "1:36",
+      "youtube_id": "aJLTsEtFma0",
+      "youtube_title": "How to Set Up Vertical Scale",
+      "youtube_match_lastTried": "2026-04-19T04:02:25.681Z",
+      "transcript_chunks": [
+        {
+          "start": 2.24,
+          "end": 6.48,
+          "text": "The vertical scale controls how much of"
+        },
+        {
+          "start": 4.48,
+          "end": 9.84,
+          "text": "your signal's amplitude is visible on"
+        },
+        {
+          "start": 6.48,
+          "end": 11.76,
+          "text": "screen. On a digital oscilloscope, the"
+        },
+        {
+          "start": 9.84,
+          "end": 14.8,
+          "text": "key is to make the signal as large as"
+        },
+        {
+          "start": 11.76,
+          "end": 17.28,
+          "text": "possible without clipping. This uses"
+        },
+        {
+          "start": 14.8,
+          "end": 19.68,
+          "text": "more of the available digitizing levels,"
+        },
+        {
+          "start": 17.28,
+          "end": 22.32,
+          "text": "reduces quantization errors, and"
+        },
+        {
+          "start": 19.68,
+          "end": 24.96,
+          "text": "improves measurement accuracy."
+        },
+        {
+          "start": 22.32,
+          "end": 27.92,
+          "text": "On the 2 series MSO, there are three"
+        },
+        {
+          "start": 24.96,
+          "end": 31.36,
+          "text": "simple ways to adjust vertical scale."
+        },
+        {
+          "start": 27.92,
+          "end": 34.4,
+          "text": "One, turn the vertical scale knob, the"
+        },
+        {
+          "start": 31.36,
+          "end": 38.16,
+          "text": "fastest and most direct method."
+        },
+        {
+          "start": 34.4,
+          "end": 40.4,
+          "text": "Two, double tap the channel badge, then"
+        },
+        {
+          "start": 38.16,
+          "end": 43.4,
+          "text": "type in the exact vertical value you"
+        },
+        {
+          "start": 40.4,
+          "end": 43.4,
+          "text": "want."
+        },
+        {
+          "start": 44.64,
+          "end": 49.8,
+          "text": "And three, use touch gestures."
+        },
+        {
+          "start": 52.08,
+          "end": 56.08,
+          "text": "The goal is to fill the screen with your"
+        },
+        {
+          "start": 53.84,
+          "end": 58.48,
+          "text": "signal as much as possible, again,"
+        },
+        {
+          "start": 56.08,
+          "end": 60.56,
+          "text": "without clipping. If the signal gets"
+        },
+        {
+          "start": 58.48,
+          "end": 62.32,
+          "text": "clipped, measurements can become"
+        },
+        {
+          "start": 60.56,
+          "end": 64.56,
+          "text": "invalid."
+        },
+        {
+          "start": 62.32,
+          "end": 67.68,
+          "text": "If you're working with multiple signals,"
+        },
+        {
+          "start": 64.56,
+          "end": 70.16,
+          "text": "use stacked mode. It gives each channel"
+        },
+        {
+          "start": 67.68,
+          "end": 73.04,
+          "text": "its own space, so you don't have to"
+        },
+        {
+          "start": 70.16,
+          "end": 76.08,
+          "text": "reduce vertical scale or deal with"
+        },
+        {
+          "start": 73.04,
+          "end": 78.64,
+          "text": "overlapping traces. Overlay mode, on the"
+        },
+        {
+          "start": 76.08,
+          "end": 81.28,
+          "text": "other hand, puts all signals in the same"
+        },
+        {
+          "start": 78.64,
+          "end": 84.08,
+          "text": "window. That often leads to a compromise"
+        },
+        {
+          "start": 81.28,
+          "end": 87.28,
+          "text": "in vertical resolution. So for the most"
+        },
+        {
+          "start": 84.08,
+          "end": 90.4,
+          "text": "accurate results, maximize your signal"
+        },
+        {
+          "start": 87.28,
+          "end": 92.4,
+          "text": "size, avoid clipping, and choose the"
+        },
+        {
+          "start": 90.4,
+          "end": 95.72,
+          "text": "display mode that gives you the clarity"
+        },
+        {
+          "start": 92.4,
+          "end": 95.72,
+          "text": "you need."
+        }
+      ],
+      "transcript_source": "youtube-en-auto",
+      "transcript_lastFetched": "2026-04-19T04:02:27.874Z"
+    },
+    {
+      "id": "tek-yt-BbbiR6X0IBQ",
+      "title": "7 Series DPO Highlights",
+      "url": "https://www.youtube.com/watch?v=BbbiR6X0IBQ",
+      "category": "youtube",
+      "products": [
+        "DPO7000"
+      ],
+      "tags": [
+        "overview"
+      ],
+      "summary": "Discover the new Tektronix 7 Series DPO oscilloscope - built for breakthroughs. Custom ASICs and 10-bit ADC deliver exceptional signal fidelity and measurement accuracy.  Analyze faster with...",
+      "duration_ms": 94000,
+      "duration": "1:34",
+      "youtube_id": "BbbiR6X0IBQ",
+      "youtube_title": "7 Series DPO Highlights",
+      "youtube_match_lastTried": "2026-04-19T04:02:52.710Z",
+      "transcript_chunks": [
+        {
+          "start": 0.64,
+          "end": 5.12,
+          "text": "In high-speed signal measurements,"
+        },
+        {
+          "start": 2.8,
+          "end": 8.16,
+          "text": "jitter and noise distort your data,"
+        },
+        {
+          "start": 5.12,
+          "end": 10,
+          "text": "leading to unreliable results. Now,"
+        },
+        {
+          "start": 8.16,
+          "end": 12.8,
+          "text": "Tektronics most advanced new"
+        },
+        {
+          "start": 10,
+          "end": 15.28,
+          "text": "oscilloscope brings ultra precision in"
+        },
+        {
+          "start": 12.8,
+          "end": 17.28,
+          "text": "both jitter and noise performance,"
+        },
+        {
+          "start": 15.28,
+          "end": 19.68,
+          "text": "enabling more margin for your most"
+        },
+        {
+          "start": 17.28,
+          "end": 22.16,
+          "text": "difficult testing requirements."
+        },
+        {
+          "start": 19.68,
+          "end": 25.16,
+          "text": "Introducing the 7 series DPO"
+        },
+        {
+          "start": 22.16,
+          "end": 25.16,
+          "text": "oscilloscope."
+        },
+        {
+          "start": 26.64,
+          "end": 32.56,
+          "text": "Two new Tektronics custom AS6. The"
+        },
+        {
+          "start": 29.6,
+          "end": 34.32,
+          "text": "first, a new ultra low-noise preamp"
+        },
+        {
+          "start": 32.56,
+          "end": 36.56,
+          "text": "delivers a high signal to noiseise"
+        },
+        {
+          "start": 34.32,
+          "end": 39.04,
+          "text": "ratio, substantially increasing"
+        },
+        {
+          "start": 36.56,
+          "end": 41.28,
+          "text": "effective bits and delivering higher"
+        },
+        {
+          "start": 39.04,
+          "end": 44.08,
+          "text": "accuracy voltage measurements. The"
+        },
+        {
+          "start": 41.28,
+          "end": 46.48,
+          "text": "second, a new 10-bit analog to digital"
+        },
+        {
+          "start": 44.08,
+          "end": 48.96,
+          "text": "converter coupled with a new precision"
+        },
+        {
+          "start": 46.48,
+          "end": 51.36,
+          "text": "time base reduces jitter to further"
+        },
+        {
+          "start": 48.96,
+          "end": 54.24,
+          "text": "enhance signal accuracy."
+        },
+        {
+          "start": 51.36,
+          "end": 57.28,
+          "text": "New high-speed signal path and faster"
+        },
+        {
+          "start": 54.24,
+          "end": 60.24,
+          "text": "processing optimizes data flow to speed"
+        },
+        {
+          "start": 57.28,
+          "end": 62.32,
+          "text": "up your analysis and testing time. See"
+        },
+        {
+          "start": 60.24,
+          "end": 64.88,
+          "text": "signal details on the highdefinition"
+        },
+        {
+          "start": 62.32,
+          "end": 66.48,
+          "text": "touchscreen in the blink of an eye and"
+        },
+        {
+          "start": 64.88,
+          "end": 70.08,
+          "text": "analyze intuitively with the"
+        },
+        {
+          "start": 66.48,
+          "end": 71.84,
+          "text": "award-winning design for touch UI."
+        },
+        {
+          "start": 70.08,
+          "end": 74.72,
+          "text": "And if you need to transfer your data"
+        },
+        {
+          "start": 71.84,
+          "end": 77.68,
+          "text": "quickly, the 10 gigabit Ethernet port"
+        },
+        {
+          "start": 74.72,
+          "end": 80,
+          "text": "combined with the new Tech HSI enables"
+        },
+        {
+          "start": 77.68,
+          "end": 83.2,
+          "text": "rapid data transfer so you can get to"
+        },
+        {
+          "start": 80,
+          "end": 85.76,
+          "text": "your analysis faster. Maximize test"
+        },
+        {
+          "start": 83.2,
+          "end": 88.48,
+          "text": "margins with best-in-class noise and"
+        },
+        {
+          "start": 85.76,
+          "end": 93.48,
+          "text": "jitter performance with the new 7 Series"
+        },
+        {
+          "start": 88.48,
+          "end": 93.48,
+          "text": "DPO. Built for breakthroughs."
+        }
+      ],
+      "transcript_source": "youtube-en-auto",
+      "transcript_lastFetched": "2026-04-19T04:02:55.026Z"
+    },
+    {
+      "id": "tek-yt-dSeaGYwVHnU",
+      "title": "7 Series DPO - Powerful Measurement System",
+      "url": "https://www.youtube.com/watch?v=dSeaGYwVHnU",
+      "category": "youtube",
+      "products": [
+        "DPO7000"
+      ],
+      "tags": [
+        "measurement"
+      ],
+      "summary": "This video highlights of few of the many powerful measurement capabilities within 7 Series DPO. Learn about the flexible options for displaying measurement results and how to configure the...",
+      "duration_ms": 240000,
+      "duration": "4:00",
+      "youtube_id": "dSeaGYwVHnU",
+      "youtube_title": "7 Series DPO - Powerful Measurement System",
+      "youtube_match_lastTried": "2026-04-19T04:02:42.607Z",
+      "transcript_chunks": [
+        {
+          "start": 2.31,
+          "end": 13.36,
+          "text": "[Music]"
+        },
+        {
+          "start": 11.12,
+          "end": 15.52,
+          "text": "Easily add measurements by selecting"
+        },
+        {
+          "start": 13.36,
+          "end": 19.44,
+          "text": "from a comprehensive list in familiar"
+        },
+        {
+          "start": 15.52,
+          "end": 23.8,
+          "text": "categories like amplitude, time, jitter,"
+        },
+        {
+          "start": 19.44,
+          "end": 23.8,
+          "text": "or technology standard specific."
+        },
+        {
+          "start": 26.08,
+          "end": 29.28,
+          "text": "You can see that the new measurements"
+        },
+        {
+          "start": 27.6,
+          "end": 32.4,
+          "text": "have been added to the results bar to"
+        },
+        {
+          "start": 29.28,
+          "end": 34.48,
+          "text": "the right of the waveform view."
+        },
+        {
+          "start": 32.4,
+          "end": 36.72,
+          "text": "Just like with most readouts in the user"
+        },
+        {
+          "start": 34.48,
+          "end": 38.32,
+          "text": "interface, when you double tap, you open"
+        },
+        {
+          "start": 36.72,
+          "end": 40.48,
+          "text": "a configuration menu for the"
+        },
+        {
+          "start": 38.32,
+          "end": 43.28,
+          "text": "measurement. Here you can do things like"
+        },
+        {
+          "start": 40.48,
+          "end": 45.52,
+          "text": "turn on statistics for measurements."
+        },
+        {
+          "start": 43.28,
+          "end": 47.52,
+          "text": "Enable different plots of the data set"
+        },
+        {
+          "start": 45.52,
+          "end": 49.6,
+          "text": "and configure items like gating, which"
+        },
+        {
+          "start": 47.52,
+          "end": 52.6,
+          "text": "can be global or local to a specific"
+        },
+        {
+          "start": 49.6,
+          "end": 52.6,
+          "text": "measurement."
+        },
+        {
+          "start": 54.24,
+          "end": 58.56,
+          "text": "If you'd rather see the measurement"
+        },
+        {
+          "start": 55.68,
+          "end": 60.56,
+          "text": "results in a tabular view, you can"
+        },
+        {
+          "start": 58.56,
+          "end": 63.44,
+          "text": "simply add a measurement results table"
+        },
+        {
+          "start": 60.56,
+          "end": 65.2,
+          "text": "here in the add new section."
+        },
+        {
+          "start": 63.44,
+          "end": 69.52,
+          "text": "Engineers really appreciate this"
+        },
+        {
+          "start": 65.2,
+          "end": 71.84,
+          "text": "detailed view of measurement results."
+        },
+        {
+          "start": 69.52,
+          "end": 73.68,
+          "text": "The flexible windows in the UI allow you"
+        },
+        {
+          "start": 71.84,
+          "end": 76,
+          "text": "to configure the display in virtually"
+        },
+        {
+          "start": 73.68,
+          "end": 77.92,
+          "text": "any way you desire. Simply grab the top"
+        },
+        {
+          "start": 76,
+          "end": 80.24,
+          "text": "of the view window and move it to a new"
+        },
+        {
+          "start": 77.92,
+          "end": 82.88,
+          "text": "location using the blue shadowing as a"
+        },
+        {
+          "start": 80.24,
+          "end": 85.04,
+          "text": "guide."
+        },
+        {
+          "start": 82.88,
+          "end": 86.4,
+          "text": "Notice in the results table on the left"
+        },
+        {
+          "start": 85.04,
+          "end": 88.8,
+          "text": "there are results from the current"
+        },
+        {
+          "start": 86.4,
+          "end": 90.88,
+          "text": "acquisition and on the right are results"
+        },
+        {
+          "start": 88.8,
+          "end": 93.92,
+          "text": "from the total population since the last"
+        },
+        {
+          "start": 90.88,
+          "end": 96,
+          "text": "clearing of results."
+        },
+        {
+          "start": 93.92,
+          "end": 98.16,
+          "text": "Let's now quickly navigate to areas of"
+        },
+        {
+          "start": 96,
+          "end": 100.96,
+          "text": "interest by using the search navigation"
+        },
+        {
+          "start": 98.16,
+          "end": 102.4,
+          "text": "buttons in any measurement badge. I'll"
+        },
+        {
+          "start": 100.96,
+          "end": 106.84,
+          "text": "start by removing the measurement"
+        },
+        {
+          "start": 102.4,
+          "end": 106.84,
+          "text": "results table and zoom in."
+        },
+        {
+          "start": 109.04,
+          "end": 112.96,
+          "text": "Next, I will single tap a measurement"
+        },
+        {
+          "start": 110.88,
+          "end": 115.28,
+          "text": "badge."
+        },
+        {
+          "start": 112.96,
+          "end": 117.28,
+          "text": "Now, select left or right arrow buttons"
+        },
+        {
+          "start": 115.28,
+          "end": 119.76,
+          "text": "to navigate to the previous or next"
+        },
+        {
+          "start": 117.28,
+          "end": 121.44,
+          "text": "measurement in the acquisition. Do the"
+        },
+        {
+          "start": 119.76,
+          "end": 123.36,
+          "text": "same for quickly moving to the minimum"
+        },
+        {
+          "start": 121.44,
+          "end": 124.96,
+          "text": "and maximum values in the record,"
+        },
+        {
+          "start": 123.36,
+          "end": 126.24,
+          "text": "allowing the scope to do the hard work"
+        },
+        {
+          "start": 124.96,
+          "end": 128.64,
+          "text": "of searching through the measurement"
+        },
+        {
+          "start": 126.24,
+          "end": 130.72,
+          "text": "data for you."
+        },
+        {
+          "start": 128.64,
+          "end": 131.92,
+          "text": "Once you find the maximum value, you"
+        },
+        {
+          "start": 130.72,
+          "end": 134.48,
+          "text": "might want to add a label for"
+        },
+        {
+          "start": 131.92,
+          "end": 136.56,
+          "text": "documentation purposes. I'll add a call"
+        },
+        {
+          "start": 134.48,
+          "end": 139.56,
+          "text": "out and label this as the maximum pulse"
+        },
+        {
+          "start": 136.56,
+          "end": 139.56,
+          "text": "width."
+        },
+        {
+          "start": 147.44,
+          "end": 152.76,
+          "text": "I can even change the color to match the"
+        },
+        {
+          "start": 149.36,
+          "end": 152.76,
+          "text": "channel color."
+        },
+        {
+          "start": 155.12,
+          "end": 158.48,
+          "text": "Another common use case is needing to"
+        },
+        {
+          "start": 156.96,
+          "end": 160,
+          "text": "gate a specific measurement"
+        },
+        {
+          "start": 158.48,
+          "end": 161.6,
+          "text": "independently from all other"
+        },
+        {
+          "start": 160,
+          "end": 163.68,
+          "text": "measurements."
+        },
+        {
+          "start": 161.6,
+          "end": 166.24,
+          "text": "You can do this easily on the 7 series"
+        },
+        {
+          "start": 163.68,
+          "end": 168.16,
+          "text": "DPO by doubletapping a measurement badge"
+        },
+        {
+          "start": 166.24,
+          "end": 170.88,
+          "text": "and opening the gating panel in the"
+        },
+        {
+          "start": 168.16,
+          "end": 172.64,
+          "text": "configuration menu. Here you can dictate"
+        },
+        {
+          "start": 170.88,
+          "end": 176.08,
+          "text": "whether you want this measurement to use"
+        },
+        {
+          "start": 172.64,
+          "end": 178.08,
+          "text": "global or local gating."
+        },
+        {
+          "start": 176.08,
+          "end": 180.64,
+          "text": "If we change this to local, we can use"
+        },
+        {
+          "start": 178.08,
+          "end": 182.96,
+          "text": "one of the numerous methods of gating."
+        },
+        {
+          "start": 180.64,
+          "end": 184.72,
+          "text": "I'll select time and set my cursors on"
+        },
+        {
+          "start": 182.96,
+          "end": 187.72,
+          "text": "either side of the pulse I'd like to"
+        },
+        {
+          "start": 184.72,
+          "end": 187.72,
+          "text": "measure."
+        },
+        {
+          "start": 189.92,
+          "end": 195.4,
+          "text": "Now this specific measurement will be"
+        },
+        {
+          "start": 191.68,
+          "end": 195.4,
+          "text": "gated by these cursors."
+        },
+        {
+          "start": 196.24,
+          "end": 199.92,
+          "text": "Now let's say I want to find all of the"
+        },
+        {
+          "start": 198,
+          "end": 203.68,
+          "text": "positive pulse widths that are greater"
+        },
+        {
+          "start": 199.92,
+          "end": 206.16,
+          "text": "than 480 picos seconds in duration. I"
+        },
+        {
+          "start": 203.68,
+          "end": 208.24,
+          "text": "can simply select add new search and"
+        },
+        {
+          "start": 206.16,
+          "end": 210.64,
+          "text": "define the positive pulse width search"
+        },
+        {
+          "start": 208.24,
+          "end": 214.36,
+          "text": "type and set the value to greater than"
+        },
+        {
+          "start": 210.64,
+          "end": 214.36,
+          "text": "480 picosconds."
+        },
+        {
+          "start": 219.04,
+          "end": 223.76,
+          "text": "You can now see a pink triangular marker"
+        },
+        {
+          "start": 221.2,
+          "end": 226.4,
+          "text": "in the waveform view indicating where in"
+        },
+        {
+          "start": 223.76,
+          "end": 228.64,
+          "text": "the record the search results are. I can"
+        },
+        {
+          "start": 226.4,
+          "end": 230.64,
+          "text": "now single tap the positive pulse width"
+        },
+        {
+          "start": 228.64,
+          "end": 234.08,
+          "text": "search badge and navigate to the"
+        },
+        {
+          "start": 230.64,
+          "end": 237.47,
+          "text": "previous, next, or minimum and maximum"
+        },
+        {
+          "start": 234.08,
+          "end": 240.63,
+          "text": "values in the record."
+        },
+        {
+          "start": 237.47,
+          "end": 240.63,
+          "text": "[Music]"
+        }
+      ],
+      "transcript_source": "youtube-en-auto",
+      "transcript_lastFetched": "2026-04-19T04:02:44.441Z"
+    },
+    {
+      "id": "tek-yt-hwIYK7mD7zI",
+      "title": "Control Test Equipment with AI: MCP, Agents, and LLMs in Action",
+      "url": "https://www.youtube.com/watch?v=hwIYK7mD7zI",
+      "category": "youtube",
+      "products": [
+        "general"
+      ],
+      "tags": [],
+      "summary": "What if you could control lab instruments just by telling an AI agent want you want to do?\n\nIn this video, we demonstrate how an LLM-powered Agent, working with an MCP server, can interpret...",
+      "duration_ms": 181000,
+      "duration": "3:01",
+      "youtube_id": "hwIYK7mD7zI",
+      "youtube_title": "Control Test Equipment with AI: MCP, Agents, and LLMs in Action",
+      "youtube_match_lastTried": "2026-04-19T04:02:16.847Z",
+      "transcript_chunks": [
+        {
+          "start": 0.08,
+          "end": 3.36,
+          "text": "Test and measurement is infinitely"
+        },
+        {
+          "start": 1.52,
+          "end": 5.04,
+          "text": "easier with an AI partner. In this"
+        },
+        {
+          "start": 3.36,
+          "end": 8.32,
+          "text": "video, I will show you how we're going"
+        },
+        {
+          "start": 5.04,
+          "end": 10.72,
+          "text": "to use AI with an MCP server and to"
+        },
+        {
+          "start": 8.32,
+          "end": 12.48,
+          "text": "build context. And what this allows us"
+        },
+        {
+          "start": 10.72,
+          "end": 14.16,
+          "text": "to do is actually set up the instruments"
+        },
+        {
+          "start": 12.48,
+          "end": 16.08,
+          "text": "that we have here, which is a scope"
+        },
+        {
+          "start": 14.16,
+          "end": 18.72,
+          "text": "arbitrary waveform generator, a function"
+        },
+        {
+          "start": 16.08,
+          "end": 21.04,
+          "text": "generator, and then a power analysis"
+        },
+        {
+          "start": 18.72,
+          "end": 23.92,
+          "text": "setup here for IMDA, inverted motor"
+        },
+        {
+          "start": 21.04,
+          "end": 26.32,
+          "text": "drive analysis. What AI will do is"
+        },
+        {
+          "start": 23.92,
+          "end": 28.56,
+          "text": "actually use that information and then"
+        },
+        {
+          "start": 26.32,
+          "end": 30.72,
+          "text": "set up the instrument and then we take"
+        },
+        {
+          "start": 28.56,
+          "end": 34.28,
+          "text": "measurements and then AI can provide the"
+        },
+        {
+          "start": 30.72,
+          "end": 34.28,
+          "text": "analysis part."
+        },
+        {
+          "start": 37.76,
+          "end": 42.32,
+          "text": "Okay. So what I'm showing you here is"
+        },
+        {
+          "start": 39.52,
+          "end": 44.08,
+          "text": "actually the AI chat window and it's"
+        },
+        {
+          "start": 42.32,
+          "end": 46.4,
+          "text": "able to detect all the instruments that"
+        },
+        {
+          "start": 44.08,
+          "end": 49.12,
+          "text": "connected on the network here. And then"
+        },
+        {
+          "start": 46.4,
+          "end": 51.76,
+          "text": "we have the MCP server that I actually"
+        },
+        {
+          "start": 49.12,
+          "end": 53.2,
+          "text": "have a screenshot set up here. It's"
+        },
+        {
+          "start": 51.76,
+          "end": 55.6,
+          "text": "actually showing the different tools"
+        },
+        {
+          "start": 53.2,
+          "end": 58.72,
+          "text": "that are in the MCB server. So, what I"
+        },
+        {
+          "start": 55.6,
+          "end": 60.72,
+          "text": "have here is a um AI interface, and I'm"
+        },
+        {
+          "start": 58.72,
+          "end": 63.6,
+          "text": "actually going to use voice control to"
+        },
+        {
+          "start": 60.72,
+          "end": 65.76,
+          "text": "have it dictate and input the um the"
+        },
+        {
+          "start": 63.6,
+          "end": 68.56,
+          "text": "prompt for me."
+        },
+        {
+          "start": 65.76,
+          "end": 72.12,
+          "text": "Turn off channel one and turn on channel"
+        },
+        {
+          "start": 68.56,
+          "end": 72.12,
+          "text": "seven and eight."
+        },
+        {
+          "start": 80.8,
+          "end": 87.92,
+          "text": "Enable the scopes AFG. Generate a 50 MHz"
+        },
+        {
+          "start": 84.72,
+          "end": 92.12,
+          "text": "sine wave. Set load impedance to 50 ohms"
+        },
+        {
+          "start": 87.92,
+          "end": 92.12,
+          "text": "and set amplitude to max."
+        },
+        {
+          "start": 92.64,
+          "end": 96.28,
+          "text": "Auto set scope."
+        },
+        {
+          "start": 100.48,
+          "end": 103.36,
+          "text": "Now on the external AFG, I can give that"
+        },
+        {
+          "start": 102.24,
+          "end": 105.44,
+          "text": "a command to generate a separate"
+        },
+        {
+          "start": 103.36,
+          "end": 108.56,
+          "text": "waveform."
+        },
+        {
+          "start": 105.44,
+          "end": 110.88,
+          "text": "On the external AFG, generate a 100 MHz"
+        },
+        {
+          "start": 108.56,
+          "end": 116.28,
+          "text": "square waveform. Set load impedance to"
+        },
+        {
+          "start": 110.88,
+          "end": 116.28,
+          "text": "50 ohms and set amplitude to max."
+        },
+        {
+          "start": 121.92,
+          "end": 126.16,
+          "text": "Now, it's going to do it independently"
+        },
+        {
+          "start": 123.68,
+          "end": 128.56,
+          "text": "because uh unlike the scope hardware,"
+        },
+        {
+          "start": 126.16,
+          "end": 131.96,
+          "text": "the AFG has to take command slowly, one"
+        },
+        {
+          "start": 128.56,
+          "end": 131.96,
+          "text": "at a time."
+        },
+        {
+          "start": 136.56,
+          "end": 141.76,
+          "text": "So slowly setting up the AFG, change it"
+        },
+        {
+          "start": 138.96,
+          "end": 145.2,
+          "text": "to a square waveform. Then setting the"
+        },
+        {
+          "start": 141.76,
+          "end": 147.28,
+          "text": "uh frequency to 100 MHz."
+        },
+        {
+          "start": 145.2,
+          "end": 150.44,
+          "text": "The next should be the load impedance to"
+        },
+        {
+          "start": 147.28,
+          "end": 150.44,
+          "text": "50 ohms."
+        },
+        {
+          "start": 152.4,
+          "end": 156.48,
+          "text": "And then increase the amplitude to"
+        },
+        {
+          "start": 154.64,
+          "end": 158.72,
+          "text": "maximum."
+        },
+        {
+          "start": 156.48,
+          "end": 160.48,
+          "text": "In this case, it will be 5 volts. Yep,"
+        },
+        {
+          "start": 158.72,
+          "end": 164,
+          "text": "there we go. And then we'll have the"
+        },
+        {
+          "start": 160.48,
+          "end": 167,
+          "text": "scope do another auto set auto set the"
+        },
+        {
+          "start": 164,
+          "end": 167,
+          "text": "scope."
+        },
+        {
+          "start": 170.24,
+          "end": 174.72,
+          "text": "So this concludes the the short AI demo"
+        },
+        {
+          "start": 172.4,
+          "end": 176.56,
+          "text": "we have here. Uh to learn more go to our"
+        },
+        {
+          "start": 174.72,
+          "end": 179.56,
+          "text": "techch.com or click this link in this"
+        },
+        {
+          "start": 176.56,
+          "end": 179.56,
+          "text": "video."
+        }
+      ],
+      "transcript_source": "youtube-en-auto",
+      "transcript_lastFetched": "2026-04-19T04:02:19.325Z"
+    },
+    {
+      "id": "tek-yt-kUzxo4dudNY",
+      "title": "How to Take Measurements on an Oscilloscope",
+      "url": "https://www.youtube.com/watch?v=kUzxo4dudNY",
+      "category": "youtube",
+      "products": [
+        "MSO2"
+      ],
+      "tags": [
+        "how-to",
+        "measurement"
+      ],
+      "summary": "Making measurements on your oscilloscope has never been easier. In this demo, we walk through three common measurement techniques on the Tektronix 2 Series MSO: manual observation, cursor placement...",
+      "duration_ms": 129000,
+      "duration": "2:09",
+      "youtube_id": "kUzxo4dudNY",
+      "youtube_title": "How to Take Measurements on an Oscilloscope",
+      "youtube_match_lastTried": "2026-04-19T04:02:22.462Z",
+      "transcript_chunks": [
+        {
+          "start": 0.4,
+          "end": 5.24,
+          "text": "Making measurements on the Tektronics 2"
+        },
+        {
+          "start": 2.48,
+          "end": 7.28,
+          "text": "series MSO is easier and more intuitive"
+        },
+        {
+          "start": 5.24,
+          "end": 8.56,
+          "text": "[music] than ever, especially compared"
+        },
+        {
+          "start": 7.28,
+          "end": 10.08,
+          "text": "to previous generations of"
+        },
+        {
+          "start": 8.56,
+          "end": 12,
+          "text": "oscilloscopes."
+        },
+        {
+          "start": 10.08,
+          "end": 13.92,
+          "text": "While traditional methods like manual"
+        },
+        {
+          "start": 12,
+          "end": 17.2,
+          "text": "observation and cursor measurements are"
+        },
+        {
+          "start": 13.92,
+          "end": 19.52,
+          "text": "still available, the 2 series MSO also"
+        },
+        {
+          "start": 17.2,
+          "end": 21.44,
+          "text": "includes a wide range of automatic"
+        },
+        {
+          "start": 19.52,
+          "end": 24.16,
+          "text": "measurements [music] along with advanced"
+        },
+        {
+          "start": 21.44,
+          "end": 25.76,
+          "text": "features like BOD plots."
+        },
+        {
+          "start": 24.16,
+          "end": 27.52,
+          "text": "Let's begin with a couple of manual"
+        },
+        {
+          "start": 25.76,
+          "end": 30.24,
+          "text": "measurement techniques before exploring"
+        },
+        {
+          "start": 27.52,
+          "end": 32.8,
+          "text": "the automatic options. You can always"
+        },
+        {
+          "start": 30.24,
+          "end": 35.28,
+          "text": "use the vertical and horizontal scales"
+        },
+        {
+          "start": 32.8,
+          "end": 38.48,
+          "text": "to estimate [music] basic values like"
+        },
+        {
+          "start": 35.28,
+          "end": 40.88,
+          "text": "amplitude and period. For example, using"
+        },
+        {
+          "start": 38.48,
+          "end": 42,
+          "text": "the probe compensation signal as a test"
+        },
+        {
+          "start": 40.88,
+          "end": 43.84,
+          "text": "waveform, [music]"
+        },
+        {
+          "start": 42,
+          "end": 47.04,
+          "text": "you might notice that a single pulse"
+        },
+        {
+          "start": 43.84,
+          "end": 49.36,
+          "text": "spans about one horizontal division. If"
+        },
+        {
+          "start": 47.04,
+          "end": 51.6,
+          "text": "your time base is set to 1 millisecond"
+        },
+        {
+          "start": 49.36,
+          "end": 54.72,
+          "text": "per division, that means the pulse"
+        },
+        {
+          "start": 51.6,
+          "end": 56.48,
+          "text": "period is approximately 1 millisecond."
+        },
+        {
+          "start": 54.72,
+          "end": 60.08,
+          "text": "Another manual method is using [music]"
+        },
+        {
+          "start": 56.48,
+          "end": 62.08,
+          "text": "cursors. Place cursor A and cursor B at"
+        },
+        {
+          "start": 60.08,
+          "end": 64.64,
+          "text": "the rising edges of two consecutive"
+        },
+        {
+          "start": 62.08,
+          "end": 66.81,
+          "text": "pulses. The oscilloscope will display"
+        },
+        {
+          "start": 64.64,
+          "end": 68.32,
+          "text": "the delta time, which in this case"
+        },
+        {
+          "start": 66.81,
+          "end": 71.12,
+          "text": "[music] should also read around 1"
+        },
+        {
+          "start": 68.32,
+          "end": 73.2,
+          "text": "millisecond. These manual methods are"
+        },
+        {
+          "start": 71.12,
+          "end": 75.68,
+          "text": "great for quick checks, but they're more"
+        },
+        {
+          "start": 73.2,
+          "end": 78.08,
+          "text": "of a rough estimate. For precise [music]"
+        },
+        {
+          "start": 75.68,
+          "end": 80,
+          "text": "and repeatable results, the built-in"
+        },
+        {
+          "start": 78.08,
+          "end": 83.28,
+          "text": "automatic measurements are your best"
+        },
+        {
+          "start": 80,
+          "end": 85.52,
+          "text": "option. To add an automatic measurement,"
+        },
+        {
+          "start": 83.28,
+          "end": 87.6,
+          "text": "simply drag [music] and drop the measure"
+        },
+        {
+          "start": 85.52,
+          "end": 90.72,
+          "text": "button onto the channel you want to"
+        },
+        {
+          "start": 87.6,
+          "end": 92.48,
+          "text": "analyze. This opens the add measurements"
+        },
+        {
+          "start": 90.72,
+          "end": 94.8,
+          "text": "menu [music] where you can choose from a"
+        },
+        {
+          "start": 92.48,
+          "end": 97.2,
+          "text": "wide range of options. You can also"
+        },
+        {
+          "start": 94.8,
+          "end": 98.96,
+          "text": "press the measure button directly and"
+        },
+        {
+          "start": 97.2,
+          "end": 102.48,
+          "text": "manually configure the measurement"
+        },
+        {
+          "start": 98.96,
+          "end": 105.36,
+          "text": "parameters. The 2 series MSO includes"
+        },
+        {
+          "start": 102.48,
+          "end": 108.4,
+          "text": "over 30 standard automatic measurements"
+        },
+        {
+          "start": 105.36,
+          "end": 110,
+          "text": "covering both amplitude and timing. And"
+        },
+        {
+          "start": 108.4,
+          "end": 112.48,
+          "text": "if you have [music] the two source or"
+        },
+        {
+          "start": 110,
+          "end": 114.96,
+          "text": "two ultimate options enabled, you'll"
+        },
+        {
+          "start": 112.48,
+          "end": 118,
+          "text": "also gain access to BOD plots [music]"
+        },
+        {
+          "start": 114.96,
+          "end": 119.84,
+          "text": "for frequency response analysis. Whether"
+        },
+        {
+          "start": 118,
+          "end": 123.04,
+          "text": "you're making quick checks or detailed"
+        },
+        {
+          "start": 119.84,
+          "end": 125.2,
+          "text": "analysis, [music] the 2 series MSO helps"
+        },
+        {
+          "start": 123.04,
+          "end": 128.6,
+          "text": "you get accurate results quickly [music]"
+        },
+        {
+          "start": 125.2,
+          "end": 128.6,
+          "text": "and easily."
+        }
+      ],
+      "transcript_source": "youtube-en-auto",
+      "transcript_lastFetched": "2026-04-19T04:02:25.174Z"
+    },
+    {
+      "id": "tek-yt-pIODXg37uFg",
+      "title": "7 Series DPO - Maximize Test Margins with Lowest Noise and Highest Effective Numbers of Bits (ENOB)",
+      "url": "https://www.youtube.com/watch?v=pIODXg37uFg",
+      "category": "youtube",
+      "products": [
+        "DPO7000"
+      ],
+      "tags": [],
+      "summary": "This video demonstrates how good the noise performance and effective number of bits is on the 7 Series DPO.  You will visually see the difference between the 7 Series DPO with it's 10-bit...",
+      "duration_ms": 105000,
+      "duration": "1:45",
+      "youtube_id": "pIODXg37uFg",
+      "youtube_title": "7 Series DPO - Maximize Test Margins with Lowest Noise and Highest Effective Numbers of Bits (ENOB)",
+      "youtube_match_lastTried": "2026-04-19T04:02:34.053Z",
+      "transcript_chunks": [
+        {
+          "start": 2.31,
+          "end": 12.72,
+          "text": "[Music]"
+        },
+        {
+          "start": 10.96,
+          "end": 15.36,
+          "text": "A practical way to demonstrate the"
+        },
+        {
+          "start": 12.72,
+          "end": 16.96,
+          "text": "innovation of the 7 series DPO,"
+        },
+        {
+          "start": 15.36,
+          "end": 19.12,
+          "text": "especially in our effective number of"
+        },
+        {
+          "start": 16.96,
+          "end": 21.36,
+          "text": "bits and the resulting signal to noise"
+        },
+        {
+          "start": 19.12,
+          "end": 24.48,
+          "text": "ratio, is to visually show the"
+        },
+        {
+          "start": 21.36,
+          "end": 26.88,
+          "text": "performance of the new signal path."
+        },
+        {
+          "start": 24.48,
+          "end": 29.44,
+          "text": "To do this, I will use a sine wave that"
+        },
+        {
+          "start": 26.88,
+          "end": 32.08,
+          "text": "has been averaged 10,000 times to remove"
+        },
+        {
+          "start": 29.44,
+          "end": 35.2,
+          "text": "most of the random noise. We will call"
+        },
+        {
+          "start": 32.08,
+          "end": 37.12,
+          "text": "this an ideal signal. This is the gray"
+        },
+        {
+          "start": 35.2,
+          "end": 39.68,
+          "text": "ref one waveform at the top of the"
+        },
+        {
+          "start": 37.12,
+          "end": 41.68,
+          "text": "display. I'll use this nearly noiseless"
+        },
+        {
+          "start": 39.68,
+          "end": 43.92,
+          "text": "signal to compare the performance of two"
+        },
+        {
+          "start": 41.68,
+          "end": 46.24,
+          "text": "different oscilloscopes."
+        },
+        {
+          "start": 43.92,
+          "end": 48.16,
+          "text": "I have previously captured the blue ref"
+        },
+        {
+          "start": 46.24,
+          "end": 50.8,
+          "text": "sine wave shown on the bottom of the"
+        },
+        {
+          "start": 48.16,
+          "end": 54.64,
+          "text": "display as the singleshot acquisition"
+        },
+        {
+          "start": 50.8,
+          "end": 57.12,
+          "text": "using a 25 GHz 8bit oscilloscope."
+        },
+        {
+          "start": 54.64,
+          "end": 60,
+          "text": "I have previously defined math 2 to be"
+        },
+        {
+          "start": 57.12,
+          "end": 62.16,
+          "text": "the ideal minus ref 2 resulting in a"
+        },
+        {
+          "start": 60,
+          "end": 65.04,
+          "text": "residual or difference waveform from the"
+        },
+        {
+          "start": 62.16,
+          "end": 67.44,
+          "text": "8-bit scope indicated by the green math"
+        },
+        {
+          "start": 65.04,
+          "end": 69.6,
+          "text": "2 waveform on the bottom of the display."
+        },
+        {
+          "start": 67.44,
+          "end": 72.08,
+          "text": "In a perfectly noiseless system, this"
+        },
+        {
+          "start": 69.6,
+          "end": 74.24,
+          "text": "would be a flat line. Now let's acquire"
+        },
+        {
+          "start": 72.08,
+          "end": 76.56,
+          "text": "a single shot on channel one of the 7"
+        },
+        {
+          "start": 74.24,
+          "end": 78.24,
+          "text": "series DPO."
+        },
+        {
+          "start": 76.56,
+          "end": 80.24,
+          "text": "Performing the same calculation as"
+        },
+        {
+          "start": 78.24,
+          "end": 82.24,
+          "text": "before results in a residual or"
+        },
+        {
+          "start": 80.24,
+          "end": 84.8,
+          "text": "difference waveform from the 7 series"
+        },
+        {
+          "start": 82.24,
+          "end": 88.4,
+          "text": "DPO. Shown here is the orange math 1"
+        },
+        {
+          "start": 84.8,
+          "end": 90.72,
+          "text": "waveform in the middle of the display."
+        },
+        {
+          "start": 88.4,
+          "end": 92.88,
+          "text": "It is very easy to see that this results"
+        },
+        {
+          "start": 90.72,
+          "end": 94.96,
+          "text": "in a substantially smaller deviation"
+        },
+        {
+          "start": 92.88,
+          "end": 97.6,
+          "text": "from the ideal waveform compared to the"
+        },
+        {
+          "start": 94.96,
+          "end": 99.44,
+          "text": "8-bit oscilloscope showing the superior"
+        },
+        {
+          "start": 97.6,
+          "end": 101.79,
+          "text": "performance of the new front-end design"
+        },
+        {
+          "start": 99.44,
+          "end": 104.94,
+          "text": "of the 7 series DPO."
+        },
+        {
+          "start": 101.79,
+          "end": 104.94,
+          "text": "[Music]"
+        }
+      ],
+      "transcript_source": "youtube-en-auto",
+      "transcript_lastFetched": "2026-04-19T04:02:36.797Z"
+    },
+    {
+      "id": "tek-yt-rv_lhPwmGpQ",
+      "title": "7 Series DPO - Intuitive User Interface, Award-winning Experience",
+      "url": "https://www.youtube.com/watch?v=rv_lhPwmGpQ",
+      "category": "youtube",
+      "products": [
+        "DPO7000"
+      ],
+      "tags": [],
+      "summary": "This video showcases the 7 Series DPO's built-for-touch user interface, integrating a full HD touchscreen display that enables you to effortlessly build the view you desire.  See how easy...",
+      "duration_ms": 129000,
+      "duration": "2:09",
+      "youtube_id": "rv_lhPwmGpQ",
+      "youtube_title": "7 Series DPO - Intuitive User Interface, Award-winning Experience",
+      "youtube_match_lastTried": "2026-04-19T04:02:31.481Z",
+      "transcript_chunks": [
+        {
+          "start": 2.31,
+          "end": 13.92,
+          "text": "[Music]"
+        },
+        {
+          "start": 10.4,
+          "end": 16.4,
+          "text": "The 15.6 in highdefinition pinch zoom"
+        },
+        {
+          "start": 13.92,
+          "end": 18.88,
+          "text": "swipe touchscreen and the awardwinning"
+        },
+        {
+          "start": 16.4,
+          "end": 22.08,
+          "text": "intuitive user interface makes the 7"
+        },
+        {
+          "start": 18.88,
+          "end": 25.08,
+          "text": "series DPO a joy to use. directly"
+        },
+        {
+          "start": 22.08,
+          "end": 25.08,
+          "text": "position"
+        },
+        {
+          "start": 25.36,
+          "end": 29.8,
+          "text": "and scale waveforms instantly."
+        },
+        {
+          "start": 30,
+          "end": 35.76,
+          "text": "Here we have two waveforms which are a"
+        },
+        {
+          "start": 32.16,
+          "end": 38.32,
+          "text": "differential pair of a 16 Gbit pers"
+        },
+        {
+          "start": 35.76,
+          "end": 40.16,
+          "text": "9 data signal. Notice the large waveform"
+        },
+        {
+          "start": 38.32,
+          "end": 42.88,
+          "text": "view with the ability to stack the"
+        },
+        {
+          "start": 40.16,
+          "end": 44.88,
+          "text": "waveforms in their own slices. The stack"
+        },
+        {
+          "start": 42.88,
+          "end": 46.8,
+          "text": "display mode helps you get the most out"
+        },
+        {
+          "start": 44.88,
+          "end": 48.8,
+          "text": "of the newly developed custom 10-bit"
+        },
+        {
+          "start": 46.8,
+          "end": 50.8,
+          "text": "analog to digital converters by"
+        },
+        {
+          "start": 48.8,
+          "end": 53.44,
+          "text": "allocating separate full resolution"
+        },
+        {
+          "start": 50.8,
+          "end": 55.44,
+          "text": "graticules for each waveform. Each"
+        },
+        {
+          "start": 53.44,
+          "end": 57.6,
+          "text": "graticule represents the full dynamic"
+        },
+        {
+          "start": 55.44,
+          "end": 59.6,
+          "text": "range of the ADC while maintaining the"
+        },
+        {
+          "start": 57.6,
+          "end": 61.76,
+          "text": "often preferred view where the waveforms"
+        },
+        {
+          "start": 59.6,
+          "end": 63.44,
+          "text": "are separated and easily compared. Of"
+        },
+        {
+          "start": 61.76,
+          "end": 65.76,
+          "text": "course, it's very easy to overlay the"
+        },
+        {
+          "start": 63.44,
+          "end": 68.72,
+          "text": "waveforms on screen for comparison if"
+        },
+        {
+          "start": 65.76,
+          "end": 71.04,
+          "text": "desired."
+        },
+        {
+          "start": 68.72,
+          "end": 73.44,
+          "text": "Exploring long acquisitions, millions or"
+        },
+        {
+          "start": 71.04,
+          "end": 75.52,
+          "text": "billions of sample in duration is made"
+        },
+        {
+          "start": 73.44,
+          "end": 77.6,
+          "text": "easy by navigating through your deep"
+        },
+        {
+          "start": 75.52,
+          "end": 80.56,
+          "text": "record to quickly move to areas of"
+        },
+        {
+          "start": 77.6,
+          "end": 82.4,
+          "text": "interest. You can simply zoom in on the"
+        },
+        {
+          "start": 80.56,
+          "end": 84.88,
+          "text": "waveform with the integrated wave"
+        },
+        {
+          "start": 82.4,
+          "end": 86.48,
+          "text": "inspector controls. Then either use the"
+        },
+        {
+          "start": 84.88,
+          "end": 89.2,
+          "text": "spring-loaded panning control of the"
+        },
+        {
+          "start": 86.48,
+          "end": 91.04,
+          "text": "wave inspector or grab the zoom window"
+        },
+        {
+          "start": 89.2,
+          "end": 94.88,
+          "text": "and move it out forward or backward in"
+        },
+        {
+          "start": 91.04,
+          "end": 97.04,
+          "text": "the record quickly and easily."
+        },
+        {
+          "start": 94.88,
+          "end": 99.04,
+          "text": "Another very common use case is creating"
+        },
+        {
+          "start": 97.04,
+          "end": 100.96,
+          "text": "a math waveform from two sides of a"
+        },
+        {
+          "start": 99.04,
+          "end": 103.92,
+          "text": "differential signal when you may not"
+        },
+        {
+          "start": 100.96,
+          "end": 106.08,
+          "text": "have access to a differential probe. To"
+        },
+        {
+          "start": 103.92,
+          "end": 108.4,
+          "text": "do that, I can simply touch the add new"
+        },
+        {
+          "start": 106.08,
+          "end": 110.64,
+          "text": "math button and then at the bottom of"
+        },
+        {
+          "start": 108.4,
+          "end": 113.36,
+          "text": "the configuration menu, I can select"
+        },
+        {
+          "start": 110.64,
+          "end": 115.76,
+          "text": "channel one minus channel 3, resulting"
+        },
+        {
+          "start": 113.36,
+          "end": 117.68,
+          "text": "in a new math 1 waveform that represents"
+        },
+        {
+          "start": 115.76,
+          "end": 120.08,
+          "text": "the differential signal from the two"
+        },
+        {
+          "start": 117.68,
+          "end": 121.76,
+          "text": "sides of the pair. We've even made"
+        },
+        {
+          "start": 120.08,
+          "end": 125.65,
+          "text": "turning channels or measurements off in"
+        },
+        {
+          "start": 121.76,
+          "end": 128.81,
+          "text": "the UI familiar and kind of fun."
+        },
+        {
+          "start": 125.65,
+          "end": 128.81,
+          "text": "[Music]"
+        }
+      ],
+      "transcript_source": "youtube-en-auto",
+      "transcript_lastFetched": "2026-04-19T04:02:33.539Z"
+    },
+    {
+      "id": "tek-yt-Srq5LtOH5UA",
+      "title": "TSP Base Demo",
+      "url": "https://www.youtube.com/watch?v=Srq5LtOH5UA",
+      "category": "youtube",
+      "products": [
+        "general"
+      ],
+      "tags": [
+        "demo"
+      ],
+      "summary": "Visit our website https://www.tek.com/ for all the Tektronix related content and solutions. \n#Tektronix",
+      "duration_ms": 165000,
+      "duration": "2:45",
+      "youtube_id": "Srq5LtOH5UA",
+      "youtube_title": "TSP Base Demo",
+      "youtube_match_lastTried": "2026-04-19T04:02:44.957Z",
+      "transcript_chunks": [
+        {
+          "start": 0.16,
+          "end": 3.76,
+          "text": "Hello, I'm Sydney Tanaya, an application"
+        },
+        {
+          "start": 2.08,
+          "end": 5.84,
+          "text": "engineer at Tektronics. I'm going to"
+        },
+        {
+          "start": 3.76,
+          "end": 7.28,
+          "text": "demonstrate TSP Toolkit terminal,"
+        },
+        {
+          "start": 5.84,
+          "end": 11.12,
+          "text": "connecting to an instrument, sending"
+        },
+        {
+          "start": 7.28,
+          "end": 13.76,
+          "text": "scripts, and TSP language server."
+        },
+        {
+          "start": 11.12,
+          "end": 16.08,
+          "text": "So, to access TSP tool, navigate to the"
+        },
+        {
+          "start": 13.76,
+          "end": 17.6,
+          "text": "TSP toolkit symbol. This will bring up"
+        },
+        {
+          "start": 16.08,
+          "end": 19.52,
+          "text": "your instruments pane, your systems"
+        },
+        {
+          "start": 17.6,
+          "end": 22,
+          "text": "configurations pane, and the new script"
+        },
+        {
+          "start": 19.52,
+          "end": 24.08,
+          "text": "generation pane. Mouse down to the IP"
+        },
+        {
+          "start": 22,
+          "end": 25.76,
+          "text": "address and hit connect. Upon a"
+        },
+        {
+          "start": 24.08,
+          "end": 27.92,
+          "text": "successful connection, a terminal will"
+        },
+        {
+          "start": 25.76,
+          "end": 29.92,
+          "text": "open. Here in the instruments pane, you"
+        },
+        {
+          "start": 27.92,
+          "end": 33.28,
+          "text": "can also upgrade your instruments"
+        },
+        {
+          "start": 29.92,
+          "end": 35.28,
+          "text": "firmware and see information such as the"
+        },
+        {
+          "start": 33.28,
+          "end": 38.76,
+          "text": "model number, serial number, and"
+        },
+        {
+          "start": 35.28,
+          "end": 38.76,
+          "text": "firmware revision."
+        },
+        {
+          "start": 39.04,
+          "end": 42.32,
+          "text": "Now that I successfully connected to my"
+        },
+        {
+          "start": 40.72,
+          "end": 43.76,
+          "text": "instrument and opened the terminal, I'm"
+        },
+        {
+          "start": 42.32,
+          "end": 46.16,
+          "text": "going to mouse over to my system"
+        },
+        {
+          "start": 43.76,
+          "end": 49.04,
+          "text": "configurations pane and click on this"
+        },
+        {
+          "start": 46.16,
+          "end": 51.28,
+          "text": "tree symbol. This is to fetch my"
+        },
+        {
+          "start": 49.04,
+          "end": 53.44,
+          "text": "connected instrument information. Now"
+        },
+        {
+          "start": 51.28,
+          "end": 56.16,
+          "text": "I'm going to name my system"
+        },
+        {
+          "start": 53.44,
+          "end": 58.32,
+          "text": "configuration MP5000 and it"
+        },
+        {
+          "start": 56.16,
+          "end": 59.84,
+          "text": "automatically catches all of the"
+        },
+        {
+          "start": 58.32,
+          "end": 61.68,
+          "text": "information including what"
+        },
+        {
+          "start": 59.84,
+          "end": 64.56,
+          "text": "instrumentation is currently installed"
+        },
+        {
+          "start": 61.68,
+          "end": 67.92,
+          "text": "in each of the MP5000 modular system"
+        },
+        {
+          "start": 64.56,
+          "end": 70.96,
+          "text": "slots. And we do this to enable the"
+        },
+        {
+          "start": 67.92,
+          "end": 73.84,
+          "text": "language server features such as overhel"
+        },
+        {
+          "start": 70.96,
+          "end": 76.96,
+          "text": "which allows me to view all of the"
+        },
+        {
+          "start": 73.84,
+          "end": 79.68,
+          "text": "manual information about any TSP command"
+        },
+        {
+          "start": 76.96,
+          "end": 82.08,
+          "text": "including usage examples. I can even"
+        },
+        {
+          "start": 79.68,
+          "end": 84.48,
+          "text": "expand this into a separate tab which"
+        },
+        {
+          "start": 82.08,
+          "end": 86.72,
+          "text": "shows the entire manual page for that"
+        },
+        {
+          "start": 84.48,
+          "end": 88.88,
+          "text": "corresponding command. This also enables"
+        },
+        {
+          "start": 86.72,
+          "end": 92.8,
+          "text": "command autocomp completion. So as I"
+        },
+        {
+          "start": 88.88,
+          "end": 96.32,
+          "text": "start typing out my commands, you can"
+        },
+        {
+          "start": 92.8,
+          "end": 98.32,
+          "text": "see that I'm given suggestions for"
+        },
+        {
+          "start": 96.32,
+          "end": 101.12,
+          "text": "different autocomp completion options as"
+        },
+        {
+          "start": 98.32,
+          "end": 104.84,
+          "text": "well as information about what those"
+        },
+        {
+          "start": 101.12,
+          "end": 104.84,
+          "text": "options will do."
+        },
+        {
+          "start": 104.96,
+          "end": 109.68,
+          "text": "To run the script, all I need to do is"
+        },
+        {
+          "start": 107.12,
+          "end": 112,
+          "text": "right click in my editor and select send"
+        },
+        {
+          "start": 109.68,
+          "end": 114.8,
+          "text": "script to terminal. My simple current"
+        },
+        {
+          "start": 112,
+          "end": 117.2,
+          "text": "sweep is running on my instrument and as"
+        },
+        {
+          "start": 114.8,
+          "end": 119.44,
+          "text": "it collects data, it is then printing"
+        },
+        {
+          "start": 117.2,
+          "end": 122.44,
+          "text": "those current and voltage values to the"
+        },
+        {
+          "start": 119.44,
+          "end": 122.44,
+          "text": "terminal."
+        },
+        {
+          "start": 122.72,
+          "end": 128.08,
+          "text": "If I navigate to the explorer tab, you"
+        },
+        {
+          "start": 126.4,
+          "end": 130.56,
+          "text": "could treat this as though it were your"
+        },
+        {
+          "start": 128.08,
+          "end": 133.6,
+          "text": "workspace. So, this is where all of my"
+        },
+        {
+          "start": 130.56,
+          "end": 136.64,
+          "text": "different saved TSP scripts are located."
+        },
+        {
+          "start": 133.6,
+          "end": 139.6,
+          "text": "And down here is my script outline. So"
+        },
+        {
+          "start": 136.64,
+          "end": 142.64,
+          "text": "it points out any variables I have, all"
+        },
+        {
+          "start": 139.6,
+          "end": 144.8,
+          "text": "of my TSP commands, and any other"
+        },
+        {
+          "start": 142.64,
+          "end": 146.48,
+          "text": "functions or loop structures. And when"
+        },
+        {
+          "start": 144.8,
+          "end": 149.2,
+          "text": "I'm done with my terminal, all I need to"
+        },
+        {
+          "start": 146.48,
+          "end": 151.04,
+          "text": "do is enterit"
+        },
+        {
+          "start": 149.2,
+          "end": 152.91,
+          "text": "and both the terminal and the instrument"
+        },
+        {
+          "start": 151.04,
+          "end": 156.1,
+          "text": "connection will"
+        },
+        {
+          "start": 152.91,
+          "end": 156.1,
+          "text": "[Applause]"
+        }
+      ],
+      "transcript_source": "youtube-en-auto",
+      "transcript_lastFetched": "2026-04-19T04:02:47.030Z"
+    },
+    {
+      "id": "tek-yt-SwkVYcHJl0I",
+      "title": "7 Series DPO - Jitter Measurements Made Fast and Accurate",
+      "url": "https://www.youtube.com/watch?v=SwkVYcHJl0I",
+      "category": "youtube",
+      "products": [
+        "DPO7000"
+      ],
+      "tags": [
+        "jitter",
+        "measurement"
+      ],
+      "summary": "In this video learn how the 7 Series DPO makes jitter measurements quick and easy. See how fast it is to create a Jitter Summary measurement along with helpful views of the measurements like...",
+      "duration_ms": 141000,
+      "duration": "2:21",
+      "youtube_id": "SwkVYcHJl0I",
+      "youtube_title": "7 Series DPO - Jitter Measurements Made Fast and Accurate",
+      "youtube_match_lastTried": "2026-04-19T04:02:50.154Z",
+      "transcript_chunks": [
+        {
+          "start": 2.31,
+          "end": 12.48,
+          "text": "[Music]"
+        },
+        {
+          "start": 10.56,
+          "end": 14.64,
+          "text": "In high-speed serial standards"
+        },
+        {
+          "start": 12.48,
+          "end": 16.24,
+          "text": "validation, conducting jitter"
+        },
+        {
+          "start": 14.64,
+          "end": 18.64,
+          "text": "measurements to understand potential"
+        },
+        {
+          "start": 16.24,
+          "end": 21.44,
+          "text": "sources of jitter, also called jitter"
+        },
+        {
+          "start": 18.64,
+          "end": 23.04,
+          "text": "decomposition, is essential."
+        },
+        {
+          "start": 21.44,
+          "end": 24.88,
+          "text": "A couple of very common jitter"
+        },
+        {
+          "start": 23.04,
+          "end": 27.36,
+          "text": "measurements are included standard on"
+        },
+        {
+          "start": 24.88,
+          "end": 30.16,
+          "text": "all 7 series DPOS."
+        },
+        {
+          "start": 27.36,
+          "end": 32.56,
+          "text": "tie or time interval error which is also"
+        },
+        {
+          "start": 30.16,
+          "end": 35.92,
+          "text": "used as a basis for drawing eye diagrams"
+        },
+        {
+          "start": 32.56,
+          "end": 38,
+          "text": "and phase noise measurements."
+        },
+        {
+          "start": 35.92,
+          "end": 40.08,
+          "text": "Many more jitter specific measurements"
+        },
+        {
+          "start": 38,
+          "end": 42.8,
+          "text": "can be enabled with optional advanced"
+        },
+        {
+          "start": 40.08,
+          "end": 44.32,
+          "text": "jitter analysis option DJA for"
+        },
+        {
+          "start": 42.8,
+          "end": 47.76,
+          "text": "conducting more advanced jitter"
+        },
+        {
+          "start": 44.32,
+          "end": 51.28,
+          "text": "decomposition measurements and plots."
+        },
+        {
+          "start": 47.76,
+          "end": 54.08,
+          "text": "Here we have a 16 Gbits per second PRBS9"
+        },
+        {
+          "start": 51.28,
+          "end": 56.48,
+          "text": "going through a 5-in PCB trace and into"
+        },
+        {
+          "start": 54.08,
+          "end": 58.32,
+          "text": "channel one of the oscilloscope."
+        },
+        {
+          "start": 56.48,
+          "end": 61.96,
+          "text": "We can add a jitter summary measurement"
+        },
+        {
+          "start": 58.32,
+          "end": 61.96,
+          "text": "on channel one."
+        },
+        {
+          "start": 63.44,
+          "end": 66.96,
+          "text": "The jitter summary measurement is a"
+        },
+        {
+          "start": 65.28,
+          "end": 70.16,
+          "text": "collection of common jitter measurement"
+        },
+        {
+          "start": 66.96,
+          "end": 74.16,
+          "text": "values as well as an eye diagram,"
+        },
+        {
+          "start": 70.16,
+          "end": 77.04,
+          "text": "a bathtub curve, and a tie histogram and"
+        },
+        {
+          "start": 74.16,
+          "end": 78.88,
+          "text": "spectrum."
+        },
+        {
+          "start": 77.04,
+          "end": 80.4,
+          "text": "Because you may want to compare jitter"
+        },
+        {
+          "start": 78.88,
+          "end": 82.8,
+          "text": "measurement values on two different"
+        },
+        {
+          "start": 80.4,
+          "end": 84.88,
+          "text": "signals from your system, you can easily"
+        },
+        {
+          "start": 82.8,
+          "end": 86.48,
+          "text": "add another jitter summary measurement"
+        },
+        {
+          "start": 84.88,
+          "end": 89.2,
+          "text": "by going through the same simple"
+        },
+        {
+          "start": 86.48,
+          "end": 93.16,
+          "text": "process. Only this time, we'll enable a"
+        },
+        {
+          "start": 89.2,
+          "end": 93.16,
+          "text": "measurement on channel 3."
+        },
+        {
+          "start": 94.32,
+          "end": 98.32,
+          "text": "You can now see we've got full jitter"
+        },
+        {
+          "start": 96.16,
+          "end": 100.32,
+          "text": "summary measurements and plots on two"
+        },
+        {
+          "start": 98.32,
+          "end": 102,
+          "text": "separate signals in the display,"
+        },
+        {
+          "start": 100.32,
+          "end": 104.8,
+          "text": "allowing you to compare the results"
+        },
+        {
+          "start": 102,
+          "end": 106.64,
+          "text": "directly. You can easily rearrange the"
+        },
+        {
+          "start": 104.8,
+          "end": 109.12,
+          "text": "windows to your liking by dragging the"
+        },
+        {
+          "start": 106.64,
+          "end": 112.72,
+          "text": "header of a window to a new location and"
+        },
+        {
+          "start": 109.12,
+          "end": 114.96,
+          "text": "dropping it where you desire."
+        },
+        {
+          "start": 112.72,
+          "end": 118.44,
+          "text": "Another way to analyze this data is in a"
+        },
+        {
+          "start": 114.96,
+          "end": 118.44,
+          "text": "tabular view."
+        },
+        {
+          "start": 121.04,
+          "end": 124.56,
+          "text": "Here you can see measurement results"
+        },
+        {
+          "start": 122.64,
+          "end": 126.88,
+          "text": "from the current acquisition on the left"
+        },
+        {
+          "start": 124.56,
+          "end": 128.96,
+          "text": "side of the table as well as statistical"
+        },
+        {
+          "start": 126.88,
+          "end": 133.04,
+          "text": "information from multiple acquisitions"
+        },
+        {
+          "start": 128.96,
+          "end": 134.8,
+          "text": "across a large population on the right."
+        },
+        {
+          "start": 133.04,
+          "end": 137.87,
+          "text": "This view of measurement data makes"
+        },
+        {
+          "start": 134.8,
+          "end": 141.04,
+          "text": "comparing and documenting values easy."
+        },
+        {
+          "start": 137.87,
+          "end": 141.04,
+          "text": "[Music]"
+        }
+      ],
+      "transcript_source": "youtube-en-auto",
+      "transcript_lastFetched": "2026-04-19T04:02:52.198Z"
+    },
+    {
+      "id": "tek-yt-tpX_-SRiLE4",
+      "title": "Chapter 3: MP5000 Series Maximize Automation Control",
+      "url": "https://www.youtube.com/watch?v=tpX_-SRiLE4",
+      "category": "youtube",
+      "products": [
+        "general"
+      ],
+      "tags": [
+        "chapter-series"
+      ],
+      "summary": "Integrate the MP5000 seamlessly into your existing automation environment with software frameworks like Python, C# and Labview or with compatible instrument drivers.  Or go farther and enable...",
+      "duration_ms": 84000,
+      "duration": "1:24",
+      "youtube_id": "tpX_-SRiLE4",
+      "youtube_title": "Chapter 3: MP5000 Series Maximize Automation Control",
+      "youtube_match_lastTried": "2026-04-19T04:02:37.308Z",
+      "transcript_chunks": [
+        {
+          "start": 0.56,
+          "end": 6.64,
+          "text": "Integrate the MP5000 seamlessly into"
+        },
+        {
+          "start": 4.08,
+          "end": 10.32,
+          "text": "your existing automation environment"
+        },
+        {
+          "start": 6.64,
+          "end": 13.12,
+          "text": "with software frameworks like Python, C,"
+        },
+        {
+          "start": 10.32,
+          "end": 16.56,
+          "text": "and Lab View, or with compatible"
+        },
+        {
+          "start": 13.12,
+          "end": 19.2,
+          "text": "instrument drivers. Go farther and"
+        },
+        {
+          "start": 16.56,
+          "end": 23.04,
+          "text": "enable faster test speeds with native"
+        },
+        {
+          "start": 19.2,
+          "end": 25.92,
+          "text": "TSP scripting built with TSP toolkit, a"
+        },
+        {
+          "start": 23.04,
+          "end": 28.4,
+          "text": "Visual Studio Code extension."
+        },
+        {
+          "start": 25.92,
+          "end": 31.68,
+          "text": "Purpose-built debugging and script"
+        },
+        {
+          "start": 28.4,
+          "end": 35.52,
+          "text": "generation tools in TSP toolkit ease the"
+        },
+        {
+          "start": 31.68,
+          "end": 38.64,
+          "text": "lift to create your custom test. Export"
+        },
+        {
+          "start": 35.52,
+          "end": 41.12,
+          "text": "these test as scripts to combine with"
+        },
+        {
+          "start": 38.64,
+          "end": 45.12,
+          "text": "data analysis tools and additional"
+        },
+        {
+          "start": 41.12,
+          "end": 48.64,
+          "text": "control code. Need to scale? TSP link"
+        },
+        {
+          "start": 45.12,
+          "end": 51.52,
+          "text": "lets you connect up to 32 mainframes and"
+        },
+        {
+          "start": 48.64,
+          "end": 54.08,
+          "text": "other TSP enabled instruments into a"
+        },
+        {
+          "start": 51.52,
+          "end": 56.72,
+          "text": "unified system with precision"
+        },
+        {
+          "start": 54.08,
+          "end": 59.68,
+          "text": "synchronization. Perfect for high"
+        },
+        {
+          "start": 56.72,
+          "end": 63.28,
+          "text": "channel count applications."
+        },
+        {
+          "start": 59.68,
+          "end": 66.96,
+          "text": "From faster test execution to reduced"
+        },
+        {
+          "start": 63.28,
+          "end": 70,
+          "text": "setup time, the MP5000 is built to help"
+        },
+        {
+          "start": 66.96,
+          "end": 71.76,
+          "text": "you test more efficiently."
+        },
+        {
+          "start": 70,
+          "end": 74.16,
+          "text": "Thanks for watching. And for more"
+        },
+        {
+          "start": 71.76,
+          "end": 77.64,
+          "text": "information on the MP5000,"
+        },
+        {
+          "start": 74.16,
+          "end": 77.64,
+          "text": "visit tech.com."
+        }
+      ],
+      "transcript_source": "youtube-en-auto",
+      "transcript_lastFetched": "2026-04-19T04:02:39.547Z"
+    },
+    {
+      "id": "tek-yt-wfN9hie6FrE",
+      "title": "7 Series DPO - Full Product Overview",
+      "url": "https://www.youtube.com/watch?v=wfN9hie6FrE",
+      "category": "youtube",
+      "products": [
+        "DPO7000"
+      ],
+      "tags": [
+        "overview"
+      ],
+      "summary": "This video explores some of the most impactful features and capabilities of the 7 Series DPO. \n\n• Learn about the award-winning user interface and just how easy it is to configure and use....",
+      "duration_ms": 1056000,
+      "duration": "17:36",
+      "youtube_id": "wfN9hie6FrE",
+      "youtube_title": "7 Series DPO - Full Product Overview",
+      "youtube_match_lastTried": "2026-04-19T04:02:40.057Z",
+      "transcript_chunks": [
+        {
+          "start": 2.31,
+          "end": 11.89,
+          "text": "[Music]"
+        },
+        {
+          "start": 16.08,
+          "end": 20.72,
+          "text": "The 7 series DPO is a performance"
+        },
+        {
+          "start": 18.24,
+          "end": 23.04,
+          "text": "oscilloscope perfect for high energy"
+        },
+        {
+          "start": 20.72,
+          "end": 25.68,
+          "text": "physics singleshot applications,"
+        },
+        {
+          "start": 23.04,
+          "end": 27.76,
+          "text": "capturing wideband RF signals, or"
+        },
+        {
+          "start": 25.68,
+          "end": 30.88,
+          "text": "validating and debugging designs with"
+        },
+        {
+          "start": 27.76,
+          "end": 32.64,
+          "text": "multi- gigahertz clocks and data rates."
+        },
+        {
+          "start": 30.88,
+          "end": 36.96,
+          "text": "It's ideal for looking at signals like"
+        },
+        {
+          "start": 32.64,
+          "end": 40.88,
+          "text": "DDR4 and 5, USB 4 version 1 and version"
+        },
+        {
+          "start": 36.96,
+          "end": 43.2,
+          "text": "2, and PCI Express Gen 1 through Gen 4."
+        },
+        {
+          "start": 40.88,
+          "end": 45.2,
+          "text": "The 7 series offers exceptional features"
+        },
+        {
+          "start": 43.2,
+          "end": 47.36,
+          "text": "that will accelerate your development by"
+        },
+        {
+          "start": 45.2,
+          "end": 49.12,
+          "text": "delivering impactful performance and"
+        },
+        {
+          "start": 47.36,
+          "end": 51.2,
+          "text": "extending the margins to test your"
+        },
+        {
+          "start": 49.12,
+          "end": 53.44,
+          "text": "products."
+        },
+        {
+          "start": 51.2,
+          "end": 55.84,
+          "text": "Gain insights faster with the 7 series"
+        },
+        {
+          "start": 53.44,
+          "end": 58,
+          "text": "DPO's advanced architecture that moves"
+        },
+        {
+          "start": 55.84,
+          "end": 59.68,
+          "text": "data within and off the platform faster"
+        },
+        {
+          "start": 58,
+          "end": 61.76,
+          "text": "than ever before."
+        },
+        {
+          "start": 59.68,
+          "end": 63.76,
+          "text": "And the award-winning user interface"
+        },
+        {
+          "start": 61.76,
+          "end": 66.8,
+          "text": "enables efficient analysis with a"
+        },
+        {
+          "start": 63.76,
+          "end": 68.96,
+          "text": "minimal learning curve."
+        },
+        {
+          "start": 66.8,
+          "end": 72.24,
+          "text": "Available in six bandwidth options"
+        },
+        {
+          "start": 68.96,
+          "end": 75.04,
+          "text": "ranging from 8 GHz to 25 GHz with a"
+        },
+        {
+          "start": 72.24,
+          "end": 77.2,
+          "text": "maximum sample rate of 125 gig samples"
+        },
+        {
+          "start": 75.04,
+          "end": 80.16,
+          "text": "per second and a standard record length"
+        },
+        {
+          "start": 77.2,
+          "end": 83.04,
+          "text": "of 500 megaamples with options for 1 and"
+        },
+        {
+          "start": 80.16,
+          "end": 84.96,
+          "text": "2 giga samples per channel."
+        },
+        {
+          "start": 83.04,
+          "end": 87.36,
+          "text": "Both bandwidth and record length can be"
+        },
+        {
+          "start": 84.96,
+          "end": 89.04,
+          "text": "upgraded remotely in your lab, saving"
+        },
+        {
+          "start": 87.36,
+          "end": 92.59,
+          "text": "time and eliminating the hassle of"
+        },
+        {
+          "start": 89.04,
+          "end": 99.28,
+          "text": "sending the scope in."
+        },
+        {
+          "start": 92.59,
+          "end": 102.88,
+          "text": "[Music]"
+        },
+        {
+          "start": 99.28,
+          "end": 105.36,
+          "text": "The 15.6 in highdefinition pinch zoom"
+        },
+        {
+          "start": 102.88,
+          "end": 107.84,
+          "text": "swipe touchscreen and the award-winning"
+        },
+        {
+          "start": 105.36,
+          "end": 111.04,
+          "text": "intuitive user interface makes the 7"
+        },
+        {
+          "start": 107.84,
+          "end": 113.76,
+          "text": "series DPO a joy to use. Directly"
+        },
+        {
+          "start": 111.04,
+          "end": 113.76,
+          "text": "position"
+        },
+        {
+          "start": 114.24,
+          "end": 118.68,
+          "text": "and scale waveforms instantly."
+        },
+        {
+          "start": 118.88,
+          "end": 124.64,
+          "text": "Here we have two waveforms which are a"
+        },
+        {
+          "start": 121.12,
+          "end": 127.28,
+          "text": "differential pair of a 16 Gbit pers"
+        },
+        {
+          "start": 124.64,
+          "end": 129.04,
+          "text": "9 data signal. Notice the large waveform"
+        },
+        {
+          "start": 127.28,
+          "end": 131.84,
+          "text": "view with the ability to stack the"
+        },
+        {
+          "start": 129.04,
+          "end": 133.76,
+          "text": "waveforms in their own slices. The stack"
+        },
+        {
+          "start": 131.84,
+          "end": 135.68,
+          "text": "display mode helps you get the most out"
+        },
+        {
+          "start": 133.76,
+          "end": 137.68,
+          "text": "of the newly developed custom 10-bit"
+        },
+        {
+          "start": 135.68,
+          "end": 139.68,
+          "text": "analog to digital converters by"
+        },
+        {
+          "start": 137.68,
+          "end": 142.32,
+          "text": "allocating separate full resolution"
+        },
+        {
+          "start": 139.68,
+          "end": 144.4,
+          "text": "graticules for each waveform. Each"
+        },
+        {
+          "start": 142.32,
+          "end": 146.56,
+          "text": "graticule represents the full dynamic"
+        },
+        {
+          "start": 144.4,
+          "end": 148.56,
+          "text": "range of the ADC while maintaining the"
+        },
+        {
+          "start": 146.56,
+          "end": 150.72,
+          "text": "often preferred view where the waveforms"
+        },
+        {
+          "start": 148.56,
+          "end": 152.4,
+          "text": "are separated and easily compared. Of"
+        },
+        {
+          "start": 150.72,
+          "end": 154.64,
+          "text": "course, it's very easy to overlay the"
+        },
+        {
+          "start": 152.4,
+          "end": 157.64,
+          "text": "waveforms on screen for comparison if"
+        },
+        {
+          "start": 154.64,
+          "end": 157.64,
+          "text": "desired."
+        },
+        {
+          "start": 157.68,
+          "end": 162.4,
+          "text": "Exploring long acquisitions, millions or"
+        },
+        {
+          "start": 160,
+          "end": 164.4,
+          "text": "billions of sample in duration is made"
+        },
+        {
+          "start": 162.4,
+          "end": 166.56,
+          "text": "easy by navigating through your deep"
+        },
+        {
+          "start": 164.4,
+          "end": 169.44,
+          "text": "record to quickly move to areas of"
+        },
+        {
+          "start": 166.56,
+          "end": 171.36,
+          "text": "interest. You can simply zoom in on the"
+        },
+        {
+          "start": 169.44,
+          "end": 173.84,
+          "text": "waveform with the integrated wave"
+        },
+        {
+          "start": 171.36,
+          "end": 175.44,
+          "text": "inspector controls. Then either use the"
+        },
+        {
+          "start": 173.84,
+          "end": 178.08,
+          "text": "spring-loaded panning control of the"
+        },
+        {
+          "start": 175.44,
+          "end": 179.92,
+          "text": "wave inspector or grab the zoom window"
+        },
+        {
+          "start": 178.08,
+          "end": 183.76,
+          "text": "and move it out forward or backward in"
+        },
+        {
+          "start": 179.92,
+          "end": 185.92,
+          "text": "the record quickly and easily."
+        },
+        {
+          "start": 183.76,
+          "end": 188,
+          "text": "Another very common use case is creating"
+        },
+        {
+          "start": 185.92,
+          "end": 189.84,
+          "text": "a math waveform from two sides of a"
+        },
+        {
+          "start": 188,
+          "end": 192.8,
+          "text": "differential signal when you may not"
+        },
+        {
+          "start": 189.84,
+          "end": 195.04,
+          "text": "have access to a differential probe. To"
+        },
+        {
+          "start": 192.8,
+          "end": 197.36,
+          "text": "do that, I can simply touch the add new"
+        },
+        {
+          "start": 195.04,
+          "end": 199.52,
+          "text": "math button and then at the bottom of"
+        },
+        {
+          "start": 197.36,
+          "end": 202.24,
+          "text": "the configuration menu, I can select"
+        },
+        {
+          "start": 199.52,
+          "end": 204.72,
+          "text": "channel one minus channel 3, resulting"
+        },
+        {
+          "start": 202.24,
+          "end": 206.64,
+          "text": "in a new math 1 waveform that represents"
+        },
+        {
+          "start": 204.72,
+          "end": 208.96,
+          "text": "the differential signal from the two"
+        },
+        {
+          "start": 206.64,
+          "end": 210.72,
+          "text": "sides of the pair. We've even made"
+        },
+        {
+          "start": 208.96,
+          "end": 213.84,
+          "text": "turning channels or measurements off in"
+        },
+        {
+          "start": 210.72,
+          "end": 221.2,
+          "text": "the UI familiar and kind of fun."
+        },
+        {
+          "start": 213.84,
+          "end": 222.88,
+          "text": "[Music]"
+        },
+        {
+          "start": 221.2,
+          "end": 225.52,
+          "text": "A practical way to demonstrate the"
+        },
+        {
+          "start": 222.88,
+          "end": 227.12,
+          "text": "innovation of the 7 series DPO,"
+        },
+        {
+          "start": 225.52,
+          "end": 229.28,
+          "text": "especially in our effective number of"
+        },
+        {
+          "start": 227.12,
+          "end": 231.52,
+          "text": "bits and the resulting signal to noise"
+        },
+        {
+          "start": 229.28,
+          "end": 234.64,
+          "text": "ratio, is to visually show the"
+        },
+        {
+          "start": 231.52,
+          "end": 237.04,
+          "text": "performance of the new signal path."
+        },
+        {
+          "start": 234.64,
+          "end": 239.6,
+          "text": "To do this, I will use a sine wave that"
+        },
+        {
+          "start": 237.04,
+          "end": 242.24,
+          "text": "has been averaged 10,000 times to remove"
+        },
+        {
+          "start": 239.6,
+          "end": 245.36,
+          "text": "most of the random noise. We will call"
+        },
+        {
+          "start": 242.24,
+          "end": 247.28,
+          "text": "this an ideal signal. This is the gray"
+        },
+        {
+          "start": 245.36,
+          "end": 249.84,
+          "text": "ref one waveform at the top of the"
+        },
+        {
+          "start": 247.28,
+          "end": 251.84,
+          "text": "display. I'll use this nearly noiseless"
+        },
+        {
+          "start": 249.84,
+          "end": 254.08,
+          "text": "signal to compare the performance of two"
+        },
+        {
+          "start": 251.84,
+          "end": 256.4,
+          "text": "different oscilloscopes."
+        },
+        {
+          "start": 254.08,
+          "end": 258.32,
+          "text": "I have previously captured the blue ref"
+        },
+        {
+          "start": 256.4,
+          "end": 260.96,
+          "text": "sine wave shown on the bottom of the"
+        },
+        {
+          "start": 258.32,
+          "end": 264.8,
+          "text": "display as the singleshot acquisition"
+        },
+        {
+          "start": 260.96,
+          "end": 267.28,
+          "text": "using a 25 GHz 8bit oscilloscope."
+        },
+        {
+          "start": 264.8,
+          "end": 270.16,
+          "text": "I have previously defined math 2 to be"
+        },
+        {
+          "start": 267.28,
+          "end": 272.32,
+          "text": "the ideal minus ref 2 resulting in a"
+        },
+        {
+          "start": 270.16,
+          "end": 275.2,
+          "text": "residual or difference waveform from the"
+        },
+        {
+          "start": 272.32,
+          "end": 277.6,
+          "text": "8-bit scope indicated by the green math"
+        },
+        {
+          "start": 275.2,
+          "end": 279.76,
+          "text": "2 waveform on the bottom of the display."
+        },
+        {
+          "start": 277.6,
+          "end": 282.24,
+          "text": "In a perfectly noiseless system, this"
+        },
+        {
+          "start": 279.76,
+          "end": 284.4,
+          "text": "would be a flat line. Now let's acquire"
+        },
+        {
+          "start": 282.24,
+          "end": 286.72,
+          "text": "a single shot on channel one of the 7"
+        },
+        {
+          "start": 284.4,
+          "end": 288.4,
+          "text": "series DPO."
+        },
+        {
+          "start": 286.72,
+          "end": 290.4,
+          "text": "Performing the same calculation as"
+        },
+        {
+          "start": 288.4,
+          "end": 292.4,
+          "text": "before results in a residual or"
+        },
+        {
+          "start": 290.4,
+          "end": 294.96,
+          "text": "difference waveform from the 7 series"
+        },
+        {
+          "start": 292.4,
+          "end": 298.64,
+          "text": "DPO. Shown here is the orange math 1"
+        },
+        {
+          "start": 294.96,
+          "end": 300.88,
+          "text": "waveform in the middle of the display."
+        },
+        {
+          "start": 298.64,
+          "end": 303.04,
+          "text": "It is very easy to see that this results"
+        },
+        {
+          "start": 300.88,
+          "end": 305.12,
+          "text": "in a substantially smaller deviation"
+        },
+        {
+          "start": 303.04,
+          "end": 307.76,
+          "text": "from the ideal waveform compared to the"
+        },
+        {
+          "start": 305.12,
+          "end": 309.6,
+          "text": "8-bit oscilloscope showing the superior"
+        },
+        {
+          "start": 307.76,
+          "end": 313.56,
+          "text": "performance of the new front-end design"
+        },
+        {
+          "start": 309.6,
+          "end": 313.56,
+          "text": "of the 7 series DPO."
+        },
+        {
+          "start": 316.29,
+          "end": 321.52,
+          "text": "[Music]"
+        },
+        {
+          "start": 319.28,
+          "end": 323.76,
+          "text": "Easily add measurements by selecting"
+        },
+        {
+          "start": 321.52,
+          "end": 327.6,
+          "text": "from a comprehensive list in familiar"
+        },
+        {
+          "start": 323.76,
+          "end": 331.96,
+          "text": "categories like amplitude, time, jitter,"
+        },
+        {
+          "start": 327.6,
+          "end": 331.96,
+          "text": "or technology standard specific."
+        },
+        {
+          "start": 334.32,
+          "end": 337.52,
+          "text": "You can see that the new measurements"
+        },
+        {
+          "start": 335.76,
+          "end": 340.56,
+          "text": "have been added to the results bar to"
+        },
+        {
+          "start": 337.52,
+          "end": 342.64,
+          "text": "the right of the waveform view."
+        },
+        {
+          "start": 340.56,
+          "end": 344.96,
+          "text": "Just like with most readouts in the user"
+        },
+        {
+          "start": 342.64,
+          "end": 346.48,
+          "text": "interface, when you double tap, you open"
+        },
+        {
+          "start": 344.96,
+          "end": 348.64,
+          "text": "a configuration menu for the"
+        },
+        {
+          "start": 346.48,
+          "end": 351.44,
+          "text": "measurement. Here you can do things like"
+        },
+        {
+          "start": 348.64,
+          "end": 353.76,
+          "text": "turn on statistics for measurements,"
+        },
+        {
+          "start": 351.44,
+          "end": 355.68,
+          "text": "enable different plots of the data set,"
+        },
+        {
+          "start": 353.76,
+          "end": 357.76,
+          "text": "and configure items like gating, which"
+        },
+        {
+          "start": 355.68,
+          "end": 360.76,
+          "text": "can be global or local to a specific"
+        },
+        {
+          "start": 357.76,
+          "end": 360.76,
+          "text": "measurement."
+        },
+        {
+          "start": 362.48,
+          "end": 366.72,
+          "text": "If you'd rather see the measurement"
+        },
+        {
+          "start": 363.84,
+          "end": 368.72,
+          "text": "results in a tabular view, you can"
+        },
+        {
+          "start": 366.72,
+          "end": 372.24,
+          "text": "simply add a measurement results table"
+        },
+        {
+          "start": 368.72,
+          "end": 374.24,
+          "text": "here in the add new section. Engineers"
+        },
+        {
+          "start": 372.24,
+          "end": 377.68,
+          "text": "really appreciate this detailed view of"
+        },
+        {
+          "start": 374.24,
+          "end": 380,
+          "text": "measurement results."
+        },
+        {
+          "start": 377.68,
+          "end": 381.92,
+          "text": "The flexible windows in the UI allow you"
+        },
+        {
+          "start": 380,
+          "end": 384.16,
+          "text": "to configure the display in virtually"
+        },
+        {
+          "start": 381.92,
+          "end": 386.08,
+          "text": "any way you desire. Simply grab the top"
+        },
+        {
+          "start": 384.16,
+          "end": 388.4,
+          "text": "of the view window and move it to a new"
+        },
+        {
+          "start": 386.08,
+          "end": 391.04,
+          "text": "location using the blue shadowing as a"
+        },
+        {
+          "start": 388.4,
+          "end": 393.28,
+          "text": "guide."
+        },
+        {
+          "start": 391.04,
+          "end": 394.56,
+          "text": "Notice in the results table on the left"
+        },
+        {
+          "start": 393.28,
+          "end": 396.64,
+          "text": "there are results from the current"
+        },
+        {
+          "start": 394.56,
+          "end": 398.64,
+          "text": "acquisition. And on the right are"
+        },
+        {
+          "start": 396.64,
+          "end": 402.08,
+          "text": "results from the total population since"
+        },
+        {
+          "start": 398.64,
+          "end": 404.24,
+          "text": "the last clearing of results."
+        },
+        {
+          "start": 402.08,
+          "end": 406.32,
+          "text": "Let's now quickly navigate to areas of"
+        },
+        {
+          "start": 404.24,
+          "end": 409.2,
+          "text": "interest by using the search navigation"
+        },
+        {
+          "start": 406.32,
+          "end": 410.64,
+          "text": "buttons in any measurement badge. I'll"
+        },
+        {
+          "start": 409.2,
+          "end": 415.08,
+          "text": "start by removing the measurement"
+        },
+        {
+          "start": 410.64,
+          "end": 415.08,
+          "text": "results table and zoom in."
+        },
+        {
+          "start": 417.28,
+          "end": 421.12,
+          "text": "Next, I will single tap a measurement"
+        },
+        {
+          "start": 419.04,
+          "end": 423.44,
+          "text": "badge."
+        },
+        {
+          "start": 421.12,
+          "end": 425.44,
+          "text": "Now, select left or right arrow buttons"
+        },
+        {
+          "start": 423.44,
+          "end": 428,
+          "text": "to navigate to the previous or next"
+        },
+        {
+          "start": 425.44,
+          "end": 429.6,
+          "text": "measurement in the acquisition. Do the"
+        },
+        {
+          "start": 428,
+          "end": 431.52,
+          "text": "same for quickly moving to the minimum"
+        },
+        {
+          "start": 429.6,
+          "end": 433.12,
+          "text": "and maximum values in the record,"
+        },
+        {
+          "start": 431.52,
+          "end": 434.48,
+          "text": "allowing the scope to do the hard work"
+        },
+        {
+          "start": 433.12,
+          "end": 436.8,
+          "text": "of searching through the measurement"
+        },
+        {
+          "start": 434.48,
+          "end": 438.88,
+          "text": "data for you."
+        },
+        {
+          "start": 436.8,
+          "end": 440.16,
+          "text": "Once you find the maximum value, you"
+        },
+        {
+          "start": 438.88,
+          "end": 442.72,
+          "text": "might want to add a label for"
+        },
+        {
+          "start": 440.16,
+          "end": 444.72,
+          "text": "documentation purposes. I'll add a call"
+        },
+        {
+          "start": 442.72,
+          "end": 447.72,
+          "text": "out and label this as the maximum pulse"
+        },
+        {
+          "start": 444.72,
+          "end": 447.72,
+          "text": "width."
+        },
+        {
+          "start": 455.6,
+          "end": 460.92,
+          "text": "I can even change the color to match the"
+        },
+        {
+          "start": 457.6,
+          "end": 460.92,
+          "text": "channel color."
+        },
+        {
+          "start": 463.28,
+          "end": 466.64,
+          "text": "Another common use case is needing to"
+        },
+        {
+          "start": 465.12,
+          "end": 468.16,
+          "text": "gate a specific measurement"
+        },
+        {
+          "start": 466.64,
+          "end": 469.84,
+          "text": "independently from all other"
+        },
+        {
+          "start": 468.16,
+          "end": 471.84,
+          "text": "measurements."
+        },
+        {
+          "start": 469.84,
+          "end": 474.4,
+          "text": "You can do this easily on the 7 series"
+        },
+        {
+          "start": 471.84,
+          "end": 476.32,
+          "text": "DPO by doubletapping a measurement badge"
+        },
+        {
+          "start": 474.4,
+          "end": 479.12,
+          "text": "and opening the gating panel in the"
+        },
+        {
+          "start": 476.32,
+          "end": 480.88,
+          "text": "configuration menu. Here you can dictate"
+        },
+        {
+          "start": 479.12,
+          "end": 484.24,
+          "text": "whether you want this measurement to use"
+        },
+        {
+          "start": 480.88,
+          "end": 486.24,
+          "text": "global or local gating."
+        },
+        {
+          "start": 484.24,
+          "end": 488.8,
+          "text": "If we change this to local, we can use"
+        },
+        {
+          "start": 486.24,
+          "end": 491.2,
+          "text": "one of the numerous methods of gating."
+        },
+        {
+          "start": 488.8,
+          "end": 492.88,
+          "text": "I'll select time and set my cursors on"
+        },
+        {
+          "start": 491.2,
+          "end": 495.88,
+          "text": "either side of the pulse I'd like to"
+        },
+        {
+          "start": 492.88,
+          "end": 495.88,
+          "text": "measure."
+        },
+        {
+          "start": 498.08,
+          "end": 503.56,
+          "text": "Now, this specific measurement will be"
+        },
+        {
+          "start": 499.84,
+          "end": 503.56,
+          "text": "gated by these cursors."
+        },
+        {
+          "start": 504.4,
+          "end": 508.16,
+          "text": "Now let's say I want to find all of the"
+        },
+        {
+          "start": 506.16,
+          "end": 511.84,
+          "text": "positive pulse widths that are greater"
+        },
+        {
+          "start": 508.16,
+          "end": 514.4,
+          "text": "than 480 picos seconds in duration. I"
+        },
+        {
+          "start": 511.84,
+          "end": 516.4,
+          "text": "can simply select add new search and"
+        },
+        {
+          "start": 514.4,
+          "end": 518.8,
+          "text": "define the positive pulse width search"
+        },
+        {
+          "start": 516.4,
+          "end": 522.52,
+          "text": "type and set the value to greater than"
+        },
+        {
+          "start": 518.8,
+          "end": 522.52,
+          "text": "480 picosconds."
+        },
+        {
+          "start": 527.28,
+          "end": 531.92,
+          "text": "You can now see a pink triangular marker"
+        },
+        {
+          "start": 529.36,
+          "end": 534.56,
+          "text": "in the waveform view indicating where in"
+        },
+        {
+          "start": 531.92,
+          "end": 536.8,
+          "text": "the record the search results are. I can"
+        },
+        {
+          "start": 534.56,
+          "end": 538.8,
+          "text": "now single tap the positive pulse width"
+        },
+        {
+          "start": 536.8,
+          "end": 542.24,
+          "text": "search badge and navigate to the"
+        },
+        {
+          "start": 538.8,
+          "end": 545.77,
+          "text": "previous, next, or minimum and maximum"
+        },
+        {
+          "start": 542.24,
+          "end": 552.64,
+          "text": "values in the record."
+        },
+        {
+          "start": 545.77,
+          "end": 554.56,
+          "text": "[Music]"
+        },
+        {
+          "start": 552.64,
+          "end": 556.72,
+          "text": "In high-speed serial standards"
+        },
+        {
+          "start": 554.56,
+          "end": 558.32,
+          "text": "validation, conducting jitter"
+        },
+        {
+          "start": 556.72,
+          "end": 560.72,
+          "text": "measurements to understand potential"
+        },
+        {
+          "start": 558.32,
+          "end": 563.52,
+          "text": "sources of jitter, also called jitter"
+        },
+        {
+          "start": 560.72,
+          "end": 565.12,
+          "text": "decomposition, is essential."
+        },
+        {
+          "start": 563.52,
+          "end": 566.96,
+          "text": "A couple of very common jitter"
+        },
+        {
+          "start": 565.12,
+          "end": 569.44,
+          "text": "measurements are included standard on"
+        },
+        {
+          "start": 566.96,
+          "end": 572,
+          "text": "all 7 series DPOS."
+        },
+        {
+          "start": 569.44,
+          "end": 574,
+          "text": "TIE or time interval error, which is"
+        },
+        {
+          "start": 572,
+          "end": 578,
+          "text": "also used as a basis for drawing eye"
+        },
+        {
+          "start": 574,
+          "end": 580.08,
+          "text": "diagrams and phase noise measurements."
+        },
+        {
+          "start": 578,
+          "end": 582.16,
+          "text": "Many more jitterspecific measurements"
+        },
+        {
+          "start": 580.08,
+          "end": 584.96,
+          "text": "can be enabled with optional advanced"
+        },
+        {
+          "start": 582.16,
+          "end": 586.4,
+          "text": "jitter analysis option DJA for"
+        },
+        {
+          "start": 584.96,
+          "end": 589.84,
+          "text": "conducting more advanced jitter"
+        },
+        {
+          "start": 586.4,
+          "end": 593.44,
+          "text": "decomposition measurements and plots."
+        },
+        {
+          "start": 589.84,
+          "end": 596.24,
+          "text": "Here we have a 16 Gbits persp"
+        },
+        {
+          "start": 593.44,
+          "end": 598.56,
+          "text": "going through a 5-in PCB trace and into"
+        },
+        {
+          "start": 596.24,
+          "end": 600.4,
+          "text": "channel one of the oscilloscope."
+        },
+        {
+          "start": 598.56,
+          "end": 604.04,
+          "text": "We can add a jitter summary measurement"
+        },
+        {
+          "start": 600.4,
+          "end": 604.04,
+          "text": "on channel one."
+        },
+        {
+          "start": 605.44,
+          "end": 609.12,
+          "text": "The jitter summary measurement is a"
+        },
+        {
+          "start": 607.36,
+          "end": 612.24,
+          "text": "collection of common jitter measurement"
+        },
+        {
+          "start": 609.12,
+          "end": 616.24,
+          "text": "values as well as an eye diagram,"
+        },
+        {
+          "start": 612.24,
+          "end": 619.12,
+          "text": "a bathtub curve and a tie histogram and"
+        },
+        {
+          "start": 616.24,
+          "end": 620.96,
+          "text": "spectrum."
+        },
+        {
+          "start": 619.12,
+          "end": 622.48,
+          "text": "Because you may want to compare jitter"
+        },
+        {
+          "start": 620.96,
+          "end": 624.88,
+          "text": "measurement values on two different"
+        },
+        {
+          "start": 622.48,
+          "end": 626.96,
+          "text": "signals from your system, you can easily"
+        },
+        {
+          "start": 624.88,
+          "end": 628.56,
+          "text": "add another jitter summary measurement"
+        },
+        {
+          "start": 626.96,
+          "end": 631.2,
+          "text": "by going through the same simple"
+        },
+        {
+          "start": 628.56,
+          "end": 634.8,
+          "text": "process. Only this time, we'll enable a"
+        },
+        {
+          "start": 631.2,
+          "end": 634.8,
+          "text": "measurement on channel 3."
+        },
+        {
+          "start": 636.4,
+          "end": 640.4,
+          "text": "You can now see we've got full jitter"
+        },
+        {
+          "start": 638.32,
+          "end": 642.4,
+          "text": "summary measurements and plots on two"
+        },
+        {
+          "start": 640.4,
+          "end": 644.08,
+          "text": "separate signals in the display,"
+        },
+        {
+          "start": 642.4,
+          "end": 646.88,
+          "text": "allowing you to compare the results"
+        },
+        {
+          "start": 644.08,
+          "end": 648.72,
+          "text": "directly. You can easily rearrange the"
+        },
+        {
+          "start": 646.88,
+          "end": 651.2,
+          "text": "windows to your liking by dragging the"
+        },
+        {
+          "start": 648.72,
+          "end": 654.8,
+          "text": "header of a window to a new location and"
+        },
+        {
+          "start": 651.2,
+          "end": 657.04,
+          "text": "dropping it where you desire."
+        },
+        {
+          "start": 654.8,
+          "end": 660.08,
+          "text": "Another way to analyze this data is in a"
+        },
+        {
+          "start": 657.04,
+          "end": 663.08,
+          "text": "tabular view."
+        },
+        {
+          "start": 660.08,
+          "end": 663.08,
+          "text": "Here"
+        },
+        {
+          "start": 663.36,
+          "end": 666.88,
+          "text": "you can see measurement results from the"
+        },
+        {
+          "start": 665.12,
+          "end": 668.96,
+          "text": "current acquisition on the left side of"
+        },
+        {
+          "start": 666.88,
+          "end": 671.04,
+          "text": "the table as well as statistical"
+        },
+        {
+          "start": 668.96,
+          "end": 675.2,
+          "text": "information from multiple acquisitions"
+        },
+        {
+          "start": 671.04,
+          "end": 676.88,
+          "text": "across a large population on the right."
+        },
+        {
+          "start": 675.2,
+          "end": 681.72,
+          "text": "This view of measurement data makes"
+        },
+        {
+          "start": 676.88,
+          "end": 681.72,
+          "text": "comparing and documenting values easy."
+        },
+        {
+          "start": 684.36,
+          "end": 689.12,
+          "text": "[Music]"
+        },
+        {
+          "start": 687.12,
+          "end": 691.2,
+          "text": "With high sample rates and large record"
+        },
+        {
+          "start": 689.12,
+          "end": 693.2,
+          "text": "lengths, modern oscilloscopes can"
+        },
+        {
+          "start": 691.2,
+          "end": 696.4,
+          "text": "produce multiple gigabytes of waveform"
+        },
+        {
+          "start": 693.2,
+          "end": 698.32,
+          "text": "data in just a fraction of a second. In"
+        },
+        {
+          "start": 696.4,
+          "end": 699.84,
+          "text": "many applications, getting this data off"
+        },
+        {
+          "start": 698.32,
+          "end": 702.32,
+          "text": "the instrument quickly is very"
+        },
+        {
+          "start": 699.84,
+          "end": 704.16,
+          "text": "important. While Ethernet has a very"
+        },
+        {
+          "start": 702.32,
+          "end": 707.12,
+          "text": "large speed advantage over older"
+        },
+        {
+          "start": 704.16,
+          "end": 709.6,
+          "text": "interfaces like GPIB, the overhead of"
+        },
+        {
+          "start": 707.12,
+          "end": 711.28,
+          "text": "Skippy commands and the VIX11 protocol"
+        },
+        {
+          "start": 709.6,
+          "end": 713.44,
+          "text": "has prevented instruments from being"
+        },
+        {
+          "start": 711.28,
+          "end": 715.6,
+          "text": "able to fully realize Ethernet's full"
+        },
+        {
+          "start": 713.44,
+          "end": 717.2,
+          "text": "potential. To take advantage of the"
+        },
+        {
+          "start": 715.6,
+          "end": 719.6,
+          "text": "speed of Ethernet, we developed"
+        },
+        {
+          "start": 717.2,
+          "end": 723.6,
+          "text": "Tektronics high-speed interface or Tech"
+        },
+        {
+          "start": 719.6,
+          "end": 725.44,
+          "text": "HSI. Tech HSI is based on gRPC and"
+        },
+        {
+          "start": 723.6,
+          "end": 727.44,
+          "text": "protocol buffers to quickly and"
+        },
+        {
+          "start": 725.44,
+          "end": 729.2,
+          "text": "efficiently serialize waveform data"
+        },
+        {
+          "start": 727.44,
+          "end": 731.84,
+          "text": "produced by the oscilloscope and"
+        },
+        {
+          "start": 729.2,
+          "end": 734.88,
+          "text": "transmitted over Ethernet. The 7 series"
+        },
+        {
+          "start": 731.84,
+          "end": 736.72,
+          "text": "DPO features a tech HSI server builtin,"
+        },
+        {
+          "start": 734.88,
+          "end": 738.48,
+          "text": "allowing client applications to connect"
+        },
+        {
+          "start": 736.72,
+          "end": 740.32,
+          "text": "and receive waveform data from the"
+        },
+        {
+          "start": 738.48,
+          "end": 742,
+          "text": "oscilloscope."
+        },
+        {
+          "start": 740.32,
+          "end": 743.84,
+          "text": "The data is automatically pushed to"
+        },
+        {
+          "start": 742,
+          "end": 745.92,
+          "text": "connected clients immediately after it"
+        },
+        {
+          "start": 743.84,
+          "end": 748.08,
+          "text": "is acquired, ensuring prompt data"
+        },
+        {
+          "start": 745.92,
+          "end": 751.12,
+          "text": "transfer with no waveform missed, no"
+        },
+        {
+          "start": 748.08,
+          "end": 752.88,
+          "text": "matter how fast the acquisition rate."
+        },
+        {
+          "start": 751.12,
+          "end": 754.88,
+          "text": "Multiple channels worth of data can be"
+        },
+        {
+          "start": 752.88,
+          "end": 757.76,
+          "text": "moved all at once, ensuring that all"
+        },
+        {
+          "start": 754.88,
+          "end": 760.48,
+          "text": "waveforms are from the same acquisition."
+        },
+        {
+          "start": 757.76,
+          "end": 763.6,
+          "text": "With Tech HSI and the 10 Gbit per second"
+        },
+        {
+          "start": 760.48,
+          "end": 765.44,
+          "text": "Ethernet interface on the 7 series DPO,"
+        },
+        {
+          "start": 763.6,
+          "end": 770.44,
+          "text": "waveform data can be moved off the scope"
+        },
+        {
+          "start": 765.44,
+          "end": 770.44,
+          "text": "at rates of up to 1 gigabyte per second."
+        },
+        {
+          "start": 770.48,
+          "end": 774.64,
+          "text": "To demonstrate this capability, I have"
+        },
+        {
+          "start": 772.88,
+          "end": 777.36,
+          "text": "written a Python script that connects to"
+        },
+        {
+          "start": 774.64,
+          "end": 779.68,
+          "text": "the TechHI server as a remote client and"
+        },
+        {
+          "start": 777.36,
+          "end": 781.6,
+          "text": "simply receives waveform data after each"
+        },
+        {
+          "start": 779.68,
+          "end": 784,
+          "text": "new acquisition is completed and then"
+        },
+        {
+          "start": 781.6,
+          "end": 786.08,
+          "text": "writes it to the disk."
+        },
+        {
+          "start": 784,
+          "end": 788.4,
+          "text": "To maximize throughput and keep up with"
+        },
+        {
+          "start": 786.08,
+          "end": 790.32,
+          "text": "the stream of incoming waveforms, the"
+        },
+        {
+          "start": 788.4,
+          "end": 792.16,
+          "text": "script receives the waveform data on one"
+        },
+        {
+          "start": 790.32,
+          "end": 795.68,
+          "text": "thread and writes it to disk using"
+        },
+        {
+          "start": 792.16,
+          "end": 797.68,
+          "text": "multiple writer threads"
+        },
+        {
+          "start": 795.68,
+          "end": 799.12,
+          "text": "by making use of a Tektronic supplied"
+        },
+        {
+          "start": 797.68,
+          "end": 800.72,
+          "text": "library that includes the"
+        },
+        {
+          "start": 799.12,
+          "end": 802.96,
+          "text": "electronics.WFM"
+        },
+        {
+          "start": 800.72,
+          "end": 806.32,
+          "text": "file format. This script writes the data"
+        },
+        {
+          "start": 802.96,
+          "end": 808.32,
+          "text": "to disk in the native tech file format."
+        },
+        {
+          "start": 806.32,
+          "end": 810.32,
+          "text": "This library can be included in your own"
+        },
+        {
+          "start": 808.32,
+          "end": 815.36,
+          "text": "Python scripts so that you can save and"
+        },
+        {
+          "start": 810.32,
+          "end": 818,
+          "text": "recall data inWFM file format or in CSV."
+        },
+        {
+          "start": 815.36,
+          "end": 820.88,
+          "text": "Also included with the tech HSI package,"
+        },
+        {
+          "start": 818,
+          "end": 824.4,
+          "text": "the TM data types library can convert"
+        },
+        {
+          "start": 820.88,
+          "end": 828.76,
+          "text": "WFM files to CSV files or vice versa"
+        },
+        {
+          "start": 824.4,
+          "end": 828.76,
+          "text": "with only a few lines of code."
+        },
+        {
+          "start": 828.8,
+          "end": 832.96,
+          "text": "First, I'm going to enable the tech HSI"
+        },
+        {
+          "start": 830.96,
+          "end": 837.28,
+          "text": "server on the instrument by navigating"
+        },
+        {
+          "start": 832.96,
+          "end": 839.52,
+          "text": "to the utility IO configuration menu."
+        },
+        {
+          "start": 837.28,
+          "end": 841.92,
+          "text": "Inside the high-speed interface panel,"
+        },
+        {
+          "start": 839.52,
+          "end": 843.84,
+          "text": "I'll choose SFP+ from the network"
+        },
+        {
+          "start": 841.92,
+          "end": 845.44,
+          "text": "connection dropdown so that I can"
+        },
+        {
+          "start": 843.84,
+          "end": 848.96,
+          "text": "utilize the port to achieve a much"
+        },
+        {
+          "start": 845.44,
+          "end": 851.36,
+          "text": "faster data rate. The SFP plus port is"
+        },
+        {
+          "start": 848.96,
+          "end": 853.6,
+          "text": "capable of up to 10 Gbit per second data"
+        },
+        {
+          "start": 851.36,
+          "end": 857.28,
+          "text": "rates and can be configured in multiple"
+        },
+        {
+          "start": 853.6,
+          "end": 859.44,
+          "text": "ways. Fiber optic SFP plus modules can"
+        },
+        {
+          "start": 857.28,
+          "end": 860.96,
+          "text": "be used for longer reaches or when"
+        },
+        {
+          "start": 859.44,
+          "end": 862.8,
+          "text": "electrical isolation between the"
+        },
+        {
+          "start": 860.96,
+          "end": 864.72,
+          "text": "instrument and the system controller is"
+        },
+        {
+          "start": 862.8,
+          "end": 868.56,
+          "text": "required. For many existing"
+        },
+        {
+          "start": 864.72,
+          "end": 870.96,
+          "text": "installations, SFP Plus to RJ45 modules"
+        },
+        {
+          "start": 868.56,
+          "end": 875.2,
+          "text": "can be used to run 10 Gbit over existing"
+        },
+        {
+          "start": 870.96,
+          "end": 877.92,
+          "text": "CAT 5e or higher twisted pair cables."
+        },
+        {
+          "start": 875.2,
+          "end": 880.08,
+          "text": "For shorter reaches under 5 m,"
+        },
+        {
+          "start": 877.92,
+          "end": 881.92,
+          "text": "inexpensive direct attach cables can be"
+        },
+        {
+          "start": 880.08,
+          "end": 885.28,
+          "text": "used to directly connect to other"
+        },
+        {
+          "start": 881.92,
+          "end": 887.84,
+          "text": "network equipment with SFP plus ports."
+        },
+        {
+          "start": 885.28,
+          "end": 890.56,
+          "text": "Finally, I will enable the tech HSI"
+        },
+        {
+          "start": 887.84,
+          "end": 892.72,
+          "text": "server by simply turning it on. With a"
+        },
+        {
+          "start": 890.56,
+          "end": 894.88,
+          "text": "tech HSI server now enabled, it can"
+        },
+        {
+          "start": 892.72,
+          "end": 896.72,
+          "text": "accept connections from remote clients"
+        },
+        {
+          "start": 894.88,
+          "end": 899.04,
+          "text": "and will push data to any connected"
+        },
+        {
+          "start": 896.72,
+          "end": 903.4,
+          "text": "clients whenever new data is available"
+        },
+        {
+          "start": 899.04,
+          "end": 903.4,
+          "text": "without having to query the instrument."
+        },
+        {
+          "start": 905.2,
+          "end": 909.04,
+          "text": "I'm going to run my Python script which"
+        },
+        {
+          "start": 907.28,
+          "end": 911.44,
+          "text": "will wait for new waveform data coming"
+        },
+        {
+          "start": 909.04,
+          "end": 913.28,
+          "text": "from the 7 series DPO and will simply"
+        },
+        {
+          "start": 911.44,
+          "end": 915.52,
+          "text": "save the file to a specific drive"
+        },
+        {
+          "start": 913.28,
+          "end": 917.2,
+          "text": "location."
+        },
+        {
+          "start": 915.52,
+          "end": 920.88,
+          "text": "Pressing the single button on the 7"
+        },
+        {
+          "start": 917.2,
+          "end": 922.8,
+          "text": "series DPO will acquire an acquisition."
+        },
+        {
+          "start": 920.88,
+          "end": 925.04,
+          "text": "You can see the file quickly show up on"
+        },
+        {
+          "start": 922.8,
+          "end": 926.96,
+          "text": "the computer's file browser. Pressing"
+        },
+        {
+          "start": 925.04,
+          "end": 930,
+          "text": "the single button again shows another"
+        },
+        {
+          "start": 926.96,
+          "end": 931.52,
+          "text": "file being saved, indicating no need to"
+        },
+        {
+          "start": 930,
+          "end": 934.16,
+          "text": "query the oscilloscope for the next"
+        },
+        {
+          "start": 931.52,
+          "end": 936.48,
+          "text": "waveform file. The oscilloscope pushed"
+        },
+        {
+          "start": 934.16,
+          "end": 939.52,
+          "text": "the data to every connected client via"
+        },
+        {
+          "start": 936.48,
+          "end": 940.8,
+          "text": "the tech HSI server. I don't want to"
+        },
+        {
+          "start": 939.52,
+          "end": 943.12,
+          "text": "keep pressing single on the"
+        },
+        {
+          "start": 940.8,
+          "end": 945.28,
+          "text": "oscilloscope. Instead, I want the flow"
+        },
+        {
+          "start": 943.12,
+          "end": 947.92,
+          "text": "of data to be real time as soon as a new"
+        },
+        {
+          "start": 945.28,
+          "end": 949.84,
+          "text": "waveform is available. So, I'm going to"
+        },
+        {
+          "start": 947.92,
+          "end": 952.16,
+          "text": "press the run button to start continuous"
+        },
+        {
+          "start": 949.84,
+          "end": 954.16,
+          "text": "acquisition of waveforms and send each"
+        },
+        {
+          "start": 952.16,
+          "end": 956.56,
+          "text": "new waveform to the client PC for"
+        },
+        {
+          "start": 954.16,
+          "end": 958.8,
+          "text": "archiving, which this new transfer"
+        },
+        {
+          "start": 956.56,
+          "end": 963.08,
+          "text": "protocol can do."
+        },
+        {
+          "start": 958.8,
+          "end": 963.08,
+          "text": "So, let's go ahead and press run."
+        },
+        {
+          "start": 963.2,
+          "end": 967.28,
+          "text": "Wow, look at how quickly this file"
+        },
+        {
+          "start": 965.28,
+          "end": 969.44,
+          "text": "browser is filling up with new waveform"
+        },
+        {
+          "start": 967.28,
+          "end": 971.28,
+          "text": "files. To show that we have complete"
+        },
+        {
+          "start": 969.44,
+          "end": 973.6,
+          "text": "waveforms, I can open one of the"
+        },
+        {
+          "start": 971.28,
+          "end": 975.36,
+          "text": "waveform files in Techcope PC, our"
+        },
+        {
+          "start": 973.6,
+          "end": 977.68,
+          "text": "offscope version of the oscilloscope"
+        },
+        {
+          "start": 975.36,
+          "end": 979.2,
+          "text": "application."
+        },
+        {
+          "start": 977.68,
+          "end": 982.16,
+          "text": "You can see the sine wave from the"
+        },
+        {
+          "start": 979.2,
+          "end": 985.12,
+          "text": "instrument here. Take advantage of this"
+        },
+        {
+          "start": 982.16,
+          "end": 988.24,
+          "text": "free tech HSI capability along with a 10"
+        },
+        {
+          "start": 985.12,
+          "end": 990.6,
+          "text": "GB SFP plus Ethernet port to move data"
+        },
+        {
+          "start": 988.24,
+          "end": 993.7,
+          "text": "faster than ever before."
+        },
+        {
+          "start": 990.6,
+          "end": 993.7,
+          "text": "[Music]"
+        },
+        {
+          "start": 995.28,
+          "end": 999.84,
+          "text": "The 7 series DPO is designed to grow"
+        },
+        {
+          "start": 997.44,
+          "end": 1001.6,
+          "text": "with your needs. Buy what you need today"
+        },
+        {
+          "start": 999.84,
+          "end": 1003.76,
+          "text": "and add capabilities as your"
+        },
+        {
+          "start": 1001.6,
+          "end": 1005.2,
+          "text": "applications evolve."
+        },
+        {
+          "start": 1003.76,
+          "end": 1007.36,
+          "text": "Some of the key upgrade options"
+        },
+        {
+          "start": 1005.2,
+          "end": 1010.08,
+          "text": "available include optional Windows"
+        },
+        {
+          "start": 1007.36,
+          "end": 1011.76,
+          "text": "operating system, arbitrary function"
+        },
+        {
+          "start": 1010.08,
+          "end": 1014.4,
+          "text": "generator for quickly outputting"
+        },
+        {
+          "start": 1011.76,
+          "end": 1016.4,
+          "text": "standard and custom waveforms, protocol"
+        },
+        {
+          "start": 1014.4,
+          "end": 1018.24,
+          "text": "trigger, decode and search to help"
+        },
+        {
+          "start": 1016.4,
+          "end": 1021.12,
+          "text": "pinpoint complex issues during"
+        },
+        {
+          "start": 1018.24,
+          "end": 1023.04,
+          "text": "debugging. Advanced jitter analysis to"
+        },
+        {
+          "start": 1021.12,
+          "end": 1024.8,
+          "text": "measure timing variations and ensure"
+        },
+        {
+          "start": 1023.04,
+          "end": 1027.28,
+          "text": "high signal integrity and precise"
+        },
+        {
+          "start": 1024.8,
+          "end": 1029.52,
+          "text": "timing. And serial standard compliance"
+        },
+        {
+          "start": 1027.28,
+          "end": 1032.48,
+          "text": "testing packages for validating against"
+        },
+        {
+          "start": 1029.52,
+          "end": 1034.32,
+          "text": "common serial data protocols. Our"
+        },
+        {
+          "start": 1032.48,
+          "end": 1036.64,
+          "text": "engineers continue to add new features"
+        },
+        {
+          "start": 1034.32,
+          "end": 1038.48,
+          "text": "and options regularly. In fact,"
+        },
+        {
+          "start": 1036.64,
+          "end": 1040.24,
+          "text": "enhancements are typically released on a"
+        },
+        {
+          "start": 1038.48,
+          "end": 1043.6,
+          "text": "quarterly basis to help keep your"
+        },
+        {
+          "start": 1040.24,
+          "end": 1045.76,
+          "text": "testing efficient and effective."
+        },
+        {
+          "start": 1043.6,
+          "end": 1047.6,
+          "text": "With its low noise, high throughput, and"
+        },
+        {
+          "start": 1045.76,
+          "end": 1049.28,
+          "text": "intuitive user interface, this"
+        },
+        {
+          "start": 1047.6,
+          "end": 1053.2,
+          "text": "oscilloscope will be a valuable and"
+        },
+        {
+          "start": 1049.28,
+          "end": 1056.35,
+          "text": "productive tool for years to come."
+        },
+        {
+          "start": 1053.2,
+          "end": 1056.35,
+          "text": "[Music]"
+        }
+      ],
+      "transcript_source": "youtube-en-auto",
+      "transcript_lastFetched": "2026-04-19T04:02:42.095Z"
+    },
+    {
+      "id": "tek-yt-y-XTkAKV8yg",
+      "title": "Modern Stability Analysis with SEPIA and without Bode Plots",
+      "url": "https://www.youtube.com/watch?v=y-XTkAKV8yg",
+      "category": "youtube",
+      "products": [
+        "general"
+      ],
+      "tags": [],
+      "summary": "Steve Sandler, Managing Director of PicoTest, says it is time for a faster and more accurate way to measure modern power systems.\n \nIn this video, Steve previews SEPIA, Step-Load Enhanced Power...",
+      "duration_ms": 112000,
+      "duration": "1:52",
+      "youtube_id": "y-XTkAKV8yg",
+      "youtube_title": "Modern Stability Analysis with SEPIA and without Bode Plots",
+      "youtube_match_lastTried": "2026-04-19T04:02:14.138Z",
+      "transcript_chunks": [
+        {
+          "start": 0,
+          "end": 4.72,
+          "text": "Hi, I'm Steve Sandler, managing director"
+        },
+        {
+          "start": 2.2,
+          "end": 6.4,
+          "text": "of PicoTest. Bode plots are dead. I've"
+        },
+        {
+          "start": 4.72,
+          "end": 9.4,
+          "text": "been saying that for a long time. I'm"
+        },
+        {
+          "start": 6.4,
+          "end": 9.4,
+          "text": "going to tell you why."
+        },
+        {
+          "start": 10.48,
+          "end": 12.5,
+          "text": ">> [music]"
+        },
+        {
+          "start": 13.2,
+          "end": 17.24,
+          "text": ">> Today's modern converters are in time"
+        },
+        {
+          "start": 15.08,
+          "end": 19.04,
+          "text": "invariant and they're not linear. That's"
+        },
+        {
+          "start": 17.24,
+          "end": 21.16,
+          "text": "why we need a better way."
+        },
+        {
+          "start": 19.04,
+          "end": 23.2,
+          "text": "And the better way is using step load"
+        },
+        {
+          "start": 21.16,
+          "end": 24.96,
+          "text": "response, which we've always done. I"
+        },
+        {
+          "start": 23.2,
+          "end": 27.2,
+          "text": "mean, going back as far as when I was a"
+        },
+        {
+          "start": 24.96,
+          "end": 29.12,
+          "text": "young engineer, we did the Bode plot and"
+        },
+        {
+          "start": 27.2,
+          "end": 31.28,
+          "text": "then we verified it by doing a step load"
+        },
+        {
+          "start": 29.12,
+          "end": 33.48,
+          "text": "response. And I always wondered why that"
+        },
+        {
+          "start": 31.28,
+          "end": 36.32,
+          "text": "was. I mean, if we trust the step load,"
+        },
+        {
+          "start": 33.48,
+          "end": 39.08,
+          "text": "why do the Bode plot? In 2011, I"
+        },
+        {
+          "start": 36.32,
+          "end": 41.2,
+          "text": "developed the math behind Sepia. What"
+        },
+        {
+          "start": 39.08,
+          "end": 43.76,
+          "text": "Sepia does is it takes a high-speed load"
+        },
+        {
+          "start": 41.2,
+          "end": 46.24,
+          "text": "step response. It takes the result of"
+        },
+        {
+          "start": 43.76,
+          "end": 49.16,
+          "text": "that and it transforms that back into"
+        },
+        {
+          "start": 46.24,
+          "end": 50.96,
+          "text": "inverse Laplace through a gain function."
+        },
+        {
+          "start": 49.16,
+          "end": 53.72,
+          "text": "From that gain function, we look at the"
+        },
+        {
+          "start": 50.96,
+          "end": 55.84,
+          "text": "response. The oscilloscope finds two"
+        },
+        {
+          "start": 53.72,
+          "end": 57.84,
+          "text": "peaks in the ringing response and it"
+        },
+        {
+          "start": 55.84,
+          "end": 60.44,
+          "text": "displays right in the badge here with"
+        },
+        {
+          "start": 57.84,
+          "end": 63.16,
+          "text": "the phase margin. What's the equivalent"
+        },
+        {
+          "start": 60.44,
+          "end": 65.4,
+          "text": "circuit model, the LCR network? So, we"
+        },
+        {
+          "start": 63.16,
+          "end": 68.52,
+          "text": "walk away with a simulation model we can"
+        },
+        {
+          "start": 65.4,
+          "end": 71.36,
+          "text": "use directly in Spice, a quantifiable"
+        },
+        {
+          "start": 68.52,
+          "end": 73.76,
+          "text": "phase margin, and it all happens in an"
+        },
+        {
+          "start": 71.36,
+          "end": 75.8,
+          "text": "instant. One of the great things about"
+        },
+        {
+          "start": 73.76,
+          "end": 78.52,
+          "text": "Sepia is that it doesn't take a lot of"
+        },
+        {
+          "start": 75.8,
+          "end": 79.64,
+          "text": "time. Bode plots take maybe 30 seconds"
+        },
+        {
+          "start": 78.52,
+          "end": 81.88,
+          "text": "to run."
+        },
+        {
+          "start": 79.64,
+          "end": 83.76,
+          "text": "Running a board like our 2000M board for"
+        },
+        {
+          "start": 81.88,
+          "end": 84.8,
+          "text": "30 seconds, you're not doing it without"
+        },
+        {
+          "start": 83.76,
+          "end": 86.72,
+          "text": "cooling."
+        },
+        {
+          "start": 84.8,
+          "end": 88.96,
+          "text": "But, a step load response, we can do"
+        },
+        {
+          "start": 86.72,
+          "end": 91.48,
+          "text": "that in 500 microseconds. We don't need"
+        },
+        {
+          "start": 88.96,
+          "end": 94.28,
+          "text": "any cooling. So, it's simpler, it's"
+        },
+        {
+          "start": 91.48,
+          "end": 97.12,
+          "text": "faster, it's more accurate, and it runs"
+        },
+        {
+          "start": 94.28,
+          "end": 100.2,
+          "text": "both large signal and small signal for"
+        },
+        {
+          "start": 97.12,
+          "end": 102.08,
+          "text": "those non-linear time variant solutions."
+        },
+        {
+          "start": 100.2,
+          "end": 103.6,
+          "text": "Uh for more information, you can contact"
+        },
+        {
+          "start": 102.08,
+          "end": 106.16,
+          "text": "us at PicoTest or you can visit"
+        },
+        {
+          "start": 103.6,
+          "end": 107.64,
+          "text": "Tektronix and ask them about Sepia."
+        },
+        {
+          "start": 106.16,
+          "end": 110.16,
+          "text": "We're happy to explain to you how it all"
+        },
+        {
+          "start": 107.64,
+          "end": 110.16,
+          "text": "works."
+        }
+      ],
+      "transcript_source": "youtube-en-auto",
+      "transcript_lastFetched": "2026-04-19T04:02:16.342Z"
+    },
+    {
+      "id": "tek-yt-Y5RX6EESwGU",
+      "title": "Chapter 2: MP5000 Series Minimize Set Up and Testing Time",
+      "url": "https://www.youtube.com/watch?v=Y5RX6EESwGU",
+      "category": "youtube",
+      "products": [
+        "general"
+      ],
+      "tags": [
+        "chapter-series"
+      ],
+      "summary": "Set up and get testing quickly with the MP5000  Series Modular Precision Test System.  No code required. Make quick measurement configuration and diagnostics on the low-profile touchscreen...",
+      "duration_ms": 43000,
+      "duration": "0:43",
+      "youtube_id": "Y5RX6EESwGU",
+      "youtube_title": "Chapter 2: MP5000 Series Minimize Set Up and Testing Time",
+      "youtube_match_lastTried": "2026-04-19T04:02:47.539Z",
+      "transcript_chunks": [
+        {
+          "start": 0.8,
+          "end": 4.88,
+          "text": "Set up and get testing quickly with the"
+        },
+        {
+          "start": 3.28,
+          "end": 7.52,
+          "text": "MP5000."
+        },
+        {
+          "start": 4.88,
+          "end": 9.76,
+          "text": "The main frame features a low profile"
+        },
+        {
+          "start": 7.52,
+          "end": 11.84,
+          "text": "touchscreen display for quick"
+        },
+        {
+          "start": 9.76,
+          "end": 14.72,
+          "text": "measurement configuration and"
+        },
+        {
+          "start": 11.84,
+          "end": 17.76,
+          "text": "diagnostics."
+        },
+        {
+          "start": 14.72,
+          "end": 20.32,
+          "text": "Alternatively, extend control with the"
+        },
+        {
+          "start": 17.76,
+          "end": 22.56,
+          "text": "web user interface."
+        },
+        {
+          "start": 20.32,
+          "end": 26,
+          "text": "Make basic measurements and view"
+        },
+        {
+          "start": 22.56,
+          "end": 29.6,
+          "text": "readings from your PC with a simple user"
+        },
+        {
+          "start": 26,
+          "end": 31.68,
+          "text": "interface and no code required. Thanks"
+        },
+        {
+          "start": 29.6,
+          "end": 33.52,
+          "text": "for watching and for more information on"
+        },
+        {
+          "start": 31.68,
+          "end": 37,
+          "text": "the MP5000,"
+        },
+        {
+          "start": 33.52,
+          "end": 37,
+          "text": "visit tech.com."
+        }
+      ],
+      "transcript_source": "youtube-en-auto",
+      "transcript_lastFetched": "2026-04-19T04:02:49.646Z"
+    },
+    {
+      "id": "tek-yt-y75AIUhO5KQ",
+      "title": "Chapter 1: MP5000 Series Maximize Rack Space Utilization",
+      "url": "https://www.youtube.com/watch?v=y75AIUhO5KQ",
+      "category": "youtube",
+      "products": [
+        "general"
+      ],
+      "tags": [
+        "chapter-series"
+      ],
+      "summary": "Modular. Swappable. Rackable. Watch this video on the groundbreaking form factor of the  new MP5000 Series Modular Precison Test System to see the shape of testing to come.\n\nLearn more about...",
+      "duration_ms": 109000,
+      "duration": "1:49",
+      "youtube_id": "y75AIUhO5KQ",
+      "youtube_title": "Chapter 1: MP5000 Series Maximize Rack Space Utilization",
+      "youtube_match_lastTried": "2026-04-19T04:02:28.375Z",
+      "transcript_chunks": [
+        {
+          "start": 0.32,
+          "end": 7.6,
+          "text": "The MP5000 is a high density SMU and PSU"
+        },
+        {
+          "start": 4.8,
+          "end": 10.08,
+          "text": "platform that gives you flexibility and"
+        },
+        {
+          "start": 7.6,
+          "end": 11.76,
+          "text": "enables you to maximize rack space"
+        },
+        {
+          "start": 10.08,
+          "end": 13.92,
+          "text": "utilization."
+        },
+        {
+          "start": 11.76,
+          "end": 17.6,
+          "text": "Swapping modules to customize your"
+        },
+        {
+          "start": 13.92,
+          "end": 19.68,
+          "text": "system is easy. Simply pinch and pull to"
+        },
+        {
+          "start": 17.6,
+          "end": 23.6,
+          "text": "release the modules"
+        },
+        {
+          "start": 19.68,
+          "end": 26.72,
+          "text": "and push in to replace."
+        },
+        {
+          "start": 23.6,
+          "end": 30,
+          "text": "Each module has two channels for up to"
+        },
+        {
+          "start": 26.72,
+          "end": 33.28,
+          "text": "six channels in one U mainframe, which"
+        },
+        {
+          "start": 30,
+          "end": 35.2,
+          "text": "is ideal for high parallel channel count"
+        },
+        {
+          "start": 33.28,
+          "end": 37.92,
+          "text": "applications."
+        },
+        {
+          "start": 35.2,
+          "end": 41.12,
+          "text": "The MSMU60-2"
+        },
+        {
+          "start": 37.92,
+          "end": 44.32,
+          "text": "is a 60V 1 and 1/2 amp source measure"
+        },
+        {
+          "start": 41.12,
+          "end": 46.96,
+          "text": "unit with superior low current accuracy"
+        },
+        {
+          "start": 44.32,
+          "end": 49.36,
+          "text": "and a high-speed digitizer for faster"
+        },
+        {
+          "start": 46.96,
+          "end": 51.92,
+          "text": "measurements. It's a great solution for"
+        },
+        {
+          "start": 49.36,
+          "end": 54.72,
+          "text": "device characterization and measuring"
+        },
+        {
+          "start": 51.92,
+          "end": 58,
+          "text": "transient behavior. Advanced protection"
+        },
+        {
+          "start": 54.72,
+          "end": 60.16,
+          "text": "features ensure your device remains safe"
+        },
+        {
+          "start": 58,
+          "end": 64.56,
+          "text": "while pushing the limits of its"
+        },
+        {
+          "start": 60.16,
+          "end": 67.44,
+          "text": "performance. The MPSU50-2ST"
+        },
+        {
+          "start": 64.56,
+          "end": 70.64,
+          "text": "dual 50watt power supply complements the"
+        },
+        {
+          "start": 67.44,
+          "end": 72.32,
+          "text": "SMU's versatility with reliable power"
+        },
+        {
+          "start": 70.64,
+          "end": 74.8,
+          "text": "channels."
+        },
+        {
+          "start": 72.32,
+          "end": 77.44,
+          "text": "Output up to five amp with a single"
+        },
+        {
+          "start": 74.8,
+          "end": 80.72,
+          "text": "channel or stack two channels in"
+        },
+        {
+          "start": 77.44,
+          "end": 82.88,
+          "text": "parallel to achieve 10 amp for high"
+        },
+        {
+          "start": 80.72,
+          "end": 85.28,
+          "text": "current devices."
+        },
+        {
+          "start": 82.88,
+          "end": 88.72,
+          "text": "Forget swapping leads or adding"
+        },
+        {
+          "start": 85.28,
+          "end": 91.28,
+          "text": "protection for your devices. The builtin"
+        },
+        {
+          "start": 88.72,
+          "end": 95.04,
+          "text": "bipolar capabilities and output"
+        },
+        {
+          "start": 91.28,
+          "end": 96.88,
+          "text": "disconnect relays does it for you."
+        },
+        {
+          "start": 95.04,
+          "end": 99.28,
+          "text": "Thanks for watching and for more"
+        },
+        {
+          "start": 96.88,
+          "end": 102.76,
+          "text": "information on the MP5000,"
+        },
+        {
+          "start": 99.28,
+          "end": 102.76,
+          "text": "visit tech.com."
+        }
+      ],
+      "transcript_source": "youtube-en-auto",
+      "transcript_lastFetched": "2026-04-19T04:02:30.969Z"
+    },
+    {
+      "id": "tek-yt-ykfpu4I5PTI",
+      "title": "De-Embedding PCB Cable & Fixture Effects for Accurate Eye Diagram Measurements with an Oscilloscope",
+      "url": "https://www.youtube.com/watch?v=ykfpu4I5PTI",
+      "category": "youtube",
+      "products": [
+        "general"
+      ],
+      "tags": [
+        "measurement",
+        "eye-diagram",
+        "de-embedding"
+      ],
+      "summary": "Accurate validation of high-speed designs requires removing signal-path impairments to reveal true performance, particularly for jitter and eye-diagram analysis.\n\nThis video demonstrates how...",
+      "duration_ms": 378000,
+      "duration": "6:18",
+      "youtube_id": "ykfpu4I5PTI",
+      "youtube_title": "De-Embedding PCB Cable & Fixture Effects for Accurate Eye Diagram Measurements with an Oscilloscope",
+      "youtube_match_lastTried": "2026-04-19T04:02:19.832Z",
+      "transcript_chunks": [
+        {
+          "start": 9.92,
+          "end": 15.12,
+          "text": "Measurement accuracy can easily be"
+        },
+        {
+          "start": 12.24,
+          "end": 17.84,
+          "text": "enhanced by accessing the new SIM or"
+        },
+        {
+          "start": 15.12,
+          "end": 20.8,
+          "text": "signal integrity modeling, which allows"
+        },
+        {
+          "start": 17.84,
+          "end": 23.04,
+          "text": "you to dembed transmission line effects,"
+        },
+        {
+          "start": 20.8,
+          "end": 25.2,
+          "text": "view virtual test points when probing"
+        },
+        {
+          "start": 23.04,
+          "end": 28.08,
+          "text": "close to the device under test is not"
+        },
+        {
+          "start": 25.2,
+          "end": 30.24,
+          "text": "practical, or simulate extra components"
+        },
+        {
+          "start": 28.08,
+          "end": 32.24,
+          "text": "to better reflect the real"
+        },
+        {
+          "start": 30.24,
+          "end": 36.4,
+          "text": "effectively performing a simulation of"
+        },
+        {
+          "start": 32.24,
+          "end": 38.24,
+          "text": "your design under different conditions."
+        },
+        {
+          "start": 36.4,
+          "end": 40.96,
+          "text": "Here we have an eye diagram of a"
+        },
+        {
+          "start": 38.24,
+          "end": 44.24,
+          "text": "high-speed serial signal on channel one"
+        },
+        {
+          "start": 40.96,
+          "end": 47.12,
+          "text": "after it has passed through 6.75 in of"
+        },
+        {
+          "start": 44.24,
+          "end": 49.12,
+          "text": "printed circuit board trace. We can"
+        },
+        {
+          "start": 47.12,
+          "end": 51.52,
+          "text": "clearly see the parasitic effects of the"
+        },
+        {
+          "start": 49.12,
+          "end": 54.56,
+          "text": "signal path on the transmitted signal"
+        },
+        {
+          "start": 51.52,
+          "end": 57.12,
+          "text": "and how it has caused the eye to close."
+        },
+        {
+          "start": 54.56,
+          "end": 59.36,
+          "text": "We can apply dembedding to remove these"
+        },
+        {
+          "start": 57.12,
+          "end": 61.92,
+          "text": "channel effects and view the signal at"
+        },
+        {
+          "start": 59.36,
+          "end": 64.4,
+          "text": "the device transmitter even if we can't"
+        },
+        {
+          "start": 61.92,
+          "end": 67.28,
+          "text": "access it directly."
+        },
+        {
+          "start": 64.4,
+          "end": 69.52,
+          "text": "Simply tap add new SIM to start building"
+        },
+        {
+          "start": 67.28,
+          "end": 71.6,
+          "text": "a new model."
+        },
+        {
+          "start": 69.52,
+          "end": 74.16,
+          "text": "SIM allows you to quickly visualize"
+        },
+        {
+          "start": 71.6,
+          "end": 76.72,
+          "text": "changes to the signal path using both a"
+        },
+        {
+          "start": 74.16,
+          "end": 79.12,
+          "text": "physical and simulated circuit model."
+        },
+        {
+          "start": 76.72,
+          "end": 81.2,
+          "text": "Physical model represents all physical"
+        },
+        {
+          "start": 79.12,
+          "end": 83.2,
+          "text": "components to be de-mbbedded in the"
+        },
+        {
+          "start": 81.2,
+          "end": 86.56,
+          "text": "signal path that was used to acquire"
+        },
+        {
+          "start": 83.2,
+          "end": 89.2,
+          "text": "waveforms. The simulation model enables"
+        },
+        {
+          "start": 86.56,
+          "end": 91.04,
+          "text": "whatif exploration showing how the"
+        },
+        {
+          "start": 89.2,
+          "end": 94.72,
+          "text": "waveform would look when an alternate"
+        },
+        {
+          "start": 91.04,
+          "end": 97.12,
+          "text": "circuit is embedded. For example, in the"
+        },
+        {
+          "start": 94.72,
+          "end": 99.84,
+          "text": "physical model, we can represent the PCB"
+        },
+        {
+          "start": 97.12,
+          "end": 102.4,
+          "text": "trace and the 1 meter cable as part of"
+        },
+        {
+          "start": 99.84,
+          "end": 104.56,
+          "text": "the measured signal path. But in the"
+        },
+        {
+          "start": 102.4,
+          "end": 106.8,
+          "text": "simulation model, these effects are"
+        },
+        {
+          "start": 104.56,
+          "end": 110.32,
+          "text": "completely removed and replaced by an"
+        },
+        {
+          "start": 106.8,
+          "end": 112.48,
+          "text": "ideal load. SIM introduces simplified"
+        },
+        {
+          "start": 110.32,
+          "end": 114.96,
+          "text": "workflows that start with only the"
+        },
+        {
+          "start": 112.48,
+          "end": 117.76,
+          "text": "essential blocks and let you add more as"
+        },
+        {
+          "start": 114.96,
+          "end": 120.4,
+          "text": "needed, saving time and reducing"
+        },
+        {
+          "start": 117.76,
+          "end": 123.28,
+          "text": "complexity by keeping setup focused on"
+        },
+        {
+          "start": 120.4,
+          "end": 126.16,
+          "text": "the test at hand. For more demanding"
+        },
+        {
+          "start": 123.28,
+          "end": 128.48,
+          "text": "scenarios, the advanced workflow enables"
+        },
+        {
+          "start": 126.16,
+          "end": 130.08,
+          "text": "combinations of methods within a single"
+        },
+        {
+          "start": 128.48,
+          "end": 132.24,
+          "text": "simulation."
+        },
+        {
+          "start": 130.08,
+          "end": 134.72,
+          "text": "For this scenario, I simply want to"
+        },
+        {
+          "start": 132.24,
+          "end": 136.88,
+          "text": "remove the effects of the PCB trace and"
+        },
+        {
+          "start": 134.72,
+          "end": 139.52,
+          "text": "the cable. So, I will choose to use the"
+        },
+        {
+          "start": 136.88,
+          "end": 142.16,
+          "text": "simple DMBBED workflow."
+        },
+        {
+          "start": 139.52,
+          "end": 145.28,
+          "text": "I will select two port system analysis"
+        },
+        {
+          "start": 142.16,
+          "end": 147.04,
+          "text": "since we are using a single cable. If we"
+        },
+        {
+          "start": 145.28,
+          "end": 148.88,
+          "text": "were modeling a differential signal"
+        },
+        {
+          "start": 147.04,
+          "end": 150.8,
+          "text": "path, we would choose four-port"
+        },
+        {
+          "start": 148.88,
+          "end": 153.04,
+          "text": "analysis."
+        },
+        {
+          "start": 150.8,
+          "end": 155.2,
+          "text": "This workflow starts with a single block"
+        },
+        {
+          "start": 153.04,
+          "end": 158.16,
+          "text": "in the physical model that is configured"
+        },
+        {
+          "start": 155.2,
+          "end": 161.2,
+          "text": "as a through by default. I will use this"
+        },
+        {
+          "start": 158.16,
+          "end": 162.8,
+          "text": "block to represent the 1meter cable by"
+        },
+        {
+          "start": 161.2,
+          "end": 164.4,
+          "text": "doubletapping to open it for"
+        },
+        {
+          "start": 162.8,
+          "end": 166.8,
+          "text": "configuration."
+        },
+        {
+          "start": 164.4,
+          "end": 169.92,
+          "text": "I change the model to S parameters and"
+        },
+        {
+          "start": 166.8,
+          "end": 172,
+          "text": "ensure the type is set to two port. I"
+        },
+        {
+          "start": 169.92,
+          "end": 173.68,
+          "text": "click the browse button to locate and"
+        },
+        {
+          "start": 172,
+          "end": 176.8,
+          "text": "select the Sparameter file that"
+        },
+        {
+          "start": 173.68,
+          "end": 179.36,
+          "text": "represents my cable."
+        },
+        {
+          "start": 176.8,
+          "end": 181.2,
+          "text": "Finally, I rename the block so I can"
+        },
+        {
+          "start": 179.36,
+          "end": 184.2,
+          "text": "easily keep track of it in the block"
+        },
+        {
+          "start": 181.2,
+          "end": 184.2,
+          "text": "diagram."
+        },
+        {
+          "start": 185.36,
+          "end": 191.2,
+          "text": "Next, I need to model the PCB trace. I"
+        },
+        {
+          "start": 188.72,
+          "end": 193.68,
+          "text": "do this by clicking the add block button"
+        },
+        {
+          "start": 191.2,
+          "end": 195.68,
+          "text": "and then drag the block into my model,"
+        },
+        {
+          "start": 193.68,
+          "end": 198.32,
+          "text": "placing it where it exists in the real"
+        },
+        {
+          "start": 195.68,
+          "end": 200.88,
+          "text": "physical system between the cable and"
+        },
+        {
+          "start": 198.32,
+          "end": 202.96,
+          "text": "the device transmitter. I will configure"
+        },
+        {
+          "start": 200.88,
+          "end": 204.72,
+          "text": "the block and change the model to"
+        },
+        {
+          "start": 202.96,
+          "end": 207.04,
+          "text": "Sparameters."
+        },
+        {
+          "start": 204.72,
+          "end": 209.28,
+          "text": "The Sparameters for my PCB trace are"
+        },
+        {
+          "start": 207.04,
+          "end": 214.04,
+          "text": "four port. So I will change the type to"
+        },
+        {
+          "start": 209.28,
+          "end": 214.04,
+          "text": "four port and then select the file."
+        },
+        {
+          "start": 216.88,
+          "end": 222.88,
+          "text": "In this system I'm only using two ports"
+        },
+        {
+          "start": 219.6,
+          "end": 225.2,
+          "text": "but my sparameters are four port. I can"
+        },
+        {
+          "start": 222.88,
+          "end": 227.04,
+          "text": "choose which two ports I want to use by"
+        },
+        {
+          "start": 225.2,
+          "end": 229.76,
+          "text": "selecting them from the block port"
+        },
+        {
+          "start": 227.04,
+          "end": 233.76,
+          "text": "dropdowns eliminating any need to edit"
+        },
+        {
+          "start": 229.76,
+          "end": 236.32,
+          "text": "the sparameter files to remap the ports."
+        },
+        {
+          "start": 233.76,
+          "end": 238.72,
+          "text": "I can quickly plot the Sparameters to"
+        },
+        {
+          "start": 236.32,
+          "end": 241.76,
+          "text": "verify that my block configuration is"
+        },
+        {
+          "start": 238.72,
+          "end": 244.56,
+          "text": "correct. I see the expected transmission"
+        },
+        {
+          "start": 241.76,
+          "end": 246.8,
+          "text": "loss profile in the S12 plot. So, I know"
+        },
+        {
+          "start": 244.56,
+          "end": 249.28,
+          "text": "that these S parameters and my selected"
+        },
+        {
+          "start": 246.8,
+          "end": 251.44,
+          "text": "ports are good."
+        },
+        {
+          "start": 249.28,
+          "end": 254.84,
+          "text": "Finally, I'll rename the block for"
+        },
+        {
+          "start": 251.44,
+          "end": 254.84,
+          "text": "tracking purposes."
+        },
+        {
+          "start": 258.24,
+          "end": 262.96,
+          "text": "In the simple DMBBED workflow, the"
+        },
+        {
+          "start": 260.56,
+          "end": 266.32,
+          "text": "DMBBED test point has already been added"
+        },
+        {
+          "start": 262.96,
+          "end": 268.4,
+          "text": "for us in the simulation model. It is"
+        },
+        {
+          "start": 266.32,
+          "end": 270.48,
+          "text": "represented by the green dot that sits"
+        },
+        {
+          "start": 268.4,
+          "end": 273.84,
+          "text": "between the device transmitter and the"
+        },
+        {
+          "start": 270.48,
+          "end": 276.48,
+          "text": "ideal load. No additional configuration"
+        },
+        {
+          "start": 273.84,
+          "end": 279.36,
+          "text": "is needed here. Now that my model is"
+        },
+        {
+          "start": 276.48,
+          "end": 281.76,
+          "text": "built, I will tap calculate sim to"
+        },
+        {
+          "start": 279.36,
+          "end": 284.24,
+          "text": "compile the model and create the DMBED"
+        },
+        {
+          "start": 281.76,
+          "end": 286.08,
+          "text": "test point filter."
+        },
+        {
+          "start": 284.24,
+          "end": 288.48,
+          "text": "Tap okay to go back to the scope"
+        },
+        {
+          "start": 286.08,
+          "end": 290.4,
+          "text": "waveform view. We can see a math"
+        },
+        {
+          "start": 288.48,
+          "end": 292.72,
+          "text": "waveform representing the waveform at"
+        },
+        {
+          "start": 290.4,
+          "end": 295.36,
+          "text": "the DMBBED test point has been added at"
+        },
+        {
+          "start": 292.72,
+          "end": 297.12,
+          "text": "the bottom of the display. We can create"
+        },
+        {
+          "start": 295.36,
+          "end": 302.68,
+          "text": "an eye height measurement for the new"
+        },
+        {
+          "start": 297.12,
+          "end": 302.68,
+          "text": "math 1 waveform and plot an eye diagram."
+        },
+        {
+          "start": 305.6,
+          "end": 311.12,
+          "text": "By dembedding the PCB trace and the 1"
+        },
+        {
+          "start": 308.48,
+          "end": 313.2,
+          "text": "meter cable, we can see the open eye at"
+        },
+        {
+          "start": 311.12,
+          "end": 315.12,
+          "text": "the device transmitter without any"
+        },
+        {
+          "start": 313.2,
+          "end": 316.96,
+          "text": "signal losses."
+        },
+        {
+          "start": 315.12,
+          "end": 319.76,
+          "text": "Comparing the eye height measurements,"
+        },
+        {
+          "start": 316.96,
+          "end": 322.16,
+          "text": "we can see that the signal lost over 170"
+        },
+        {
+          "start": 319.76,
+          "end": 325.04,
+          "text": "molts of eye height due to impairments"
+        },
+        {
+          "start": 322.16,
+          "end": 327.6,
+          "text": "caused by the signal path."
+        },
+        {
+          "start": 325.04,
+          "end": 330.4,
+          "text": "Unlike legacy tools which limit you to"
+        },
+        {
+          "start": 327.6,
+          "end": 332.48,
+          "text": "one simulation at a time, now you can"
+        },
+        {
+          "start": 330.4,
+          "end": 335.44,
+          "text": "compare practically an unlimited number"
+        },
+        {
+          "start": 332.48,
+          "end": 338.08,
+          "text": "of circuit models simultaneously."
+        },
+        {
+          "start": 335.44,
+          "end": 340.88,
+          "text": "Each one outputs to a math waveform and"
+        },
+        {
+          "start": 338.08,
+          "end": 343.52,
+          "text": "can be daisy chained for complex what-if"
+        },
+        {
+          "start": 340.88,
+          "end": 346.24,
+          "text": "modeling scenarios."
+        },
+        {
+          "start": 343.52,
+          "end": 348.16,
+          "text": "Pairing SIM with jitter analysis enables"
+        },
+        {
+          "start": 346.24,
+          "end": 350.8,
+          "text": "comparing multiple eye diagrams and"
+        },
+        {
+          "start": 348.16,
+          "end": 352.96,
+          "text": "measurements simultaneously and without"
+        },
+        {
+          "start": 350.8,
+          "end": 355.12,
+          "text": "compromise."
+        },
+        {
+          "start": 352.96,
+          "end": 357.2,
+          "text": "Tectronics tools are uniquely designed"
+        },
+        {
+          "start": 355.12,
+          "end": 360.16,
+          "text": "to enable simple analysis when"
+        },
+        {
+          "start": 357.2,
+          "end": 362.08,
+          "text": "complexity is low and advanced analysis"
+        },
+        {
+          "start": 360.16,
+          "end": 364.16,
+          "text": "where multiple sources and measurement"
+        },
+        {
+          "start": 362.08,
+          "end": 366.8,
+          "text": "configurations can be analyzed"
+        },
+        {
+          "start": 364.16,
+          "end": 369.8,
+          "text": "simultaneously saving significant test"
+        },
+        {
+          "start": 366.8,
+          "end": 369.8,
+          "text": "time."
+        }
+      ],
+      "transcript_source": "youtube-en-auto",
+      "transcript_lastFetched": "2026-04-19T04:02:21.960Z"
     }
   ]
 }

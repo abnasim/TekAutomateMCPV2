@@ -1,64 +1,53 @@
 /**
- * scrapeTekVideos.ts  —  Tek.com video → Brightcove metadata → audio → Whisper transcript.
+ * scrapeTekVideos.ts  —  tek.com video → Brightcove metadata → YouTube mirror → transcript.
  *
- * Runs locally (NOT in production runtime). Populates data/videos.json from
- * scripts/tek_video_urls.json. Idempotent: skips videos already fully
- * populated, re-runs only missing stages.
+ * Runs locally. Populates data/videos.json from scripts/tek_video_urls.json.
+ * Idempotent: skips already-populated videos unless forced.
  *
- * ─── Pipeline ───
- * 1. Read seed URL list (scripts/tek_video_urls.json), per-family.
- * 2. For each URL:
- *    a. Fetch the tek.com page HTML → extract data-video-id + data-account.
- *    b. Fetch the Brightcove iframe page → extract policyKey.
- *    c. Call Brightcove Playback API → get metadata (name, description,
- *       duration, MP4 source URL).
- *    d. If no existing transcript and --transcribe is passed, download
- *       the MP4 audio track via ffmpeg, run openai-whisper CLI, parse
- *       the .json output into transcript_chunks[{start,end,text}].
- * 3. Merge into data/videos.json. Preserve hand-edited summaries
- *    (don't clobber non-empty existing summary unless --force-summary).
- * 4. Atomic write (tmp + rename) + bump lastUpdated.
+ * ─── Pipeline per tek.com URL ───
+ * 1. Fetch tek.com page HTML → extract data-video-id + data-account +
+ *    data-player (Brightcove embed).
+ * 2. Fetch Brightcove iframe once per account/player → extract policyKey.
+ * 3. Call Brightcove Playback API → get name, description, duration,
+ *    MP4 sources, text_tracks. (text_tracks on Tek videos are thumbnails
+ *    only; no captions published there.)
+ * 4. (--match-yt or --all) YouTube search for the video by title with
+ *    "Tektronix" qualifier. Accept only results whose channel is
+ *    Tektronix. Record the youtubeId.
+ * 5. (--transcribe or --all) shell to scripts/fetch_yt_transcript.py
+ *    (uses youtube-transcript-api) → real transcript as chunks of
+ *    {start, end, text}. Far lighter than Whisper and works without
+ *    ffmpeg or model weights.
  *
- * ─── Install requirements (local) ───
- *   # Node/tsx (already present in repo)
- *   # Python Whisper:
- *   pip install -U openai-whisper
- *   # ffmpeg must be in PATH:
- *   winget install ffmpeg   # Windows
- *   brew install ffmpeg     # macOS
- *   apt-get install ffmpeg  # Debian/Ubuntu
+ * ─── Install ───
+ *   python -m pip install youtube-transcript-api certifi
+ *
+ *   # no ffmpeg or whisper required — YouTube auto-captions handle it.
  *
  * ─── Run ───
- *   # collect metadata only (fast; no transcription)
- *   npx tsx scripts/scrapeTekVideos.ts --collect
+ *   # metadata only (fast)
+ *   npx tsx scripts/scrapeTekVideos.ts --collect [--family MSO2]
  *
- *   # full pipeline (downloads audio + transcribes — slow, heavy)
- *   npx tsx scripts/scrapeTekVideos.ts --all
+ *   # metadata + YouTube mirror match (no transcripts)
+ *   npx tsx scripts/scrapeTekVideos.ts --match-yt [--family MSO2]
  *
- *   # restrict to a single family
- *   npx tsx scripts/scrapeTekVideos.ts --all --family MSO2
+ *   # full: collect + match + transcripts
+ *   npx tsx scripts/scrapeTekVideos.ts --all [--family MSO2]
  *
- *   # use a smaller Whisper model (faster, lower accuracy)
- *   WHISPER_MODEL=medium npx tsx scripts/scrapeTekVideos.ts --all
- *
- *   # force re-transcription even if chunks already exist
- *   npx tsx scripts/scrapeTekVideos.ts --all --force-transcribe
- *
+ *   # force re-transcription / re-match
+ *   npx tsx scripts/scrapeTekVideos.ts --all --force-transcribe --force-match
  *
  * ─── Caveats ───
- * - Tek.com publishes NO captions to Brightcove (verified for MSO2);
- *   Whisper is the only transcript path.
- * - Brightcove's policyKey is per-account/per-player; extracted once
- *   from the iframe page and cached in memory for the batch.
- * - Rate-limited: 1 request/sec to tek.com + Brightcove.
- * - Audio downloaded to system temp dir, cleaned up per-video unless
- *   --keep-audio is passed (useful for re-transcribing with a
- *   different model later).
+ * - Tek.com publishes NO captions to Brightcove (verified MSO2).
+ *   YouTube auto-captions are the only viable transcript source.
+ * - Some tek.com URLs may map to the same YouTube upload. That's fine;
+ *   entries stay distinct, transcripts are identical.
+ * - A small fraction of Tek YouTube uploads may not have captions.
+ *   These will be flagged with transcript_error instead of chunks.
  */
 
-import { execFileSync, spawnSync } from 'child_process';
+import { spawnSync } from 'child_process';
 import fs from 'fs';
-import os from 'os';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -68,40 +57,52 @@ const _scriptDir = path.dirname(__filename);
 const _projectRoot = path.resolve(_scriptDir, '..');
 const URLS_PATH = path.join(_scriptDir, 'tek_video_urls.json');
 const VIDEOS_PATH = path.join(_projectRoot, 'data', 'videos.json');
+const PY_TRANSCRIPT = path.join(_scriptDir, 'fetch_yt_transcript.py');
+const PY_CHANNEL = path.join(_scriptDir, 'fetch_tek_channel.py');
 
 // ─── Config ──────────────────────────────────────────────────────────
-const WHISPER_MODEL = process.env.WHISPER_MODEL || 'large-v3';
 const RATE_LIMIT_MS = 1000;
 const USER_AGENT = 'Mozilla/5.0 (Tekautomate-scraper)';
+const YT_CHANNEL_ALLOW = ['tektronix', 'tektronix test'];
+const PYTHON_CMD = process.env.PYTHON_CMD || 'python';
 
 // ─── CLI parsing ─────────────────────────────────────────────────────
 interface CliOpts {
-  mode: 'collect' | 'transcribe' | 'all';
+  mode: 'collect' | 'match-yt' | 'transcribe' | 'all' | 'channel-sweep';
   family: string | null;
+  maxVideos: number;
   forceSummary: boolean;
+  forceMatch: boolean;
   forceTranscribe: boolean;
-  keepAudio: boolean;
 }
 
 function parseArgs(argv: string[]): CliOpts {
   const opts: CliOpts = {
     mode: 'collect',
     family: null,
+    maxVideos: 0,
     forceSummary: false,
+    forceMatch: false,
     forceTranscribe: false,
-    keepAudio: false,
   };
   for (let i = 2; i < argv.length; i++) {
     const a = argv[i];
     if (a === '--collect') opts.mode = 'collect';
+    else if (a === '--match-yt') opts.mode = 'match-yt';
     else if (a === '--transcribe') opts.mode = 'transcribe';
     else if (a === '--all') opts.mode = 'all';
+    else if (a === '--channel-sweep') opts.mode = 'channel-sweep';
     else if (a === '--family') opts.family = argv[++i] || null;
+    else if (a === '--max') opts.maxVideos = Number(argv[++i]) || 0;
     else if (a === '--force-summary') opts.forceSummary = true;
+    else if (a === '--force-match') opts.forceMatch = true;
     else if (a === '--force-transcribe') opts.forceTranscribe = true;
-    else if (a === '--keep-audio') opts.keepAudio = true;
     else if (a === '--help' || a === '-h') {
-      console.log(`usage: npx tsx scripts/scrapeTekVideos.ts [--collect|--transcribe|--all] [--family <name>] [--force-summary] [--force-transcribe] [--keep-audio]`);
+      console.log(`usage: npx tsx scripts/scrapeTekVideos.ts
+  --collect | --match-yt | --transcribe | --all   per-tek.com-URL flow (uses tek_video_urls.json)
+  --channel-sweep [--max N]                       pull every video on @tektronix, auto-tag families, fetch transcripts
+  --family <name>                                 scope the per-URL modes
+  --force-summary | --force-match | --force-transcribe`);
       process.exit(0);
     }
   }
@@ -116,7 +117,7 @@ interface UrlsFile {
 }
 
 interface TranscriptChunk {
-  start: number; // seconds
+  start: number;
   end: number;
   text: string;
 }
@@ -130,12 +131,17 @@ interface VideoEntry {
   tags?: string[];
   summary?: string;
   duration_ms?: number;
-  duration?: string; // "mm:ss"
+  duration?: string;
   brightcove_account?: string;
   brightcove_video_id?: string;
   mp4_url?: string;
+  youtube_id?: string;
+  youtube_title?: string;
+  youtube_match_lastTried?: string;
   transcript_chunks?: TranscriptChunk[];
+  transcript_source?: string;
   transcript_lastFetched?: string;
+  transcript_error?: string;
   page_lastFetched?: string;
 }
 
@@ -195,7 +201,7 @@ async function fetchJson<T>(url: string, headers: Record<string, string> = {}): 
 }
 
 // ─── Brightcove integration ──────────────────────────────────────────
-const policyKeyCache = new Map<string, string>(); // cache per account/player pair
+const policyKeyCache = new Map<string, string>();
 
 async function extractBrightcovePolicyKey(accountId: string, playerId: string): Promise<string> {
   const cacheKey = `${accountId}/${playerId}`;
@@ -213,7 +219,7 @@ async function extractBrightcovePolicyKey(accountId: string, playerId: string): 
 interface BrightcoveVideo {
   name?: string;
   description?: string;
-  duration?: number; // ms
+  duration?: number;
   sources?: Array<{ src?: string; container?: string; type?: string; height?: number }>;
   text_tracks?: Array<{ kind?: string; src?: string; srclang?: string; label?: string }>;
 }
@@ -229,7 +235,6 @@ async function fetchBrightcoveVideo(accountId: string, videoId: string, policyKe
 
 function pickBestMp4Source(sources: BrightcoveVideo['sources']): string | null {
   if (!sources) return null;
-  // Prefer MP4, highest height ≤ 720 (enough for audio, smaller download)
   const mp4s = sources.filter((s) => s.container === 'MP4' && s.src && !/^rtmp/i.test(s.src));
   if (mp4s.length === 0) return null;
   const sorted = [...mp4s].sort((a, b) => (a.height || 9999) - (b.height || 9999));
@@ -263,15 +268,13 @@ async function collectEntry(url: string, family: string, existing: VideoEntry | 
   const bc = await fetchBrightcoveVideo(pageMeta.accountId, pageMeta.videoId, policyKey);
 
   const title = bc.name || existing?.title || url;
-  const summary = (existing?.summary && !existing.summary.startsWith('Short introduction') && existing.summary.length > 40)
+  const summary = (existing?.summary && existing.summary.length > 40 && !/^short introduction/i.test(existing.summary))
     ? existing.summary
     : (bc.description || existing?.summary || '');
   const mp4 = pickBestMp4Source(bc.sources);
-  const products = existing?.products && existing.products.length > 0
-    ? existing.products
-    : [family];
+  const products = existing?.products && existing.products.length > 0 ? existing.products : [family];
 
-  const entry: VideoEntry = {
+  return {
     id: existing?.id || `tek-video-${slugify(title)}`,
     title,
     url,
@@ -283,99 +286,258 @@ async function collectEntry(url: string, family: string, existing: VideoEntry | 
     brightcove_account: pageMeta.accountId,
     brightcove_video_id: pageMeta.videoId,
     ...(mp4 ? { mp4_url: mp4 } : {}),
+    ...(existing?.youtube_id ? { youtube_id: existing.youtube_id, youtube_title: existing.youtube_title } : {}),
+    ...(existing?.youtube_match_lastTried ? { youtube_match_lastTried: existing.youtube_match_lastTried } : {}),
     ...(existing?.transcript_chunks ? { transcript_chunks: existing.transcript_chunks } : {}),
+    ...(existing?.transcript_source ? { transcript_source: existing.transcript_source } : {}),
     ...(existing?.transcript_lastFetched ? { transcript_lastFetched: existing.transcript_lastFetched } : {}),
     page_lastFetched: new Date().toISOString(),
   };
-  return entry;
 }
 
-// ─── Transcription ───────────────────────────────────────────────────
-interface WhisperSegment {
-  id?: number;
-  start: number;
-  end: number;
-  text: string;
+// ─── YouTube mirror matching ─────────────────────────────────────────
+interface YtHit {
+  videoId: string;
+  title: string;
+  channel: string;
 }
 
-interface WhisperJson {
-  text?: string;
-  segments?: WhisperSegment[];
+async function searchYoutubeForTek(title: string): Promise<YtHit | null> {
+  const q = `${title} Tektronix`;
+  const url = `https://www.youtube.com/results?search_query=${encodeURIComponent(q)}`;
+  const res = await fetch(url, { headers: { 'User-Agent': USER_AGENT, 'Accept-Language': 'en-US,en;q=0.9' } });
+  if (!res.ok) throw new Error(`yt search ${res.status}`);
+  const html = await res.text();
+
+  const hits: YtHit[] = [];
+  // videoRenderer blocks contain videoId, title, and ownerText — regex them out in order.
+  const vrPattern = /"videoRenderer":\{"videoId":"([a-zA-Z0-9_-]{11})"[\s\S]*?"title":\{"runs":\[\{"text":"([^"]+)"\}\][\s\S]*?(?:"ownerText":\{"runs":\[\{"text":"([^"]+)"|"longBylineText":\{"runs":\[\{"text":"([^"]+)")/g;
+  let m;
+  while ((m = vrPattern.exec(html)) !== null) {
+    hits.push({
+      videoId: m[1],
+      title: m[2],
+      channel: (m[3] || m[4] || '').trim(),
+    });
+    if (hits.length >= 12) break;
+  }
+
+  // Prefer results from Tektronix channel; take first that matches.
+  const fromTek = hits.find((h) => YT_CHANNEL_ALLOW.some((a) => h.channel.toLowerCase().includes(a)));
+  if (fromTek) return fromTek;
+  // Fallback: first result, but flag it (may be wrong)
+  return hits[0] || null;
+}
+
+async function matchYouTubeEntry(entry: VideoEntry, force: boolean): Promise<VideoEntry> {
+  if (entry.youtube_id && !force) {
+    console.log(`  [skip yt-match] ${entry.title} — already matched (${entry.youtube_id})`);
+    return entry;
+  }
+  console.log(`  [match-yt] ${entry.title}`);
+  try {
+    const hit = await searchYoutubeForTek(entry.title);
+    if (!hit) {
+      return { ...entry, youtube_match_lastTried: new Date().toISOString() };
+    }
+    const fromTek = YT_CHANNEL_ALLOW.some((a) => hit.channel.toLowerCase().includes(a));
+    if (!fromTek) {
+      console.log(`    (no Tektronix-channel match; top hit was "${hit.title}" from ${hit.channel}) — SKIPPING`);
+      return { ...entry, youtube_match_lastTried: new Date().toISOString() };
+    }
+    console.log(`    → ${hit.videoId} / ${hit.title}`);
+    return {
+      ...entry,
+      youtube_id: hit.videoId,
+      youtube_title: hit.title,
+      youtube_match_lastTried: new Date().toISOString(),
+    };
+  } catch (err) {
+    console.log(`    match error: ${err instanceof Error ? err.message : String(err)}`);
+    return { ...entry, youtube_match_lastTried: new Date().toISOString() };
+  }
+}
+
+// ─── Transcription (YouTube captions) ────────────────────────────────
+interface PyTranscriptResult {
+  ok: boolean;
+  entries?: Array<{ start: number; end: number; text: string }>;
   language?: string;
+  error?: string;
 }
 
-function ensureAudioFile(mp4Url: string, workDir: string, videoId: string): string {
-  // Use ffmpeg to stream-extract audio only. Output is a compact WAV file.
-  const audioPath = path.join(workDir, `${videoId}.wav`);
-  if (fs.existsSync(audioPath)) return audioPath;
-  console.log(`    [ffmpeg] ${mp4Url} → ${path.basename(audioPath)}`);
-  execFileSync(
-    'ffmpeg',
-    [
-      '-y', '-hide_banner', '-loglevel', 'warning',
-      '-i', mp4Url,
-      '-vn', '-ac', '1', '-ar', '16000', '-acodec', 'pcm_s16le',
-      audioPath,
-    ],
-    { stdio: 'inherit' },
-  );
-  return audioPath;
-}
-
-function whisperTranscribe(audioPath: string, workDir: string): TranscriptChunk[] {
-  console.log(`    [whisper] model=${WHISPER_MODEL} ${path.basename(audioPath)}`);
-  // openai-whisper CLI writes <basename>.json next to the audio file
-  execFileSync(
-    'whisper',
-    [
-      audioPath,
-      '--model', WHISPER_MODEL,
-      '--output_dir', workDir,
-      '--output_format', 'json',
-      '--language', 'en',
-      '--verbose', 'False',
-    ],
-    { stdio: 'inherit' },
-  );
-  const jsonPath = audioPath.replace(/\.wav$/, '.json');
-  const data = JSON.parse(fs.readFileSync(jsonPath, 'utf-8')) as WhisperJson;
-  const segments = data.segments || [];
-  return segments.map((s) => ({
-    start: +s.start.toFixed(2),
-    end: +s.end.toFixed(2),
-    text: s.text.trim(),
-  }));
+function fetchYtTranscript(youtubeId: string): PyTranscriptResult {
+  if (!commandExists(PYTHON_CMD)) {
+    return { ok: false, error: `python not in PATH (tried ${PYTHON_CMD}); install python or set PYTHON_CMD` };
+  }
+  const result = spawnSync(PYTHON_CMD, [PY_TRANSCRIPT, youtubeId], {
+    encoding: 'utf-8',
+    stdio: ['ignore', 'pipe', 'pipe'],
+  });
+  if (result.error) return { ok: false, error: String(result.error) };
+  const stdout = result.stdout || '';
+  try {
+    return JSON.parse(stdout) as PyTranscriptResult;
+  } catch {
+    return { ok: false, error: `helper returned non-JSON: ${stdout.slice(0, 200)}` };
+  }
 }
 
 async function transcribeEntry(entry: VideoEntry, opts: CliOpts): Promise<VideoEntry> {
-  if (!entry.mp4_url) {
-    console.log(`  [skip transcribe] ${entry.title} — no mp4_url; run --collect first`);
+  if (!entry.youtube_id) {
+    console.log(`  [skip transcribe] ${entry.title} — no youtube_id; run --match-yt first`);
     return entry;
   }
   if (entry.transcript_chunks && entry.transcript_chunks.length > 0 && !opts.forceTranscribe) {
-    console.log(`  [skip transcribe] ${entry.title} — already has ${entry.transcript_chunks.length} chunks (pass --force-transcribe to redo)`);
+    console.log(`  [skip transcribe] ${entry.title} — already has ${entry.transcript_chunks.length} chunks`);
     return entry;
   }
-  if (!commandExists('ffmpeg')) throw new Error('ffmpeg not found in PATH');
-  if (!commandExists('whisper')) throw new Error('whisper not found in PATH (pip install openai-whisper)');
-
-  const workDir = path.join(os.tmpdir(), 'tekautomate-video-transcribe');
-  fs.mkdirSync(workDir, { recursive: true });
-  const videoId = entry.brightcove_video_id || slugify(entry.title);
-
-  console.log(`  [transcribe] ${entry.title}`);
-  const audioPath = ensureAudioFile(entry.mp4_url, workDir, videoId);
-  const chunks = whisperTranscribe(audioPath, workDir);
-
-  if (!opts.keepAudio) {
-    try { fs.unlinkSync(audioPath); } catch { /* ignore */ }
-    try { fs.unlinkSync(audioPath.replace(/\.wav$/, '.json')); } catch { /* ignore */ }
+  console.log(`  [transcribe] ${entry.title} (${entry.youtube_id})`);
+  const r = fetchYtTranscript(entry.youtube_id);
+  if (!r.ok || !r.entries) {
+    console.log(`    fail: ${r.error}`);
+    return { ...entry, transcript_error: r.error || 'unknown', transcript_lastFetched: new Date().toISOString() };
   }
-
-  return {
+  const chunks: TranscriptChunk[] = r.entries.map((e) => ({
+    start: +e.start.toFixed(2),
+    end: +e.end.toFixed(2),
+    text: e.text,
+  }));
+  console.log(`    ok: ${chunks.length} chunks, ${chunks.reduce((a, c) => a + c.text.length, 0)} chars`);
+  const entryOut: VideoEntry = {
     ...entry,
     transcript_chunks: chunks,
+    transcript_source: `youtube-${r.language || 'en'}-auto`,
     transcript_lastFetched: new Date().toISOString(),
+  };
+  delete entryOut.transcript_error;
+  return entryOut;
+}
+
+// ─── Product-family tagger ───────────────────────────────────────────
+// Heuristic map from title/description keywords → product family keys.
+// Order matters for ambiguous cases — more specific patterns first.
+interface FamilyRule {
+  family: string;
+  test: RegExp;
+}
+
+const FAMILY_RULES: FamilyRule[] = [
+  // 6 Series B before 6 Series (more specific)
+  { family: 'MSO6B', test: /\b(6\s*Series\s*B\s*MSO|MSO(?:64|66|68)B|6-Series-B)\b/i },
+  { family: 'MSO6',  test: /\b(6\s*Series\s*MSO|MSO(?:64|66|68)(?!B)|6-Series-MSO)\b/i },
+  { family: 'MSO5B', test: /\b(5\s*Series\s*B\s*MSO|MSO5[468]B)\b/i },
+  { family: 'MSO5',  test: /\b(5\s*Series\s*MSO|MSO5[468](?!B)|5-Series-MSO)\b/i },
+  { family: 'MSO4B', test: /\b(4\s*Series\s*B\s*MSO|MSO4[46]B)\b/i },
+  { family: 'MSO4',  test: /\b(4\s*Series\s*MSO|MSO4[46](?!B)|4-Series-MSO)\b/i },
+  { family: 'MSO2',  test: /\b(2\s*Series\s*MSO|MSO2[24]|2-Series-MSO)\b/i },
+  { family: 'MDO3',  test: /\b(3\s*Series\s*MDO|MDO3(?!000))\b/i },
+  { family: 'MDO4',  test: /\b(4\s*Series\s*MDO|MDO4(?!000))\b/i },
+  { family: 'MDO3000', test: /\bMDO3\d{3}\b/i },
+  { family: 'MDO4000', test: /\bMDO4\d{3}[A-C]?\b/i },
+  { family: 'DPO70000', test: /\bDPO70\d{3}(?:C|DX|SX)?\b|\b70000\s*Series\b/i },
+  { family: 'DPO7000',  test: /\b7\s*Series\s*DPO\b|\bDPO7(?!0)/i },
+  { family: 'DPO5000',  test: /\bDPO5\d{3}B?\b|\bMSO5\d{3}B?\b/i },
+  { family: 'DPO4000',  test: /\b(MSO\/DPO|DPO)4\d{3}B?\b/i },
+  { family: 'DPO3000',  test: /\b(MSO\/DPO|DPO)3\d{3}B?\b/i },
+  { family: 'DPO2000',  test: /\b(MSO\/DPO|DPO)2\d{3}B?\b/i },
+];
+
+function tagProducts(title: string, description: string): string[] {
+  const hay = `${title} ${description}`;
+  const out = new Set<string>();
+  for (const r of FAMILY_RULES) {
+    if (r.test.test(hay)) out.add(r.family);
+  }
+  if (out.size === 0) out.add('general');
+  return Array.from(out);
+}
+
+function deriveTagsFromTitle(title: string): string[] {
+  const tags = new Set<string>();
+  const low = title.toLowerCase();
+  const hints: Array<[RegExp, string]> = [
+    [/^how to|\bhow to\b/, 'how-to'],
+    [/\bintroduction\b|\boverview\b|\bhighlights\b/, 'overview'],
+    [/\bchapter\s+\d+\b/i, 'chapter-series'],
+    [/\bdemo\b/, 'demo'],
+    [/\bjitter\b/, 'jitter'],
+    [/\bcursor/, 'cursors'],
+    [/\bmeasurement|\bmeasure/, 'measurement'],
+    [/\bspectrum|\bRF\b/i, 'spectrum'],
+    [/\bpower\b/, 'power'],
+    [/\btrigger/, 'trigger'],
+    [/\bprobe/, 'probing'],
+    [/\bDDR|\bDDR\d/i, 'ddr'],
+    [/\bEthernet|\bI2C|\bSPI|\bCAN|\bUSB|\bLIN|\bRS232/i, 'protocol-decode'],
+    [/\beye\s*diagram\b/, 'eye-diagram'],
+    [/\bde-embed|embedding/i, 'de-embedding'],
+  ];
+  for (const [re, tag] of hints) if (re.test(low)) tags.add(tag);
+  return Array.from(tags);
+}
+
+// ─── Channel sweep (YouTube) ─────────────────────────────────────────
+interface ChannelVideo {
+  id: string;
+  title: string;
+  description?: string;
+  duration_s?: number;
+  url: string;
+}
+
+interface ChannelDump {
+  ok: boolean;
+  channel?: string;
+  channel_id?: string;
+  count?: number;
+  videos?: ChannelVideo[];
+  error?: string;
+}
+
+function fetchChannelList(maxVideos: number): ChannelDump {
+  if (!commandExists(PYTHON_CMD)) {
+    return { ok: false, error: `python not in PATH (tried ${PYTHON_CMD})` };
+  }
+  const args = [PY_CHANNEL];
+  if (maxVideos > 0) args.push(String(maxVideos));
+  const result = spawnSync(PYTHON_CMD, args, {
+    encoding: 'utf-8',
+    stdio: ['ignore', 'pipe', 'pipe'],
+    maxBuffer: 64 * 1024 * 1024,
+  });
+  if (result.error) return { ok: false, error: String(result.error) };
+  const stdout = result.stdout || '';
+  try { return JSON.parse(stdout) as ChannelDump; }
+  catch { return { ok: false, error: `channel helper returned non-JSON: ${stdout.slice(0, 300)}` }; }
+}
+
+function ytEntryFromChannel(v: ChannelVideo, existing: VideoEntry | null): VideoEntry {
+  const products = (existing?.products && existing.products.length > 0)
+    ? existing.products
+    : tagProducts(v.title, v.description || '');
+  const tagsFromTitle = deriveTagsFromTitle(v.title);
+  const mergedTags = Array.from(new Set([...(existing?.tags || []), ...tagsFromTitle]));
+  const durationMs = v.duration_s ? Math.round(v.duration_s * 1000) : existing?.duration_ms;
+  return {
+    id: existing?.id || `tek-yt-${v.id}`,
+    title: v.title,
+    url: v.url,
+    category: existing?.category || 'youtube',
+    products,
+    tags: mergedTags,
+    summary: existing?.summary || (v.description || '').slice(0, 500) || v.title,
+    ...(durationMs ? { duration_ms: durationMs, duration: fmtDuration(durationMs) } : {}),
+    youtube_id: v.id,
+    youtube_title: v.title,
+    youtube_match_lastTried: new Date().toISOString(),
+    ...(existing?.brightcove_account ? { brightcove_account: existing.brightcove_account } : {}),
+    ...(existing?.brightcove_video_id ? { brightcove_video_id: existing.brightcove_video_id } : {}),
+    ...(existing?.mp4_url ? { mp4_url: existing.mp4_url } : {}),
+    ...(existing?.transcript_chunks ? { transcript_chunks: existing.transcript_chunks } : {}),
+    ...(existing?.transcript_source ? { transcript_source: existing.transcript_source } : {}),
+    ...(existing?.transcript_lastFetched ? { transcript_lastFetched: existing.transcript_lastFetched } : {}),
+    ...(existing?.page_lastFetched ? { page_lastFetched: existing.page_lastFetched } : {}),
   };
 }
 
@@ -386,20 +548,71 @@ function readStore(): VideosStore {
     const parsed = JSON.parse(raw);
     if (parsed && Array.isArray(parsed.videos)) return parsed as VideosStore;
   } catch { /* fresh */ }
-  return {
-    $schema: 'videos.v1',
-    note: 'Curated index of Tektronix instructional videos.',
-    phase: 'production',
-    videos: [],
-  };
+  return { $schema: 'videos.v1', note: 'Curated index of Tektronix instructional videos.', phase: 'production', videos: [] };
 }
 
 function writeStore(store: VideosStore) {
-  const dir = path.dirname(VIDEOS_PATH);
-  fs.mkdirSync(dir, { recursive: true });
+  fs.mkdirSync(path.dirname(VIDEOS_PATH), { recursive: true });
   const tmp = `${VIDEOS_PATH}.${process.pid}.tmp`;
   fs.writeFileSync(tmp, JSON.stringify(store, null, 2), 'utf-8');
   fs.renameSync(tmp, VIDEOS_PATH);
+}
+
+// ─── Channel-sweep main ──────────────────────────────────────────────
+async function runChannelSweep(opts: CliOpts, store: VideosStore): Promise<void> {
+  console.log(`[channel-sweep] max=${opts.maxVideos || 'all'}`);
+  const dump = fetchChannelList(opts.maxVideos);
+  if (!dump.ok || !dump.videos) {
+    console.error(`[fatal] channel list failed: ${dump.error}`);
+    process.exit(1);
+  }
+  console.log(`[channel-sweep] ${dump.count} videos from ${dump.channel}`);
+
+  // Index existing store by youtube_id so we merge with the tek.com-matched
+  // entries (keeping Brightcove data, hand-curated summaries, etc.).
+  const byYtId = new Map<string, VideoEntry>();
+  for (const v of store.videos) if (v.youtube_id) byYtId.set(v.youtube_id, v);
+
+  let touched = 0;
+  let transcribed = 0;
+  let skipped = 0;
+  let failed = 0;
+
+  for (const [idx, yv] of (dump.videos || []).entries()) {
+    try {
+      const existing = byYtId.get(yv.id) || null;
+      let entry = ytEntryFromChannel(yv, existing);
+
+      // Transcript
+      const hasChunks = entry.transcript_chunks && entry.transcript_chunks.length > 0;
+      if (!hasChunks || opts.forceTranscribe) {
+        entry = await transcribeEntry(entry, opts);
+        if (entry.transcript_chunks && entry.transcript_chunks.length > 0) transcribed++;
+      } else {
+        skipped++;
+      }
+
+      byYtId.set(yv.id, entry);
+      touched++;
+      if ((idx + 1) % 10 === 0) {
+        console.log(`  [progress] ${idx + 1}/${dump.count} touched=${touched} transcribed=${transcribed} failed=${failed}`);
+      }
+      await sleep(RATE_LIMIT_MS / 2); // lighter rate on YouTube — we're just reading captions
+    } catch (err) {
+      failed++;
+      console.error(`  [fail] yt=${yv.id} — ${err instanceof Error ? err.message : String(err)}`);
+    }
+  }
+
+  // Merge back: preserve existing non-YT entries too.
+  const merged = new Map<string, VideoEntry>();
+  for (const v of store.videos) merged.set(v.id, v);
+  for (const v of byYtId.values()) merged.set(v.id, v);
+  store.videos = Array.from(merged.values()).sort((a, b) => a.id.localeCompare(b.id));
+  store.lastUpdated = new Date().toISOString().slice(0, 10);
+  writeStore(store);
+
+  console.log(`[done] touched=${touched} transcribed=${transcribed} skipped=${skipped} failed=${failed} total_in_store=${store.videos.length}`);
 }
 
 // ─── Main ────────────────────────────────────────────────────────────
@@ -407,8 +620,14 @@ async function main() {
   const opts = parseArgs(process.argv);
   console.log(`[scrape] mode=${opts.mode} family=${opts.family || 'all'}`);
 
-  const urls: UrlsFile = JSON.parse(fs.readFileSync(URLS_PATH, 'utf-8'));
   const store = readStore();
+
+  if (opts.mode === 'channel-sweep') {
+    await runChannelSweep(opts, store);
+    return;
+  }
+
+  const urls: UrlsFile = JSON.parse(fs.readFileSync(URLS_PATH, 'utf-8'));
   const byUrl = new Map<string, VideoEntry>();
   for (const v of store.videos) byUrl.set(v.url, v);
 
@@ -418,33 +637,34 @@ async function main() {
 
   for (const family of families) {
     const urlList = urls.families[family] || [];
-    if (urlList.length === 0) {
-      console.log(`[family ${family}] no URLs in seed list, skip`);
-      continue;
-    }
+    if (urlList.length === 0) { console.log(`[family ${family}] no URLs, skip`); continue; }
     console.log(`[family ${family}] ${urlList.length} URL(s)`);
     for (const url of urlList) {
       try {
         let entry = byUrl.get(url) || null;
-        const alreadyComplete = entry
-          && entry.brightcove_video_id
-          && (opts.mode === 'collect' || (entry.transcript_chunks && entry.transcript_chunks.length > 0));
-        if (alreadyComplete && !opts.forceSummary && !opts.forceTranscribe) {
-          console.log(`  [skip] ${url} — already complete for mode ${opts.mode}`);
-          continue;
-        }
 
-        if (opts.mode === 'collect' || opts.mode === 'all' || !entry) {
+        // Stage 1: collect Brightcove metadata if needed
+        const needsCollect = opts.mode === 'collect' || opts.mode === 'all' || !entry?.brightcove_video_id;
+        if (needsCollect) {
           entry = await collectEntry(url, family, entry);
           await sleep(RATE_LIMIT_MS);
         }
-        if ((opts.mode === 'transcribe' || opts.mode === 'all') && entry) {
+        if (!entry) continue;
+
+        // Stage 2: match YouTube mirror
+        const needsMatch = opts.mode === 'match-yt' || opts.mode === 'all' || (opts.mode === 'transcribe' && !entry.youtube_id);
+        if (needsMatch) {
+          entry = await matchYouTubeEntry(entry, opts.forceMatch);
+          await sleep(RATE_LIMIT_MS);
+        }
+
+        // Stage 3: fetch transcript via YouTube captions
+        if ((opts.mode === 'transcribe' || opts.mode === 'all') && entry.youtube_id) {
           entry = await transcribeEntry(entry, opts);
         }
-        if (entry) {
-          byUrl.set(url, entry);
-          touched++;
-        }
+
+        byUrl.set(url, entry);
+        touched++;
       } catch (err) {
         failed++;
         console.error(`  [fail] ${url} — ${err instanceof Error ? err.message : String(err)}`);
@@ -452,12 +672,12 @@ async function main() {
     }
   }
 
-  // Merge back into store
   store.videos = Array.from(byUrl.values()).sort((a, b) => a.id.localeCompare(b.id));
   store.lastUpdated = new Date().toISOString().slice(0, 10);
   writeStore(store);
 
-  console.log(`[done] touched=${touched} failed=${failed} total_in_store=${store.videos.length}`);
+  const withTranscripts = store.videos.filter((v) => v.transcript_chunks && v.transcript_chunks.length > 0).length;
+  console.log(`[done] touched=${touched} failed=${failed} total=${store.videos.length} with_transcripts=${withTranscripts}`);
   if (failed > 0) process.exit(1);
 }
 
