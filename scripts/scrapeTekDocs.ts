@@ -3,11 +3,30 @@
  * Scrapes public Tektronix technical documents from tek.com and builds
  * a RAG index (tek_docs_index.json) in the same format as other corpora.
  *
- * Usage:
- *   cd mcp-server
- *   npx tsx scripts/scrapeTekDocs.ts
+ * Manifest shape (scripts/tek_doc_urls.json):
+ *   Either a flat array of URLs (legacy):
+ *     ["https://www.tek.com/...", "https://www.tek.com/..."]
+ *   OR a family-organized manifest (preferred):
+ *     {
+ *       "$schema": "tek-docs.v2",
+ *       "shared": ["https://www.tek.com/..."],
+ *       "families": {
+ *         "MSO2":   ["https://www.tek.com/..."],
+ *         "MSO6B":  ["https://www.tek.com/..."],
+ *         "DPO7000":["https://www.tek.com/..."]
+ *       }
+ *     }
  *
- * Output: mcp-server/public/rag/tek_docs_index.json
+ * When a URL is under families[KEY], chunks from that URL are authoritatively
+ * tagged with that family (so retrieval with products:["MSO6"] surfaces them).
+ * "shared" URLs get keyword-inferred family tags (same rules as scrapeTekVideos).
+ *
+ * Usage:
+ *   npx tsx scripts/scrapeTekDocs.ts           # scrape all
+ *   npx tsx scripts/scrapeTekDocs.ts --family MSO6   # scrape only one family
+ *   npx tsx scripts/scrapeTekDocs.ts --only-shared   # skip per-family, just shared
+ *
+ * Output: public/rag/tek_docs_index.json
  * Then re-run: npx tsx scripts/buildRagIndex.ts  (or just update manifest manually)
  */
 
@@ -20,105 +39,15 @@ const OUT_FILE = path.resolve(SCRIPT_DIR, '../public/rag/tek_docs_index.json');
 const MANIFEST_FILE = path.resolve(SCRIPT_DIR, '../public/rag/manifest.json');
 const URL_LIST_FILE = path.resolve(SCRIPT_DIR, 'tek_doc_urls.json');
 
-// Load URL list from file if present, otherwise fall back to SEED_URLS
-function loadUrls(): string[] {
-  if (fs.existsSync(URL_LIST_FILE)) {
-    console.log(`Loading URLs from ${URL_LIST_FILE}`);
-    return JSON.parse(fs.readFileSync(URL_LIST_FILE, 'utf8')) as string[];
-  }
-  return SEED_URLS;
+// ── Types ─────────────────────────────────────────────────────────────────────
+interface DocsManifest {
+  $schema?: string;
+  note?: string;
+  lastUpdated?: string;
+  shared: string[];
+  families: Record<string, string[]>;
 }
 
-// ── Curated URL list ──────────────────────────────────────────────────────────
-// Add more URLs here any time — just run the script again to refresh.
-const SEED_URLS: string[] = [
-
-  // ── Automation & remote control ──────────────────────────────────────────
-  'https://www.tek.com/en/documents/technical-brief/getting-started-with-oscilloscope-automation-and-python',
-  'https://www.tek.com/en/documents/technical-brief/enhance-productivity-with-hsi',
-  'https://www.tek.com/en/documents/technical-brief/working-remotely-with-tek-scopes-tech-brief',
-  'https://www.tek.com/en/documents/technical-brief/working-remotely-with-tek-scopes-with-windows-os-tech-brief',
-  'https://www.tek.com/en/documents/technical-brief/pi-command-translator-on-oscilloscopes-tech-brief',
-  'https://www.tek.com/en/documents/application-note/remote-control-and-access-for-the-2-series-mso-mixed-signal-oscilloscope',
-  'https://www.tek.com/en/documents/application-note/automating-double-pulse-tests-with-python',
-  'https://www.tek.com/en/documents/application-note/using-raspberry-pi-to-control-your-oscilloscope',
-  'https://www.tek.com/en/documents/how-guide/simplifying-test-automation-with-tm_devices-and-python',
-  'https://www.tek.com/en/documents/how-guide/getting-started-with-hsi-how-to-guide',
-
-  // ── Oscilloscope fundamentals & setup ───────────────────────────────────
-  'https://www.tek.com/en/documents/primer/xyzs-oscilloscopes-primer',
-  'https://www.tek.com/en/documents/primer/oscilloscope-basics',
-  'https://www.tek.com/en/documents/primer/oscilloscope-systems-and-controls',
-  'https://www.tek.com/en/documents/primer/setting-and-using-oscilloscope',
-  'https://www.tek.com/en/documents/primer/how-to-use-an-oscilloscope',
-  'https://www.tek.com/en/documents/primer/evaluating-oscilloscopes',
-  'https://www.tek.com/en/documents/technical-brief/floating-oscilloscope-measurements-and-operator-protection',
-
-  // ── MSO / mixed signal ───────────────────────────────────────────────────
-  'https://www.tek.com/en/documents/application-note/how-use-mixed-signal-oscilloscope-test-digital-circuits',
-  'https://www.tek.com/en/documents/application-note/fundamentals-mdo4000-series-mixed-domain-oscilloscope',
-  'https://www.tek.com/en/documents/application-note/using-mixed-signal-oscilloscopes-to-find-and-diagnose-jitter-caused-by-power-integrity-problems',
-
-  // ── Serial buses & protocols ─────────────────────────────────────────────
-  'https://www.tek.com/en/documents/application-note/debugging-spmi-power-management-buses-oscilloscope',
-  'https://www.tek.com/en/documents/application-note/how-troubleshoot-system-problems-using-oscilloscope-i2c-and-spi-decoding',
-  'https://www.tek.com/en/documents/application-note/debugging-can-lin-and-flexray-automotive-buses-oscilloscope',
-  'https://www.tek.com/en/documents/application-note/debugging-sent-automotive-buses-oscilloscope',
-  'https://www.tek.com/en/documents/application-note/debugging-serial-buses-embedded-system-designs-0',
-  'https://www.tek.com/en/documents/application-note/analyzing-8b-10b-encoded-signals-real-time-oscilloscope',
-  'https://www.tek.com/en/documents/application-note/understanding-and-performing-usb-20-physical-layer-testing',
-  'https://www.tek.com/en/documents/primer/468111',
-  'https://www.tek.com/en/documents/application-note/automotive-ethernet-see-true-signal',
-
-  // ── Jitter & signal integrity ────────────────────────────────────────────
-  'https://www.tek.com/en/documents/technical-brief/choose-right-platform-your-jitter-measurements',
-  'https://www.tek.com/en/documents/application-note/characterizing-and-troubleshooting-jitter-your-oscilloscope',
-  'https://www.tek.com/en/documents/technical-brief/jitter-testing-on-ethernet-app-note',
-  'https://www.tek.com/en/documents/application-note/troubleshooting-ethernet-problems-your-oscilloscope',
-  'https://www.tek.com/en/documents/primer/clock-recovery-primer-part-1',
-  'https://www.tek.com/en/documents/primer/clock-recovery-primer-part-2',
-  'https://www.tek.com/en/documents/primer/stressed-eye-primer',
-
-  // ── Probing & measurement ────────────────────────────────────────────────
-  'https://www.tek.com/en/documents/application-note/how-oscilloscope-probes-affect-your-measurement',
-  'https://www.tek.com/en/documents/technical-brief/making-microvolt-biomedical-measurements',
-
-  // ── Power measurements ───────────────────────────────────────────────────
-  'https://www.tek.com/en/documents/technical-brief/measuring-the-control-loop-response-of-a-power-supply-using-an-oscilloscope',
-  'https://www.tek.com/en/documents/application-note/getting-started-power-rail-measurements-application-note',
-  'https://www.tek.com/en/documents/application-note/power-supply-application-note',
-  'https://www.tek.com/en/documents/application-note/double-pulse-test-tektronix-afg31000-arbitrary-function-generator',
-  'https://www.tek.com/en/documents/primer/standby-power-primer',
-  'https://www.tek.com/en/documents/technical-brief/dc-power-supply-technical-information',
-
-  // ── Spectrum & frequency domain ──────────────────────────────────────────
-  'https://www.tek.com/en/documents/application-note/spectrum-view-new-approach-frequency-domain-analysis-oscilloscopes',
-  'https://www.tek.com/en/documents/whitepaper/comparing-traditional-oscilloscope-fft-to-spectrum-view-analysis-power-supply-control-loop',
-  'https://www.tek.com/en/documents/primer/fundamentals-real-time-spectrum-analysis',
-  'https://www.tek.com/en/documents/primer/dpx-acquisition-technology-spectrum-analyzers-fundamentals',
-  'https://www.tek.com/en/documents/primer/fundamentals-radar-measurements',
-
-  // ── Triggering & acquisition ─────────────────────────────────────────────
-  'https://www.tek.com/en/documents/technical-brief/visual-triggers-graphical-methods-capturing-bursts-and-other-complex',
-
-  // ── EMI / RF ─────────────────────────────────────────────────────────────
-  'https://www.tek.com/en/documents/application-note/practical-emi-troubleshooting',
-  'https://www.tek.com/en/documents/application-note/interference-hunting-application-note',
-
-  // ── TDR / signal propagation ─────────────────────────────────────────────
-  'https://www.tek.com/en/documents/primer/tdr-test',
-  'https://www.tek.com/en/documents/primer/understanding-and-applying-time-domain-reflectometry-tdr-using-real-time-oscilloscopes',
-
-  // ── High-speed / PCIe / compliance ──────────────────────────────────────
-  'https://www.tek.com/en/documents/technical-brief/pcie-gen-5-tx-tech-brief',
-  'https://www.tek.com/en/documents/application-note/overcoming-receiver-test-challenges-gen4-i-o-applications',
-  'https://www.tek.com/en/documents/application-note/physical-layer-compliance-testing-hdmi-using-tdsht3-hdmi-compliance-test-s',
-
-  // ── Misc ─────────────────────────────────────────────────────────────────
-  'https://www.tek.com/en/documents/technical-brief/tekscope-pc-software-installation-guide',
-];
-
-// ── Types ─────────────────────────────────────────────────────────────────────
 interface RagChunk {
   id: string;
   corpus: string;
@@ -128,11 +57,84 @@ interface RagChunk {
   source: string;
 }
 
-// ── HTML text extraction ──────────────────────────────────────────────────────
-/**
- * Strips HTML tags and decodes common entities.
- * Works well enough for tek.com's server-rendered article pages.
- */
+interface CliOpts {
+  onlyFamily: string | null;
+  onlyShared: boolean;
+}
+
+// ── Product family rules (same approach as scrapeTekVideos.ts) ────────────────
+// Order matters — more specific first. Applied to title + body text to
+// infer product tags for "shared" URLs, and to augment family-keyed URLs
+// with extra families they happen to reference.
+interface FamilyRule { family: string; test: RegExp; }
+const FAMILY_RULES: FamilyRule[] = [
+  { family: 'MSO6B', test: /\b(6\s*Series\s*B\s*MSO|MSO(?:64|66|68)B|6-Series-B)\b/i },
+  { family: 'MSO6',  test: /\b(6\s*Series\s*MSO|MSO(?:64|66|68)(?!B)|6-Series-MSO)\b/i },
+  { family: 'MSO5B', test: /\b(5\s*Series\s*B\s*MSO|MSO5[468]B)\b/i },
+  { family: 'MSO5',  test: /\b(5\s*Series\s*MSO|MSO5[468](?!B)|5-Series-MSO)\b/i },
+  { family: 'MSO4B', test: /\b(4\s*Series\s*B\s*MSO|MSO4[46]B)\b/i },
+  { family: 'MSO4',  test: /\b(4\s*Series\s*MSO|MSO4[46](?!B)|4-Series-MSO)\b/i },
+  { family: 'MSO2',  test: /\b(2\s*Series\s*MSO|MSO2[24]|2-Series-MSO)\b/i },
+  { family: 'MDO3',  test: /\b(3\s*Series\s*MDO|MDO3(?!000))\b/i },
+  { family: 'MDO4',  test: /\b(4\s*Series\s*MDO|MDO4(?!000))\b/i },
+  { family: 'MDO3000', test: /\bMDO3\d{3}\b/i },
+  { family: 'MDO4000', test: /\bMDO4\d{3}[A-C]?\b/i },
+  { family: 'DPO70000', test: /\bDPO70\d{3}(?:C|DX|SX)?\b|\b70000\s*Series\b/i },
+  { family: 'DPO7000',  test: /\b7\s*Series\s*DPO\b|\bDPO7(?!0)/i },
+  { family: 'DPO5000',  test: /\bDPO5\d{3}B?\b|\bMSO5\d{3}B?\b/i },
+  { family: 'DPO4000',  test: /\b(MSO\/DPO|DPO)4\d{3}B?\b/i },
+  { family: 'DPO3000',  test: /\b(MSO\/DPO|DPO)3\d{3}B?\b/i },
+  { family: 'DPO2000',  test: /\b(MSO\/DPO|DPO)2\d{3}B?\b/i },
+];
+
+function inferFamilies(text: string): string[] {
+  const out = new Set<string>();
+  for (const r of FAMILY_RULES) if (r.test.test(text)) out.add(r.family);
+  return Array.from(out);
+}
+
+// ── CLI ───────────────────────────────────────────────────────────────────────
+function parseArgs(argv: string[]): CliOpts {
+  const opts: CliOpts = { onlyFamily: null, onlyShared: false };
+  for (let i = 2; i < argv.length; i++) {
+    const a = argv[i];
+    if (a === '--family') opts.onlyFamily = argv[++i] || null;
+    else if (a === '--only-shared') opts.onlyShared = true;
+    else if (a === '--help' || a === '-h') {
+      console.log(`usage: npx tsx scripts/scrapeTekDocs.ts
+  (no flags)                  scrape all — shared + every family bucket
+  --family <KEY>              scrape only one family bucket (e.g. MSO2, DPO7000)
+  --only-shared               scrape only the shared bucket, skip per-family`);
+      process.exit(0);
+    }
+  }
+  return opts;
+}
+
+// ── Manifest loader ───────────────────────────────────────────────────────────
+function loadManifest(): DocsManifest {
+  const raw = fs.readFileSync(URL_LIST_FILE, 'utf8');
+  const parsed = JSON.parse(raw);
+
+  // Legacy: flat array
+  if (Array.isArray(parsed)) {
+    console.log(`Legacy flat-array manifest detected (${parsed.length} URLs → all treated as "shared")`);
+    return { shared: parsed, families: {} };
+  }
+
+  // Modern: object
+  const manifest: DocsManifest = {
+    $schema: parsed.$schema,
+    note: parsed.note,
+    lastUpdated: parsed.lastUpdated,
+    shared: Array.isArray(parsed.shared) ? parsed.shared : [],
+    families: (parsed.families && typeof parsed.families === 'object') ? parsed.families : {},
+  };
+  console.log(`Manifest: ${manifest.shared.length} shared + ${Object.keys(manifest.families).length} family buckets (${Object.values(manifest.families).reduce((a: number, v) => a + (Array.isArray(v) ? v.length : 0), 0)} family-specific URLs)`);
+  return manifest;
+}
+
+// ── HTML extraction ───────────────────────────────────────────────────────────
 function stripHtml(html: string): string {
   return html
     .replace(/<script[\s\S]*?<\/script>/gi, '')
@@ -148,49 +150,52 @@ function stripHtml(html: string): string {
     .trim();
 }
 
-/**
- * Extracts the main article text from tek.com document pages.
- * These pages embed full article HTML in the page body.
- */
+// Strip tek.com page chrome (feedback widget, nav, footer) so body
+// snippets in retrieval aren't polluted with boilerplate.
+const BOILERPLATE_PATTERNS: RegExp[] = [
+  /Whether positive or negative,[\s\S]*?experience\.?/gi,
+  /Let us know if you[' ]?re[\s\S]*?feedback\./gi,
+  /We[' ]?ll use your feedback[\s\S]*?\./gi,
+  /Was this information helpful\??/gi,
+  /Submit\s+Thank you for your feedback\.?/gi,
+  /Accept all cookies/gi,
+  /Cookie preferences/gi,
+  /Sign in to (?:your|my) (?:account|TekCloud)/gi,
+];
+
+function scrubBoilerplate(text: string): string {
+  let out = text;
+  for (const p of BOILERPLATE_PATTERNS) out = out.replace(p, ' ');
+  return out.replace(/\s{2,}/g, ' ').trim();
+}
+
 function extractArticleText(html: string): { title: string; body: string } {
-  // Page title
   const titleMatch = html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i);
   const rawTitle = titleMatch ? stripHtml(titleMatch[1]) : '';
 
-  // Try to find the main article container — tek.com uses various class names
   const articlePatterns = [
     /<article[\s\S]*?>([\s\S]*?)<\/article>/i,
-    /<div[^>]*class="[^"]*(?:content|article|body|main|document)[^"]*"[^>]*>([\s\S]*?)<\/div>/i,
     /<div[^>]*class="[^"]*field--name-body[^"]*"[^>]*>([\s\S]*?)<\/div>/i,
     /<div[^>]*class="[^"]*resource-content[^"]*"[^>]*>([\s\S]*?)<\/div>/i,
+    /<div[^>]*class="[^"]*(?:content|article|body|main|document)[^"]*"[^>]*>([\s\S]*?)<\/div>/i,
     /<main[^>]*>([\s\S]*?)<\/main>/i,
   ];
 
   let rawBody = '';
   for (const pattern of articlePatterns) {
     const match = html.match(pattern);
-    if (match && match[1].length > 500) {
-      rawBody = match[1];
-      break;
-    }
+    if (match && match[1].length > 500) { rawBody = match[1]; break; }
   }
 
-  // Fallback: strip entire body
   if (!rawBody) {
     const bodyMatch = html.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
     rawBody = bodyMatch ? bodyMatch[1] : html;
   }
 
-  const body = stripHtml(rawBody)
-    .replace(/\s{3,}/g, '\n\n')
-    .trim();
-
+  const body = scrubBoilerplate(stripHtml(rawBody).replace(/\s{3,}/g, '\n\n').trim());
   return { title: rawTitle, body };
 }
 
-/**
- * Splits a long text into chunks of ~400 words with a 50-word overlap.
- */
 function chunkText(text: string, maxWords = 400, overlap = 50): string[] {
   const words = text.split(/\s+/).filter(Boolean);
   if (words.length <= maxWords) return [text];
@@ -210,20 +215,30 @@ function slugify(s: string): string {
   return s.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '').slice(0, 64);
 }
 
+function docTypeFromUrl(url: string): string {
+  if (url.includes('/technical-brief/')) return 'technical-brief';
+  if (url.includes('/application-note/')) return 'application-note';
+  if (url.includes('/primer/')) return 'primer';
+  if (url.includes('/white-paper/') || url.includes('/whitepaper/')) return 'white-paper';
+  if (url.includes('/how-guide/') || url.includes('/how-to-guide/')) return 'how-guide';
+  if (url.includes('/datasheet')) return 'datasheet';
+  if (url.includes('/faqs/')) return 'faq';
+  if (url.includes('/blog/')) return 'blog';
+  if (url.includes('/manual/')) return 'manual';
+  return 'document';
+}
+
 // ── Fetcher ───────────────────────────────────────────────────────────────────
 async function fetchPage(url: string): Promise<string | null> {
   try {
     const res = await fetch(url, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (compatible; TekAutomate-RAG-Scraper/1.0)',
-        'Accept': 'text/html,application/xhtml+xml',
+        Accept: 'text/html,application/xhtml+xml',
       },
-      signal: AbortSignal.timeout(15_000),
+      signal: AbortSignal.timeout(20_000),
     });
-    if (!res.ok) {
-      console.warn(`  ✗ HTTP ${res.status} — skipping`);
-      return null;
-    }
+    if (!res.ok) { console.warn(`  ✗ HTTP ${res.status} — skipping`); return null; }
     return await res.text();
   } catch (err) {
     console.warn(`  ✗ Fetch error: ${err instanceof Error ? err.message : err}`);
@@ -231,81 +246,116 @@ async function fetchPage(url: string): Promise<string | null> {
   }
 }
 
+// ── Chunk builder ─────────────────────────────────────────────────────────────
+interface ScrapeJob {
+  url: string;
+  authoritativeFamilies: string[]; // explicit from manifest bucket
+}
+
+async function scrapeOne(job: ScrapeJob, seen: Set<string>): Promise<RagChunk[]> {
+  const slug = job.url.split('/').pop() || 'unknown';
+  console.log(`→ ${slug}${job.authoritativeFamilies.length > 0 ? ` [${job.authoritativeFamilies.join(',')}]` : ''}`);
+
+  const html = await fetchPage(job.url);
+  if (!html) return [];
+
+  const { title, body } = extractArticleText(html);
+  if (body.length < 200) { console.warn('  ✗ Extracted body too short — skipping'); return []; }
+
+  const docSlug = slugify(slug);
+  const docType = docTypeFromUrl(job.url);
+
+  // Build family tag list: authoritative (from manifest) + inferred from content.
+  const inferred = inferFamilies(`${title} ${body}`);
+  const familyTags = Array.from(new Set<string>([...job.authoritativeFamilies, ...inferred]));
+
+  const textChunks = chunkText(body);
+  const baseTags = [docSlug, docType, 'tektronix', 'tek_com', ...familyTags];
+  console.log(`  ✓ "${title || slug}" — ${body.length} chars → ${textChunks.length} chunk(s), families=[${familyTags.join(',') || 'none'}]`);
+
+  const out: RagChunk[] = [];
+  textChunks.forEach((chunkBody, i) => {
+    const id = `tek_${docSlug}_p${i + 1}`;
+    if (seen.has(id)) return;
+    seen.add(id);
+    out.push({
+      id,
+      corpus: 'tek_docs',
+      title: title || slug,
+      body: chunkBody,
+      tags: [...baseTags],
+      source: job.url,
+    });
+  });
+  return out;
+}
+
 // ── Main ──────────────────────────────────────────────────────────────────────
 async function main() {
-  const urls = loadUrls();
-  console.log(`Scraping ${urls.length} tek.com document URLs…\n`);
+  const opts = parseArgs(process.argv);
+  const manifest = loadManifest();
+
+  // Build job list respecting CLI scope
+  const jobs: ScrapeJob[] = [];
+  if (!opts.onlyFamily) {
+    for (const url of manifest.shared) jobs.push({ url, authoritativeFamilies: [] });
+  }
+  if (!opts.onlyShared) {
+    for (const [fam, urls] of Object.entries(manifest.families)) {
+      if (opts.onlyFamily && fam !== opts.onlyFamily) continue;
+      for (const url of urls || []) jobs.push({ url, authoritativeFamilies: [fam] });
+    }
+  }
+
+  if (jobs.length === 0) {
+    console.error('No URLs to scrape under the current filter. Exiting.');
+    process.exit(1);
+  }
+  console.log(`\nScraping ${jobs.length} tek.com document URLs…\n`);
 
   const chunks: RagChunk[] = [];
   const seen = new Set<string>();
+  let ok = 0, fail = 0;
 
-  for (const url of urls) {
-    const slug = url.split('/').pop() || 'unknown';
-    console.log(`→ ${slug}`);
-
-    const html = await fetchPage(url);
-    if (!html) continue;
-
-    const { title, body } = extractArticleText(html);
-    if (body.length < 200) {
-      console.warn('  ✗ Extracted body too short — skipping');
-      continue;
+  for (const [i, job] of jobs.entries()) {
+    const produced = await scrapeOne(job, seen);
+    if (produced.length > 0) { chunks.push(...produced); ok++; } else fail++;
+    if ((i + 1) % 25 === 0) {
+      console.log(`[progress] ${i + 1}/${jobs.length} ok=${ok} fail=${fail} chunks=${chunks.length}`);
     }
-
-    const docSlug = slugify(slug);
-    const docType = url.includes('/technical-brief/') ? 'technical-brief'
-      : url.includes('/application-note/') ? 'application-note'
-      : url.includes('/primer/') ? 'primer'
-      : url.includes('/white-paper/') ? 'white-paper'
-      : 'document';
-
-    const textChunks = chunkText(body);
-    console.log(`  ✓ "${title || slug}" — ${body.length} chars → ${textChunks.length} chunk(s)`);
-
-    textChunks.forEach((chunkBody, i) => {
-      const id = `tek_${docSlug}_p${i + 1}`;
-      if (seen.has(id)) return;
-      seen.add(id);
-      chunks.push({
-        id,
-        corpus: 'tek_docs',
-        title: title || slug,
-        body: chunkBody,
-        tags: [docSlug, docType, 'tektronix', 'tek_com'],
-        source: url,
-      });
-    });
-
-    // Polite delay
-    await new Promise(r => setTimeout(r, 800));
+    await new Promise((r) => setTimeout(r, 800)); // polite delay
   }
 
-  if (chunks.length === 0) {
-    console.error('\nNo chunks produced — nothing to write.');
-    process.exit(1);
-  }
+  if (chunks.length === 0) { console.error('\nNo chunks produced — nothing to write.'); process.exit(1); }
 
-  // Write index
   fs.mkdirSync(path.dirname(OUT_FILE), { recursive: true });
   fs.writeFileSync(OUT_FILE, JSON.stringify(chunks, null, 2), 'utf8');
   console.log(`\n✅ Wrote ${chunks.length} chunks → ${OUT_FILE}`);
 
-  // Update manifest
   if (fs.existsSync(MANIFEST_FILE)) {
-    const manifest = JSON.parse(fs.readFileSync(MANIFEST_FILE, 'utf8'));
-    manifest.corpora = manifest.corpora || {};
-    manifest.counts = manifest.counts || {};
-    manifest.corpora['tek_docs'] = 'tek_docs_index.json';
-    manifest.counts['tek_docs'] = chunks.length;
-    manifest.generatedAt = new Date().toISOString();
-    fs.writeFileSync(MANIFEST_FILE, JSON.stringify(manifest, null, 2), 'utf8');
-    console.log(`✅ Updated manifest (${chunks.length} tek_docs chunks)`);
+    const manifestRag = JSON.parse(fs.readFileSync(MANIFEST_FILE, 'utf8'));
+    manifestRag.corpora = manifestRag.corpora || {};
+    manifestRag.counts = manifestRag.counts || {};
+    manifestRag.corpora['tek_docs'] = 'tek_docs_index.json';
+    manifestRag.counts['tek_docs'] = chunks.length;
+    manifestRag.generatedAt = new Date().toISOString();
+    fs.writeFileSync(MANIFEST_FILE, JSON.stringify(manifestRag, null, 2), 'utf8');
+    console.log(`✅ Updated RAG manifest (${chunks.length} tek_docs chunks)`);
   }
 
-  console.log('\nDone! Restart the MCP server to load the new corpus.');
+  // Quick family breakdown report
+  const byFamily: Record<string, number> = {};
+  for (const c of chunks) {
+    const fams = c.tags.filter((t) => /^MSO|^MDO|^DPO|^TBS|^TDS/.test(t));
+    if (fams.length === 0) { byFamily['general'] = (byFamily['general'] || 0) + 1; continue; }
+    for (const f of fams) byFamily[f] = (byFamily[f] || 0) + 1;
+  }
+  console.log(`\nChunks by family:`);
+  for (const [fam, n] of Object.entries(byFamily).sort((a, b) => b[1] - a[1])) {
+    console.log(`  ${fam.padEnd(12)} ${n}`);
+  }
+  console.log(`\n[done] jobs=${jobs.length} ok=${ok} fail=${fail} chunks=${chunks.length}`);
+  console.log('Next: rebuild indexed RAG via: npx tsx scripts/buildRagIndex.ts');
 }
 
-main().catch(err => {
-  console.error('Fatal:', err);
-  process.exit(1);
-});
+main().catch((err) => { console.error('Fatal:', err); process.exit(1); });
