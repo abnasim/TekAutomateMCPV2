@@ -1,0 +1,23 @@
+{
+  "$schema": "tek-video-urls.v1",
+  "note": "Per-family seed URL list for scripts/scrapeTekVideos.ts. Update when Tek publishes new videos. Keys are scope-family identifiers that match the 'products' field in data/videos.json.",
+  "lastUpdated": "2026-04-18",
+  "families": {
+    "MSO2": [
+      "https://www.tek.com/en/video/product-features/2-series-mso-mixed-signal-oscilloscope-introduction",
+      "https://www.tek.com/en/video/product-features/2-series-mso-mixed-signal-oscilloscope-%E2%80%93-a-full-set-of-analysis-tools",
+      "https://www.tek.com/en/video/how-to/making-measurements-on-the-2-series-mso",
+      "https://www.tek.com/en/video/how-to/2-series-mso---cursors-and-measurements"
+    ],
+    "MSO4": [],
+    "MSO5": [],
+    "MSO6": [],
+    "MDO3": [],
+    "MDO4": [],
+    "DPO2000": [],
+    "DPO3000": [],
+    "DPO4000": [],
+    "DPO7000": [],
+    "DPO70000": []
+  }
+}

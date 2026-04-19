@@ -1,45 +1,104 @@
 {
   "$schema": "videos.v1",
-  "note": "Curated index of Tektronix instructional videos. Reference material — fetch the url for full video + any available transcript. Phase 0 pilot seeded with MSO2 only; sweep other families once the retrieval path is proven. Transcripts are NOT yet populated — transcript_chunks[] is reserved for future Phase 1 work (YouTube auto-captions or Whisper pass).",
-  "lastUpdated": "2026-04-18",
+  "note": "Curated index of Tektronix instructional videos. Reference material — fetch the url for full video content. Transcripts (transcript_chunks[]) are populated by scripts/scrapeTekVideos.ts via Brightcove Playback API + Whisper. Each chunk is {start, end, text} in seconds. Tek videos are hosted on Brightcove with NO published captions, so Whisper is the only transcript path.",
+  "lastUpdated": "2026-04-19",
   "phase": "pilot",
-  "updateProcedure": "Run scripts/scrapeTekVideos.ts to collect URLs per family; fetch page metadata for summary/duration; optionally fetch YouTube transcripts. Bump lastUpdated. Sync via the normal V2 → Public → mcp-server flow.",
+  "updateProcedure": "Edit scripts/tek_video_urls.json to add/remove per-family URLs. Then: (1) `npx tsx scripts/scrapeTekVideos.ts --collect` for metadata-only (fast); (2) `npx tsx scripts/scrapeTekVideos.ts --all` for full pipeline including Whisper transcription (slow, needs ffmpeg + openai-whisper in PATH). Sync via V2 → Public → mcp-server.",
   "videos": [
+    {
+      "id": "tek-video-mso2-analysis-tools",
+      "title": "2 Series MSO Mixed Signal Oscilloscope – A Full Set of Analysis Tools",
+      "url": "https://www.tek.com/en/video/product-features/2-series-mso-mixed-signal-oscilloscope-%E2%80%93-a-full-set-of-analysis-tools",
+      "category": "product-features",
+      "products": [
+        "MSO2",
+        "MSO22",
+        "MSO24"
+      ],
+      "tags": [
+        "analysis",
+        "measurements",
+        "tools",
+        "overview"
+      ],
+      "summary": "Overview of the analysis tool set on the 2 Series MSO — measurements, math, cursors, decoding, and related capabilities.",
+      "duration_ms": 141760,
+      "duration": "2:21",
+      "brightcove_account": "1572118491",
+      "brightcove_video_id": "6307006055112",
+      "mp4_url": "http://fastly-signed-us-east-1-prod.brightcovecdn.com/media/v1/pmp4/static/clear/1572118491/97c8caf0-6ddd-401a-90e1-c8d8d73eddd6/6247411b-3c02-46db-a6c6-87b87c00319c/main.mp4?fastly_token=NjllNGE1YmJfZDhhOTFjZWY5MTgzNTg2YzI3NWNjNjI4ZjdlMWY4ZThiNjQwNTlkZTZjMWZiNjEwNjI1OWEwNTc1ZmU2N2VjMV8vL2Zhc3RseS1zaWduZWQtdXMtZWFzdC0xLXByb2QuYnJpZ2h0Y292ZWNkbi5jb20vbWVkaWEvdjEvcG1wNC9zdGF0aWMvY2xlYXIvMTU3MjExODQ5MS85N2M4Y2FmMC02ZGRkLTQwMWEtOTBlMS1jOGQ4ZDczZWRkZDYvNjI0NzQxMWItM2MwMi00NmRiLWE2YzYtODdiODdjMDAzMTljL21haW4ubXA0",
+      "page_lastFetched": "2026-04-19T03:34:10.305Z"
+    },
+    {
+      "id": "tek-video-mso2-cursors-measurements",
+      "title": "2 Series MSO - Cursors & Measurements",
+      "url": "https://www.tek.com/en/video/how-to/2-series-mso---cursors-and-measurements",
+      "category": "how-to",
+      "products": [
+        "MSO2",
+        "MSO22",
+        "MSO24"
+      ],
+      "tags": [
+        "cursors",
+        "measurement",
+        "how-to"
+      ],
+      "summary": "Dedicated tutorial on the 2 Series MSO's cursor and automated measurement workflow — setup, placement, readout interpretation.",
+      "duration_ms": 94165,
+      "duration": "1:34",
+      "brightcove_account": "1572118491",
+      "brightcove_video_id": "6307543068112",
+      "mp4_url": "http://fastly-signed-us-east-1-prod.brightcovecdn.com/media/v1/pmp4/static/clear/1572118491/a4cc45e7-3385-4417-b9fd-2d04ee4cf1a3/e3cb7a98-0c92-4a18-b26d-a734aaae2ed7/main.mp4?fastly_token=NjllNGE1ODhfYzExNmVjNmVmZGNiNGEzNDFjYTgxMjg3Zjc2NGU4ZTdmMzZkYjA0ZmViNmU2YTEyMzMwNWIwOTFlZjc2ZmI2OF8vL2Zhc3RseS1zaWduZWQtdXMtZWFzdC0xLXByb2QuYnJpZ2h0Y292ZWNkbi5jb20vbWVkaWEvdjEvcG1wNC9zdGF0aWMvY2xlYXIvMTU3MjExODQ5MS9hNGNjNDVlNy0zMzg1LTQ0MTctYjlmZC0yZDA0ZWU0Y2YxYTMvZTNjYjdhOTgtMGM5Mi00YTE4LWIyNmQtYTczNGFhYWUyZWQ3L21haW4ubXA0",
+      "page_lastFetched": "2026-04-19T03:34:15.047Z"
+    },
     {
       "id": "tek-video-mso2-introduction",
       "title": "2 Series MSO Mixed Signal Oscilloscope Introduction",
       "url": "https://www.tek.com/en/video/product-features/2-series-mso-mixed-signal-oscilloscope-introduction",
       "category": "product-features",
-      "products": ["MSO2", "MSO22", "MSO24"],
-      "tags": ["intro", "overview", "features"],
-      "summary": "Short introduction covering the key features and specifications of the 2 Series MSO. A starting point for getting oriented on the instrument."
-    },
-    {
-      "id": "tek-video-mso2-analysis-tools",
-      "title": "2 Series MSO — A Full Set of Analysis Tools",
-      "url": "https://www.tek.com/en/video/product-features/2-series-mso-mixed-signal-oscilloscope-%E2%80%93-a-full-set-of-analysis-tools",
-      "category": "product-features",
-      "products": ["MSO2", "MSO22", "MSO24"],
-      "tags": ["analysis", "measurements", "tools", "overview"],
-      "summary": "Overview of the analysis tool set on the 2 Series MSO — measurements, math, cursors, decoding, and related capabilities."
+      "products": [
+        "MSO2",
+        "MSO22",
+        "MSO24"
+      ],
+      "tags": [
+        "intro",
+        "overview",
+        "features"
+      ],
+      "summary": "This video provides a short introduction of the key features and specifications of the 2 Series MSO Mixed Signal Oscilloscope.",
+      "duration_ms": 232853,
+      "duration": "3:52",
+      "brightcove_account": "1572118491",
+      "brightcove_video_id": "6307007832112",
+      "mp4_url": "http://fastly-signed-us-east-1-prod.brightcovecdn.com/media/v1/pmp4/static/clear/1572118491/ebbd0f56-5aba-4641-a1f8-99e6ac08972e/3d034e07-5020-428e-985a-a84215cbb662/main.mp4?fastly_token=NjllNGE2MjNfZThkOGFiNzk2YjU2ZDc4Mjg1OTE3NjI0NjczMjY1OWMxMWZkZTJjMmRmOGRkMGY5Mzk0OGRiYjViN2EwMzcyZl8vL2Zhc3RseS1zaWduZWQtdXMtZWFzdC0xLXByb2QuYnJpZ2h0Y292ZWNkbi5jb20vbWVkaWEvdjEvcG1wNC9zdGF0aWMvY2xlYXIvMTU3MjExODQ5MS9lYmJkMGY1Ni01YWJhLTQ2NDEtYTFmOC05OWU2YWMwODk3MmUvM2QwMzRlMDctNTAyMC00MjhlLTk4NWEtYTg0MjE1Y2JiNjYyL21haW4ubXA0",
+      "page_lastFetched": "2026-04-19T03:34:07.836Z"
     },
     {
       "id": "tek-video-mso2-making-measurements",
-      "title": "Making Measurements on the 2 Series MSO",
+      "title": "Making Measurements 2 Series MSO",
       "url": "https://www.tek.com/en/video/how-to/making-measurements-on-the-2-series-mso",
       "category": "how-to",
-      "products": ["MSO2", "MSO22", "MSO24"],
-      "tags": ["measurement", "measurements", "cursors", "automated", "how-to"],
-      "summary": "Walks through three common measurement techniques on the 2 Series MSO: manual on-screen observation, cursor placement, and automated measurements. Start here when teaching someone how to pull numbers off a signal."
-    },
-    {
-      "id": "tek-video-mso2-cursors-measurements",
-      "title": "2 Series MSO — Cursors and Measurements",
-      "url": "https://www.tek.com/en/video/how-to/2-series-mso---cursors-and-measurements",
-      "category": "how-to",
-      "products": ["MSO2", "MSO22", "MSO24"],
-      "tags": ["cursors", "measurement", "how-to"],
-      "summary": "Dedicated tutorial on the 2 Series MSO's cursor and automated measurement workflow — setup, placement, readout interpretation."
+      "products": [
+        "MSO2",
+        "MSO22",
+        "MSO24"
+      ],
+      "tags": [
+        "measurement",
+        "measurements",
+        "cursors",
+        "automated",
+        "how-to"
+      ],
+      "summary": "Walks through three common measurement techniques on the 2 Series MSO: manual on-screen observation, cursor placement, and automated measurements. Start here when teaching someone how to pull numbers off a signal.",
+      "duration_ms": 128848,
+      "duration": "2:08",
+      "brightcove_account": "1572118491",
+      "brightcove_video_id": "6376642909112",
+      "mp4_url": "http://fastly-signed-us-east-1-prod.brightcovecdn.com/media/v1/pmp4/static/clear/1572118491/aac27c04-9cb2-4388-afcb-af2bfcfc4572/a3dcac57-0c98-416a-b367-d8df28faba34/main.mp4?fastly_token=NjllNGE1YWVfMWZhNWUyZTc5ODZhYTdmNzk2ZDI3YmE1NDYzYWVkNzkzNmU5MWQ0ZDg1ZDQwYzZjYTNiZjgyZjFjNWFmYTVkMF8vL2Zhc3RseS1zaWduZWQtdXMtZWFzdC0xLXByb2QuYnJpZ2h0Y292ZWNkbi5jb20vbWVkaWEvdjEvcG1wNC9zdGF0aWMvY2xlYXIvMTU3MjExODQ5MS9hYWMyN2MwNC05Y2IyLTQzODgtYWZjYi1hZjJiZmNmYzQ1NzIvYTNkY2FjNTctMGM5OC00MTZhLWIzNjctZDhkZjI4ZmFiYTM0L21haW4ubXA0",
+      "page_lastFetched": "2026-04-19T03:34:12.682Z"
     }
   ]
 }
