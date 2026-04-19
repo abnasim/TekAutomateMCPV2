@@ -4,6 +4,7 @@ import { retrieveLessons } from './lessons';
 import { personality } from './personality';
 import { retrieveRagChunks } from './retrieveRagChunks';
 import { searchKnownFailures } from './searchKnownFailures';
+import { retrieveVideos } from './videos';
 
 interface KnowledgeInput extends Record<string, unknown> {
   action?: string;
@@ -24,10 +25,11 @@ export async function knowledge(input: KnowledgeInput) {
 
   switch (action) {
     case 'retrieve': {
-      // Special-case the "lessons" corpus — it's not a RAG index, it's
-      // the saved Lessons Learned store written by tek_router{save}.
+      // Special-case corpora that aren't RAG indexes — direct handlers
+      // read their own stores.
       const corpus = typeof args.corpus === 'string' ? args.corpus.toLowerCase() : '';
       if (corpus === 'lessons') return retrieveLessons(args as any);
+      if (corpus === 'videos') return retrieveVideos(args as any);
       return retrieveRagChunks(args as any);
     }
     case 'examples':

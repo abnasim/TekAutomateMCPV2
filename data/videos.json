@@ -1,0 +1,45 @@
+{
+  "$schema": "videos.v1",
+  "note": "Curated index of Tektronix instructional videos. Reference material — fetch the url for full video + any available transcript. Phase 0 pilot seeded with MSO2 only; sweep other families once the retrieval path is proven. Transcripts are NOT yet populated — transcript_chunks[] is reserved for future Phase 1 work (YouTube auto-captions or Whisper pass).",
+  "lastUpdated": "2026-04-18",
+  "phase": "pilot",
+  "updateProcedure": "Run scripts/scrapeTekVideos.ts to collect URLs per family; fetch page metadata for summary/duration; optionally fetch YouTube transcripts. Bump lastUpdated. Sync via the normal V2 → Public → mcp-server flow.",
+  "videos": [
+    {
+      "id": "tek-video-mso2-introduction",
+      "title": "2 Series MSO Mixed Signal Oscilloscope Introduction",
+      "url": "https://www.tek.com/en/video/product-features/2-series-mso-mixed-signal-oscilloscope-introduction",
+      "category": "product-features",
+      "products": ["MSO2", "MSO22", "MSO24"],
+      "tags": ["intro", "overview", "features"],
+      "summary": "Short introduction covering the key features and specifications of the 2 Series MSO. A starting point for getting oriented on the instrument."
+    },
+    {
+      "id": "tek-video-mso2-analysis-tools",
+      "title": "2 Series MSO — A Full Set of Analysis Tools",
+      "url": "https://www.tek.com/en/video/product-features/2-series-mso-mixed-signal-oscilloscope-%E2%80%93-a-full-set-of-analysis-tools",
+      "category": "product-features",
+      "products": ["MSO2", "MSO22", "MSO24"],
+      "tags": ["analysis", "measurements", "tools", "overview"],
+      "summary": "Overview of the analysis tool set on the 2 Series MSO — measurements, math, cursors, decoding, and related capabilities."
+    },
+    {
+      "id": "tek-video-mso2-making-measurements",
+      "title": "Making Measurements on the 2 Series MSO",
+      "url": "https://www.tek.com/en/video/how-to/making-measurements-on-the-2-series-mso",
+      "category": "how-to",
+      "products": ["MSO2", "MSO22", "MSO24"],
+      "tags": ["measurement", "measurements", "cursors", "automated", "how-to"],
+      "summary": "Walks through three common measurement techniques on the 2 Series MSO: manual on-screen observation, cursor placement, and automated measurements. Start here when teaching someone how to pull numbers off a signal."
+    },
+    {
+      "id": "tek-video-mso2-cursors-measurements",
+      "title": "2 Series MSO — Cursors and Measurements",
+      "url": "https://www.tek.com/en/video/how-to/2-series-mso---cursors-and-measurements",
+      "category": "how-to",
+      "products": ["MSO2", "MSO22", "MSO24"],
+      "tags": ["cursors", "measurement", "how-to"],
+      "summary": "Dedicated tutorial on the 2 Series MSO's cursor and automated measurement workflow — setup, placement, readout interpretation."
+    }
+  ]
+}

@@ -363,12 +363,18 @@ export function getToolDefinitions() {
               '• tmdevices — tm_devices Python driver API.\n' +
               '• app_logic — TekAutomate architecture and AiAction schemas.\n' +
               '• pyvisa_tekhsi — PyVISA and TekHSI connection examples.\n' +
-              '• lessons — Lessons Learned saved via tek_router{action:"save", kind:"lesson"}. Structured {lesson, observation, implication, tags}. Query is a fuzzy token match across all fields; tags filter is lenient (lowercase, plural/hyphen/case-insensitive: "masks" matches "mask", "arg-names" matches "argnames"); modelFamily narrows to a specific scope family or neutral. Accepts either limit or topK for max results (default 10, cap 50). REFERENCE NOTES, NOT EXECUTABLE — do not try to dispatch them.',
+              '• lessons — Lessons Learned saved via tek_router{action:"save", kind:"lesson"}. Structured {lesson, observation, implication, tags}. Query is a fuzzy token match across all fields; tags filter is lenient (lowercase, plural/hyphen/case-insensitive: "masks" matches "mask", "arg-names" matches "argnames"); modelFamily narrows to a specific scope family or neutral. Accepts either limit or topK for max results (default 10, cap 50). REFERENCE NOTES, NOT EXECUTABLE — do not try to dispatch them.\n' +
+              '• videos — curated Tektronix instructional videos (Phase 0 pilot: MSO2 only). Each entry: {title, url, category, products[], tags[], summary}. Filters: query (fuzzy stem match across title/summary/tags/products), tags[] (AND), products[] (OR — pass family "MSO2" or model "MSO24"). Does NOT yet include transcripts; fetch the url for the full video. Reference only.',
           },
           tags: {
             type: 'array',
             items: { type: 'string' },
-            description: 'For corpus:"lessons" only — filter to lessons that carry ALL of these tags (AND semantics).',
+            description: 'For corpus:"lessons" or corpus:"videos" — filter to entries that carry ALL of these tags (AND semantics). Lenient matching: case-insensitive, plural/hyphen-normalized.',
+          },
+          products: {
+            type: 'array',
+            items: { type: 'string' },
+            description: 'For corpus:"videos" — filter to videos tagged for any of these products. Accepts family keys ("MSO2") or model numbers ("MSO24"). OR semantics across the list.',
           },
           query: {
             type: 'string',
