@@ -17,6 +17,23 @@ const INDEX_PATH = path.resolve(here, '..', 'public', 'rag', 'tek_docs_index.jso
 
 // Patterns to strip. Each is a RegExp applied with /g + /i flags.
 const PATTERNS = [
+  // tek.com page chrome block that leads every app-note/primer/whitepaper.
+  // Structure: "WORD Feedback Have feedback? We'd love to hear your thoughts.
+  // Let us know ... Tell us what you think Tektronix <TITLE> <TITLE> Please
+  // Login/register ... Login × Download File <ACTUAL BODY>"
+  // We strip from "WORD Feedback" through the end-of-chrome marker. Different
+  // page types have different markers:
+  //   - App notes / primers / whitepapers: "Download File " sits right before body
+  //   - FAQs: "Answer :" sits right before the answer text
+  //   - Manuals: the repeated section heading is the first real content
+  // We keep the 1,500-char cap so we don't over-strip.
+  /WORD Feedback[\s\S]{0,1500}?(?:Download File|Answer\s*:)\s*/gi,
+  // Shorter variant without "WORD Feedback" prefix (some pages)
+  /Have feedback\?\s+We[' ]?d love to hear your thoughts[\s\S]{0,1200}?(?:Download File|Answer\s*:)\s*/gi,
+  // Login/register chrome that appears mid-body on some pages
+  /Please Login\/register to save starred items to Your Library\.\s*Login\s*[×x]\s*Download File\s*/gi,
+  // Tell us what you think widget (abbreviated form)
+  /Tell us what you think Tektronix\s+[A-Z][\w\s\-:,&]{5,150}\1?\s*Please Login\/register[\s\S]{0,200}?Download File\s*/gi,
   // tek.com right-rail nav / "Contact us" block (appears on MANY pages)
   /Contact us\s+Request Services\s+Quote\s+Parts Ordering\s+Request Sales Contact\s+Request Technical Support[\s\S]{0,500}?(?:Need help on product se[a-z]*\?)?/gi,
   /Request Services\s+Quote\s+Parts Ordering\s+Request Sales Contact\s+Request Technical Support[\s\S]{0,300}?/gi,
